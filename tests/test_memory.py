@@ -220,6 +220,85 @@ class TestGatesAndOps:
         assert all(v == 0 for v in m.stats.values())
 
 
+class TestAgainstLoopReference:
+    """Property test: vectorised update/get_relevant == the loop semantics."""
+
+    @staticmethod
+    def loop_reference(m: Memory, new: torch.Tensor, crit: float, max_to_new: float,
+                       window_size: int, window_crit: float) -> None:
+        """Straight transcription of the notebook's original algorithm."""
+        new = new.squeeze(0)
+        ctx_n = m.context[0] / torch.clamp(torch.linalg.vector_norm(m.context[0], dim=1, keepdim=True), min=1e-8)
+        q_n = new / torch.clamp(torch.linalg.vector_norm(new, dim=1, keepdim=True), min=1e-8)
+        sims = ctx_n @ q_n.T
+        best_sim, best_idx = torch.max(sims, dim=0)
+        for i in range(new.shape[0]):
+            vec, sim, idx = new[i], float(best_sim[i]), int(best_idx[i])
+            if sim >= crit and bool(m.occupied[idx]):
+                if m.merge_k is None:
+                    m.context[0, idx] = (m.context[0, idx] + vec) / 2
+                else:
+                    m.context[0, idx] = (1 - m.merge_k) * m.context[0, idx] + m.merge_k * vec
+                m.ttl[idx] = max(float(m.ttl[idx]), float(m.TTL_NEW))
+            elif sim <= max_to_new and Memory.check(vec, window_size, window_crit):
+                free = torch.nonzero(~m.occupied, as_tuple=True)[0]
+                if free.numel() == 0:
+                    continue
+                pos = int(free[0])
+                m.context[0, pos] = vec
+                m.ttl[pos] = m.TTL_NEW
+                m.occupied[pos] = True
+                m.count_element += 1
+
+    def _run_pair(self, merge_k, seed):
+        g = torch.Generator().manual_seed(seed)
+        args = dict(d_model=16, size=5, merge_k=merge_k)
+        mA = Memory(**args)
+        mB = Memory(**args)
+        for step in range(20):
+            batch = (torch.randn(1, 6, 16, generator=g) * (1 + (step % 3)))
+            if step % 4 == 0:
+                batch = batch.abs() + 0.5  # activity-gate friendly
+            common = batch.clone()
+            mA.update(common.clone(), crit=0.6, max_to_new=0.45, window_crit=1.0)
+            self.loop_reference(mB, common.clone(), crit=0.6, max_to_new=0.45,
+                                window_size=8, window_crit=1.0)
+            # retrieval path of mA uses the vectorised eviction; run it on mB
+            # by transcribing the same rule before comparing full state
+            q = torch.randn(1, 4, 16, generator=g)
+            mA.get_relevant(q, count=5)
+            self._loop_get_relevant(mB, q.clone(), count=5)
+            assert torch.allclose(mA.context, mB.context, atol=1e-5), (step, merge_k)
+            assert torch.allclose(mA.ttl, mB.ttl, atol=1e-6), (step, merge_k)
+            assert bool((mA.occupied == mB.occupied).all()), (step, merge_k)
+
+    @staticmethod
+    def _loop_get_relevant(m: Memory, query: torch.Tensor, count: int) -> None:
+        count = min(count, m.size)
+        ctx_n = m.context / torch.clamp(torch.linalg.vector_norm(m.context, dim=2, keepdim=True), min=1e-8)
+        q_n = query / torch.clamp(torch.linalg.vector_norm(query, dim=2, keepdim=True), min=1e-8)
+        best = torch.max(torch.matmul(ctx_n, q_n.transpose(-2, -1)), dim=2)[0][0]
+        _, idxs = torch.topk(best, k=count, largest=True)
+        norms = torch.linalg.vector_norm(m.context[0], dim=1)
+        for idx in idxs.tolist():
+            if bool(m.occupied[idx]) and float(norms[idx]) > 1e-6:
+                m.ttl[idx] = min(m.TTL_MAX, float(m.ttl[idx]) + m.TTL_HIT_BONUS)
+        m.ttl -= 1
+        expired = (m.ttl <= 0) & m.occupied
+        if bool(torch.any(expired)):
+            ii = torch.nonzero(expired, as_tuple=True)[0]
+            m.context[0, ii] = 0
+            m.ttl[ii] = 0
+            m.occupied[ii] = False
+            m.count_element -= int(ii.numel())
+
+    def test_mean_merge_match(self):
+        self._run_pair(merge_k=None, seed=1)
+
+    def test_ema_merge_match(self):
+        self._run_pair(merge_k=0.25, seed=2)
+
+
 class TestCorrectionLayer:
     def test_forward_retrieves_then_updates(self):
         corr = CorrectionLayer(D, size=16)
