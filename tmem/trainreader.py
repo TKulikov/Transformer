@@ -22,35 +22,41 @@ import random
 import torch
 
 from .models import ModelBundle
-from .semantic import embed_utterance
 
 IGNORE = -100
-FACT_TPL = "The name of my {thing} is {v}."
+FACT_TPL = "The name of my {thing} is {code}."
 Q_TPL = "What is the name of my {thing}?"
 ALT_Q_TPL = "Tell me the name of my {thing}."
-ANSWER_TPL = "Your {thing} is called {v}."
+ANSWER_TPL = "Your {thing} is called {code}."
 FILLER = "Tell me a bit more about your day in a few sentences."
 
 THINGS = ["cat", "dog", "robot", "parrot", "guitar", "bike", "laptop", "plant", "mug", "fridge",
           "lamp", "watch", "knife", "boot", "kettle"]
-VALS = ["Barsik", "Zeus", "R2D2", "Kiwi", "Strat", "Brompton", "Thinkpad", "Fern", "Moka", "Nordic",
-        "Lumen", "Timex", "Damask", "Vibram", "Breville"]
+
+
+def _rand_code(rng: random.Random) -> str:
+    """Unique pseudo-lexical code - impossible to memorize in weights."""
+    letters = "BCDFGHJKLMNPRSTVWXYZ"
+    return f"{rng.choice(letters)}{rng.randint(100, 999)}{rng.choice('aeiou')}{rng.randint(10, 99)}"
 
 
 def _items(n: int, rng: random.Random, offset: int = 0) -> list[dict]:
+    """(fact, question, answer) with globally unique random values per pool:
+    a model that has not learned to READ the injected memory cannot get the
+    answer right even once - memorization shortcuts are closed."""
     out = []
     for i in range(n):
         thing = THINGS[(i + offset) % len(THINGS)]
-        val = VALS[(i * 3 + offset + 1) % len(VALS)]
-        facts = [FACT_TPL.format(thing=thing, v=val)]
+        code = _rand_code(rng)
+        facts = [FACT_TPL.format(thing=thing, code=code)]
         if rng.random() < 0.6:
             other = THINGS[(i + 7) % len(THINGS)]
-            facts.append(FACT_TPL.format(thing=other, v=VALS[(i * 3 + offset + 4) % len(VALS)]))
+            facts.append(FACT_TPL.format(thing=other, code=_rand_code(rng)))
         out.append({
             "facts": facts,
-            "gold": val,
+            "gold": code,
             "question": (Q_TPL if i % 2 else ALT_Q_TPL).format(thing=thing),
-            "answer": ANSWER_TPL.format(thing=thing, v=val),
+            "answer": ANSWER_TPL.format(thing=thing, code=code),
         })
     return out
 
@@ -118,6 +124,22 @@ def _encode(bundle: ModelBundle, text: str) -> torch.Tensor:
     return ids.to(bundle.device)
 
 
+@torch.no_grad()
+def _fact_states(bundle: ModelBundle, text: str, cap: int = 24) -> torch.Tensor:
+    """Token-level last-hidden states of a fact sentence (lexical content
+    survives here, which a single mean-pooled vector loses)."""
+    ids = bundle.tokenizer(text, return_tensors="pt", truncation=True, max_length=cap)["input_ids"].to(bundle.device)
+    out = bundle.model(input_ids=ids, output_hidden_states=True, use_cache=False)
+    return out.hidden_states[-1][0]  # (L, d)
+
+
+def precompute_mem(bundle: ModelBundle, items: list[dict], max_rows: int = 64) -> None:
+    """Freeze memory rows for each item (computed once with the base model)."""
+    for item in items:
+        parts = [_fact_states(bundle, f) for f in item["facts"]]
+        item["mem_rows"] = torch.cat(parts, dim=0)[:max_rows].to(torch.bfloat16).cpu()
+
+
 def _sample(bundle: ModelBundle, item: dict, rng: random.Random):
     """(input_ids, labels, mem) for one memory-QA training example."""
     ctx = f"{FILLER}\nAssistant: Of course! {FILLER}\n"
@@ -128,7 +150,7 @@ def _sample(bundle: ModelBundle, item: dict, rng: random.Random):
     n_prompt = prompt_ids.shape[0]
     labels = full_ids.clone()
     labels[:n_prompt] = IGNORE
-    mem = torch.stack([embed_utterance(bundle, f) for f in item["facts"]]).to(torch.bfloat16)
+    mem = item["mem_rows"].to(bundle.device)
     return full_ids.unsqueeze(0), labels.unsqueeze(0), mem.unsqueeze(0)
 
 
@@ -185,7 +207,9 @@ def train(bundle: ModelBundle, steps: int = 300, lr: float = 2e-4, batch: int = 
     holder: dict = {}
     wrapped = _install(bundle.model, holder)
     train_items = _items(200, rng, offset=0)
-    eval_items = _items(eval_n, rng, offset=7)  # unseen pairings
+    eval_items = _items(eval_n, rng, offset=7)  # unseen pairings + fresh random codes
+    precompute_mem(bundle, train_items)
+    precompute_mem(bundle, eval_items)
     halluc = evaluate(bundle, wrapped, holder, eval_items, use_memory=False)
     base_recall = evaluate(bundle, wrapped, holder, eval_items)
     log(f"recall WITHOUT memory (hallucination): {halluc:.2f} | WITH memory untrained: {base_recall:.2f}")
