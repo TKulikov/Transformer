@@ -236,10 +236,8 @@ def main():
     q = RD.q35_all()
     if not q:
         raise SystemExit("нет данных батареи qwen3.5")
-    RD.fig_evolution(q)
-    RD.fig_pareto(q)
-    RD.fig_models()
-    RD.fig_training()
+    import paper_figures as PF
+    PF.make_all()  # единый источник качественных рисунков для обоих документов
     rows = rows_for_pdf(q)
     small_rows = small_model_rows()
     build_md(rows, small_rows)

@@ -75,7 +75,7 @@ def build_pdf(q):
     doc = SimpleDocTemplate(str(OUT / "PAPER.pdf"), pagesize=landscape(A4),
                             leftMargin=1.4 * cm, rightMargin=1.4 * cm, topMargin=1.3 * cm, bottomMargin=1.3 * cm,
                             title=PT.TITLE)
-    story = [Paragraph(PT.TITLE, title), Paragraph(PT.AUTHORS, st["Normal"]), Spacer(1, 0.3 * cm),
+    story = [Paragraph(PT.TITLE, title), Paragraph(PT.AUTHORS, body), Spacer(1, 0.3 * cm),
              Paragraph("Аннотация", h1), Paragraph(PT.ABSTRACT, body), Spacer(1, 0.2 * cm),
              Paragraph("<b>Ключевые числа:</b> факты 83 % эталона при attention ×5 дешевле · тон 1.07× эталона · "
                        "латентность −28 % · разрежённый KV-кэш той же задачи теряет 83–100 % фактов · "
