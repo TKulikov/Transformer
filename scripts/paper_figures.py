@@ -28,11 +28,10 @@ COLORS = {"ref": "#c44e52", "kv": "#8172b2", "buf": "#8c8c8c", "ours": "#4c72b0"
 def _systems(q):
     spec = [
         ("classic_kv_full", "Эталон:\nполный контекст", COLORS["ref"]),
-        ("sparse_sliding_128", "Скользящий\nKV-кэш 128", COLORS["kv"]),
-        ("sparse_topk_128", "KV top-k\n(H2O)", COLORS["kv"]),
-        ("window2_only", "Буфер 2 хода\nбез памяти", COLORS["buf"]),
-        ("v3_rag_centroid", "Наша: банк\n(ступень 3)", COLORS["ours2"]),
-        ("v4_rag_kv", "Наша: банк+темы\nв attention (4)", COLORS["ours"]),
+        ("sparse_sliding_128", "Конкурент:\nскользящий KV-128", COLORS["kv"]),
+        ("sparse_topk_128", "Конкурент:\nKV top-k (H2O)", "#937860"),
+        ("window2_only", "Нижняя граница:\nбуфер без памяти", COLORS["buf"]),
+        ("v4_rag_kv", "НАША СИСТЕМА\n(финальная)", COLORS["ours"]),
     ]
     return [(lbl, q[k], c) for k, lbl, c in spec if q.get(k)]
 
@@ -45,11 +44,11 @@ def fig_paper_main(q):
         ("Точность фактов\n(доля верно возвращённых; выше = лучше)",
          [d["recall_mean"] for _, d, _ in entries], "{:.2f}", False, (0, 1.12)),
         ("Удержание темы\n(нормировано на эталон = 1.00)",
-         [RD.rel_tone(d, ref) or 0 for _, d, _ in entries], "{:.2f}", False, (0.9, 1.25)),
+         [RD.rel_tone(d, ref) or 0 for _, d, _ in entries], "{:.2f}", False, (0.9, 1.28)),
         ("Стоимость внимания\n(attention-слоты, % от эталона; лог-шкала)",
          [d["cache_slots"] / ref["cache_slots"] * 100 for _, d, _ in entries], "{:.0f}%", True, None),
         ("Латентность хода, с\n(меньше = быстрее)",
-         [d["mean_turn_latency_s"] for _, d, _ in entries], "{:.2f}", False, None),
+         [d["mean_turn_latency_s"] for _, d, _ in entries], "{:.2f}", False, (0, 2.35)),
     ]
     fig, axes = plt.subplots(2, 2, figsize=(11.6, 7.6))
     for ax, (title, vals, spec, log, ylim) in zip(axes.flat, panels):
@@ -145,27 +144,19 @@ def fig_pareto(q):
         ("Скользящий KV-128", "sparse_sliding_128", COLORS["kv"], "v"),
         ("KV top-k (H2O)", "sparse_topk_128", "#937860", "h"),
         ("Буфер без памяти", "window2_only", COLORS["buf"], "s"),
-        ("Ступень 1: хук", "v1_memory", "#b0b0b0", "^"),
-        ("Ступень 2: банк", "v2_rag_plain_fixes", COLORS["ours"], "D"),
-        ("Ступень 3: центроид", "v3_rag_centroid", COLORS["ours2"], "P"),
-        ("Ступень 3: +gist", "v3_centroid_plus_gist", "#30a2da", "X"),
-        ("Ступень 4: банк+attention", "v4_rag_kv", "#dd8452", "*"),
-        ("Ступень 4: только attention", "v4_kv_mid", "#e377c2", "p"),
+        ("Наша система", "v4_rag_kv", COLORS["ours"], "*"),
     ]
     fig, ax = plt.subplots(figsize=(10.6, 6.6))
+    offsets = {"Эталон (полный контекст)": (-140, 10), "Скользящий KV-128": (12, -4),
+               "KV top-k (H2O)": (12, -16), "Буфер без памяти": (12, 10), "Наша система": (12, 8)}
     for label, key, color, mk in pts:
         d = q.get(key)
         if not d:
             continue
-        ax.scatter(d["cache_slots"], d["recall_mean"], s=150, color=color, marker=mk, zorder=3)
-        off = _PARETO_OFFSETS.get(label, (10, 6))
-        if off is None:
-            continue
-        dx, dy = off
+        ax.scatter(d["cache_slots"], d["recall_mean"], s=170, color=color, marker=mk, zorder=3)
+        dx, dy = offsets[label]
         ax.annotate(label, (d["cache_slots"], d["recall_mean"]), textcoords="offset points",
-                    xytext=(dx, dy), fontsize=8)
-    ax.annotate("здесь же: «Ступень 4: только attention» (точки совпадают)",
-                (801328, 0.0), textcoords="offset points", xytext=(-150, 8), fontsize=7.5, color="#777")
+                    xytext=(dx, dy), fontsize=8.5)
     ax.set_xscale("log")
     ax.set_ylim(-0.05, 1.12)
     ax.set_xlabel("Стоимость: attention-слоты за сессию (лог-шкала; влево = дешевле)")
@@ -301,12 +292,11 @@ def fig_architecture():
 def make_all():
     q = RD.q35_all()
     fig_paper_main(q)
-    fig_evolution(q)
     fig_pareto(q)
     fig_smallmodels()
     fig_training()
     fig_architecture()
-    print("paper figures v2 ok")
+    print("paper figures v3 ok")
 
 
 if __name__ == "__main__":

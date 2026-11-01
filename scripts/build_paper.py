@@ -8,19 +8,42 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import report_data as RD
 import paper_text as PT
-from build_report import rows_for_pdf, small_model_rows, HEADERS, GLOSS
+from build_report import GLOSS, HEADERS, small_model_rows
 
 OUT = RD.OUT
 FIGS = RD.FIGS
 
+COMPARE_ORDER = [
+    ("classic_kv_full", "Эталон: весь диалог в контексте + классический KV-кэш"),
+    ("sparse_sliding_128", "Конкурент: скользящий KV-кэш (128 слотов)"),
+    ("sparse_topk_128", "Конкурент: top-k по вниманию (H2O, 128)"),
+    ("window2_only", "Нижняя граница: буфер 2 хода без памяти"),
+    ("v4_rag_kv", "НАША СИСТЕМА: буфер + банк отклонений + темы в attention"),
+]
+
+
+def rows_compare(q):
+    classic = q["classic_kv_full"]
+    rows = []
+    for key, label in COMPARE_ORDER:
+        d = q.get(key)
+        if not d:
+            continue
+        factor = classic["cache_slots"] / d["cache_slots"] if d.get("cache_slots") else None
+        rows.append([label, RD.fmt(d["recall_mean"]), RD.fmt(RD.rel_tone(d, classic), "{:.2f}×"),
+                     RD.fmt(d.get("stale_rate")), f"{d['prompt_tokens']:,}", f"{d['cache_slots']:,}",
+                     RD.fmt(factor, "{:.1f}×"), f"{d['mean_turn_latency_s']:.2f}"])
+    return rows
+
 FIG_PLAN = [
     ("architecture.png", "Рис. 1. Архитектура двухслойной памяти"),
-    ("paper_main.png", "Рис. 2. Базовая модель vs разрежённое внимание vs наша система (4 оси)"),
-    ("evolution.png", "Рис. 3. Эволюция качества и стоимости по ступеням"),
-    ("pareto.png", "Рис. 4. Парето «точность фактов — attention-стоимость»"),
-    ("smallmodels.png", "Рис. 5. Базовые политики на малых моделях"),
-    ("training.png", "Рис. 6. Обучение читателя памяти: негативный результат"),
+    ("paper_main.png", "Рис. 2. Эталон vs конкуренты vs наша система (4 оси)"),
+    ("pareto.png", "Рис. 3. Парето «точность фактов — attention-стоимость»"),
+    ("smallmodels.png", "Рис. 4. Базовые политики на малых моделях"),
+    ("training.png", "Рис. 5. Обучение читателя памяти: негативный результат"),
 ]
+
+CH = ["Конфигурация", "Факты↑", "Тема ×эт.", "Устар.↓", "Prompt ток.", "Attn слоты", "×дешевле", "Лат. с/ход"]
 
 
 def build_md(q):
@@ -30,8 +53,8 @@ def build_md(q):
         lines += [p + "\n" for p in paras]
         if heading.startswith("5."):
             lines += ["**Таблица 1. Основная батарея (Qwen3.5-4B, 107 ходов / 24 вопроса)**", "",
-                      "| " + " | ".join(HEADERS) + " |", "|" + "---|" * len(HEADERS)]
-            lines += ["| " + " | ".join(r) + " |" for r in rows_for_pdf(q)]
+                      "| " + " | ".join(CH) + " |", "|" + "---|" * len(CH)]
+            lines += ["| " + " | ".join(r) + " |" for r in rows_compare(q)]
             lines += ["", "**Таблица 2. Малые модели (базовое сравнение политик)**", "",
                       "| Модель: политика | Факты | Prompt токены | Attn слоты | Лат. с/ход |", "|---|---|---|---|---|"]
             lines += ["| " + " | ".join(r) + " |" for r in small_model_rows()]
@@ -78,10 +101,9 @@ def build_pdf(q):
     story = [Paragraph(PT.TITLE, title), Paragraph(PT.AUTHORS, body), Spacer(1, 0.3 * cm),
              Paragraph("Аннотация", h1), Paragraph(PT.ABSTRACT, body), Spacer(1, 0.2 * cm),
              Paragraph("<b>Ключевые числа:</b> факты 83 % эталона при attention ×5 дешевле · тон 1.07× эталона · "
-                       "латентность −28 % · разрежённый KV-кэш той же задачи теряет 83–100 % фактов · "
+                       "латентность −28 % · скользящий KV-кэш той же задачи теряет 83 % фактов · "
                        "пост-hoc обучение читателя — негативно (n=24×3 попытки).", body)]
 
-    fig_page = {"5. Результаты": ("paper_main.png", 0), "3. Идея и архитектура": ("architecture.png", 0)}
     inserted_tables = False
     for heading, paras in PT.SECTIONS:
         story.append(Paragraph(heading, h1))
@@ -100,10 +122,10 @@ def build_pdf(q):
         if heading.startswith("5.") and not inserted_tables:
             inserted_tables = True
             story.append(Paragraph("Таблица 1. Основная батарея (Qwen3.5-4B, 107 ходов / 24 вопроса)", h1))
-            rows = rows_for_pdf(q)
-            data = [[Paragraph(h, small) for h in HEADERS]] + [[Paragraph(c, small) for c in r] for r in rows]
-            t = Table(data, colWidths=[9.6 * cm, 1.7 * cm, 1.7 * cm, 1.7 * cm, 1.7 * cm, 2.3 * cm, 2.3 * cm,
-                                       1.9 * cm, 2.1 * cm], repeatRows=1)
+            rows = rows_compare(q)
+            data = [[Paragraph(h, small) for h in CH]] + [[Paragraph(c, small) for c in r] for r in rows]
+            t = Table(data, colWidths=[10.6 * cm, 1.8 * cm, 1.8 * cm, 1.8 * cm, 2.4 * cm, 2.4 * cm,
+                                       2.0 * cm, 2.2 * cm], repeatRows=1)
             t.setStyle(TableStyle([("GRID", (0, 0), (-1, -1), 0.4, colors.grey),
                                    ("BACKGROUND", (0, 0), (-1, 0), colors.lightgrey),
                                    ("ROWBACKGROUNDS", (0, 1), (-1, -1), [colors.white, colors.Color(.96, .97, 1)]),
@@ -111,18 +133,16 @@ def build_pdf(q):
             story.append(t)
             story.append(PageBreak())
             story.append(Image(str(FIGS / "paper_main.png"), width=24.5 * cm, height=16.6 * cm))
-            story.append(Paragraph("Рис. 2. Базовая модель (полный контекст + классический KV) vs разрежённое "
-                                   "внимание (скользящий/H2O KV) vs наша система — по четырём осям.", small))
+            story.append(Paragraph("Рис. 2. Эталон (полный контекст + классический KV) vs конкурент (скользящий "
+                                   "KV-кэш) vs нижняя граница (буфер) vs наша система — по четырём осям.", small))
             story.append(PageBreak())
-            story.append(Image(str(FIGS / "evolution.png"), width=22.5 * cm, height=15 * cm))
-            story.append(Paragraph("Рис. 3. Эволюция системы по ступеням 1→4.", small))
-            story.append(Spacer(1, 0.2 * cm))
-            story.append(Image(str(FIGS / "pareto.png"), width=21.5 * cm, height=14 * cm))
-            story.append(Paragraph("Рис. 4. Парето «точность фактов — стоимость внимания».", small))
+            story.append(Image(str(FIGS / "pareto.png"), width=22.5 * cm, height=14 * cm))
+            story.append(Paragraph("Рис. 3. Парето «точность фактов — стоимость внимания». Идеал — верхний левый угол.",
+                                   small))
         if heading.startswith("6."):
             story.append(PageBreak())
             story.append(Image(str(FIGS / "smallmodels.png"), width=20.5 * cm, height=11.6 * cm))
-            story.append(Paragraph("Рис. 5. Базовые политики на малых моделях.", small))
+            story.append(Paragraph("Рис. 4. Базовые политики на малых моделях (GPT-2 / T5-base / Qwen2-1.5B).", small))
             story.append(Spacer(1, 0.2 * cm))
             hdr = ["Модель: политика", "Факты", "Prompt токены", "Attn слоты", "Лат. с/ход"]
             data = [[Paragraph(h, small) for h in hdr]] + [[Paragraph(c, small) for c in r]
@@ -133,7 +153,7 @@ def build_pdf(q):
             story.append(t)
             story.append(Spacer(1, 0.25 * cm))
             story.append(Image(str(FIGS / "training.png"), width=20.5 * cm, height=11.7 * cm))
-            story.append(Paragraph("Рис. 6. Обучение читателя памяти (негативный результат при исправном "
+            story.append(Paragraph("Рис. 5. Обучение читателя памяти (негативный результат при исправном "
                                    "позитивном контроле).", small))
     story.append(Paragraph("Список литературы", h1))
     for i, r in enumerate(PT.REFERENCES, 1):
