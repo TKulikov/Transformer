@@ -103,10 +103,8 @@ def build_long_session(n_facts: int = 9, seed: int = 0, paraphrase_every: int = 
     order = facts[:]
     rng.shuffle(order)
     for i, f in enumerate(order):
-        if i % paraphrase_every == paraphrase_every - 1:
-            question = f.paraphrase
-        else:
-            question = f.question
+        is_paraphrase = i % paraphrase_every == paraphrase_every - 1
+        question = f.paraphrase if is_paraphrase else f.question
         probes.append(
             Probe(
                 after_turn=len(turns),
@@ -114,6 +112,7 @@ def build_long_session(n_facts: int = 9, seed: int = 0, paraphrase_every: int = 
                 expected=list(expected[f.key]),
                 plant_turn=plants[f.key],
                 stale=stale.get(f.key, []),
+                paraphrase=is_paraphrase,
             )
         )
         turns.append(question)
@@ -142,6 +141,7 @@ def build_adversarial_session() -> DialogSession:
                 expected=list(expected[f.key]),
                 plant_turn=plants[f.key],
                 stale=stale[f.key],
+                paraphrase=bool(i % 2),
             )
         )
         turns.append(question)
@@ -154,7 +154,7 @@ def stress_sessions() -> list[DialogSession]:
 
 # ----------------------------------------------------------------- battery100
 def build_battery_100(target_turns: int = 105, seed: int = 0) -> DialogSession:
-    """>100-turn dialogue: 16 facts across all zones, 3 updates, 24 probes."""
+    """>100-turn dialogue: 16 facts across all zones, 2 updates, 24 probes."""
     rng = random.Random(seed)
     facts = FACTS[:16]
     turns: list[str] = ["Let's have a long talk about my life, work and plans."]
@@ -189,17 +189,23 @@ def build_battery_100(target_turns: int = 105, seed: int = 0) -> DialogSession:
         question = f.paraphrase if i % 2 else f.question
         turns[at] = question
         probes.append(Probe(after_turn=at, question=question, expected=list(expected[f.key]),
-                            plant_turn=plants[f.key], stale=stale.get(f.key, [])))
+                            plant_turn=plants[f.key], stale=stale.get(f.key, []), paraphrase=bool(i % 2)))
     while len(turns) < target_turns:
         turns.append(FILLER)
     return DialogSession(name=f"battery-{len(turns)}t-{len(probes)}q", opening=turns, fillers=[], probes=probes)
 
 
 def battery_strategies(budget: int = 128) -> list[Strategy]:
-    """Grid for the big battery (no topk — hybrid models don't expose attn weights)."""
+    """Return archival conditions and the comparable training-free controls."""
     return [
         Strategy("classic_kv_full", context="full"),
         Strategy(f"sparse_sliding_{budget}", context="full", kv=KVConfig.sparse(budget, "sliding", 4, 64)),
+        Strategy(f"sparse_topk_{budget}", context="full", kv=KVConfig.sparse(budget, "topk", 4, 64)),
+        Strategy(f"snapkv_{budget}", context="full",
+                 kv=KVConfig.sparse(budget, "snapkv", observation=64, kernel_size=7)),
+        Strategy(f"pyramidkv_{budget}", context="full",
+                 kv=KVConfig.sparse(budget, "pyramidkv", observation=8, pyramid_beta=20)),
+        Strategy("rag_text_only", context="window", window=5, rag=True, rag_lambda=0.0, rag_centered=False),
         Strategy("window2_only", context="window", window=2),
         Strategy("window5_only", context="window", window=5),
         Strategy("v1_memory", context="window", window=2, memory=True, memory_window_crit=0.5),
@@ -248,15 +254,15 @@ def _jaccard(a: str, b: str) -> float:
 
 
 def analyze_session(runs: dict[str, DialogueRun], reference: str = "classic_kv_full") -> dict:
-    """Recall by zone/lag, stale rate, consistency vs reference, costs."""
+    """Compute conditional recall, update errors, latency distribution and costs."""
     ref_run = runs.get(reference)
     total_turns = len(ref_run.turns) if ref_run else max((len(r.turns) for r in runs.values()), default=1)
     ref_answers = {d["question"]: d["answer"] for d in ref_run.summary()["probe_details"]} if ref_run else {}
     out = {}
     for name, run in runs.items():
         details = run.summary()["probe_details"]
-        stale_hits, cons = 0, []
-        lags_bucket = {"0-5": 0.0, "6-12": 0.0, "13-20": 0.0, "21+": 0.0}
+        cons = []
+        lag_scores = {"0-5": [], "6-12": [], "13-20": [], "21+": []}
         zone_acc: dict[str, list[float]] = {}
         for d in details:
             score = d["score"] or 0.0
@@ -264,27 +270,39 @@ def analyze_session(runs: dict[str, DialogueRun], reference: str = "classic_kv_f
             zone_acc.setdefault(zone, []).append(score)
             lag = d["lag"] or 0
             bucket = "0-5" if lag <= 5 else ("6-12" if lag <= 12 else ("13-20" if lag <= 20 else "21+"))
-            lags_bucket[bucket] += score
-            if d["stale_score"]:
-                stale_hits += 1
+            lag_scores[bucket].append(score)
             if d["question"] in ref_answers:
                 cons.append(_jaccard(d["answer"], ref_answers[d["question"]]))
         n = max(len(details), 1)
         s = run.summary()
+        direct = [d["score"] or 0.0 for d in details if not d.get("paraphrase")]
+        paraphrase = [d["score"] or 0.0 for d in details if d.get("paraphrase")]
+        updated = [d for d in details if d["stale_score"] is not None]
+        latencies = sorted(t.decode.latency_s for t in run.turns)
+        mid = len(latencies) // 2
+        median = (latencies[mid] if len(latencies) % 2 else (latencies[mid - 1] + latencies[mid]) / 2) if latencies else 0.0
+        p90 = latencies[max(0, -(-9 * len(latencies) // 10) - 1)] if latencies else 0.0
         out[name] = {
             "recall_mean": round(sum(x["score"] or 0.0 for x in details) / n, 3),
+            "recall_direct": round(sum(direct) / len(direct), 3) if direct else None,
+            "recall_paraphrase": round(sum(paraphrase) / len(paraphrase), 3) if paraphrase else None,
             "recall_by_zone": {z: round(sum(v) / len(v), 3) for z, v in zone_acc.items()},
-            "recall_by_lag": {k: round(v / n, 3) for k, v in lags_bucket.items()},
-            "stale_rate": round(stale_hits / n, 3),
+            "recall_by_lag": {k: round(sum(v) / len(v), 3) if v else None for k, v in lag_scores.items()},
+            "stale_rate": round(sum(bool(d["stale_score"]) for d in details) / n, 3),
+            "stale_updated_rate": round(sum(bool(d["stale_score"]) for d in updated) / len(updated), 3) if updated else None,
             "consistency_vs_reference": round(sum(cons) / len(cons), 3) if cons else None,
             "tone_mean": s.get("tone_mean"),
             "rep_mean": s["rep_mean"],
             "prompt_tokens": s["prompt_tokens"],
+            "generated_tokens": s["generated_tokens"],
             "embed_tokens": s.get("embed_tokens", 0),
             "cache_slots": s["cache_slots"],
             "attention_flops_proxy": s["attention_flops_proxy"],
             "max_cache_len": s["max_cache_len"],
             "mean_turn_latency_s": s["mean_turn_latency_s"],
+            "median_turn_latency_s": round(median, 4),
+            "p90_turn_latency_s": round(p90, 4),
+            "peak_mem_mb": round(max((t.decode.peak_mem_mb or 0.0 for t in run.turns), default=0.0), 2) or None,
             "memory_stats": s.get("memory_stats"),
             "rag_stats": s.get("rag_stats"),
             "probe_details": details,

@@ -14,7 +14,8 @@ class TestBattery100:
         session = build_battery_100()
         turns = session.user_turns()
         assert len(turns) >= 100
-        assert len(session.probes) >= 20
+        assert len(session.probes) == 24
+        assert sum(p.paraphrase for p in session.probes) == 12
         for p in session.probes:
             assert p.plant_turn < p.after_turn
             assert p.expected
@@ -30,12 +31,15 @@ class TestBattery100:
         from tmem.dialogue import run_session
 
         session = build_battery_100(target_turns=105)
-        grid = battery_strategies(budget=48)
-        # v4 kv-injection wraps Qwen3.5 attention specifically — keep the
-        # GPT-2 smoke to the architecture-agnostic conditions.
-        pick = [s for s in grid if not s.memory_kv][:4] + [
-            s for s in grid if s.name in ("v3_rag_centroid", "v2_rag_gist")
-        ]
+        grid = battery_strategies(budget=128)
+        # KV injection wraps Qwen3.5 attention specifically, and PyramidKV
+        # needs per-layer masks that GPT-2 does not provide.
+        names = {
+            "classic_kv_full", "sparse_sliding_128", "sparse_topk_128",
+            "snapkv_128", "rag_text_only",
+        }
+        pick = [s for s in grid if s.name in names]
+        assert len(pick) == 5
         for strategy in pick:
             run = run_session(causal_bundle, session, strategy, max_new_tokens=2, seed=0)
             s = run.summary()

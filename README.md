@@ -17,7 +17,7 @@
 |---|---|---|
 | `tmem/memory.py` | `Memory` + `CorrectionLayer` (алгоритм 1-в-1, исправлен баг с дублями слотов) | 0 |
 | `tmem/hooks.py` | хуки инжекции памяти: конкатенация в энкодер T5 (+маска), аддитивное влияние в декодеры | 0, 1, 2 |
-| `tmem/kvcache.py` | политики кэша: `classic` (неограниченный) и `sparse` (`sliding`, `topk`) + трекер важности H2O | — (новое) |
+| `tmem/kvcache.py` | `classic`, StreamingLLM (`sliding`), H2O (`topk`), SnapKV и PyramidKV с раздельным выбором по KV-головам | — (новое) |
 | `tmem/compat.py` | совместимость с внутренним устройством `DynamicCache` разных версий transformers | — (новое) |
 | `tmem/generate.py` | управляемый цикл генерации с метриками (длина кэша, латентность, пик памяти) | 3, 4, 5, 6, 8, 10 |
 | `tmem/dialogue.py` | сетка стратегий `контекст x память x кэш` и прогон диалоговых сессий | 4, 5, 6, 8, 10 |
@@ -32,7 +32,7 @@
 ## Запуск тестов
 
 ```bash
-.venv/bin/python -m pytest -q                 # ~101 unit-тест, CPU, офлайн
+.venv/bin/python -m pytest -q                 # unit-тесты, CPU, офлайн
 .venv/bin/python -m pytest -m integration -q  # реальный GPT-2 на CPU (нужна сеть)
 .venv/bin/python -m pytest -m gpu -q          # ТОЛЬКО по согласованию, ROCm/CUDA
 ```
@@ -63,22 +63,26 @@
 .venv/bin/python -m tmem.cli --model gpt2  --device cuda --budget 128
 .venv/bin/python -m tmem.cli --model qwen2-1.5b --device cuda --budget 128 --max-new-tokens 32
 .venv/bin/python -m tmem.cli --model t5-base --device cuda
-# большая батарея: 107 ходов, 24 вопроса, 16 фактов + смены (Qwen3.5-4B, bf16, ~8 GiB VRAM):
-.venv/bin/python -m tmem.cli --model unused --battery100 --models qwen35-4b --device cuda --dtype bfloat16 --out results/battery
-.venv/bin/python scripts/summarize_stress.py results/battery
+# единая батарея: 107 ходов, 24 вопроса, 16 фактов, 2 смены (Qwen3.5-4B, bf16):
+HF_HUB_OFFLINE=1 .venv/bin/python -m tmem.cli --model unused --battery100 --models qwen35-4b --device cuda --dtype bfloat16 --max-new-tokens 32 --strategies classic_kv_full sparse_sliding_128 sparse_topk_128 snapkv_128 pyramidkv_128 rag_text_only v4_rag_kv --out results/qwen35_comparison
+.venv/bin/python scripts/build_report.py
+.venv/bin/python scripts/build_paper.py
 ```
 
-Стратегии: `no_cache_full`, `classic_kv_full`, `sparse_sliding`,
-`sparse_topk`, `window_only`, `window_hybrid_memory`. Выход: `results/*.json`
-(токены, длина кэша, латентность, quality, probe-scores) и PNG-графики.
+Основная серия сравнивает полный контекст, StreamingLLM, H2O, SnapKV,
+PyramidKV, текстовый RAG-контроль и двухканальную систему. Последняя сочетает
+выдачу текстовых заметок в промпт с латентным retrieval: активации скрытых
+слоёв проецируются в дополнительные K/V средних attention-слоёв. JSON
+сохраняется после каждой стратегии и содержит качество, токены,
+attention-слоты, латентность, максимальную длину кэша и пиковую память генерации.
 
 ## Примечания по железу
 
 Видеокарта — **AMD Radeon RX 7900 XTX (Navi 31)**: NVIDIA/CUDA нет, PyTorch
 нужен в ROCm-сборке (`pip install torch --index-url
 https://download.pytorch.org/whl/rocm6.x`), устройство при этом называется
-`cuda`. Текущий `.venv` — CPU-сборка torch 2.15; для прогонов на GPU её надо
-заменить на ROCm-сборку (загрузка нескольких ГБ — шаг только с одобрения).
+`cuda`. Текущий `.venv` содержит ROCm-сборку PyTorch 2.9.1; основная батарея
+Qwen3.5-4B выполняется в bf16.
 
 ## Ограничения (задокументированы честно)
 
@@ -87,6 +91,8 @@ https://download.pytorch.org/whl/rocm6.x`), устройство при этом
   возможны смещения bias;
 * `topk`-важность — накопленная сумма внимания (H2O-подобная), attention
   включается через `eager`-реализацию;
+* PyramidKV требует раздельные attention-маски для слоёв с разной длиной кэша;
+  на GPT-2 с его общей маской политика явно отклоняется, на Qwen3.5 поддерживается;
 * метрики качества — эвристики ноутбука (лексика), семантической оценки нет;
 * `Memory.check` (гейт по сумме окна) унаследован из ноутбука как есть —
   он чувствителен к знаком активаций; порог вынесен в

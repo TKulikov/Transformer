@@ -27,10 +27,11 @@ class TestCausalCacheEquivalence:
         assert a.token_ids == b.token_ids
         assert b.cache_lengths[0] == a.prompt_len
 
-    def test_sparse_with_huge_budget_matches_classic(self, causal_bundle):
+    @pytest.mark.parametrize("strategy", ["sliding", "topk", "snapkv", "pyramidkv"])
+    def test_sparse_with_huge_budget_matches_classic(self, causal_bundle, strategy):
         model = causal_bundle.model
         classic = decode_causal(model, ids(), kv=KVConfig.classic(), cache="use", max_new_tokens=8, seed=0)
-        roomy = decode_causal(model, ids(), kv=KVConfig.sparse(1024, "sliding"), cache="use", max_new_tokens=8, seed=0)
+        roomy = decode_causal(model, ids(), kv=KVConfig.sparse(1024, strategy), cache="use", max_new_tokens=8, seed=0)
         assert classic.token_ids == roomy.token_ids
 
     def test_classic_cache_lengths_grow(self, causal_bundle):
@@ -59,6 +60,19 @@ class TestSparseBudgets:
         classic = decode_causal(causal_bundle.model, long_prompt, kv=KVConfig.classic(), cache="use", max_new_tokens=20, seed=0)
         sparse = decode_causal(causal_bundle.model, long_prompt, kv=KVConfig.sparse(32, "sliding", sink=4, recent=16), cache="use", max_new_tokens=20, seed=0)
         assert sparse.total_cache_slots < classic.total_cache_slots
+
+    def test_snapkv_compresses_prompt_before_generation(self, causal_bundle):
+        kv = KVConfig.sparse(budget=16, strategy="snapkv", observation=4)
+        res = decode_causal(causal_bundle.model, ids(40), kv=kv, cache="use", max_new_tokens=6, seed=0)
+        assert res.steps == 6
+        assert res.cache_lengths[0] == 16
+        assert max(res.cache_lengths) <= 16 + res.steps - 1
+        assert max(res.cache_max_lengths) <= 16 + res.steps - 1
+
+    def test_pyramidkv_rejects_shared_mask_backend_after_compression(self, causal_bundle):
+        kv = KVConfig.sparse(budget=16, strategy="pyramidkv", observation=4)
+        with pytest.raises(RuntimeError, match="requires per-layer attention masks"):
+            decode_causal(causal_bundle.model, ids(40), kv=kv, cache="use", max_new_tokens=6, seed=0)
 
 
 class TestStoppingAndSampling:

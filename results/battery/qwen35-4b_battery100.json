@@ -1,0 +1,2281 @@
+{
+  "model": "qwen35-4b",
+  "device": "cuda",
+  "tag": "battery100",
+  "sessions": {
+    "battery-107t-24q": {
+      "turns": 107,
+      "n_probes": 24,
+      "strategies": {
+        "classic_kv_full": {
+          "recall_mean": 1.0,
+          "recall_by_zone": {
+            "early": 1.0,
+            "middle": 1.0
+          },
+          "recall_by_lag": {
+            "0-5": 0.0,
+            "6-12": 0.0,
+            "13-20": 0.0,
+            "21+": 1.0
+          },
+          "stale_rate": 0.125,
+          "consistency_vs_reference": 0.994,
+          "tone_mean": 0.942,
+          "rep_mean": 0.0,
+          "prompt_tokens": 276970,
+          "embed_tokens": 4571,
+          "cache_slots": 8559983,
+          "attention_flops_proxy": 8559983,
+          "max_cache_len": 5015,
+          "mean_turn_latency_s": 2.0682,
+          "memory_stats": null,
+          "rag_stats": {
+            "adds": 82,
+            "upserts": 132,
+            "evictions": 0,
+            "size": 82
+          },
+          "probe_details": [
+            {
+              "turn": 83,
+              "question": "What version is my parser?",
+              "plant_turn": 12,
+              "lag": 71,
+              "score": 1.0,
+              "stale_score": null,
+              "answer": "Your parser, **Oxidum**, is currently at version **0.4.2**."
+            },
+            {
+              "turn": 84,
+              "question": "Which color do I like most?",
+              "plant_turn": 26,
+              "lag": 58,
+              "score": 1.0,
+              "stale_score": null,
+              "answer": "Based on the details you've shared, the color you like most is **teal**.\n\nYou mentioned it as your favorite color, descr"
+            },
+            {
+              "turn": 85,
+              "question": "What is my diet?",
+              "plant_turn": 48,
+              "lag": 37,
+              "score": 1.0,
+              "stale_score": null,
+              "answer": "Based on the details you've shared, you are currently following a **gluten-free diet**. You mentioned that you made the "
+            },
+            {
+              "turn": 86,
+              "question": "Which brand is my car?",
+              "plant_turn": 37,
+              "lag": 49,
+              "score": 1.0,
+              "stale_score": null,
+              "answer": "Based on the details you've shared, your car is a **Volvo**. You specifically mentioned it is a **blue Volvo**, which is"
+            },
+            {
+              "turn": 87,
+              "question": "What is my name?",
+              "plant_turn": 1,
+              "lag": 86,
+              "score": 1.0,
+              "stale_score": null,
+              "answer": "Your name is **Alex**."
+            },
+            {
+              "turn": 88,
+              "question": "When does the conference begin?",
+              "plant_turn": 19,
+              "lag": 69,
+              "score": 1.0,
+              "stale_score": null,
+              "answer": "Based on the conversation, the conference was originally scheduled to start on **March 14**. However, since you mentione"
+            },
+            {
+              "turn": 89,
+              "question": "What is my name?",
+              "plant_turn": 1,
+              "lag": 88,
+              "score": 1.0,
+              "stale_score": null,
+              "answer": "Your name is **Alex**."
+            },
+            {
+              "turn": 90,
+              "question": "What novel is on my nightstand?",
+              "plant_turn": 30,
+              "lag": 60,
+              "score": 1.0,
+              "stale_score": null,
+              "answer": "Based on the details you've shared, the novel currently on your nightstand is **Dune** by Frank Herbert. You mentioned t"
+            },
+            {
+              "turn": 91,
+              "question": "What is the name of my Rust parser?",
+              "plant_turn": 8,
+              "lag": 83,
+              "score": 1.0,
+              "stale_score": null,
+              "answer": "Your Rust parser is called **Oxidum**."
+            },
+            {
+              "turn": 92,
+              "question": "Which mountain expedition is in my plans?",
+              "plant_turn": 52,
+              "lag": 40,
+              "score": 1.0,
+              "stale_score": null,
+              "answer": "Based on the details you've shared, the mountain expedition in your plans is an **Everest Base Camp trek**. You mentione"
+            },
+            {
+              "turn": 93,
+              "question": "Which book am I reading?",
+              "plant_turn": 30,
+              "lag": 63,
+              "score": 1.0,
+              "stale_score": null,
+              "answer": "Based on the details you've shared, the book you are currently reading is **Dune** by Frank Herbert. You mentioned that "
+            },
+            {
+              "turn": 94,
+              "question": "Which color do I like most?",
+              "plant_turn": 26,
+              "lag": 68,
+              "score": 1.0,
+              "stale_score": null,
+              "answer": "Based on the details you've shared, the color you like most is **teal**. You specifically mentioned it as your favorite "
+            },
+            {
+              "turn": 95,
+              "question": "Which city hosts the conference?",
+              "plant_turn": 65,
+              "lag": 30,
+              "score": 1.0,
+              "stale_score": 1.0,
+              "answer": "Based on the conversation, the conference is hosted in **Tallinn**.\n\nAlthough you initially mentioned Helsinki, you late"
+            },
+            {
+              "turn": 96,
+              "question": "Tell me the name of my feline pet.",
+              "plant_turn": 56,
+              "lag": 40,
+              "score": 1.0,
+              "stale_score": 1.0,
+              "answer": "Based on the details you've shared, your feline pet is named **Simba**.\n\nYou originally mentioned your cat was named **B"
+            },
+            {
+              "turn": 97,
+              "question": "Which guitar did I buy?",
+              "plant_turn": 44,
+              "lag": 53,
+              "score": 1.0,
+              "stale_score": null,
+              "answer": "Based on the details you've shared, the guitar you bought is a **Fender Stratocaster**. You specifically mentioned it is"
+            },
+            {
+              "turn": 98,
+              "question": "What is my study language?",
+              "plant_turn": 55,
+              "lag": 43,
+              "score": 1.0,
+              "stale_score": null,
+              "answer": "Based on the details you've shared, your study language is **Finnish**. You mentioned that you are currently learning it"
+            },
+            {
+              "turn": 99,
+              "question": "What is my diet?",
+              "plant_turn": 48,
+              "lag": 51,
+              "score": 1.0,
+              "stale_score": null,
+              "answer": "Based on the details you've shared, you are currently following a **gluten-free diet**. You mentioned that you made the "
+            },
+            {
+              "turn": 100,
+              "question": "Where is the conference held?",
+              "plant_turn": 65,
+              "lag": 35,
+              "score": 1.0,
+              "stale_score": 1.0,
+              "answer": "Based on the conversation, the conference is held in **Tallinn**.\n\nAlthough you initially mentioned Helsinki, you later "
+            },
+            {
+              "turn": 101,
+              "question": "Which guitar did I buy?",
+              "plant_turn": 44,
+              "lag": 57,
+              "score": 1.0,
+              "stale_score": null,
+              "answer": "Based on the details you've shared, the guitar you bought is a **Fender Stratocaster**. You specifically mentioned it is"
+            },
+            {
+              "turn": 102,
+              "question": "Which reservation number do I have?",
+              "plant_turn": 23,
+              "lag": 79,
+              "score": 1.0,
+              "stale_score": null,
+              "answer": "Based on the details you've shared, your hotel booking reference is **HG-77120**. You mentioned this earlier as a helpfu"
+            },
+            {
+              "turn": 103,
+              "question": "What is my hotel booking reference?",
+              "plant_turn": 23,
+              "lag": 80,
+              "score": 1.0,
+              "stale_score": null,
+              "answer": "Based on the details you've shared, your hotel booking reference is **HG-77120**. You mentioned this earlier as a helpfu"
+            },
+            {
+              "turn": 104,
+              "question": "Which field does my sister work in?",
+              "plant_turn": 41,
+              "lag": 63,
+              "score": 1.0,
+              "stale_score": null,
+              "answer": "Based on the details you've shared, your sister works in the field of **marine biology**. You mentioned that she is a ma"
+            },
+            {
+              "turn": 105,
+              "question": "Which language am I learning?",
+              "plant_turn": 55,
+              "lag": 50,
+              "score": 1.0,
+              "stale_score": null,
+              "answer": "Based on the details you've shared, the language you are learning is **Finnish**. You mentioned that you are currently s"
+            },
+            {
+              "turn": 106,
+              "question": "Which serial does my computer have?",
+              "plant_turn": 33,
+              "lag": 73,
+              "score": 1.0,
+              "stale_score": null,
+              "answer": "Based on the details you've shared, your laptop's serial number is **ZX9-4410**. You mentioned this earlier as a very sp"
+            }
+          ]
+        },
+        "sparse_sliding_128": {
+          "recall_mean": 0.167,
+          "recall_by_zone": {
+            "early": 0.25,
+            "middle": 0.083
+          },
+          "recall_by_lag": {
+            "0-5": 0.0,
+            "6-12": 0.0,
+            "13-20": 0.0,
+            "21+": 0.167
+          },
+          "stale_rate": 0.0,
+          "consistency_vs_reference": 0.315,
+          "tone_mean": 0.9087,
+          "rep_mean": 0.0012,
+          "prompt_tokens": 275063,
+          "embed_tokens": 4459,
+          "cache_slots": 410752,
+          "attention_flops_proxy": 410752,
+          "max_cache_len": 128,
+          "mean_turn_latency_s": 1.915,
+          "memory_stats": null,
+          "rag_stats": {
+            "adds": 106,
+            "upserts": 108,
+            "evictions": 0,
+            "size": 106
+          },
+          "probe_details": [
+            {
+              "turn": 83,
+              "question": "What version is my parser?",
+              "plant_turn": 12,
+              "lag": 71,
+              "score": 0.0,
+              "stale_score": null,
+              "answer": "Your parser is currently at **version 1.0.0**."
+            },
+            {
+              "turn": 84,
+              "question": "Which color do I like most?",
+              "plant_turn": 26,
+              "lag": 58,
+              "score": 0.0,
+              "stale_score": null,
+              "answer": "Based on our conversation, you mentioned liking **blue** the most."
+            },
+            {
+              "turn": 85,
+              "question": "What is my diet?",
+              "plant_turn": 48,
+              "lag": 37,
+              "score": 0.0,
+              "stale_score": null,
+              "answer": "Based on our conversation, you follow a diet that includes **blue** (which seems to be a metaphorical or specific refere"
+            },
+            {
+              "turn": 86,
+              "question": "Which brand is my car?",
+              "plant_turn": 37,
+              "lag": 49,
+              "score": 0.0,
+              "stale_score": null,
+              "answer": "Based on our conversation, your car is a **BMW**."
+            },
+            {
+              "turn": 87,
+              "question": "What is my name?",
+              "plant_turn": 1,
+              "lag": 86,
+              "score": 1.0,
+              "stale_score": null,
+              "answer": "Your name is **Alex**."
+            },
+            {
+              "turn": 88,
+              "question": "When does the conference begin?",
+              "plant_turn": 19,
+              "lag": 69,
+              "score": 1.0,
+              "stale_score": null,
+              "answer": "Based on our conversation, the conference begins on **March 15th**."
+            },
+            {
+              "turn": 89,
+              "question": "What is my name?",
+              "plant_turn": 1,
+              "lag": 88,
+              "score": 1.0,
+              "stale_score": null,
+              "answer": "Your name is **Alex**."
+            },
+            {
+              "turn": 90,
+              "question": "What novel is on my nightstand?",
+              "plant_turn": 30,
+              "lag": 60,
+              "score": 0.0,
+              "stale_score": null,
+              "answer": "Based on our conversation, the novel on your nightstand is **The Great Gatsby**."
+            },
+            {
+              "turn": 91,
+              "question": "What is the name of my Rust parser?",
+              "plant_turn": 8,
+              "lag": 83,
+              "score": 0.0,
+              "stale_score": null,
+              "answer": "Based on our conversation, your Rust parser is named **The Great Gatsby**."
+            },
+            {
+              "turn": 92,
+              "question": "Which mountain expedition is in my plans?",
+              "plant_turn": 52,
+              "lag": 40,
+              "score": 1.0,
+              "stale_score": null,
+              "answer": "Based on our conversation, the mountain expedition in your plans is the climb of **Mount Everest**."
+            },
+            {
+              "turn": 93,
+              "question": "Which book am I reading?",
+              "plant_turn": 30,
+              "lag": 63,
+              "score": 0.0,
+              "stale_score": null,
+              "answer": "Based on our conversation, the book you are currently reading is **The Great Gatsby**."
+            },
+            {
+              "turn": 94,
+              "question": "Which color do I like most?",
+              "plant_turn": 26,
+              "lag": 68,
+              "score": 0.0,
+              "stale_score": null,
+              "answer": "Based on the dialogue provided, there is a contradiction in the information given:\n\n1.  In the middle of the conversatio"
+            },
+            {
+              "turn": 95,
+              "question": "Which city hosts the conference?",
+              "plant_turn": 65,
+              "lag": 30,
+              "score": 0.0,
+              "stale_score": 0.0,
+              "answer": "Based on the dialogue provided, there is a contradiction regarding the conference city:\n\n1.  Earlier in the conversation"
+            },
+            {
+              "turn": 96,
+              "question": "Tell me the name of my feline pet.",
+              "plant_turn": 56,
+              "lag": 40,
+              "score": 0.0,
+              "stale_score": 0.0,
+              "answer": "Based on the dialogue provided, there is a contradiction regarding the name of your feline pet:\n\n1.  Earlier in the conv"
+            },
+            {
+              "turn": 97,
+              "question": "Which guitar did I buy?",
+              "plant_turn": 44,
+              "lag": 53,
+              "score": 0.0,
+              "stale_score": null,
+              "answer": "Based on the dialogue provided, you bought a **Gibson Les Paul**.\n\n*(Note: While the specific model wasn't explicitly de"
+            },
+            {
+              "turn": 98,
+              "question": "What is my study language?",
+              "plant_turn": 55,
+              "lag": 43,
+              "score": 0.0,
+              "stale_score": null,
+              "answer": "Based on the dialogue provided, your study language is **English**.\n\nThis is inferred from the fact that the entire conv"
+            },
+            {
+              "turn": 99,
+              "question": "What is my diet?",
+              "plant_turn": 48,
+              "lag": 51,
+              "score": 0.0,
+              "stale_score": null,
+              "answer": "Based on the dialogue provided, there is no mention of your diet. The conversation focuses on various topics such as tra"
+            },
+            {
+              "turn": 100,
+              "question": "Where is the conference held?",
+              "plant_turn": 65,
+              "lag": 35,
+              "score": 0.0,
+              "stale_score": 0.0,
+              "answer": "Based on the dialogue provided, there is **no mention** of where the conference is held.\n\nThe conversation covers variou"
+            },
+            {
+              "turn": 101,
+              "question": "Which guitar did I buy?",
+              "plant_turn": 44,
+              "lag": 57,
+              "score": 0.0,
+              "stale_score": null,
+              "answer": "Based on the dialogue provided, there is **no mention** of which guitar you bought.\n\nWhile the conversation touches on v"
+            },
+            {
+              "turn": 102,
+              "question": "Which reservation number do I have?",
+              "plant_turn": 23,
+              "lag": 79,
+              "score": 0.0,
+              "stale_score": null,
+              "answer": "Based on the dialogue provided, there is **no mention** of a specific reservation number.\n\nEarlier in the conversation, "
+            },
+            {
+              "turn": 103,
+              "question": "What is my hotel booking reference?",
+              "plant_turn": 23,
+              "lag": 80,
+              "score": 0.0,
+              "stale_score": null,
+              "answer": "Based on the dialogue provided, your hotel booking reference is **12345678**."
+            },
+            {
+              "turn": 104,
+              "question": "Which field does my sister work in?",
+              "plant_turn": 41,
+              "lag": 63,
+              "score": 0.0,
+              "stale_score": null,
+              "answer": "Based on the dialogue provided, your sister works in the **field of music**.\n\n*(Note: While the specific sentence \"Your "
+            },
+            {
+              "turn": 105,
+              "question": "Which language am I learning?",
+              "plant_turn": 55,
+              "lag": 50,
+              "score": 0.0,
+              "stale_score": null,
+              "answer": "Based on the dialogue provided earlier, you are learning **Russian**.\n\n*(Note: In the previous turn, the assistant menti"
+            },
+            {
+              "turn": 106,
+              "question": "Which serial does my computer have?",
+              "plant_turn": 33,
+              "lag": 73,
+              "score": 0.0,
+              "stale_score": null,
+              "answer": "Based on the dialogue provided earlier, your computer has the serial number **1234567890**."
+            }
+          ]
+        },
+        "window2_only": {
+          "recall_mean": 0.0,
+          "recall_by_zone": {
+            "early": 0.0,
+            "middle": 0.0
+          },
+          "recall_by_lag": {
+            "0-5": 0.0,
+            "6-12": 0.0,
+            "13-20": 0.0,
+            "21+": 0.0
+          },
+          "stale_rate": 0.0,
+          "consistency_vs_reference": 0.071,
+          "tone_mean": 0.8961,
+          "rep_mean": 0.0,
+          "prompt_tokens": 23383,
+          "embed_tokens": 4658,
+          "cache_slots": 801328,
+          "attention_flops_proxy": 801328,
+          "max_cache_len": 266,
+          "mean_turn_latency_s": 1.165,
+          "memory_stats": null,
+          "rag_stats": {
+            "adds": 116,
+            "upserts": 98,
+            "evictions": 0,
+            "size": 116
+          },
+          "probe_details": [
+            {
+              "turn": 83,
+              "question": "What version is my parser?",
+              "plant_turn": 12,
+              "lag": 71,
+              "score": 0.0,
+              "stale_score": null,
+              "answer": "I don't have access to information about your specific system, software environment, or the parser you are using. To fin"
+            },
+            {
+              "turn": 84,
+              "question": "Which color do I like most?",
+              "plant_turn": 26,
+              "lag": 58,
+              "score": 0.0,
+              "stale_score": null,
+              "answer": "I don't have access to your personal preferences, past interactions, or visual data, so I can't know which color you lik"
+            },
+            {
+              "turn": 85,
+              "question": "What is my diet?",
+              "plant_turn": 48,
+              "lag": 37,
+              "score": 0.0,
+              "stale_score": null,
+              "answer": "I don't have access to your personal health records, dietary history, or any information about what you eat. To find out"
+            },
+            {
+              "turn": 86,
+              "question": "Which brand is my car?",
+              "plant_turn": 37,
+              "lag": 49,
+              "score": 0.0,
+              "stale_score": null,
+              "answer": "I don't have access to your personal vehicle information, registration details, or any data about the car you own. To fi"
+            },
+            {
+              "turn": 87,
+              "question": "What is my name?",
+              "plant_turn": 1,
+              "lag": 86,
+              "score": 0.0,
+              "stale_score": null,
+              "answer": "I don't have access to your personal identity information, such as your name, unless you have previously shared it in th"
+            },
+            {
+              "turn": 88,
+              "question": "When does the conference begin?",
+              "plant_turn": 19,
+              "lag": 69,
+              "score": 0.0,
+              "stale_score": null,
+              "answer": "I don't have access to your personal calendar, event invitations, or specific details about which conference you are ref"
+            },
+            {
+              "turn": 89,
+              "question": "What is my name?",
+              "plant_turn": 1,
+              "lag": 88,
+              "score": 0.0,
+              "stale_score": null,
+              "answer": "I don't have access to your personal identity information, such as your name, unless you have previously shared it in th"
+            },
+            {
+              "turn": 90,
+              "question": "What novel is on my nightstand?",
+              "plant_turn": 30,
+              "lag": 60,
+              "score": 0.0,
+              "stale_score": null,
+              "answer": "I don't have access to your physical environment, your home, or the items on your nightstand. To find out which novel is"
+            },
+            {
+              "turn": 91,
+              "question": "What is the name of my Rust parser?",
+              "plant_turn": 8,
+              "lag": 83,
+              "score": 0.0,
+              "stale_score": null,
+              "answer": "I don't have access to your local computer, your file system, or the specific projects you are working on. To find the n"
+            },
+            {
+              "turn": 92,
+              "question": "Which mountain expedition is in my plans?",
+              "plant_turn": 52,
+              "lag": 40,
+              "score": 0.0,
+              "stale_score": null,
+              "answer": "I don't have access to your personal plans, travel itineraries, or future schedules. To find out which mountain expediti"
+            },
+            {
+              "turn": 93,
+              "question": "Which book am I reading?",
+              "plant_turn": 30,
+              "lag": 63,
+              "score": 0.0,
+              "stale_score": null,
+              "answer": "I don't have access to your current reading habits, your digital library, or the physical books you are holding. To find"
+            },
+            {
+              "turn": 94,
+              "question": "Which color do I like most?",
+              "plant_turn": 26,
+              "lag": 68,
+              "score": 0.0,
+              "stale_score": null,
+              "answer": "I don't have access to your personal preferences, past behavior, or psychological profile to determine which color you l"
+            },
+            {
+              "turn": 95,
+              "question": "Which city hosts the conference?",
+              "plant_turn": 65,
+              "lag": 30,
+              "score": 0.0,
+              "stale_score": 0.0,
+              "answer": "I don't have access to your calendar, email, or any specific events you are attending. To find out which city hosts the "
+            },
+            {
+              "turn": 96,
+              "question": "Tell me the name of my feline pet.",
+              "plant_turn": 56,
+              "lag": 40,
+              "score": 0.0,
+              "stale_score": 0.0,
+              "answer": "I don't have access to your personal information, such as the names of your pets. To find out the name of your feline pe"
+            },
+            {
+              "turn": 97,
+              "question": "Which guitar did I buy?",
+              "plant_turn": 44,
+              "lag": 53,
+              "score": 0.0,
+              "stale_score": null,
+              "answer": "I don't have access to your purchase history, shopping cart, or the specific items you have bought. To find out which gu"
+            },
+            {
+              "turn": 98,
+              "question": "What is my study language?",
+              "plant_turn": 55,
+              "lag": 43,
+              "score": 0.0,
+              "stale_score": null,
+              "answer": "I don't have access to your personal settings, learning history, or profile data to determine your study language. To fi"
+            },
+            {
+              "turn": 99,
+              "question": "What is my diet?",
+              "plant_turn": 48,
+              "lag": 51,
+              "score": 0.0,
+              "stale_score": null,
+              "answer": "I don't have access to your personal health records, dietary logs, or medical history. To find out what your diet consis"
+            },
+            {
+              "turn": 100,
+              "question": "Where is the conference held?",
+              "plant_turn": 65,
+              "lag": 35,
+              "score": 0.0,
+              "stale_score": 0.0,
+              "answer": "I don't have access to your personal calendar, event invitations, or travel plans to know where the conference you are r"
+            },
+            {
+              "turn": 101,
+              "question": "Which guitar did I buy?",
+              "plant_turn": 44,
+              "lag": 57,
+              "score": 0.0,
+              "stale_score": null,
+              "answer": "I don't have access to your purchase history, shopping cart, or the specific items you have bought. To find out which gu"
+            },
+            {
+              "turn": 102,
+              "question": "Which reservation number do I have?",
+              "plant_turn": 23,
+              "lag": 79,
+              "score": 0.0,
+              "stale_score": null,
+              "answer": "I don't have access to your booking records, hotel accounts, or travel itineraries to retrieve your reservation number. "
+            },
+            {
+              "turn": 103,
+              "question": "What is my hotel booking reference?",
+              "plant_turn": 23,
+              "lag": 80,
+              "score": 0.0,
+              "stale_score": null,
+              "answer": "I don't have access to your booking records, hotel accounts, or travel itineraries to retrieve your hotel booking refere"
+            },
+            {
+              "turn": 104,
+              "question": "Which field does my sister work in?",
+              "plant_turn": 41,
+              "lag": 63,
+              "score": 0.0,
+              "stale_score": null,
+              "answer": "I don't have access to your personal information, family details, or your sister's employment records. To find out which"
+            },
+            {
+              "turn": 105,
+              "question": "Which language am I learning?",
+              "plant_turn": 55,
+              "lag": 50,
+              "score": 0.0,
+              "stale_score": null,
+              "answer": "I don't have access to your personal learning records, course enrollments, or language study history. To find out which "
+            },
+            {
+              "turn": 106,
+              "question": "Which serial does my computer have?",
+              "plant_turn": 33,
+              "lag": 73,
+              "score": 0.0,
+              "stale_score": null,
+              "answer": "I don't have access to your computer's hardware specifications or system settings to retrieve your serial number. To fin"
+            }
+          ]
+        },
+        "window5_only": {
+          "recall_mean": 0.0,
+          "recall_by_zone": {
+            "early": 0.0,
+            "middle": 0.0
+          },
+          "recall_by_lag": {
+            "0-5": 0.0,
+            "6-12": 0.0,
+            "13-20": 0.0,
+            "21+": 0.0
+          },
+          "stale_rate": 0.0,
+          "consistency_vs_reference": 0.079,
+          "tone_mean": 0.9321,
+          "rep_mean": 0.0004,
+          "prompt_tokens": 51964,
+          "embed_tokens": 4658,
+          "cache_slots": 1715920,
+          "attention_flops_proxy": 1715920,
+          "max_cache_len": 566,
+          "mean_turn_latency_s": 1.2609,
+          "memory_stats": null,
+          "rag_stats": {
+            "adds": 96,
+            "upserts": 118,
+            "evictions": 0,
+            "size": 96
+          },
+          "probe_details": [
+            {
+              "turn": 83,
+              "question": "What version is my parser?",
+              "plant_turn": 12,
+              "lag": 71,
+              "score": 0.0,
+              "stale_score": null,
+              "answer": "I don't have access to information about your specific system, software environment, or the parser you are using. To fin"
+            },
+            {
+              "turn": 84,
+              "question": "Which color do I like most?",
+              "plant_turn": 26,
+              "lag": 58,
+              "score": 0.0,
+              "stale_score": null,
+              "answer": "I don't have access to your personal preferences, past conversations, or visual data, so I can't know which color you li"
+            },
+            {
+              "turn": 85,
+              "question": "What is my diet?",
+              "plant_turn": 48,
+              "lag": 37,
+              "score": 0.0,
+              "stale_score": null,
+              "answer": "I don't have access to your personal health records, dietary habits, or any private information about you. To find out w"
+            },
+            {
+              "turn": 86,
+              "question": "Which brand is my car?",
+              "plant_turn": 37,
+              "lag": 49,
+              "score": 0.0,
+              "stale_score": null,
+              "answer": "I don't have access to your personal vehicle information, registration details, or any private data about your car. To f"
+            },
+            {
+              "turn": 87,
+              "question": "What is my name?",
+              "plant_turn": 1,
+              "lag": 86,
+              "score": 0.0,
+              "stale_score": null,
+              "answer": "I don't have access to your personal identity information, such as your name, unless you have explicitly told me it in t"
+            },
+            {
+              "turn": 88,
+              "question": "When does the conference begin?",
+              "plant_turn": 19,
+              "lag": 69,
+              "score": 0.0,
+              "stale_score": null,
+              "answer": "I don't have access to the specific schedule or details of the conference you are referring to. To find out when it begi"
+            },
+            {
+              "turn": 89,
+              "question": "What is my name?",
+              "plant_turn": 1,
+              "lag": 88,
+              "score": 0.0,
+              "stale_score": null,
+              "answer": "I don't have access to your personal identity information, such as your name, unless you have explicitly told me it in t"
+            },
+            {
+              "turn": 90,
+              "question": "What novel is on my nightstand?",
+              "plant_turn": 30,
+              "lag": 60,
+              "score": 0.0,
+              "stale_score": null,
+              "answer": "I don't have access to your physical environment, your home, or the items on your nightstand. To find out which novel is"
+            },
+            {
+              "turn": 91,
+              "question": "What is the name of my Rust parser?",
+              "plant_turn": 8,
+              "lag": 83,
+              "score": 0.0,
+              "stale_score": null,
+              "answer": "I don't have access to your local development environment, project files, or the specific Rust code you are working with"
+            },
+            {
+              "turn": 92,
+              "question": "Which mountain expedition is in my plans?",
+              "plant_turn": 52,
+              "lag": 40,
+              "score": 0.0,
+              "stale_score": null,
+              "answer": "I don't have access to your personal travel plans, itinerary, or any private data about your upcoming trips. To find out"
+            },
+            {
+              "turn": 93,
+              "question": "Which book am I reading?",
+              "plant_turn": 30,
+              "lag": 63,
+              "score": 0.0,
+              "stale_score": null,
+              "answer": "I don't have access to your physical environment, your home, or the items currently in your hands. To find out which boo"
+            },
+            {
+              "turn": 94,
+              "question": "Which color do I like most?",
+              "plant_turn": 26,
+              "lag": 68,
+              "score": 0.0,
+              "stale_score": null,
+              "answer": "I don't have access to your personal preferences, past conversations, or visual data, so I can't know which color you li"
+            },
+            {
+              "turn": 95,
+              "question": "Which city hosts the conference?",
+              "plant_turn": 65,
+              "lag": 30,
+              "score": 0.0,
+              "stale_score": 0.0,
+              "answer": "I don't have access to the specific schedule, location, or details of the conference you are referring to. To find out w"
+            },
+            {
+              "turn": 96,
+              "question": "Tell me the name of my feline pet.",
+              "plant_turn": 56,
+              "lag": 40,
+              "score": 0.0,
+              "stale_score": 0.0,
+              "answer": "I don't have access to your personal pets or your home environment, so I cannot tell you the name of your feline pet. To"
+            },
+            {
+              "turn": 97,
+              "question": "Which guitar did I buy?",
+              "plant_turn": 44,
+              "lag": 53,
+              "score": 0.0,
+              "stale_score": null,
+              "answer": "I don't have access to your personal purchase history, shopping cart, or the specific items you have bought. To find out"
+            },
+            {
+              "turn": 98,
+              "question": "What is my study language?",
+              "plant_turn": 55,
+              "lag": 43,
+              "score": 0.0,
+              "stale_score": null,
+              "answer": "I don't have access to your personal study habits, curriculum, or the specific language you are currently learning. To f"
+            },
+            {
+              "turn": 99,
+              "question": "What is my diet?",
+              "plant_turn": 48,
+              "lag": 51,
+              "score": 0.0,
+              "stale_score": null,
+              "answer": "I don't have access to your personal health records, dietary logs, or what you eat. To find out what your diet is, you w"
+            },
+            {
+              "turn": 100,
+              "question": "Where is the conference held?",
+              "plant_turn": 65,
+              "lag": 35,
+              "score": 0.0,
+              "stale_score": 0.0,
+              "answer": "I don't have access to the specific schedule, location, or details of the conference you are referring to. To find out w"
+            },
+            {
+              "turn": 101,
+              "question": "Which guitar did I buy?",
+              "plant_turn": 44,
+              "lag": 57,
+              "score": 0.0,
+              "stale_score": null,
+              "answer": "I don't have access to your personal purchase history, shopping cart, or the specific items you have bought. To find out"
+            },
+            {
+              "turn": 102,
+              "question": "Which reservation number do I have?",
+              "plant_turn": 23,
+              "lag": 79,
+              "score": 0.0,
+              "stale_score": null,
+              "answer": "I don't have access to your personal account data, booking systems, or reservation details. To find out your reservation"
+            },
+            {
+              "turn": 103,
+              "question": "What is my hotel booking reference?",
+              "plant_turn": 23,
+              "lag": 80,
+              "score": 0.0,
+              "stale_score": null,
+              "answer": "I don't have access to your personal account data, booking systems, or reservation details. To find your hotel booking r"
+            },
+            {
+              "turn": 104,
+              "question": "Which field does my sister work in?",
+              "plant_turn": 41,
+              "lag": 63,
+              "score": 0.0,
+              "stale_score": null,
+              "answer": "I don't have access to your personal family information, such as your sister's profession or workplace. To find out whic"
+            },
+            {
+              "turn": 105,
+              "question": "Which language am I learning?",
+              "plant_turn": 55,
+              "lag": 50,
+              "score": 0.0,
+              "stale_score": null,
+              "answer": "I don't have access to your personal study habits, curriculum, or the specific language you are currently learning. To f"
+            },
+            {
+              "turn": 106,
+              "question": "Which serial does my computer have?",
+              "plant_turn": 33,
+              "lag": 73,
+              "score": 0.0,
+              "stale_score": null,
+              "answer": "I don't have access to your computer's hardware specifications or system settings. To find out which serial number your "
+            }
+          ]
+        },
+        "v1_memory": {
+          "recall_mean": 0.0,
+          "recall_by_zone": {
+            "early": 0.0,
+            "middle": 0.0
+          },
+          "recall_by_lag": {
+            "0-5": 0.0,
+            "6-12": 0.0,
+            "13-20": 0.0,
+            "21+": 0.0
+          },
+          "stale_rate": 0.0,
+          "consistency_vs_reference": 0.073,
+          "tone_mean": 0.907,
+          "rep_mean": 0.0,
+          "prompt_tokens": 23391,
+          "embed_tokens": 4657,
+          "cache_slots": 801584,
+          "attention_flops_proxy": 801584,
+          "max_cache_len": 266,
+          "mean_turn_latency_s": 1.714,
+          "memory_stats": {
+            "get_calls": 3638,
+            "update_calls": 3638,
+            "retrievals": 137127,
+            "stores": 49,
+            "merges": 1785,
+            "evictions": 0,
+            "gate_rejects": 0,
+            "occupied_slots": 49
+          },
+          "rag_stats": {
+            "adds": 115,
+            "upserts": 99,
+            "evictions": 0,
+            "size": 115
+          },
+          "probe_details": [
+            {
+              "turn": 83,
+              "question": "What version is my parser?",
+              "plant_turn": 12,
+              "lag": 71,
+              "score": 0.0,
+              "stale_score": null,
+              "answer": "I don't have access to your local system or your specific development environment, so I can't tell you exactly which ver"
+            },
+            {
+              "turn": 84,
+              "question": "Which color do I like most?",
+              "plant_turn": 26,
+              "lag": 58,
+              "score": 0.0,
+              "stale_score": null,
+              "answer": "I don't have access to your personal preferences, past conversations, or visual data, so I can't know which color you li"
+            },
+            {
+              "turn": 85,
+              "question": "What is my diet?",
+              "plant_turn": 48,
+              "lag": 37,
+              "score": 0.0,
+              "stale_score": null,
+              "answer": "I don't have access to your personal health records, dietary logs, or private information, so I can't tell you what your"
+            },
+            {
+              "turn": 86,
+              "question": "Which brand is my car?",
+              "plant_turn": 37,
+              "lag": 49,
+              "score": 0.0,
+              "stale_score": null,
+              "answer": "I don't have access to your vehicle's specifications, registration details, or personal data, so I can't identify which "
+            },
+            {
+              "turn": 87,
+              "question": "What is my name?",
+              "plant_turn": 1,
+              "lag": 86,
+              "score": 0.0,
+              "stale_score": null,
+              "answer": "I don't have access to your personal identity information, so I can't tell you what your name is. To find out, you would"
+            },
+            {
+              "turn": 88,
+              "question": "When does the conference begin?",
+              "plant_turn": 19,
+              "lag": 69,
+              "score": 0.0,
+              "stale_score": null,
+              "answer": "I don't have access to your calendar, event invitations, or specific schedule details, so I can't tell you when the conf"
+            },
+            {
+              "turn": 89,
+              "question": "What is my name?",
+              "plant_turn": 1,
+              "lag": 88,
+              "score": 0.0,
+              "stale_score": null,
+              "answer": "I don't have access to your personal identity information, so I can't tell you what your name is. To find out, you would"
+            },
+            {
+              "turn": 90,
+              "question": "What novel is on my nightstand?",
+              "plant_turn": 30,
+              "lag": 60,
+              "score": 0.0,
+              "stale_score": null,
+              "answer": "I don't have access to your physical environment or the contents of your home, so I can't tell you which novel is on you"
+            },
+            {
+              "turn": 91,
+              "question": "What is the name of my Rust parser?",
+              "plant_turn": 8,
+              "lag": 83,
+              "score": 0.0,
+              "stale_score": null,
+              "answer": "I don't have access to your local computer, file system, or project directories, so I cannot see which Rust parser you a"
+            },
+            {
+              "turn": 92,
+              "question": "Which mountain expedition is in my plans?",
+              "plant_turn": 52,
+              "lag": 40,
+              "score": 0.0,
+              "stale_score": null,
+              "answer": "I don't have access to your personal travel plans, itinerary, or future bookings, so I cannot tell you which mountain ex"
+            },
+            {
+              "turn": 93,
+              "question": "Which book am I reading?",
+              "plant_turn": 30,
+              "lag": 63,
+              "score": 0.0,
+              "stale_score": null,
+              "answer": "I don't have access to your current reading habits, open documents, or what you are holding in your hands, so I cannot t"
+            },
+            {
+              "turn": 94,
+              "question": "Which color do I like most?",
+              "plant_turn": 26,
+              "lag": 68,
+              "score": 0.0,
+              "stale_score": null,
+              "answer": "I don't have access to your personal preferences, past behavior, or psychological profile, so I cannot determine which c"
+            },
+            {
+              "turn": 95,
+              "question": "Which city hosts the conference?",
+              "plant_turn": 65,
+              "lag": 30,
+              "score": 0.0,
+              "stale_score": 0.0,
+              "answer": "I don't have access to your calendar, email, or any specific event invitations, so I cannot tell you which city is hosti"
+            },
+            {
+              "turn": 96,
+              "question": "Tell me the name of my feline pet.",
+              "plant_turn": 56,
+              "lag": 40,
+              "score": 0.0,
+              "stale_score": 0.0,
+              "answer": "I don't have access to your personal information, such as the names of your pets, so I cannot tell you the name of your "
+            },
+            {
+              "turn": 97,
+              "question": "Which guitar did I buy?",
+              "plant_turn": 44,
+              "lag": 53,
+              "score": 0.0,
+              "stale_score": null,
+              "answer": "I don't have access to your purchase history, shopping cart, or personal records, so I cannot tell you which specific gu"
+            },
+            {
+              "turn": 98,
+              "question": "What is my study language?",
+              "plant_turn": 55,
+              "lag": 43,
+              "score": 0.0,
+              "stale_score": null,
+              "answer": "I don't have access to your personal settings, language preferences, or any previous conversations you may have had with"
+            },
+            {
+              "turn": 99,
+              "question": "What is my diet?",
+              "plant_turn": 48,
+              "lag": 51,
+              "score": 0.0,
+              "stale_score": null,
+              "answer": "I don't have access to your personal health records, dietary logs, or any information about what you eat, so I cannot te"
+            },
+            {
+              "turn": 100,
+              "question": "Where is the conference held?",
+              "plant_turn": 65,
+              "lag": 35,
+              "score": 0.0,
+              "stale_score": 0.0,
+              "answer": "I don't have access to your calendar, event invitations, or personal schedule, so I cannot tell you where the specific c"
+            },
+            {
+              "turn": 101,
+              "question": "Which guitar did I buy?",
+              "plant_turn": 44,
+              "lag": 57,
+              "score": 0.0,
+              "stale_score": null,
+              "answer": "I don't have access to your purchase history, shopping cart, or personal records, so I cannot tell you which specific gu"
+            },
+            {
+              "turn": 102,
+              "question": "Which reservation number do I have?",
+              "plant_turn": 23,
+              "lag": 79,
+              "score": 0.0,
+              "stale_score": null,
+              "answer": "I don't have access to your booking records, reservation systems, or personal travel data, so I cannot tell you which sp"
+            },
+            {
+              "turn": 103,
+              "question": "What is my hotel booking reference?",
+              "plant_turn": 23,
+              "lag": 80,
+              "score": 0.0,
+              "stale_score": null,
+              "answer": "I don't have access to your booking records, hotel reservation systems, or personal travel data, so I cannot tell you yo"
+            },
+            {
+              "turn": 104,
+              "question": "Which field does my sister work in?",
+              "plant_turn": 41,
+              "lag": 63,
+              "score": 0.0,
+              "stale_score": null,
+              "answer": "I don't have access to your personal information, family details, or private records about your sister, so I cannot tell"
+            },
+            {
+              "turn": 105,
+              "question": "Which language am I learning?",
+              "plant_turn": 55,
+              "lag": 50,
+              "score": 0.0,
+              "stale_score": null,
+              "answer": "I don't have access to your personal learning records, course enrollments, or private study data, so I cannot tell you w"
+            },
+            {
+              "turn": 106,
+              "question": "Which serial does my computer have?",
+              "plant_turn": 33,
+              "lag": 73,
+              "score": 0.0,
+              "stale_score": null,
+              "answer": "I don't have access to your computer's hardware specifications or system information, so I cannot tell you which serial "
+            }
+          ]
+        },
+        "v2_memory_ema": {
+          "recall_mean": 0.0,
+          "recall_by_zone": {
+            "early": 0.0,
+            "middle": 0.0
+          },
+          "recall_by_lag": {
+            "0-5": 0.0,
+            "6-12": 0.0,
+            "13-20": 0.0,
+            "21+": 0.0
+          },
+          "stale_rate": 0.0,
+          "consistency_vs_reference": 0.091,
+          "tone_mean": 0.9215,
+          "rep_mean": 0.0,
+          "prompt_tokens": 23371,
+          "embed_tokens": 4655,
+          "cache_slots": 800711,
+          "attention_flops_proxy": 800711,
+          "max_cache_len": 266,
+          "mean_turn_latency_s": 1.6577,
+          "memory_stats": {
+            "get_calls": 3637,
+            "update_calls": 3637,
+            "retrievals": 153683,
+            "stores": 59,
+            "merges": 686,
+            "evictions": 0,
+            "gate_rejects": 0,
+            "occupied_slots": 59
+          },
+          "rag_stats": {
+            "adds": 102,
+            "upserts": 112,
+            "evictions": 0,
+            "size": 102
+          },
+          "probe_details": [
+            {
+              "turn": 83,
+              "question": "What version is my parser?",
+              "plant_turn": 12,
+              "lag": 71,
+              "score": 0.0,
+              "stale_score": null,
+              "answer": "I don't have access to your local environment or your specific codebase, so I can't tell you exactly which version of yo"
+            },
+            {
+              "turn": 84,
+              "question": "Which color do I like most?",
+              "plant_turn": 26,
+              "lag": 58,
+              "score": 0.0,
+              "stale_score": null,
+              "answer": "I don't have access to your personal preferences, past conversations, or visual data, so I can't know which color you li"
+            },
+            {
+              "turn": 85,
+              "question": "What is my diet?",
+              "plant_turn": 48,
+              "lag": 37,
+              "score": 0.0,
+              "stale_score": null,
+              "answer": "I don't have access to your personal health records, dietary logs, or past conversations, so I can't tell you what your "
+            },
+            {
+              "turn": 86,
+              "question": "Which brand is my car?",
+              "plant_turn": 37,
+              "lag": 49,
+              "score": 0.0,
+              "stale_score": null,
+              "answer": "I don't have access to your personal vehicle information, registration details, or past conversations, so I can't tell y"
+            },
+            {
+              "turn": 87,
+              "question": "What is my name?",
+              "plant_turn": 1,
+              "lag": 86,
+              "score": 0.0,
+              "stale_score": null,
+              "answer": "I don't have access to your personal identity information, name, or any private data unless you explicitly tell me it in"
+            },
+            {
+              "turn": 88,
+              "question": "When does the conference begin?",
+              "plant_turn": 19,
+              "lag": 69,
+              "score": 0.0,
+              "stale_score": null,
+              "answer": "I don't have access to your calendar, event invitations, or specific meeting schedules unless you provide those details "
+            },
+            {
+              "turn": 89,
+              "question": "What is my name?",
+              "plant_turn": 1,
+              "lag": 88,
+              "score": 0.0,
+              "stale_score": null,
+              "answer": "I don't have access to your personal identity information, name, or any private data unless you explicitly tell me it in"
+            },
+            {
+              "turn": 90,
+              "question": "What novel is on my nightstand?",
+              "plant_turn": 30,
+              "lag": 60,
+              "score": 0.0,
+              "stale_score": null,
+              "answer": "I don't have access to your physical environment, your home, or the items on your nightstand unless you describe them to"
+            },
+            {
+              "turn": 91,
+              "question": "What is the name of my Rust parser?",
+              "plant_turn": 8,
+              "lag": 83,
+              "score": 0.0,
+              "stale_score": null,
+              "answer": "I don't have access to your local computer, your file system, or the specific projects you are working on unless you pro"
+            },
+            {
+              "turn": 92,
+              "question": "Which mountain expedition is in my plans?",
+              "plant_turn": 52,
+              "lag": 40,
+              "score": 0.0,
+              "stale_score": null,
+              "answer": "I don't have access to your personal travel plans, itinerary, or upcoming expeditions unless you share those details wit"
+            },
+            {
+              "turn": 93,
+              "question": "Which book am I reading?",
+              "plant_turn": 30,
+              "lag": 63,
+              "score": 0.0,
+              "stale_score": null,
+              "answer": "I don't have access to your current reading habits or the specific book you are holding unless you tell me its title in "
+            },
+            {
+              "turn": 94,
+              "question": "Which color do I like most?",
+              "plant_turn": 26,
+              "lag": 68,
+              "score": 0.0,
+              "stale_score": null,
+              "answer": "I don't have access to your personal preferences, memories, or psychological profile unless you share them with me in ou"
+            },
+            {
+              "turn": 95,
+              "question": "Which city hosts the conference?",
+              "plant_turn": 65,
+              "lag": 30,
+              "score": 0.0,
+              "stale_score": 0.0,
+              "answer": "I don't have access to your calendar, email, or specific event invitations unless you tell me the name of the conference"
+            },
+            {
+              "turn": 96,
+              "question": "Tell me the name of my feline pet.",
+              "plant_turn": 56,
+              "lag": 40,
+              "score": 0.0,
+              "stale_score": 0.0,
+              "answer": "I don't have access to your personal information, such as the names of your pets, unless you tell me in our conversation"
+            },
+            {
+              "turn": 97,
+              "question": "Which guitar did I buy?",
+              "plant_turn": 44,
+              "lag": 53,
+              "score": 0.0,
+              "stale_score": null,
+              "answer": "I don't have access to your purchase history, shopping cart, or personal belongings unless you tell me the name of the g"
+            },
+            {
+              "turn": 98,
+              "question": "What is my study language?",
+              "plant_turn": 55,
+              "lag": 43,
+              "score": 0.0,
+              "stale_score": null,
+              "answer": "I don't have access to your personal settings, language preferences, or study materials unless you tell me which languag"
+            },
+            {
+              "turn": 99,
+              "question": "What is my diet?",
+              "plant_turn": 48,
+              "lag": 51,
+              "score": 0.0,
+              "stale_score": null,
+              "answer": "I don't have access to your dietary habits, medical records, or grocery lists unless you tell me what you eat in our con"
+            },
+            {
+              "turn": 100,
+              "question": "Where is the conference held?",
+              "plant_turn": 65,
+              "lag": 35,
+              "score": 0.0,
+              "stale_score": 0.0,
+              "answer": "I don't have access to your calendar, travel plans, or event details unless you tell me where the conference is held in "
+            },
+            {
+              "turn": 101,
+              "question": "Which guitar did I buy?",
+              "plant_turn": 44,
+              "lag": 57,
+              "score": 0.0,
+              "stale_score": null,
+              "answer": "I don't have access to your purchase history, shopping cart, or personal belongings unless you tell me the name of the g"
+            },
+            {
+              "turn": 102,
+              "question": "Which reservation number do I have?",
+              "plant_turn": 23,
+              "lag": 79,
+              "score": 0.0,
+              "stale_score": null,
+              "answer": "I don't have access to your booking confirmations, hotel records, or reservation details unless you tell me the number i"
+            },
+            {
+              "turn": 103,
+              "question": "What is my hotel booking reference?",
+              "plant_turn": 23,
+              "lag": 80,
+              "score": 0.0,
+              "stale_score": null,
+              "answer": "I don't have access to your hotel booking records or reservation details unless you tell me the reference number in our "
+            },
+            {
+              "turn": 104,
+              "question": "Which field does my sister work in?",
+              "plant_turn": 41,
+              "lag": 63,
+              "score": 0.0,
+              "stale_score": null,
+              "answer": "I don't have access to your personal information, family details, or your sister's employment history unless you tell me"
+            },
+            {
+              "turn": 105,
+              "question": "Which language am I learning?",
+              "plant_turn": 55,
+              "lag": 50,
+              "score": 0.0,
+              "stale_score": null,
+              "answer": "I don't have access to your personal learning records, course enrollments, or language study history unless you tell me "
+            },
+            {
+              "turn": 106,
+              "question": "Which serial does my computer have?",
+              "plant_turn": 33,
+              "lag": 73,
+              "score": 0.0,
+              "stale_score": null,
+              "answer": "I don't have access to your computer's hardware specifications or serial numbers unless you tell me the serial number in"
+            }
+          ]
+        },
+        "v2_rag_plain": {
+          "recall_mean": 0.542,
+          "recall_by_zone": {
+            "early": 0.5,
+            "middle": 0.583
+          },
+          "recall_by_lag": {
+            "0-5": 0.0,
+            "6-12": 0.0,
+            "13-20": 0.0,
+            "21+": 0.542
+          },
+          "stale_rate": 0.083,
+          "consistency_vs_reference": 0.334,
+          "tone_mean": 0.9484,
+          "rep_mean": 0.0,
+          "prompt_tokens": 30860,
+          "embed_tokens": 4543,
+          "cache_slots": 1013837,
+          "attention_flops_proxy": 1013837,
+          "max_cache_len": 373,
+          "mean_turn_latency_s": 1.2064,
+          "memory_stats": null,
+          "rag_stats": {
+            "adds": 80,
+            "upserts": 134,
+            "evictions": 0,
+            "size": 80
+          },
+          "probe_details": [
+            {
+              "turn": 83,
+              "question": "What version is my parser?",
+              "plant_turn": 12,
+              "lag": 71,
+              "score": 1.0,
+              "stale_score": null,
+              "answer": "Your parser, **Oxidum**, is currently at version **0.4.2**.\n\nSince you're in the midst of reading *Dune*,"
+            },
+            {
+              "turn": 84,
+              "question": "Which color do I like most?",
+              "plant_turn": 26,
+              "lag": 58,
+              "score": 1.0,
+              "stale_score": null,
+              "answer": "Based on the notes you provided earlier, your favorite color is **teal**.\n\nSince you mentioned that teal is your favorit"
+            },
+            {
+              "turn": 85,
+              "question": "What is my diet?",
+              "plant_turn": 48,
+              "lag": 37,
+              "score": 0.0,
+              "stale_score": null,
+              "answer": "Based on the notes provided in our conversation so far, there is **no information regarding your diet**.\n\nThe available "
+            },
+            {
+              "turn": 86,
+              "question": "Which brand is my car?",
+              "plant_turn": 37,
+              "lag": 49,
+              "score": 1.0,
+              "stale_score": null,
+              "answer": "Based on the notes you provided, your car is a **Volvo**."
+            },
+            {
+              "turn": 87,
+              "question": "What is my name?",
+              "plant_turn": 1,
+              "lag": 86,
+              "score": 1.0,
+              "stale_score": null,
+              "answer": "Your name is **Alex**."
+            },
+            {
+              "turn": 88,
+              "question": "When does the conference begin?",
+              "plant_turn": 19,
+              "lag": 69,
+              "score": 0.0,
+              "stale_score": null,
+              "answer": "The conference begins in **Tallinn**.\n\n(Note: While one of the notes mentioned Helsinki, the correction indicates the ev"
+            },
+            {
+              "turn": 89,
+              "question": "What is my name?",
+              "plant_turn": 1,
+              "lag": 88,
+              "score": 1.0,
+              "stale_score": null,
+              "answer": "Your name is **Alex**."
+            },
+            {
+              "turn": 90,
+              "question": "What novel is on my nightstand?",
+              "plant_turn": 30,
+              "lag": 60,
+              "score": 0.0,
+              "stale_score": null,
+              "answer": "Based on the notes you provided, there is no mention of a novel on your nightstand. The available information only cover"
+            },
+            {
+              "turn": 91,
+              "question": "What is the name of my Rust parser?",
+              "plant_turn": 8,
+              "lag": 83,
+              "score": 0.0,
+              "stale_score": null,
+              "answer": "Based on the notes provided, there is no mention of a Rust parser or its version. The available information only covers "
+            },
+            {
+              "turn": 92,
+              "question": "Which mountain expedition is in my plans?",
+              "plant_turn": 52,
+              "lag": 40,
+              "score": 1.0,
+              "stale_score": null,
+              "answer": "The mountain expedition in your plans is an **Everest Base Camp trek** scheduled for next summer. This aligns perfectly "
+            },
+            {
+              "turn": 93,
+              "question": "Which book am I reading?",
+              "plant_turn": 30,
+              "lag": 63,
+              "score": 1.0,
+              "stale_score": null,
+              "answer": "You are currently reading the novel **Dune** by Frank Herbert.\n\nThis is a science fiction masterpiece set in the far fut"
+            },
+            {
+              "turn": 94,
+              "question": "Which color do I like most?",
+              "plant_turn": 26,
+              "lag": 68,
+              "score": 1.0,
+              "stale_score": null,
+              "answer": "Based on the notes you provided, the color you like most is **teal**.\n\nSince you mentioned that teal is your favorite, i"
+            },
+            {
+              "turn": 95,
+              "question": "Which city hosts the conference?",
+              "plant_turn": 65,
+              "lag": 30,
+              "score": 0.0,
+              "stale_score": 1.0,
+              "answer": "Based on the notes provided, there is a contradiction: one note states \"Our conference takes place in **Helsinki**,\" whi"
+            },
+            {
+              "turn": 96,
+              "question": "Tell me the name of my feline pet.",
+              "plant_turn": 56,
+              "lag": 40,
+              "score": 1.0,
+              "stale_score": 0.0,
+              "answer": "Your feline pet's name is **Simba**.\n\nAs you mentioned earlier, your cat has been renamed to Simba, so that is the curre"
+            },
+            {
+              "turn": 97,
+              "question": "Which guitar did I buy?",
+              "plant_turn": 44,
+              "lag": 53,
+              "score": 1.0,
+              "stale_score": null,
+              "answer": "You bought a **Fender Stratocaster**.\n\nThis is a fantastic starting point, Alex! Since you mentioned buying a Fender Str"
+            },
+            {
+              "turn": 98,
+              "question": "What is my study language?",
+              "plant_turn": 55,
+              "lag": 43,
+              "score": 0.0,
+              "stale_score": null,
+              "answer": "Based on the notes provided, there is no mention of your study language. The available information covers your favorite "
+            },
+            {
+              "turn": 99,
+              "question": "What is my diet?",
+              "plant_turn": 48,
+              "lag": 51,
+              "score": 0.0,
+              "stale_score": null,
+              "answer": "Based on the notes provided, there is no mention of your diet. The available information covers your favorite color (tea"
+            },
+            {
+              "turn": 100,
+              "question": "Where is the conference held?",
+              "plant_turn": 65,
+              "lag": 35,
+              "score": 1.0,
+              "stale_score": 1.0,
+              "answer": "The conference is held in **Tallinn**.\n\n*(Note: Although the initial notes mentioned Helsinki, the correction indicates "
+            },
+            {
+              "turn": 101,
+              "question": "Which guitar did I buy?",
+              "plant_turn": 44,
+              "lag": 57,
+              "score": 1.0,
+              "stale_score": null,
+              "answer": "You bought a **Fender Stratocaster**."
+            },
+            {
+              "turn": 102,
+              "question": "Which reservation number do I have?",
+              "plant_turn": 23,
+              "lag": 79,
+              "score": 0.0,
+              "stale_score": null,
+              "answer": "Based on the notes provided, there is no mention of your reservation number. The available information covers your favor"
+            },
+            {
+              "turn": 103,
+              "question": "What is my hotel booking reference?",
+              "plant_turn": 23,
+              "lag": 80,
+              "score": 0.0,
+              "stale_score": null,
+              "answer": "Based on the notes provided, there is no mention of your hotel booking reference. The available information covers your "
+            },
+            {
+              "turn": 104,
+              "question": "Which field does my sister work in?",
+              "plant_turn": 41,
+              "lag": 63,
+              "score": 1.0,
+              "stale_score": null,
+              "answer": "Your sister works as a **marine biologist**."
+            },
+            {
+              "turn": 105,
+              "question": "Which language am I learning?",
+              "plant_turn": 55,
+              "lag": 50,
+              "score": 0.0,
+              "stale_score": null,
+              "answer": "Based on the notes provided, there is no mention of which language you are learning. The available information covers yo"
+            },
+            {
+              "turn": 106,
+              "question": "Which serial does my computer have?",
+              "plant_turn": 33,
+              "lag": 73,
+              "score": 0.0,
+              "stale_score": null,
+              "answer": "Based on the notes provided, there is no mention of your computer's serial number. The available information covers your"
+            }
+          ]
+        },
+        "v2_rag_gist": {
+          "recall_mean": 0.542,
+          "recall_by_zone": {
+            "early": 0.417,
+            "middle": 0.667
+          },
+          "recall_by_lag": {
+            "0-5": 0.0,
+            "6-12": 0.0,
+            "13-20": 0.0,
+            "21+": 0.542
+          },
+          "stale_rate": 0.083,
+          "consistency_vs_reference": 0.301,
+          "tone_mean": 0.9552,
+          "rep_mean": 0.0,
+          "prompt_tokens": 31226,
+          "embed_tokens": 4589,
+          "cache_slots": 1035206,
+          "attention_flops_proxy": 1035206,
+          "max_cache_len": 361,
+          "mean_turn_latency_s": 1.7079,
+          "memory_stats": {
+            "get_calls": 3574,
+            "update_calls": 3574,
+            "retrievals": 136076,
+            "stores": 48,
+            "merges": 843,
+            "evictions": 0,
+            "gate_rejects": 0,
+            "occupied_slots": 48
+          },
+          "rag_stats": {
+            "adds": 80,
+            "upserts": 134,
+            "evictions": 0,
+            "size": 80
+          },
+          "probe_details": [
+            {
+              "turn": 83,
+              "question": "What version is my parser?",
+              "plant_turn": 12,
+              "lag": 71,
+              "score": 1.0,
+              "stale_score": null,
+              "answer": "Your parser, **Oxidum**, is currently at version **0.4.2**.\n\nThat's a solid milestone for a project in development! Vers"
+            },
+            {
+              "turn": 84,
+              "question": "Which color do I like most?",
+              "plant_turn": 26,
+              "lag": 58,
+              "score": 1.0,
+              "stale_score": null,
+              "answer": "Based on the notes you provided, the color you like most is **teal**.\n\nIt's a wonderful choice! Teal sits right at the i"
+            },
+            {
+              "turn": 85,
+              "question": "What is my diet?",
+              "plant_turn": 48,
+              "lag": 37,
+              "score": 1.0,
+              "stale_score": null,
+              "answer": "Based on the notes you shared earlier, your diet is **gluten-free**.\n\nYou mentioned a specific commitment to avoiding gl"
+            },
+            {
+              "turn": 86,
+              "question": "Which brand is my car?",
+              "plant_turn": 37,
+              "lag": 49,
+              "score": 1.0,
+              "stale_score": null,
+              "answer": "Based on the notes you provided, your car is a **Volvo**.\n\nSpecifically, it's a **blue** Volvo!"
+            },
+            {
+              "turn": 87,
+              "question": "What is my name?",
+              "plant_turn": 1,
+              "lag": 86,
+              "score": 1.0,
+              "stale_score": null,
+              "answer": "Your name is **Alex**.\n\nIt's great to meet you, Alex! Is there anything else you'd like to know about your preferences o"
+            },
+            {
+              "turn": 88,
+              "question": "When does the conference begin?",
+              "plant_turn": 19,
+              "lag": 69,
+              "score": 0.0,
+              "stale_score": null,
+              "answer": "Based on the notes you provided, the conference begins in **Tallinn**.\n\nIt's great to meet you, Alex! Since the location"
+            },
+            {
+              "turn": 89,
+              "question": "What is my name?",
+              "plant_turn": 1,
+              "lag": 88,
+              "score": 1.0,
+              "stale_score": null,
+              "answer": "Your name is **Alex**.\n\nIt's great to meet you, Alex! Is there anything else you'd like to know about your preferences o"
+            },
+            {
+              "turn": 90,
+              "question": "What novel is on my nightstand?",
+              "plant_turn": 30,
+              "lag": 60,
+              "score": 0.0,
+              "stale_score": null,
+              "answer": "Based on the notes you provided, there is no mention of a novel on your nightstand. The available information only cover"
+            },
+            {
+              "turn": 91,
+              "question": "What is the name of my Rust parser?",
+              "plant_turn": 8,
+              "lag": 83,
+              "score": 0.0,
+              "stale_score": null,
+              "answer": "Based on the notes provided, there is no mention of a specific name for your Rust parser. The available information only"
+            },
+            {
+              "turn": 92,
+              "question": "Which mountain expedition is in my plans?",
+              "plant_turn": 52,
+              "lag": 40,
+              "score": 0.0,
+              "stale_score": null,
+              "answer": "Based on the notes provided, there is no mention of any mountain expedition in your plans. The available information onl"
+            },
+            {
+              "turn": 93,
+              "question": "Which book am I reading?",
+              "plant_turn": 30,
+              "lag": 63,
+              "score": 0.0,
+              "stale_score": null,
+              "answer": "Based on the notes provided, there is no mention of a specific book you are currently reading. The available information"
+            },
+            {
+              "turn": 94,
+              "question": "Which color do I like most?",
+              "plant_turn": 26,
+              "lag": 68,
+              "score": 1.0,
+              "stale_score": null,
+              "answer": "Based on the notes you provided, the color you like most is **teal**.\n\nIt's a wonderful choice! Teal sits right at the i"
+            },
+            {
+              "turn": 95,
+              "question": "Which city hosts the conference?",
+              "plant_turn": 65,
+              "lag": 30,
+              "score": 1.0,
+              "stale_score": 1.0,
+              "answer": "Based on the notes provided, the conference is hosted in **Helsinki**.\n\n*(Note: The notes also mention a correction that"
+            },
+            {
+              "turn": 96,
+              "question": "Tell me the name of my feline pet.",
+              "plant_turn": 56,
+              "lag": 40,
+              "score": 1.0,
+              "stale_score": 0.0,
+              "answer": "Based on the notes you provided, your feline pet has been renamed to **Simba**."
+            },
+            {
+              "turn": 97,
+              "question": "Which guitar did I buy?",
+              "plant_turn": 44,
+              "lag": 53,
+              "score": 1.0,
+              "stale_score": null,
+              "answer": "Based on the notes you provided, the guitar you bought is a **Fender Stratocaster**.\n\nIt's a wonderful instrument, and i"
+            },
+            {
+              "turn": 98,
+              "question": "What is my study language?",
+              "plant_turn": 55,
+              "lag": 43,
+              "score": 0.0,
+              "stale_score": null,
+              "answer": "Based on the notes you provided, your study language is **English**."
+            },
+            {
+              "turn": 99,
+              "question": "What is my diet?",
+              "plant_turn": 48,
+              "lag": 51,
+              "score": 0.0,
+              "stale_score": null,
+              "answer": "Based on the notes provided, there is no information regarding your diet. The available details cover your name, study l"
+            },
+            {
+              "turn": 100,
+              "question": "Where is the conference held?",
+              "plant_turn": 65,
+              "lag": 35,
+              "score": 1.0,
+              "stale_score": 1.0,
+              "answer": "Based on the notes provided, the conference is held in **Tallinn**.\n\n*(Note: Although the initial note mentioned Helsink"
+            },
+            {
+              "turn": 101,
+              "question": "Which guitar did I buy?",
+              "plant_turn": 44,
+              "lag": 57,
+              "score": 1.0,
+              "stale_score": null,
+              "answer": "Based on the notes you provided, the guitar you bought is a **Fender Stratocaster**.\n\nIt's a wonderful instrument, and i"
+            },
+            {
+              "turn": 102,
+              "question": "Which reservation number do I have?",
+              "plant_turn": 23,
+              "lag": 79,
+              "score": 0.0,
+              "stale_score": null,
+              "answer": "Based on the notes provided, there is no mention of a specific reservation number. The available information covers your"
+            },
+            {
+              "turn": 103,
+              "question": "What is my hotel booking reference?",
+              "plant_turn": 23,
+              "lag": 80,
+              "score": 0.0,
+              "stale_score": null,
+              "answer": "Based on the notes provided, there is no information regarding your hotel booking reference. The available details cover"
+            },
+            {
+              "turn": 104,
+              "question": "Which field does my sister work in?",
+              "plant_turn": 41,
+              "lag": 63,
+              "score": 1.0,
+              "stale_score": null,
+              "answer": "Based on the notes provided, your sister works as a **marine biologist**."
+            },
+            {
+              "turn": 105,
+              "question": "Which language am I learning?",
+              "plant_turn": 55,
+              "lag": 50,
+              "score": 0.0,
+              "stale_score": null,
+              "answer": "Based on the notes you provided, the language you are learning is **English**."
+            },
+            {
+              "turn": 106,
+              "question": "Which serial does my computer have?",
+              "plant_turn": 33,
+              "lag": 73,
+              "score": 0.0,
+              "stale_score": null,
+              "answer": "Based on the notes provided, there is no mention of a specific serial number for your computer. The available informatio"
+            }
+          ]
+        },
+        "v2_full": {
+          "recall_mean": 0.5,
+          "recall_by_zone": {
+            "early": 0.583,
+            "middle": 0.417
+          },
+          "recall_by_lag": {
+            "0-5": 0.0,
+            "6-12": 0.0,
+            "13-20": 0.0,
+            "21+": 0.5
+          },
+          "stale_rate": 0.083,
+          "consistency_vs_reference": 0.354,
+          "tone_mean": 0.9557,
+          "rep_mean": 0.0004,
+          "prompt_tokens": 58650,
+          "embed_tokens": 4534,
+          "cache_slots": 1871343,
+          "attention_flops_proxy": 1871343,
+          "max_cache_len": 667,
+          "mean_turn_latency_s": 1.7745,
+          "memory_stats": {
+            "get_calls": 3522,
+            "update_calls": 3522,
+            "retrievals": 136691,
+            "stores": 48,
+            "merges": 911,
+            "evictions": 0,
+            "gate_rejects": 0,
+            "occupied_slots": 48
+          },
+          "rag_stats": {
+            "adds": 75,
+            "upserts": 139,
+            "evictions": 0,
+            "size": 75
+          },
+          "probe_details": [
+            {
+              "turn": 83,
+              "question": "What version is my parser?",
+              "plant_turn": 12,
+              "lag": 71,
+              "score": 1.0,
+              "stale_score": null,
+              "answer": "Your parser, **Oxidum**, is currently at version **0.4.2**.\n\nIt's a fascinating project! Moving from a simple lexer to"
+            },
+            {
+              "turn": 84,
+              "question": "Which color do I like most?",
+              "plant_turn": 26,
+              "lag": 58,
+              "score": 1.0,
+              "stale_score": null,
+              "answer": "Based on the notes you provided, your favorite color is **teal**.\n\nIt is a truly sophisticated choice! Teal sits right i"
+            },
+            {
+              "turn": 85,
+              "question": "What is my diet?",
+              "plant_turn": 48,
+              "lag": 37,
+              "score": 0.0,
+              "stale_score": null,
+              "answer": "Based on the notes provided in our conversation, there is no specific information regarding your diet. The available det"
+            },
+            {
+              "turn": 86,
+              "question": "Which brand is my car?",
+              "plant_turn": 37,
+              "lag": 49,
+              "score": 1.0,
+              "stale_score": null,
+              "answer": "Based on the notes you provided, your car is a **Volvo**."
+            },
+            {
+              "turn": 87,
+              "question": "What is my name?",
+              "plant_turn": 1,
+              "lag": 86,
+              "score": 1.0,
+              "stale_score": null,
+              "answer": "Your name is **Alex**."
+            },
+            {
+              "turn": 88,
+              "question": "When does the conference begin?",
+              "plant_turn": 19,
+              "lag": 69,
+              "score": 0.0,
+              "stale_score": null,
+              "answer": "The conference begins in **Tallinn**.\n\nJust to clarify, while our previous discussions mentioned Helsinki, the event has"
+            },
+            {
+              "turn": 89,
+              "question": "What is my name?",
+              "plant_turn": 1,
+              "lag": 88,
+              "score": 1.0,
+              "stale_score": null,
+              "answer": "Your name is **Alex**."
+            },
+            {
+              "turn": 90,
+              "question": "What novel is on my nightstand?",
+              "plant_turn": 30,
+              "lag": 60,
+              "score": 0.0,
+              "stale_score": null,
+              "answer": "Based on the notes provided in our conversation, there is no specific information regarding a novel on your nightstand. "
+            },
+            {
+              "turn": 91,
+              "question": "What is the name of my Rust parser?",
+              "plant_turn": 8,
+              "lag": 83,
+              "score": 1.0,
+              "stale_score": null,
+              "answer": "Your Rust parser is named **Oxidum**."
+            },
+            {
+              "turn": 92,
+              "question": "Which mountain expedition is in my plans?",
+              "plant_turn": 52,
+              "lag": 40,
+              "score": 0.0,
+              "stale_score": null,
+              "answer": "Based on the notes provided in our conversation, there is no specific information regarding a mountain expedition in you"
+            },
+            {
+              "turn": 93,
+              "question": "Which book am I reading?",
+              "plant_turn": 30,
+              "lag": 63,
+              "score": 1.0,
+              "stale_score": null,
+              "answer": "Based on the notes provided in our conversation, you are currently reading the novel **Dune**."
+            },
+            {
+              "turn": 94,
+              "question": "Which color do I like most?",
+              "plant_turn": 26,
+              "lag": 68,
+              "score": 1.0,
+              "stale_score": null,
+              "answer": "Based on the notes you provided, your favorite color is **teal**.\n\nIt is a truly sophisticated choice! Teal sits right i"
+            },
+            {
+              "turn": 95,
+              "question": "Which city hosts the conference?",
+              "plant_turn": 65,
+              "lag": 30,
+              "score": 1.0,
+              "stale_score": 1.0,
+              "answer": "Based on the notes provided in our conversation, the conference is hosted in **Tallinn**.\n\nAlthough earlier mentions ref"
+            },
+            {
+              "turn": 96,
+              "question": "Tell me the name of my feline pet.",
+              "plant_turn": 56,
+              "lag": 40,
+              "score": 1.0,
+              "stale_score": 0.0,
+              "answer": "Your feline pet is named **Simba**.\n\nAs we discussed earlier, the cat has been given this new name, replacing any previo"
+            },
+            {
+              "turn": 97,
+              "question": "Which guitar did I buy?",
+              "plant_turn": 44,
+              "lag": 53,
+              "score": 0.0,
+              "stale_score": null,
+              "answer": "Based on the notes provided in our conversation, there is no specific information regarding a guitar you bought. The ava"
+            },
+            {
+              "turn": 98,
+              "question": "What is my study language?",
+              "plant_turn": 55,
+              "lag": 43,
+              "score": 0.0,
+              "stale_score": null,
+              "answer": "Based on the notes provided in our conversation, there is no specific information regarding your study language. The ava"
+            },
+            {
+              "turn": 99,
+              "question": "What is my diet?",
+              "plant_turn": 48,
+              "lag": 51,
+              "score": 0.0,
+              "stale_score": null,
+              "answer": "Based on the notes provided in our conversation, there is no specific information regarding your diet. The available det"
+            },
+            {
+              "turn": 100,
+              "question": "Where is the conference held?",
+              "plant_turn": 65,
+              "lag": 35,
+              "score": 1.0,
+              "stale_score": 1.0,
+              "answer": "Based on the notes provided in our conversation, the conference is held in **Tallinn**.\n\nAlthough there was an earlier m"
+            },
+            {
+              "turn": 101,
+              "question": "Which guitar did I buy?",
+              "plant_turn": 44,
+              "lag": 57,
+              "score": 0.0,
+              "stale_score": null,
+              "answer": "Based on the notes provided in our conversation, there is no specific information regarding a guitar you bought. The ava"
+            },
+            {
+              "turn": 102,
+              "question": "Which reservation number do I have?",
+              "plant_turn": 23,
+              "lag": 79,
+              "score": 0.0,
+              "stale_score": null,
+              "answer": "Based on the notes provided in our conversation, there is no specific information regarding a reservation number. The av"
+            },
+            {
+              "turn": 103,
+              "question": "What is my hotel booking reference?",
+              "plant_turn": 23,
+              "lag": 80,
+              "score": 0.0,
+              "stale_score": null,
+              "answer": "Based on the notes provided in our conversation, there is no specific information regarding your hotel booking reference"
+            },
+            {
+              "turn": 104,
+              "question": "Which field does my sister work in?",
+              "plant_turn": 41,
+              "lag": 63,
+              "score": 1.0,
+              "stale_score": null,
+              "answer": "Based on the notes provided, your sister works as a **marine biologist**."
+            },
+            {
+              "turn": 105,
+              "question": "Which language am I learning?",
+              "plant_turn": 55,
+              "lag": 50,
+              "score": 0.0,
+              "stale_score": null,
+              "answer": "Based on the notes provided in our conversation, there is no specific information regarding the language you are learnin"
+            },
+            {
+              "turn": 106,
+              "question": "Which serial does my computer have?",
+              "plant_turn": 33,
+              "lag": 73,
+              "score": 0.0,
+              "stale_score": null,
+              "answer": "Based on the notes provided in our conversation, there is no specific information regarding the serial number of your co"
+            }
+          ]
+        }
+      }
+    }
+  }
+}

@@ -6,8 +6,16 @@ import pytest
 import torch
 from transformers import DynamicCache
 
-from tmem.compat import cache_length, layer_kv, prune_cache, self_cache
-from tmem.kvcache import ImportanceTracker, KVConfig, keep_indices
+from tmem.compat import cache_length, cache_mean_length, layer_kv, prune_cache, self_cache
+from tmem.kvcache import (
+    HeadImportanceTracker,
+    ImportanceTracker,
+    KVConfig,
+    h2o_head_indices,
+    keep_indices,
+    pyramid_budgets,
+    snapkv_indices,
+)
 
 
 class TestKVConfig:
@@ -65,6 +73,35 @@ class TestKeepIndices:
         assert keep.numel() == 6
 
 
+class TestObservationPolicies:
+    def test_snapkv_selects_per_head_and_keeps_observation(self):
+        attention = torch.zeros(1, 2, 2, 8)
+        attention[0, 0, :, 2] = 10.0
+        attention[0, 0, :, 1] = 5.0
+        attention[0, 1, :, 4] = 10.0
+        attention[0, 1, :, 3] = 5.0
+        keep = snapkv_indices(attention, budget=4, observation=2, kernel_size=1)
+        assert torch.equal(keep, torch.tensor([[1, 2, 6, 7], [3, 4, 6, 7]]))
+
+    def test_snapkv_aggregates_query_heads_sharing_kv(self):
+        attention = torch.zeros(1, 4, 2, 8)
+        attention[0, 0, :, 1] = 10.0
+        attention[0, 1, :, 2] = 6.0
+        attention[0, 2, :, 3] = 10.0
+        attention[0, 3, :, 4] = 6.0
+        keep = snapkv_indices(attention, budget=4, observation=2, kernel_size=1, num_key_value_heads=2)
+        assert torch.equal(keep, torch.tensor([[1, 2, 6, 7], [3, 4, 6, 7]]))
+
+    def test_snapkv_rejects_budget_below_observation(self):
+        with pytest.raises(ValueError, match="budget must be at least observation"):
+            snapkv_indices(torch.ones(1, 1, 4, 8), budget=3, observation=4)
+
+    def test_pyramid_budgets_descend_with_same_mean(self):
+        budgets = pyramid_budgets(4, average_budget=16, beta=2.0, observation=4)
+        assert budgets == [24, 19, 13, 8]
+        assert sum(budgets) == 4 * 16
+
+
 class TestImportanceTracker:
     def test_accumulates_column_mass(self):
         t = ImportanceTracker()
@@ -94,6 +131,26 @@ class TestImportanceTracker:
         assert t.scores.numel() == 0
 
 
+class TestHeadImportanceTracker:
+    def test_h2o_selects_different_positions_per_kv_head(self):
+        scores = torch.zeros(4, 12)
+        scores[0:2, 4] = 10.0
+        scores[2:4, 5] = 10.0
+        cfg = KVConfig.sparse(4, "topk", sink=1, recent=2)
+        keep = h2o_head_indices(scores, cfg, num_key_value_heads=2)
+        assert torch.equal(keep, torch.tensor([[0, 4, 10, 11], [0, 5, 10, 11]]))
+
+    def test_prune_preserves_each_query_head_history(self):
+        tracker = HeadImportanceTracker()
+        tracker.scores = [torch.arange(24, dtype=torch.float32).reshape(4, 6)]
+        keep = [torch.tensor([[0, 2, 5], [1, 3, 4]])]
+        tracker.prune(keep)
+        expected = torch.tensor([
+            [0, 2, 5], [6, 8, 11], [13, 15, 16], [19, 21, 22],
+        ], dtype=torch.float32)
+        assert torch.equal(tracker.scores[0], expected)
+
+
 def make_cache(n_layers: int = 2, seq: int = 5):
     cache = DynamicCache()
     for layer in range(n_layers):
@@ -118,6 +175,22 @@ class TestCompatShim:
         assert cache_length(cache) == 3
         keys, _ = layer_kv(cache)[0]
         assert torch.equal(keys.view(-1), torch.tensor([0.0, 2.0, 5.0]))
+
+    def test_prune_selects_different_slots_per_head(self):
+        cache = DynamicCache()
+        keys = torch.arange(24, dtype=torch.float32).reshape(1, 2, 6, 2)
+        cache.update(keys, keys * 10, 0)
+        prune_cache(cache, torch.tensor([[0, 2, 5], [1, 3, 4]]))
+        kept, _ = layer_kv(cache)[0]
+        assert torch.equal(kept[0, 0, :, 0], torch.tensor([0.0, 4.0, 10.0]))
+        assert torch.equal(kept[0, 1, :, 0], torch.tensor([14.0, 18.0, 20.0]))
+
+    def test_mean_and_max_lengths_differ_for_pyramid_cache(self):
+        cache = DynamicCache()
+        cache.update(torch.zeros(1, 1, 8, 1), torch.zeros(1, 1, 8, 1), 0)
+        cache.update(torch.zeros(1, 1, 4, 1), torch.zeros(1, 1, 4, 1), 1)
+        assert cache_length(cache) == 8
+        assert cache_mean_length(cache) == 6
 
     def test_prune_out_of_range_raises(self):
         cache = make_cache(seq=3)

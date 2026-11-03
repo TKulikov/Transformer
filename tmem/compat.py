@@ -66,32 +66,55 @@ def layer_kv(cache) -> list[tuple[torch.Tensor, torch.Tensor]]:
     return [_read_slot(cache, i) for i in range(num_layers(cache))]
 
 
+def cache_lengths(cache) -> list[int]:
+    """Return the number of cached slots in every layer that stores K/V."""
+    return [keys.shape[-2] for keys, _ in layer_kv(cache) if keys is not None and keys.numel()]
+
+
 def cache_length(cache) -> int:
-    """Number of cached token slots (0 when empty; first layer that holds K/V)."""
-    for keys, _ in layer_kv(cache):
-        if keys is not None and keys.numel():
-            return keys.shape[-2]
-    return 0
+    """Return the largest per-layer cache length, or 0 for an empty cache."""
+    return max(cache_lengths(cache), default=0)
 
 
-def prune_cache(cache, keep: torch.Tensor) -> None:
-    """Drop all cache slots whose index is not in ``keep`` (in place).
+def cache_mean_length(cache) -> int:
+    """Return the rounded mean cache length across K/V layers.
 
-    ``keep`` is a 1-D index tensor sorted ascending, with values in
-    ``[0, cache_length)``. Key/value tensors are gathered along the
-    sequence dimension for every layer.
+    The mean is the attention-work unit for policies such as PyramidKV that
+    intentionally assign different budgets to different layers. It is 0 when
+    no layer holds K/V tensors.
+    """
+    lengths = cache_lengths(cache)
+    return round(sum(lengths) / len(lengths)) if lengths else 0
+
+
+def _gather_slots(tensors: torch.Tensor, keep: torch.Tensor) -> torch.Tensor:
+    if keep.ndim == 1:
+        if keep.numel() and int(keep.amax()) >= tensors.shape[-2]:
+            raise IndexError(f"prune index out of range: cache has {tensors.shape[-2]} slots")
+        return tensors.index_select(-2, keep).contiguous()
+    if keep.ndim != 2 or keep.shape[0] != tensors.shape[1]:
+        raise ValueError(f"per-head keep must have shape (heads={tensors.shape[1]}, slots)")
+    if keep.numel() and int(keep.amax()) >= tensors.shape[-2]:
+        raise IndexError(f"prune index out of range: cache has {tensors.shape[-2]} slots")
+    return torch.stack([
+        tensors[:, head].index_select(-2, keep[head]) for head in range(tensors.shape[1])
+    ], dim=1).contiguous()
+
+
+def prune_cache(cache, keep: torch.Tensor | dict[int, torch.Tensor]) -> None:
+    """Drop unselected K/V slots in place, optionally per layer and head.
+
+    A 1-D tensor applies shared indices to every layer. A 2-D tensor has one
+    row of sorted indices per K/V head. A dictionary maps cache-layer indices
+    to either form; layers omitted from it remain unchanged. Indices refer to
+    each layer's current slots. Out-of-range indices raise ``IndexError`` and
+    incompatible head dimensions raise ``ValueError``.
     """
     inner = self_cache(cache)
     for i in range(num_layers(inner)):
         keys, values = _read_slot(inner, i)
-        if keys is None or keys.shape[-2] == 0:
+        if keys is None or keys.shape[-2] == 0 or (isinstance(keep, dict) and i not in keep):
             continue
-        keep_local = keep.to(keys.device)
-        if keep_local.numel() and int(keep_local.amax()) >= keys.shape[-2]:
-            raise IndexError(f"prune index out of range: cache has {keys.shape[-2]} slots")
-        _write_slot(
-            inner,
-            i,
-            keys.index_select(-2, keep_local).contiguous(),
-            values.index_select(-2, keep_local).contiguous(),
-        )
+        local = keep[i] if isinstance(keep, dict) else keep
+        local = local.to(keys.device)
+        _write_slot(inner, i, _gather_slots(keys, local), _gather_slots(values, local))

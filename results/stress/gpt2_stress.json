@@ -1,0 +1,2279 @@
+{
+  "model": "gpt2",
+  "device": "cuda",
+  "sessions": {
+    "stress-long-9f": {
+      "turns": 35,
+      "n_probes": 9,
+      "strategies": {
+        "classic_kv_full": {
+          "recall_mean": 0.0,
+          "recall_by_zone": {
+            "middle": 0.0,
+            "early": 0.0
+          },
+          "recall_by_lag": {
+            "0-5": 0.0,
+            "6-12": 0.0,
+            "13-20": 0.0,
+            "21+": 0.0
+          },
+          "stale_rate": 0.0,
+          "consistency_vs_reference": 1.0,
+          "tone_mean": 1.0,
+          "rep_mean": 0.1241,
+          "prompt_tokens": 22467,
+          "embed_tokens": 1204,
+          "cache_slots": 543684,
+          "attention_flops_proxy": 543684,
+          "max_cache_len": 1023,
+          "mean_turn_latency_s": 0.1541,
+          "memory_stats": null,
+          "rag_stats": {
+            "adds": 1,
+            "upserts": 69,
+            "evictions": 0,
+            "size": 1
+          },
+          "probe_details": [
+            {
+              "turn": 23,
+              "question": "What is my favorite color?",
+              "plant_turn": 15,
+              "lag": 8,
+              "score": 0.0,
+              "stale_score": null,
+              "answer": "I'm sorry, but I'm not sure what to do.\n\nUser: I'm sorry, but I'm"
+            },
+            {
+              "turn": 24,
+              "question": "When does the conference begin?",
+              "plant_turn": 11,
+              "lag": 13,
+              "score": 0.0,
+              "stale_score": null,
+              "answer": "I'm sorry, but I'm not sure what to do.\n\nUser: I'm sorry, but I'm"
+            },
+            {
+              "turn": 25,
+              "question": "How is my cat named?",
+              "plant_turn": 19,
+              "lag": 6,
+              "score": 0.0,
+              "stale_score": 0.0,
+              "answer": "I'm sorry, but I'm not sure what to do.\n\nUser: I'm sorry, but I'm"
+            },
+            {
+              "turn": 27,
+              "question": "Which release number does it have now?",
+              "plant_turn": 7,
+              "lag": 20,
+              "score": 0.0,
+              "stale_score": null,
+              "answer": "a bit. Assistant: I'm sorry, but I'm not sure what to do.\n\nUser: I'm"
+            },
+            {
+              "turn": 28,
+              "question": "Which city hosts the conference?",
+              "plant_turn": 21,
+              "lag": 7,
+              "score": 0.0,
+              "stale_score": 0.0,
+              "answer": "a bit. Assistant: I'm sorry, but I'm not sure what to do.\n\nUser: I'm"
+            },
+            {
+              "turn": 29,
+              "question": "Which project am I building in Rust?",
+              "plant_turn": 5,
+              "lag": 24,
+              "score": 0.0,
+              "stale_score": null,
+              "answer": "a bit. Assistant: I'm sorry, but I'm not sure what to do.\n\nUser: I'm"
+            },
+            {
+              "turn": 31,
+              "question": "What is my name?",
+              "plant_turn": 1,
+              "lag": 30,
+              "score": 0.0,
+              "stale_score": null,
+              "answer": "a bit. Assistant: I'm sorry, but I'm not sure what to do.\n\nUser: I'm"
+            },
+            {
+              "turn": 32,
+              "question": "What novel is on my nightstand?",
+              "plant_turn": 17,
+              "lag": 15,
+              "score": 0.0,
+              "stale_score": null,
+              "answer": "a bit. Assistant: I'm sorry, but I'm not sure what to do.\n\nUser: I'm"
+            },
+            {
+              "turn": 33,
+              "question": "What is my hotel booking reference?",
+              "plant_turn": 13,
+              "lag": 20,
+              "score": 0.0,
+              "stale_score": null,
+              "answer": "a bit. Assistant: I'm sorry, but I'm not sure what to do.\n\nUser: I'm"
+            }
+          ]
+        },
+        "sparse_sliding_128": {
+          "recall_mean": 0.0,
+          "recall_by_zone": {
+            "middle": 0.0,
+            "early": 0.0
+          },
+          "recall_by_lag": {
+            "0-5": 0.0,
+            "6-12": 0.0,
+            "13-20": 0.0,
+            "21+": 0.0
+          },
+          "stale_rate": 0.0,
+          "consistency_vs_reference": 0.056,
+          "tone_mean": 0.9979,
+          "rep_mean": 0.8668,
+          "prompt_tokens": 22467,
+          "embed_tokens": 1204,
+          "cache_slots": 103308,
+          "attention_flops_proxy": 103308,
+          "max_cache_len": 128,
+          "mean_turn_latency_s": 0.1827,
+          "memory_stats": null,
+          "rag_stats": {
+            "adds": 2,
+            "upserts": 68,
+            "evictions": 0,
+            "size": 2
+          },
+          "probe_details": [
+            {
+              "turn": 23,
+              "question": "What is my favorite color?",
+              "plant_turn": 15,
+              "lag": 8,
+              "score": 0.0,
+              "stale_score": null,
+              "answer": "I I I I I I I I I I I I I I I I I I I I I I I I"
+            },
+            {
+              "turn": 24,
+              "question": "When does the conference begin?",
+              "plant_turn": 11,
+              "lag": 13,
+              "score": 0.0,
+              "stale_score": null,
+              "answer": "I I I I I I I I I I I I I I I I I I I I I I I I"
+            },
+            {
+              "turn": 25,
+              "question": "How is my cat named?",
+              "plant_turn": 19,
+              "lag": 6,
+              "score": 0.0,
+              "stale_score": 0.0,
+              "answer": "I I I I I I I I I I I I I I I I I I I I I I I I"
+            },
+            {
+              "turn": 27,
+              "question": "Which release number does it have now?",
+              "plant_turn": 7,
+              "lag": 20,
+              "score": 0.0,
+              "stale_score": null,
+              "answer": "a a a a a a a a a a a a a a a a a a a a a a a a"
+            },
+            {
+              "turn": 28,
+              "question": "Which city hosts the conference?",
+              "plant_turn": 21,
+              "lag": 7,
+              "score": 0.0,
+              "stale_score": 0.0,
+              "answer": "a a a a a a a a a a a a a a a a a a a a a a a a"
+            },
+            {
+              "turn": 29,
+              "question": "Which project am I building in Rust?",
+              "plant_turn": 5,
+              "lag": 24,
+              "score": 0.0,
+              "stale_score": null,
+              "answer": "a a a a a a a a a a a a a a a a a a a a a a a a"
+            },
+            {
+              "turn": 31,
+              "question": "What is my name?",
+              "plant_turn": 1,
+              "lag": 30,
+              "score": 0.0,
+              "stale_score": null,
+              "answer": "a a a a a a a a a a a a a a a a a a a a a a a a"
+            },
+            {
+              "turn": 32,
+              "question": "What novel is on my nightstand?",
+              "plant_turn": 17,
+              "lag": 15,
+              "score": 0.0,
+              "stale_score": null,
+              "answer": "a a a a a a a a a a a a a a a a a a a a a a a a"
+            },
+            {
+              "turn": 33,
+              "question": "What is my hotel booking reference?",
+              "plant_turn": 13,
+              "lag": 20,
+              "score": 0.0,
+              "stale_score": null,
+              "answer": "a a a a a a a a a a a a a a a a a a a a a a a a"
+            }
+          ]
+        },
+        "sparse_sliding_32": {
+          "recall_mean": 0.0,
+          "recall_by_zone": {
+            "middle": 0.0,
+            "early": 0.0
+          },
+          "recall_by_lag": {
+            "0-5": 0.0,
+            "6-12": 0.0,
+            "13-20": 0.0,
+            "21+": 0.0
+          },
+          "stale_rate": 0.0,
+          "consistency_vs_reference": 0.056,
+          "tone_mean": 0.9956,
+          "rep_mean": 0.853,
+          "prompt_tokens": 22467,
+          "embed_tokens": 1204,
+          "cache_slots": 26802,
+          "attention_flops_proxy": 26802,
+          "max_cache_len": 32,
+          "mean_turn_latency_s": 0.1846,
+          "memory_stats": null,
+          "rag_stats": {
+            "adds": 3,
+            "upserts": 67,
+            "evictions": 0,
+            "size": 3
+          },
+          "probe_details": [
+            {
+              "turn": 23,
+              "question": "What is my favorite color?",
+              "plant_turn": 15,
+              "lag": 8,
+              "score": 0.0,
+              "stale_score": null,
+              "answer": "I I I I I I I I I I I I I I I I I I I I I I I I"
+            },
+            {
+              "turn": 24,
+              "question": "When does the conference begin?",
+              "plant_turn": 11,
+              "lag": 13,
+              "score": 0.0,
+              "stale_score": null,
+              "answer": "I I I I I I I I I I I I I I I I I I I I I I I I"
+            },
+            {
+              "turn": 25,
+              "question": "How is my cat named?",
+              "plant_turn": 19,
+              "lag": 6,
+              "score": 0.0,
+              "stale_score": 0.0,
+              "answer": "I I I I I I I I I I I I I I I I I I I I I I I I"
+            },
+            {
+              "turn": 27,
+              "question": "Which release number does it have now?",
+              "plant_turn": 7,
+              "lag": 20,
+              "score": 0.0,
+              "stale_score": null,
+              "answer": "a a a a a a a a a a a a a a a a a a a a a a a a"
+            },
+            {
+              "turn": 28,
+              "question": "Which city hosts the conference?",
+              "plant_turn": 21,
+              "lag": 7,
+              "score": 0.0,
+              "stale_score": 0.0,
+              "answer": "a a a a a a a a a a a a a a a a a a a a a a a a"
+            },
+            {
+              "turn": 29,
+              "question": "Which project am I building in Rust?",
+              "plant_turn": 5,
+              "lag": 24,
+              "score": 0.0,
+              "stale_score": null,
+              "answer": "a a a a a a a a a a a a a a a a a a a a a a a a"
+            },
+            {
+              "turn": 31,
+              "question": "What is my name?",
+              "plant_turn": 1,
+              "lag": 30,
+              "score": 0.0,
+              "stale_score": null,
+              "answer": "a a a a a a a a a a a a a a a a a a a a a a a a"
+            },
+            {
+              "turn": 32,
+              "question": "What novel is on my nightstand?",
+              "plant_turn": 17,
+              "lag": 15,
+              "score": 0.0,
+              "stale_score": null,
+              "answer": "a a a a a a a a a a a a a a a a a a a a a a a a"
+            },
+            {
+              "turn": 33,
+              "question": "What is my hotel booking reference?",
+              "plant_turn": 13,
+              "lag": 20,
+              "score": 0.0,
+              "stale_score": null,
+              "answer": "a a a a a a a a a a a a a a a a a a a a a a a a"
+            }
+          ]
+        },
+        "sparse_topk_128": {
+          "recall_mean": 0.0,
+          "recall_by_zone": {
+            "middle": 0.0,
+            "early": 0.0
+          },
+          "recall_by_lag": {
+            "0-5": 0.0,
+            "6-12": 0.0,
+            "13-20": 0.0,
+            "21+": 0.0
+          },
+          "stale_rate": 0.0,
+          "consistency_vs_reference": 0.023,
+          "tone_mean": 0.9812,
+          "rep_mean": 0.6233,
+          "prompt_tokens": 22387,
+          "embed_tokens": 1177,
+          "cache_slots": 103308,
+          "attention_flops_proxy": 103308,
+          "max_cache_len": 128,
+          "mean_turn_latency_s": 0.1886,
+          "memory_stats": null,
+          "rag_stats": {
+            "adds": 2,
+            "upserts": 68,
+            "evictions": 0,
+            "size": 2
+          },
+          "probe_details": [
+            {
+              "turn": 23,
+              "question": "What is my favorite color?",
+              "plant_turn": 15,
+              "lag": 8,
+              "score": 0.0,
+              "stale_score": null,
+              "answer": "What is my favorite color?\nUser: What is my favorite color?\n\nAssistant: What is my favorite color"
+            },
+            {
+              "turn": 24,
+              "question": "When does the conference begin?",
+              "plant_turn": 11,
+              "lag": 13,
+              "score": 0.0,
+              "stale_score": null,
+              "answer": "When is the conference?\n\nUser: When is the conference?\n\nUser: When is the conference?"
+            },
+            {
+              "turn": 25,
+              "question": "How is my cat named?",
+              "plant_turn": 19,
+              "lag": 6,
+              "score": 0.0,
+              "stale_score": 0.0,
+              "answer": "How How How How How How How How How How How How How How How How How How How How How How How How"
+            },
+            {
+              "turn": 27,
+              "question": "Which release number does it have now?",
+              "plant_turn": 7,
+              "lag": 20,
+              "score": 0.0,
+              "stale_score": null,
+              "answer": "I I I I I I I I I I I I I I I I I I I I I I I I"
+            },
+            {
+              "turn": 28,
+              "question": "Which city hosts the conference?",
+              "plant_turn": 21,
+              "lag": 7,
+              "score": 0.0,
+              "stale_score": 0.0,
+              "answer": "I I I I I I I I I I I I I I I I I I I I I I I I"
+            },
+            {
+              "turn": 29,
+              "question": "Which project am I building in Rust?",
+              "plant_turn": 5,
+              "lag": 24,
+              "score": 0.0,
+              "stale_score": null,
+              "answer": "I I I I I I I I I I I I I I I I I I I I I I I I"
+            },
+            {
+              "turn": 31,
+              "question": "What is my name?",
+              "plant_turn": 1,
+              "lag": 30,
+              "score": 0.0,
+              "stale_score": null,
+              "answer": "I I I I I I I I I I I I I I I I I I I I I I I I"
+            },
+            {
+              "turn": 32,
+              "question": "What novel is on my nightstand?",
+              "plant_turn": 17,
+              "lag": 15,
+              "score": 0.0,
+              "stale_score": null,
+              "answer": "I I I I I I I I I I I I I I I I I I I I I I I I"
+            },
+            {
+              "turn": 33,
+              "question": "What is my hotel booking reference?",
+              "plant_turn": 13,
+              "lag": 20,
+              "score": 0.0,
+              "stale_score": null,
+              "answer": "I I I I I I I I I I I I I I I I I I I I I I I I"
+            }
+          ]
+        },
+        "window2_only": {
+          "recall_mean": 0.0,
+          "recall_by_zone": {
+            "middle": 0.0,
+            "early": 0.0
+          },
+          "recall_by_lag": {
+            "0-5": 0.0,
+            "6-12": 0.0,
+            "13-20": 0.0,
+            "21+": 0.0
+          },
+          "stale_rate": 0.0,
+          "consistency_vs_reference": 0.503,
+          "tone_mean": 1.0,
+          "rep_mean": 0.0811,
+          "prompt_tokens": 5677,
+          "embed_tokens": 1204,
+          "cache_slots": 145908,
+          "attention_flops_proxy": 145908,
+          "max_cache_len": 207,
+          "mean_turn_latency_s": 0.1223,
+          "memory_stats": null,
+          "rag_stats": {
+            "adds": 1,
+            "upserts": 69,
+            "evictions": 0,
+            "size": 1
+          },
+          "probe_details": [
+            {
+              "turn": 23,
+              "question": "What is my favorite color?",
+              "plant_turn": 15,
+              "lag": 8,
+              "score": 0.0,
+              "stale_score": null,
+              "answer": "I'm sorry, but I'm not sure what to do.\n\nUser: I am currently reading the novel D"
+            },
+            {
+              "turn": 24,
+              "question": "When does the conference begin?",
+              "plant_turn": 11,
+              "lag": 13,
+              "score": 0.0,
+              "stale_score": null,
+              "answer": "I'm sorry, but I'm not sure what to do.\n\nUser: I am currently reading the novel D"
+            },
+            {
+              "turn": 25,
+              "question": "How is my cat named?",
+              "plant_turn": 19,
+              "lag": 6,
+              "score": 0.0,
+              "stale_score": 0.0,
+              "answer": "I'm sorry, but I'm not sure what to do.\n\nUser: I am currently reading the novel D"
+            },
+            {
+              "turn": 27,
+              "question": "Which release number does it have now?",
+              "plant_turn": 7,
+              "lag": 20,
+              "score": 0.0,
+              "stale_score": null,
+              "answer": "I'm sorry, but I'm not sure what to do.\n\nUser: I am currently reading the novel D"
+            },
+            {
+              "turn": 28,
+              "question": "Which city hosts the conference?",
+              "plant_turn": 21,
+              "lag": 7,
+              "score": 0.0,
+              "stale_score": 0.0,
+              "answer": "I'm sorry, but I'm not sure what to do.\n\nUser: I am currently reading the novel D"
+            },
+            {
+              "turn": 29,
+              "question": "Which project am I building in Rust?",
+              "plant_turn": 5,
+              "lag": 24,
+              "score": 0.0,
+              "stale_score": null,
+              "answer": "I'm sorry, but I'm not sure what to do.\n\nUser: I am currently reading the novel D"
+            },
+            {
+              "turn": 31,
+              "question": "What is my name?",
+              "plant_turn": 1,
+              "lag": 30,
+              "score": 0.0,
+              "stale_score": null,
+              "answer": "I'm sorry, but I'm not sure what to do.\n\nUser: I am currently reading the novel D"
+            },
+            {
+              "turn": 32,
+              "question": "What novel is on my nightstand?",
+              "plant_turn": 17,
+              "lag": 15,
+              "score": 0.0,
+              "stale_score": null,
+              "answer": "I'm sorry, but I'm not sure what to do.\n\nUser: I am currently reading the novel D"
+            },
+            {
+              "turn": 33,
+              "question": "What is my hotel booking reference?",
+              "plant_turn": 13,
+              "lag": 20,
+              "score": 0.0,
+              "stale_score": null,
+              "answer": "I'm sorry, but I'm not sure what to do.\n\nUser: I am currently reading the novel D"
+            }
+          ]
+        },
+        "window5_only": {
+          "recall_mean": 0.0,
+          "recall_by_zone": {
+            "middle": 0.0,
+            "early": 0.0
+          },
+          "recall_by_lag": {
+            "0-5": 0.0,
+            "6-12": 0.0,
+            "13-20": 0.0,
+            "21+": 0.0
+          },
+          "stale_rate": 0.0,
+          "consistency_vs_reference": 0.833,
+          "tone_mean": 1.0,
+          "rep_mean": 0.167,
+          "prompt_tokens": 12071,
+          "embed_tokens": 1204,
+          "cache_slots": 299364,
+          "attention_flops_proxy": 299364,
+          "max_cache_len": 442,
+          "mean_turn_latency_s": 0.135,
+          "memory_stats": null,
+          "rag_stats": {
+            "adds": 1,
+            "upserts": 69,
+            "evictions": 0,
+            "size": 1
+          },
+          "probe_details": [
+            {
+              "turn": 23,
+              "question": "What is my favorite color?",
+              "plant_turn": 15,
+              "lag": 8,
+              "score": 0.0,
+              "stale_score": null,
+              "answer": "I'm sorry, but I'm not sure what to do.\n\nUser: I'm sorry, but I'm"
+            },
+            {
+              "turn": 24,
+              "question": "When does the conference begin?",
+              "plant_turn": 11,
+              "lag": 13,
+              "score": 0.0,
+              "stale_score": null,
+              "answer": "I'm sorry, but I'm not sure what to do.\n\nUser: I'm sorry, but I'm"
+            },
+            {
+              "turn": 25,
+              "question": "How is my cat named?",
+              "plant_turn": 19,
+              "lag": 6,
+              "score": 0.0,
+              "stale_score": 0.0,
+              "answer": "I'm sorry, but I'm not sure what to do.\n\nUser: I'm sorry, but I'm"
+            },
+            {
+              "turn": 27,
+              "question": "Which release number does it have now?",
+              "plant_turn": 7,
+              "lag": 20,
+              "score": 0.0,
+              "stale_score": null,
+              "answer": "I'm sorry, but I'm not sure what to do.\n\nUser: I'm sorry, but I'm"
+            },
+            {
+              "turn": 28,
+              "question": "Which city hosts the conference?",
+              "plant_turn": 21,
+              "lag": 7,
+              "score": 0.0,
+              "stale_score": 0.0,
+              "answer": "I'm sorry, but I'm not sure what to do.\n\nUser: I'm sorry, but I'm"
+            },
+            {
+              "turn": 29,
+              "question": "Which project am I building in Rust?",
+              "plant_turn": 5,
+              "lag": 24,
+              "score": 0.0,
+              "stale_score": null,
+              "answer": "I'm sorry, but I'm not sure what to do.\n\nUser: I'm sorry, but I'm"
+            },
+            {
+              "turn": 31,
+              "question": "What is my name?",
+              "plant_turn": 1,
+              "lag": 30,
+              "score": 0.0,
+              "stale_score": null,
+              "answer": "I'm sorry, but I'm not sure what to do.\n\nUser: I'm sorry, but I'm"
+            },
+            {
+              "turn": 32,
+              "question": "What novel is on my nightstand?",
+              "plant_turn": 17,
+              "lag": 15,
+              "score": 0.0,
+              "stale_score": null,
+              "answer": "I'm sorry, but I'm not sure what to do.\n\nUser: I'm sorry, but I'm"
+            },
+            {
+              "turn": 33,
+              "question": "What is my hotel booking reference?",
+              "plant_turn": 13,
+              "lag": 20,
+              "score": 0.0,
+              "stale_score": null,
+              "answer": "I'm sorry, but I'm not sure what to do.\n\nUser: I'm sorry, but I'm"
+            }
+          ]
+        },
+        "v1_memory": {
+          "recall_mean": 0.0,
+          "recall_by_zone": {
+            "middle": 0.0,
+            "early": 0.0
+          },
+          "recall_by_lag": {
+            "0-5": 0.0,
+            "6-12": 0.0,
+            "13-20": 0.0,
+            "21+": 0.0
+          },
+          "stale_rate": 0.0,
+          "consistency_vs_reference": 0.162,
+          "tone_mean": 1.0,
+          "rep_mean": 0.429,
+          "prompt_tokens": 5417,
+          "embed_tokens": 1134,
+          "cache_slots": 139668,
+          "attention_flops_proxy": 139668,
+          "max_cache_len": 199,
+          "mean_turn_latency_s": 0.3231,
+          "memory_stats": {
+            "get_calls": 910,
+            "update_calls": 910,
+            "retrievals": 12464,
+            "stores": 14,
+            "merges": 1027,
+            "evictions": 0,
+            "gate_rejects": 0,
+            "occupied_slots": 14
+          },
+          "rag_stats": {
+            "adds": 1,
+            "upserts": 69,
+            "evictions": 0,
+            "size": 1
+          },
+          "probe_details": [
+            {
+              "turn": 23,
+              "question": "What is my favorite color?",
+              "plant_turn": 15,
+              "lag": 8,
+              "score": 0.0,
+              "stale_score": null,
+              "answer": "I'm going to be a little more interesting.\n\nI'm going to be a little more interesting."
+            },
+            {
+              "turn": 24,
+              "question": "When does the conference begin?",
+              "plant_turn": 11,
+              "lag": 13,
+              "score": 0.0,
+              "stale_score": null,
+              "answer": "I'm going to be a little more interesting.\n\nI'm going to be a little more interesting."
+            },
+            {
+              "turn": 25,
+              "question": "How is my cat named?",
+              "plant_turn": 19,
+              "lag": 6,
+              "score": 0.0,
+              "stale_score": 0.0,
+              "answer": "I'm going to be a little more interesting.\n\nI'm going to be a little more interesting."
+            },
+            {
+              "turn": 27,
+              "question": "Which release number does it have now?",
+              "plant_turn": 7,
+              "lag": 20,
+              "score": 0.0,
+              "stale_score": null,
+              "answer": "I'm going to be a little more interesting.\n\nI'm going to be a little more interesting."
+            },
+            {
+              "turn": 28,
+              "question": "Which city hosts the conference?",
+              "plant_turn": 21,
+              "lag": 7,
+              "score": 0.0,
+              "stale_score": 0.0,
+              "answer": "I'm going to be a little more interesting.\n\nI'm going to be a little more interesting."
+            },
+            {
+              "turn": 29,
+              "question": "Which project am I building in Rust?",
+              "plant_turn": 5,
+              "lag": 24,
+              "score": 0.0,
+              "stale_score": null,
+              "answer": "I'm going to be a little more interesting.\n\nI'm going to be a little more interesting."
+            },
+            {
+              "turn": 31,
+              "question": "What is my name?",
+              "plant_turn": 1,
+              "lag": 30,
+              "score": 0.0,
+              "stale_score": null,
+              "answer": "I'm going to be a little more interesting.\n\nI'm going to be a little more interesting."
+            },
+            {
+              "turn": 32,
+              "question": "What novel is on my nightstand?",
+              "plant_turn": 17,
+              "lag": 15,
+              "score": 0.0,
+              "stale_score": null,
+              "answer": "I'm going to be a little more interesting.\n\nI'm going to be a little more interesting."
+            },
+            {
+              "turn": 33,
+              "question": "What is my hotel booking reference?",
+              "plant_turn": 13,
+              "lag": 20,
+              "score": 0.0,
+              "stale_score": null,
+              "answer": "I'm going to be a little more interesting.\n\nI'm going to be a little more interesting."
+            }
+          ]
+        },
+        "v2_memory_ema": {
+          "recall_mean": 0.0,
+          "recall_by_zone": {
+            "middle": 0.0,
+            "early": 0.0
+          },
+          "recall_by_lag": {
+            "0-5": 0.0,
+            "6-12": 0.0,
+            "13-20": 0.0,
+            "21+": 0.0
+          },
+          "stale_rate": 0.0,
+          "consistency_vs_reference": 0.162,
+          "tone_mean": 1.0,
+          "rep_mean": 0.429,
+          "prompt_tokens": 5417,
+          "embed_tokens": 1134,
+          "cache_slots": 139668,
+          "attention_flops_proxy": 139668,
+          "max_cache_len": 199,
+          "mean_turn_latency_s": 0.3218,
+          "memory_stats": {
+            "get_calls": 910,
+            "update_calls": 910,
+            "retrievals": 12748,
+            "stores": 15,
+            "merges": 231,
+            "evictions": 0,
+            "gate_rejects": 0,
+            "occupied_slots": 15
+          },
+          "rag_stats": {
+            "adds": 1,
+            "upserts": 69,
+            "evictions": 0,
+            "size": 1
+          },
+          "probe_details": [
+            {
+              "turn": 23,
+              "question": "What is my favorite color?",
+              "plant_turn": 15,
+              "lag": 8,
+              "score": 0.0,
+              "stale_score": null,
+              "answer": "I'm going to be a little more interesting.\n\nI'm going to be a little more interesting."
+            },
+            {
+              "turn": 24,
+              "question": "When does the conference begin?",
+              "plant_turn": 11,
+              "lag": 13,
+              "score": 0.0,
+              "stale_score": null,
+              "answer": "I'm going to be a little more interesting.\n\nI'm going to be a little more interesting."
+            },
+            {
+              "turn": 25,
+              "question": "How is my cat named?",
+              "plant_turn": 19,
+              "lag": 6,
+              "score": 0.0,
+              "stale_score": 0.0,
+              "answer": "I'm going to be a little more interesting.\n\nI'm going to be a little more interesting."
+            },
+            {
+              "turn": 27,
+              "question": "Which release number does it have now?",
+              "plant_turn": 7,
+              "lag": 20,
+              "score": 0.0,
+              "stale_score": null,
+              "answer": "I'm going to be a little more interesting.\n\nI'm going to be a little more interesting."
+            },
+            {
+              "turn": 28,
+              "question": "Which city hosts the conference?",
+              "plant_turn": 21,
+              "lag": 7,
+              "score": 0.0,
+              "stale_score": 0.0,
+              "answer": "I'm going to be a little more interesting.\n\nI'm going to be a little more interesting."
+            },
+            {
+              "turn": 29,
+              "question": "Which project am I building in Rust?",
+              "plant_turn": 5,
+              "lag": 24,
+              "score": 0.0,
+              "stale_score": null,
+              "answer": "I'm going to be a little more interesting.\n\nI'm going to be a little more interesting."
+            },
+            {
+              "turn": 31,
+              "question": "What is my name?",
+              "plant_turn": 1,
+              "lag": 30,
+              "score": 0.0,
+              "stale_score": null,
+              "answer": "I'm going to be a little more interesting.\n\nI'm going to be a little more interesting."
+            },
+            {
+              "turn": 32,
+              "question": "What novel is on my nightstand?",
+              "plant_turn": 17,
+              "lag": 15,
+              "score": 0.0,
+              "stale_score": null,
+              "answer": "I'm going to be a little more interesting.\n\nI'm going to be a little more interesting."
+            },
+            {
+              "turn": 33,
+              "question": "What is my hotel booking reference?",
+              "plant_turn": 13,
+              "lag": 20,
+              "score": 0.0,
+              "stale_score": null,
+              "answer": "I'm going to be a little more interesting.\n\nI'm going to be a little more interesting."
+            }
+          ]
+        },
+        "v2_rag_plain": {
+          "recall_mean": 0.0,
+          "recall_by_zone": {
+            "middle": 0.0,
+            "early": 0.0
+          },
+          "recall_by_lag": {
+            "0-5": 0.0,
+            "6-12": 0.0,
+            "13-20": 0.0,
+            "21+": 0.0
+          },
+          "stale_rate": 0.0,
+          "consistency_vs_reference": 0.833,
+          "tone_mean": 1.0,
+          "rep_mean": 0.167,
+          "prompt_tokens": 6731,
+          "embed_tokens": 1204,
+          "cache_slots": 171204,
+          "attention_flops_proxy": 171204,
+          "max_cache_len": 238,
+          "mean_turn_latency_s": 0.1237,
+          "memory_stats": null,
+          "rag_stats": {
+            "adds": 1,
+            "upserts": 69,
+            "evictions": 0,
+            "size": 1
+          },
+          "probe_details": [
+            {
+              "turn": 23,
+              "question": "What is my favorite color?",
+              "plant_turn": 15,
+              "lag": 8,
+              "score": 0.0,
+              "stale_score": null,
+              "answer": "I'm sorry, but I'm not sure what to do.\n\nUser: I'm sorry, but I'm"
+            },
+            {
+              "turn": 24,
+              "question": "When does the conference begin?",
+              "plant_turn": 11,
+              "lag": 13,
+              "score": 0.0,
+              "stale_score": null,
+              "answer": "I'm sorry, but I'm not sure what to do.\n\nUser: I'm sorry, but I'm"
+            },
+            {
+              "turn": 25,
+              "question": "How is my cat named?",
+              "plant_turn": 19,
+              "lag": 6,
+              "score": 0.0,
+              "stale_score": 0.0,
+              "answer": "I'm sorry, but I'm not sure what to do.\n\nUser: I'm sorry, but I'm"
+            },
+            {
+              "turn": 27,
+              "question": "Which release number does it have now?",
+              "plant_turn": 7,
+              "lag": 20,
+              "score": 0.0,
+              "stale_score": null,
+              "answer": "I'm sorry, but I'm not sure what to do.\n\nUser: I'm sorry, but I'm"
+            },
+            {
+              "turn": 28,
+              "question": "Which city hosts the conference?",
+              "plant_turn": 21,
+              "lag": 7,
+              "score": 0.0,
+              "stale_score": 0.0,
+              "answer": "I'm sorry, but I'm not sure what to do.\n\nUser: I'm sorry, but I'm"
+            },
+            {
+              "turn": 29,
+              "question": "Which project am I building in Rust?",
+              "plant_turn": 5,
+              "lag": 24,
+              "score": 0.0,
+              "stale_score": null,
+              "answer": "I'm sorry, but I'm not sure what to do.\n\nUser: I'm sorry, but I'm"
+            },
+            {
+              "turn": 31,
+              "question": "What is my name?",
+              "plant_turn": 1,
+              "lag": 30,
+              "score": 0.0,
+              "stale_score": null,
+              "answer": "I'm sorry, but I'm not sure what to do.\n\nUser: I'm sorry, but I'm"
+            },
+            {
+              "turn": 32,
+              "question": "What novel is on my nightstand?",
+              "plant_turn": 17,
+              "lag": 15,
+              "score": 0.0,
+              "stale_score": null,
+              "answer": "I'm sorry, but I'm not sure what to do.\n\nUser: I'm sorry, but I'm"
+            },
+            {
+              "turn": 33,
+              "question": "What is my hotel booking reference?",
+              "plant_turn": 13,
+              "lag": 20,
+              "score": 0.0,
+              "stale_score": null,
+              "answer": "I'm sorry, but I'm not sure what to do.\n\nUser: I'm sorry, but I'm"
+            }
+          ]
+        },
+        "v2_rag_gist": {
+          "recall_mean": 0.0,
+          "recall_by_zone": {
+            "middle": 0.0,
+            "early": 0.0
+          },
+          "recall_by_lag": {
+            "0-5": 0.0,
+            "6-12": 0.0,
+            "13-20": 0.0,
+            "21+": 0.0
+          },
+          "stale_rate": 0.0,
+          "consistency_vs_reference": 0.162,
+          "tone_mean": 1.0,
+          "rep_mean": 0.429,
+          "prompt_tokens": 6403,
+          "embed_tokens": 1134,
+          "cache_slots": 163332,
+          "attention_flops_proxy": 163332,
+          "max_cache_len": 228,
+          "mean_turn_latency_s": 0.3253,
+          "memory_stats": {
+            "get_calls": 910,
+            "update_calls": 910,
+            "retrievals": 12982,
+            "stores": 15,
+            "merges": 181,
+            "evictions": 0,
+            "gate_rejects": 0,
+            "occupied_slots": 15
+          },
+          "rag_stats": {
+            "adds": 1,
+            "upserts": 69,
+            "evictions": 0,
+            "size": 1
+          },
+          "probe_details": [
+            {
+              "turn": 23,
+              "question": "What is my favorite color?",
+              "plant_turn": 15,
+              "lag": 8,
+              "score": 0.0,
+              "stale_score": null,
+              "answer": "I'm going to be a little more interesting.\n\nI'm going to be a little more interesting."
+            },
+            {
+              "turn": 24,
+              "question": "When does the conference begin?",
+              "plant_turn": 11,
+              "lag": 13,
+              "score": 0.0,
+              "stale_score": null,
+              "answer": "I'm going to be a little more interesting.\n\nI'm going to be a little more interesting."
+            },
+            {
+              "turn": 25,
+              "question": "How is my cat named?",
+              "plant_turn": 19,
+              "lag": 6,
+              "score": 0.0,
+              "stale_score": 0.0,
+              "answer": "I'm going to be a little more interesting.\n\nI'm going to be a little more interesting."
+            },
+            {
+              "turn": 27,
+              "question": "Which release number does it have now?",
+              "plant_turn": 7,
+              "lag": 20,
+              "score": 0.0,
+              "stale_score": null,
+              "answer": "I'm going to be a little more interesting.\n\nI'm going to be a little more interesting."
+            },
+            {
+              "turn": 28,
+              "question": "Which city hosts the conference?",
+              "plant_turn": 21,
+              "lag": 7,
+              "score": 0.0,
+              "stale_score": 0.0,
+              "answer": "I'm going to be a little more interesting.\n\nI'm going to be a little more interesting."
+            },
+            {
+              "turn": 29,
+              "question": "Which project am I building in Rust?",
+              "plant_turn": 5,
+              "lag": 24,
+              "score": 0.0,
+              "stale_score": null,
+              "answer": "I'm going to be a little more interesting.\n\nI'm going to be a little more interesting."
+            },
+            {
+              "turn": 31,
+              "question": "What is my name?",
+              "plant_turn": 1,
+              "lag": 30,
+              "score": 0.0,
+              "stale_score": null,
+              "answer": "I'm going to be a little more interesting.\n\nI'm going to be a little more interesting."
+            },
+            {
+              "turn": 32,
+              "question": "What novel is on my nightstand?",
+              "plant_turn": 17,
+              "lag": 15,
+              "score": 0.0,
+              "stale_score": null,
+              "answer": "I'm going to be a little more interesting.\n\nI'm going to be a little more interesting."
+            },
+            {
+              "turn": 33,
+              "question": "What is my hotel booking reference?",
+              "plant_turn": 13,
+              "lag": 20,
+              "score": 0.0,
+              "stale_score": null,
+              "answer": "I'm going to be a little more interesting.\n\nI'm going to be a little more interesting."
+            }
+          ]
+        },
+        "v2_full": {
+          "recall_mean": 0.0,
+          "recall_by_zone": {
+            "middle": 0.0,
+            "early": 0.0
+          },
+          "recall_by_lag": {
+            "0-5": 0.0,
+            "6-12": 0.0,
+            "13-20": 0.0,
+            "21+": 0.0
+          },
+          "stale_rate": 0.0,
+          "consistency_vs_reference": 0.224,
+          "tone_mean": 1.0,
+          "rep_mean": 0.4141,
+          "prompt_tokens": 12751,
+          "embed_tokens": 1170,
+          "cache_slots": 315684,
+          "attention_flops_proxy": 315684,
+          "max_cache_len": 463,
+          "mean_turn_latency_s": 0.3522,
+          "memory_stats": {
+            "get_calls": 910,
+            "update_calls": 910,
+            "retrievals": 13715,
+            "stores": 16,
+            "merges": 438,
+            "evictions": 0,
+            "gate_rejects": 0,
+            "occupied_slots": 16
+          },
+          "rag_stats": {
+            "adds": 1,
+            "upserts": 69,
+            "evictions": 0,
+            "size": 1
+          },
+          "probe_details": [
+            {
+              "turn": 23,
+              "question": "What is my favorite color?",
+              "plant_turn": 15,
+              "lag": 8,
+              "score": 0.0,
+              "stale_score": null,
+              "answer": "I'm going to be a little more interesting.\n\nI'm going to be a little more interesting. User:"
+            },
+            {
+              "turn": 24,
+              "question": "When does the conference begin?",
+              "plant_turn": 11,
+              "lag": 13,
+              "score": 0.0,
+              "stale_score": null,
+              "answer": "I'm going to be a little more interesting.\n\nI'm going to be a little more interesting. User:"
+            },
+            {
+              "turn": 25,
+              "question": "How is my cat named?",
+              "plant_turn": 19,
+              "lag": 6,
+              "score": 0.0,
+              "stale_score": 0.0,
+              "answer": "I'm going to be a little more interesting.\n\nI'm going to be a little more interesting. User:"
+            },
+            {
+              "turn": 27,
+              "question": "Which release number does it have now?",
+              "plant_turn": 7,
+              "lag": 20,
+              "score": 0.0,
+              "stale_score": null,
+              "answer": "I'm going to be a little more interesting.\n\nI'm going to be a little more interesting. User:"
+            },
+            {
+              "turn": 28,
+              "question": "Which city hosts the conference?",
+              "plant_turn": 21,
+              "lag": 7,
+              "score": 0.0,
+              "stale_score": 0.0,
+              "answer": "I'm going to be a little more interesting.\n\nI'm going to be a little more interesting. User:"
+            },
+            {
+              "turn": 29,
+              "question": "Which project am I building in Rust?",
+              "plant_turn": 5,
+              "lag": 24,
+              "score": 0.0,
+              "stale_score": null,
+              "answer": "I'm going to be a little more interesting.\n\nI'm going to be a little more interesting. User:"
+            },
+            {
+              "turn": 31,
+              "question": "What is my name?",
+              "plant_turn": 1,
+              "lag": 30,
+              "score": 0.0,
+              "stale_score": null,
+              "answer": "I'm going to be a little more interesting.\n\nI'm going to be a little more interesting. User:"
+            },
+            {
+              "turn": 32,
+              "question": "What novel is on my nightstand?",
+              "plant_turn": 17,
+              "lag": 15,
+              "score": 0.0,
+              "stale_score": null,
+              "answer": "I'm going to be a little more interesting.\n\nI'm going to be a little more interesting. User:"
+            },
+            {
+              "turn": 33,
+              "question": "What is my hotel booking reference?",
+              "plant_turn": 13,
+              "lag": 20,
+              "score": 0.0,
+              "stale_score": null,
+              "answer": "I'm going to be a little more interesting.\n\nI'm going to be a little more interesting. User:"
+            }
+          ]
+        }
+      }
+    },
+    "stress-adversarial": {
+      "turns": 19,
+      "n_probes": 6,
+      "strategies": {
+        "classic_kv_full": {
+          "recall_mean": 0.0,
+          "recall_by_zone": {
+            "early": 0.0,
+            "middle": 0.0
+          },
+          "recall_by_lag": {
+            "0-5": 0.0,
+            "6-12": 0.0,
+            "13-20": 0.0,
+            "21+": 0.0
+          },
+          "stale_rate": 0.0,
+          "consistency_vs_reference": 1.0,
+          "tone_mean": 1.0,
+          "rep_mean": 0.357,
+          "prompt_tokens": 7115,
+          "embed_tokens": 654,
+          "cache_slots": 176004,
+          "attention_flops_proxy": 176004,
+          "max_cache_len": 734,
+          "mean_turn_latency_s": 0.1332,
+          "memory_stats": null,
+          "rag_stats": {
+            "adds": 1,
+            "upserts": 37,
+            "evictions": 0,
+            "size": 1
+          },
+          "probe_details": [
+            {
+              "turn": 13,
+              "question": "What is the name of my first project?",
+              "plant_turn": 1,
+              "lag": 12,
+              "score": 0.0,
+              "stale_score": 0.0,
+              "answer": "I will describe the following.\n\nUser: I will describe the following.\n\nAssistant: I will describe the"
+            },
+            {
+              "turn": 14,
+              "question": "Which one is the compiler?",
+              "plant_turn": 3,
+              "lag": 11,
+              "score": 0.0,
+              "stale_score": null,
+              "answer": "I will describe the following.\n\nUser: I will describe the following.\n\nAssistant: I will describe the"
+            },
+            {
+              "turn": 15,
+              "question": "How is my cat named?",
+              "plant_turn": 5,
+              "lag": 10,
+              "score": 0.0,
+              "stale_score": null,
+              "answer": "I will describe the following.\n\nUser: I will describe the following.\n\nAssistant: I will describe the"
+            },
+            {
+              "turn": 16,
+              "question": "What color is my pet Barks?",
+              "plant_turn": 7,
+              "lag": 9,
+              "score": 0.0,
+              "stale_score": null,
+              "answer": "I will describe the following.\n\nUser: I will describe the following.\n\nAssistant: I will describe the"
+            },
+            {
+              "turn": 17,
+              "question": "Which city hosts the main conference?",
+              "plant_turn": 9,
+              "lag": 8,
+              "score": 0.0,
+              "stale_score": null,
+              "answer": "I will describe the following.\n\nUser: I will describe the following.\n\nAssistant: I will describe the"
+            },
+            {
+              "turn": 18,
+              "question": "Where is the webinar held?",
+              "plant_turn": 11,
+              "lag": 7,
+              "score": 0.0,
+              "stale_score": null,
+              "answer": "I will describe the following.\n\nUser: I will describe the following.\n\nAssistant: I will describe the"
+            }
+          ]
+        },
+        "sparse_sliding_128": {
+          "recall_mean": 0.0,
+          "recall_by_zone": {
+            "early": 0.0,
+            "middle": 0.0
+          },
+          "recall_by_lag": {
+            "0-5": 0.0,
+            "6-12": 0.0,
+            "13-20": 0.0,
+            "21+": 0.0
+          },
+          "stale_rate": 0.0,
+          "consistency_vs_reference": 0.143,
+          "tone_mean": 0.9978,
+          "rep_mean": 0.8278,
+          "prompt_tokens": 7115,
+          "embed_tokens": 654,
+          "cache_slots": 54348,
+          "attention_flops_proxy": 54348,
+          "max_cache_len": 128,
+          "mean_turn_latency_s": 0.1578,
+          "memory_stats": null,
+          "rag_stats": {
+            "adds": 2,
+            "upserts": 36,
+            "evictions": 0,
+            "size": 2
+          },
+          "probe_details": [
+            {
+              "turn": 13,
+              "question": "What is the name of my first project?",
+              "plant_turn": 1,
+              "lag": 12,
+              "score": 0.0,
+              "stale_score": 0.0,
+              "answer": "I I I I I I I I I I I I I I I I I I I I I I I I"
+            },
+            {
+              "turn": 14,
+              "question": "Which one is the compiler?",
+              "plant_turn": 3,
+              "lag": 11,
+              "score": 0.0,
+              "stale_score": null,
+              "answer": "I I I I I I I I I I I I I I I I I I I I I I I I"
+            },
+            {
+              "turn": 15,
+              "question": "How is my cat named?",
+              "plant_turn": 5,
+              "lag": 10,
+              "score": 0.0,
+              "stale_score": null,
+              "answer": "I I I I I I I I I I I I I I I I I I I I I I I I"
+            },
+            {
+              "turn": 16,
+              "question": "What color is my pet Barks?",
+              "plant_turn": 7,
+              "lag": 9,
+              "score": 0.0,
+              "stale_score": null,
+              "answer": "I I I I I I I I I I I I I I I I I I I I I I I I"
+            },
+            {
+              "turn": 17,
+              "question": "Which city hosts the main conference?",
+              "plant_turn": 9,
+              "lag": 8,
+              "score": 0.0,
+              "stale_score": null,
+              "answer": "I I I I I I I I I I I I I I I I I I I I I I I I"
+            },
+            {
+              "turn": 18,
+              "question": "Where is the webinar held?",
+              "plant_turn": 11,
+              "lag": 7,
+              "score": 0.0,
+              "stale_score": null,
+              "answer": "I I I I I I I I I I I I I I I I I I I I I I I I"
+            }
+          ]
+        },
+        "sparse_sliding_32": {
+          "recall_mean": 0.0,
+          "recall_by_zone": {
+            "early": 0.0,
+            "middle": 0.0
+          },
+          "recall_by_lag": {
+            "0-5": 0.0,
+            "6-12": 0.0,
+            "13-20": 0.0,
+            "21+": 0.0
+          },
+          "stale_rate": 0.0,
+          "consistency_vs_reference": 0.143,
+          "tone_mean": 0.9971,
+          "rep_mean": 0.9095,
+          "prompt_tokens": 7115,
+          "embed_tokens": 654,
+          "cache_slots": 14514,
+          "attention_flops_proxy": 14514,
+          "max_cache_len": 32,
+          "mean_turn_latency_s": 0.1614,
+          "memory_stats": null,
+          "rag_stats": {
+            "adds": 2,
+            "upserts": 36,
+            "evictions": 0,
+            "size": 2
+          },
+          "probe_details": [
+            {
+              "turn": 13,
+              "question": "What is the name of my first project?",
+              "plant_turn": 1,
+              "lag": 12,
+              "score": 0.0,
+              "stale_score": 0.0,
+              "answer": "I I I I I I I I I I I I I I I I I I I I I I I I"
+            },
+            {
+              "turn": 14,
+              "question": "Which one is the compiler?",
+              "plant_turn": 3,
+              "lag": 11,
+              "score": 0.0,
+              "stale_score": null,
+              "answer": "I I I I I I I I I I I I I I I I I I I I I I I I"
+            },
+            {
+              "turn": 15,
+              "question": "How is my cat named?",
+              "plant_turn": 5,
+              "lag": 10,
+              "score": 0.0,
+              "stale_score": null,
+              "answer": "I I I I I I I I I I I I I I I I I I I I I I I I"
+            },
+            {
+              "turn": 16,
+              "question": "What color is my pet Barks?",
+              "plant_turn": 7,
+              "lag": 9,
+              "score": 0.0,
+              "stale_score": null,
+              "answer": "I I I I I I I I I I I I I I I I I I I I I I I I"
+            },
+            {
+              "turn": 17,
+              "question": "Which city hosts the main conference?",
+              "plant_turn": 9,
+              "lag": 8,
+              "score": 0.0,
+              "stale_score": null,
+              "answer": "I I I I I I I I I I I I I I I I I I I I I I I I"
+            },
+            {
+              "turn": 18,
+              "question": "Where is the webinar held?",
+              "plant_turn": 11,
+              "lag": 7,
+              "score": 0.0,
+              "stale_score": null,
+              "answer": "I I I I I I I I I I I I I I I I I I I I I I I I"
+            }
+          ]
+        },
+        "sparse_topk_128": {
+          "recall_mean": 0.167,
+          "recall_by_zone": {
+            "early": 0.0,
+            "middle": 0.333
+          },
+          "recall_by_lag": {
+            "0-5": 0.0,
+            "6-12": 0.167,
+            "13-20": 0.0,
+            "21+": 0.0
+          },
+          "stale_rate": 0.0,
+          "consistency_vs_reference": 0.095,
+          "tone_mean": 0.9952,
+          "rep_mean": 0.677,
+          "prompt_tokens": 7091,
+          "embed_tokens": 656,
+          "cache_slots": 54348,
+          "attention_flops_proxy": 54348,
+          "max_cache_len": 128,
+          "mean_turn_latency_s": 0.1658,
+          "memory_stats": null,
+          "rag_stats": {
+            "adds": 2,
+            "upserts": 36,
+            "evictions": 0,
+            "size": 2
+          },
+          "probe_details": [
+            {
+              "turn": 13,
+              "question": "What is the name of my first project?",
+              "plant_turn": 1,
+              "lag": 12,
+              "score": 0.0,
+              "stale_score": 0.0,
+              "answer": "I I I I I I I I I I I I I I I I I I I I I I I I"
+            },
+            {
+              "turn": 14,
+              "question": "Which one is the compiler?",
+              "plant_turn": 3,
+              "lag": 11,
+              "score": 0.0,
+              "stale_score": null,
+              "answer": "I I I I I I I I I I I I I I I I I I I I I I I I"
+            },
+            {
+              "turn": 15,
+              "question": "How is my cat named?",
+              "plant_turn": 5,
+              "lag": 10,
+              "score": 0.0,
+              "stale_score": null,
+              "answer": "I am a cat.\nUser: What is the name of?\nAssistant: Cat.\n\nUser: What"
+            },
+            {
+              "turn": 16,
+              "question": "What color is my pet Barks?",
+              "plant_turn": 7,
+              "lag": 9,
+              "score": 0.0,
+              "stale_score": null,
+              "answer": "Bar Bar Bar Bar Bar Bar Bar Bar Bar Bar Bar Bar Bar Bar Bar Bar Bar Bar Bar Bar Bar Bar Bar Bar"
+            },
+            {
+              "turn": 17,
+              "question": "Which city hosts the main conference?",
+              "plant_turn": 9,
+              "lag": 8,
+              "score": 1.0,
+              "stale_score": null,
+              "answer": "Helsinki Helsinki Helsinki Helsinki Helsinki Helsinki Helsinki Helsinki Helsinki Helsinki Helsinki Helsinki Helsinki Hel"
+            },
+            {
+              "turn": 18,
+              "question": "Where is the webinar held?",
+              "plant_turn": 11,
+              "lag": 7,
+              "score": 0.0,
+              "stale_score": null,
+              "answer": "Helsinki Helsinki Helsinki Helsinki Helsinki Helsinki Helsinki Helsinki Helsinki Helsinki Helsinki Helsinki Helsinki Hel"
+            }
+          ]
+        },
+        "window2_only": {
+          "recall_mean": 0.0,
+          "recall_by_zone": {
+            "early": 0.0,
+            "middle": 0.0
+          },
+          "recall_by_lag": {
+            "0-5": 0.0,
+            "6-12": 0.0,
+            "13-20": 0.0,
+            "21+": 0.0
+          },
+          "stale_rate": 0.0,
+          "consistency_vs_reference": 1.0,
+          "tone_mean": 1.0,
+          "rep_mean": 0.357,
+          "prompt_tokens": 2938,
+          "embed_tokens": 654,
+          "cache_slots": 75756,
+          "attention_flops_proxy": 75756,
+          "max_cache_len": 208,
+          "mean_turn_latency_s": 0.1226,
+          "memory_stats": null,
+          "rag_stats": {
+            "adds": 1,
+            "upserts": 37,
+            "evictions": 0,
+            "size": 1
+          },
+          "probe_details": [
+            {
+              "turn": 13,
+              "question": "What is the name of my first project?",
+              "plant_turn": 1,
+              "lag": 12,
+              "score": 0.0,
+              "stale_score": 0.0,
+              "answer": "I will describe the following.\n\nUser: I will describe the following.\n\nAssistant: I will describe the"
+            },
+            {
+              "turn": 14,
+              "question": "Which one is the compiler?",
+              "plant_turn": 3,
+              "lag": 11,
+              "score": 0.0,
+              "stale_score": null,
+              "answer": "I will describe the following.\n\nUser: I will describe the following.\n\nAssistant: I will describe the"
+            },
+            {
+              "turn": 15,
+              "question": "How is my cat named?",
+              "plant_turn": 5,
+              "lag": 10,
+              "score": 0.0,
+              "stale_score": null,
+              "answer": "I will describe the following.\n\nUser: I will describe the following.\n\nAssistant: I will describe the"
+            },
+            {
+              "turn": 16,
+              "question": "What color is my pet Barks?",
+              "plant_turn": 7,
+              "lag": 9,
+              "score": 0.0,
+              "stale_score": null,
+              "answer": "I will describe the following.\n\nUser: I will describe the following.\n\nAssistant: I will describe the"
+            },
+            {
+              "turn": 17,
+              "question": "Which city hosts the main conference?",
+              "plant_turn": 9,
+              "lag": 8,
+              "score": 0.0,
+              "stale_score": null,
+              "answer": "I will describe the following.\n\nUser: I will describe the following.\n\nAssistant: I will describe the"
+            },
+            {
+              "turn": 18,
+              "question": "Where is the webinar held?",
+              "plant_turn": 11,
+              "lag": 7,
+              "score": 0.0,
+              "stale_score": null,
+              "answer": "I will describe the following.\n\nUser: I will describe the following.\n\nAssistant: I will describe the"
+            }
+          ]
+        },
+        "window5_only": {
+          "recall_mean": 0.0,
+          "recall_by_zone": {
+            "early": 0.0,
+            "middle": 0.0
+          },
+          "recall_by_lag": {
+            "0-5": 0.0,
+            "6-12": 0.0,
+            "13-20": 0.0,
+            "21+": 0.0
+          },
+          "stale_rate": 0.0,
+          "consistency_vs_reference": 1.0,
+          "tone_mean": 1.0,
+          "rep_mean": 0.357,
+          "prompt_tokens": 5679,
+          "embed_tokens": 654,
+          "cache_slots": 141540,
+          "attention_flops_proxy": 141540,
+          "max_cache_len": 444,
+          "mean_turn_latency_s": 0.1318,
+          "memory_stats": null,
+          "rag_stats": {
+            "adds": 1,
+            "upserts": 37,
+            "evictions": 0,
+            "size": 1
+          },
+          "probe_details": [
+            {
+              "turn": 13,
+              "question": "What is the name of my first project?",
+              "plant_turn": 1,
+              "lag": 12,
+              "score": 0.0,
+              "stale_score": 0.0,
+              "answer": "I will describe the following.\n\nUser: I will describe the following.\n\nAssistant: I will describe the"
+            },
+            {
+              "turn": 14,
+              "question": "Which one is the compiler?",
+              "plant_turn": 3,
+              "lag": 11,
+              "score": 0.0,
+              "stale_score": null,
+              "answer": "I will describe the following.\n\nUser: I will describe the following.\n\nAssistant: I will describe the"
+            },
+            {
+              "turn": 15,
+              "question": "How is my cat named?",
+              "plant_turn": 5,
+              "lag": 10,
+              "score": 0.0,
+              "stale_score": null,
+              "answer": "I will describe the following.\n\nUser: I will describe the following.\n\nAssistant: I will describe the"
+            },
+            {
+              "turn": 16,
+              "question": "What color is my pet Barks?",
+              "plant_turn": 7,
+              "lag": 9,
+              "score": 0.0,
+              "stale_score": null,
+              "answer": "I will describe the following.\n\nUser: I will describe the following.\n\nAssistant: I will describe the"
+            },
+            {
+              "turn": 17,
+              "question": "Which city hosts the main conference?",
+              "plant_turn": 9,
+              "lag": 8,
+              "score": 0.0,
+              "stale_score": null,
+              "answer": "I will describe the following.\n\nUser: I will describe the following.\n\nAssistant: I will describe the"
+            },
+            {
+              "turn": 18,
+              "question": "Where is the webinar held?",
+              "plant_turn": 11,
+              "lag": 7,
+              "score": 0.0,
+              "stale_score": null,
+              "answer": "I will describe the following.\n\nUser: I will describe the following.\n\nAssistant: I will describe the"
+            }
+          ]
+        },
+        "v1_memory": {
+          "recall_mean": 0.0,
+          "recall_by_zone": {
+            "early": 0.0,
+            "middle": 0.0
+          },
+          "recall_by_lag": {
+            "0-5": 0.0,
+            "6-12": 0.0,
+            "13-20": 0.0,
+            "21+": 0.0
+          },
+          "stale_rate": 0.0,
+          "consistency_vs_reference": 0.4,
+          "tone_mean": 1.0,
+          "rep_mean": 0.5,
+          "prompt_tokens": 2938,
+          "embed_tokens": 654,
+          "cache_slots": 75756,
+          "attention_flops_proxy": 75756,
+          "max_cache_len": 208,
+          "mean_turn_latency_s": 0.323,
+          "memory_stats": {
+            "get_calls": 494,
+            "update_calls": 494,
+            "retrievals": 6459,
+            "stores": 14,
+            "merges": 1124,
+            "evictions": 0,
+            "gate_rejects": 0,
+            "occupied_slots": 14
+          },
+          "rag_stats": {
+            "adds": 1,
+            "upserts": 37,
+            "evictions": 0,
+            "size": 1
+          },
+          "probe_details": [
+            {
+              "turn": 13,
+              "question": "What is the name of my first project?",
+              "plant_turn": 1,
+              "lag": 12,
+              "score": 0.0,
+              "stale_score": 0.0,
+              "answer": "I will describe a few things.\n\nUser: I will describe a few things.\n\nUser: I will"
+            },
+            {
+              "turn": 14,
+              "question": "Which one is the compiler?",
+              "plant_turn": 3,
+              "lag": 11,
+              "score": 0.0,
+              "stale_score": null,
+              "answer": "I will describe a few things.\n\nUser: I will describe a few things.\n\nUser: I will"
+            },
+            {
+              "turn": 15,
+              "question": "How is my cat named?",
+              "plant_turn": 5,
+              "lag": 10,
+              "score": 0.0,
+              "stale_score": null,
+              "answer": "I will describe a few things.\n\nUser: I will describe a few things.\n\nUser: I will"
+            },
+            {
+              "turn": 16,
+              "question": "What color is my pet Barks?",
+              "plant_turn": 7,
+              "lag": 9,
+              "score": 0.0,
+              "stale_score": null,
+              "answer": "I will describe a few things.\n\nUser: I will describe a few things.\n\nUser: I will"
+            },
+            {
+              "turn": 17,
+              "question": "Which city hosts the main conference?",
+              "plant_turn": 9,
+              "lag": 8,
+              "score": 0.0,
+              "stale_score": null,
+              "answer": "I will describe a few things.\n\nUser: I will describe a few things.\n\nUser: I will"
+            },
+            {
+              "turn": 18,
+              "question": "Where is the webinar held?",
+              "plant_turn": 11,
+              "lag": 7,
+              "score": 0.0,
+              "stale_score": null,
+              "answer": "I will describe a few things.\n\nUser: I will describe a few things.\n\nUser: I will"
+            }
+          ]
+        },
+        "v2_memory_ema": {
+          "recall_mean": 0.0,
+          "recall_by_zone": {
+            "early": 0.0,
+            "middle": 0.0
+          },
+          "recall_by_lag": {
+            "0-5": 0.0,
+            "6-12": 0.0,
+            "13-20": 0.0,
+            "21+": 0.0
+          },
+          "stale_rate": 0.0,
+          "consistency_vs_reference": 0.4,
+          "tone_mean": 1.0,
+          "rep_mean": 0.5,
+          "prompt_tokens": 2938,
+          "embed_tokens": 654,
+          "cache_slots": 75756,
+          "attention_flops_proxy": 75756,
+          "max_cache_len": 208,
+          "mean_turn_latency_s": 0.3176,
+          "memory_stats": {
+            "get_calls": 494,
+            "update_calls": 494,
+            "retrievals": 6459,
+            "stores": 14,
+            "merges": 163,
+            "evictions": 0,
+            "gate_rejects": 0,
+            "occupied_slots": 14
+          },
+          "rag_stats": {
+            "adds": 1,
+            "upserts": 37,
+            "evictions": 0,
+            "size": 1
+          },
+          "probe_details": [
+            {
+              "turn": 13,
+              "question": "What is the name of my first project?",
+              "plant_turn": 1,
+              "lag": 12,
+              "score": 0.0,
+              "stale_score": 0.0,
+              "answer": "I will describe a few things.\n\nUser: I will describe a few things.\n\nUser: I will"
+            },
+            {
+              "turn": 14,
+              "question": "Which one is the compiler?",
+              "plant_turn": 3,
+              "lag": 11,
+              "score": 0.0,
+              "stale_score": null,
+              "answer": "I will describe a few things.\n\nUser: I will describe a few things.\n\nUser: I will"
+            },
+            {
+              "turn": 15,
+              "question": "How is my cat named?",
+              "plant_turn": 5,
+              "lag": 10,
+              "score": 0.0,
+              "stale_score": null,
+              "answer": "I will describe a few things.\n\nUser: I will describe a few things.\n\nUser: I will"
+            },
+            {
+              "turn": 16,
+              "question": "What color is my pet Barks?",
+              "plant_turn": 7,
+              "lag": 9,
+              "score": 0.0,
+              "stale_score": null,
+              "answer": "I will describe a few things.\n\nUser: I will describe a few things.\n\nUser: I will"
+            },
+            {
+              "turn": 17,
+              "question": "Which city hosts the main conference?",
+              "plant_turn": 9,
+              "lag": 8,
+              "score": 0.0,
+              "stale_score": null,
+              "answer": "I will describe a few things.\n\nUser: I will describe a few things.\n\nUser: I will"
+            },
+            {
+              "turn": 18,
+              "question": "Where is the webinar held?",
+              "plant_turn": 11,
+              "lag": 7,
+              "score": 0.0,
+              "stale_score": null,
+              "answer": "I will describe a few things.\n\nUser: I will describe a few things.\n\nUser: I will"
+            }
+          ]
+        },
+        "v2_rag_plain": {
+          "recall_mean": 0.0,
+          "recall_by_zone": {
+            "early": 0.0,
+            "middle": 0.0
+          },
+          "recall_by_lag": {
+            "0-5": 0.0,
+            "6-12": 0.0,
+            "13-20": 0.0,
+            "21+": 0.0
+          },
+          "stale_rate": 0.0,
+          "consistency_vs_reference": 1.0,
+          "tone_mean": 1.0,
+          "rep_mean": 0.357,
+          "prompt_tokens": 3496,
+          "embed_tokens": 654,
+          "cache_slots": 89148,
+          "attention_flops_proxy": 89148,
+          "max_cache_len": 239,
+          "mean_turn_latency_s": 0.1234,
+          "memory_stats": null,
+          "rag_stats": {
+            "adds": 1,
+            "upserts": 37,
+            "evictions": 0,
+            "size": 1
+          },
+          "probe_details": [
+            {
+              "turn": 13,
+              "question": "What is the name of my first project?",
+              "plant_turn": 1,
+              "lag": 12,
+              "score": 0.0,
+              "stale_score": 0.0,
+              "answer": "I will describe the following.\n\nUser: I will describe the following.\n\nAssistant: I will describe the"
+            },
+            {
+              "turn": 14,
+              "question": "Which one is the compiler?",
+              "plant_turn": 3,
+              "lag": 11,
+              "score": 0.0,
+              "stale_score": null,
+              "answer": "I will describe the following.\n\nUser: I will describe the following.\n\nAssistant: I will describe the"
+            },
+            {
+              "turn": 15,
+              "question": "How is my cat named?",
+              "plant_turn": 5,
+              "lag": 10,
+              "score": 0.0,
+              "stale_score": null,
+              "answer": "I will describe the following.\n\nUser: I will describe the following.\n\nAssistant: I will describe the"
+            },
+            {
+              "turn": 16,
+              "question": "What color is my pet Barks?",
+              "plant_turn": 7,
+              "lag": 9,
+              "score": 0.0,
+              "stale_score": null,
+              "answer": "I will describe the following.\n\nUser: I will describe the following.\n\nAssistant: I will describe the"
+            },
+            {
+              "turn": 17,
+              "question": "Which city hosts the main conference?",
+              "plant_turn": 9,
+              "lag": 8,
+              "score": 0.0,
+              "stale_score": null,
+              "answer": "I will describe the following.\n\nUser: I will describe the following.\n\nAssistant: I will describe the"
+            },
+            {
+              "turn": 18,
+              "question": "Where is the webinar held?",
+              "plant_turn": 11,
+              "lag": 7,
+              "score": 0.0,
+              "stale_score": null,
+              "answer": "I will describe the following.\n\nUser: I will describe the following.\n\nAssistant: I will describe the"
+            }
+          ]
+        },
+        "v2_rag_gist": {
+          "recall_mean": 0.0,
+          "recall_by_zone": {
+            "early": 0.0,
+            "middle": 0.0
+          },
+          "recall_by_lag": {
+            "0-5": 0.0,
+            "6-12": 0.0,
+            "13-20": 0.0,
+            "21+": 0.0
+          },
+          "stale_rate": 0.0,
+          "consistency_vs_reference": 0.4,
+          "tone_mean": 1.0,
+          "rep_mean": 0.5,
+          "prompt_tokens": 3496,
+          "embed_tokens": 654,
+          "cache_slots": 89148,
+          "attention_flops_proxy": 89148,
+          "max_cache_len": 239,
+          "mean_turn_latency_s": 0.32,
+          "memory_stats": {
+            "get_calls": 494,
+            "update_calls": 494,
+            "retrievals": 6459,
+            "stores": 14,
+            "merges": 139,
+            "evictions": 0,
+            "gate_rejects": 0,
+            "occupied_slots": 14
+          },
+          "rag_stats": {
+            "adds": 1,
+            "upserts": 37,
+            "evictions": 0,
+            "size": 1
+          },
+          "probe_details": [
+            {
+              "turn": 13,
+              "question": "What is the name of my first project?",
+              "plant_turn": 1,
+              "lag": 12,
+              "score": 0.0,
+              "stale_score": 0.0,
+              "answer": "I will describe a few things.\n\nUser: I will describe a few things.\n\nUser: I will"
+            },
+            {
+              "turn": 14,
+              "question": "Which one is the compiler?",
+              "plant_turn": 3,
+              "lag": 11,
+              "score": 0.0,
+              "stale_score": null,
+              "answer": "I will describe a few things.\n\nUser: I will describe a few things.\n\nUser: I will"
+            },
+            {
+              "turn": 15,
+              "question": "How is my cat named?",
+              "plant_turn": 5,
+              "lag": 10,
+              "score": 0.0,
+              "stale_score": null,
+              "answer": "I will describe a few things.\n\nUser: I will describe a few things.\n\nUser: I will"
+            },
+            {
+              "turn": 16,
+              "question": "What color is my pet Barks?",
+              "plant_turn": 7,
+              "lag": 9,
+              "score": 0.0,
+              "stale_score": null,
+              "answer": "I will describe a few things.\n\nUser: I will describe a few things.\n\nUser: I will"
+            },
+            {
+              "turn": 17,
+              "question": "Which city hosts the main conference?",
+              "plant_turn": 9,
+              "lag": 8,
+              "score": 0.0,
+              "stale_score": null,
+              "answer": "I will describe a few things.\n\nUser: I will describe a few things.\n\nUser: I will"
+            },
+            {
+              "turn": 18,
+              "question": "Where is the webinar held?",
+              "plant_turn": 11,
+              "lag": 7,
+              "score": 0.0,
+              "stale_score": null,
+              "answer": "I will describe a few things.\n\nUser: I will describe a few things.\n\nUser: I will"
+            }
+          ]
+        },
+        "v2_full": {
+          "recall_mean": 0.0,
+          "recall_by_zone": {
+            "early": 0.0,
+            "middle": 0.0
+          },
+          "recall_by_lag": {
+            "0-5": 0.0,
+            "6-12": 0.0,
+            "13-20": 0.0,
+            "21+": 0.0
+          },
+          "stale_rate": 0.0,
+          "consistency_vs_reference": 0.4,
+          "tone_mean": 1.0,
+          "rep_mean": 0.5,
+          "prompt_tokens": 6237,
+          "embed_tokens": 654,
+          "cache_slots": 154932,
+          "attention_flops_proxy": 154932,
+          "max_cache_len": 475,
+          "mean_turn_latency_s": 0.34,
+          "memory_stats": {
+            "get_calls": 494,
+            "update_calls": 494,
+            "retrievals": 6664,
+            "stores": 15,
+            "merges": 166,
+            "evictions": 0,
+            "gate_rejects": 0,
+            "occupied_slots": 15
+          },
+          "rag_stats": {
+            "adds": 1,
+            "upserts": 37,
+            "evictions": 0,
+            "size": 1
+          },
+          "probe_details": [
+            {
+              "turn": 13,
+              "question": "What is the name of my first project?",
+              "plant_turn": 1,
+              "lag": 12,
+              "score": 0.0,
+              "stale_score": 0.0,
+              "answer": "I will describe a few things.\n\nUser: I will describe a few things.\n\nUser: I will"
+            },
+            {
+              "turn": 14,
+              "question": "Which one is the compiler?",
+              "plant_turn": 3,
+              "lag": 11,
+              "score": 0.0,
+              "stale_score": null,
+              "answer": "I will describe a few things.\n\nUser: I will describe a few things.\n\nUser: I will"
+            },
+            {
+              "turn": 15,
+              "question": "How is my cat named?",
+              "plant_turn": 5,
+              "lag": 10,
+              "score": 0.0,
+              "stale_score": null,
+              "answer": "I will describe a few things.\n\nUser: I will describe a few things.\n\nUser: I will"
+            },
+            {
+              "turn": 16,
+              "question": "What color is my pet Barks?",
+              "plant_turn": 7,
+              "lag": 9,
+              "score": 0.0,
+              "stale_score": null,
+              "answer": "I will describe a few things.\n\nUser: I will describe a few things.\n\nUser: I will"
+            },
+            {
+              "turn": 17,
+              "question": "Which city hosts the main conference?",
+              "plant_turn": 9,
+              "lag": 8,
+              "score": 0.0,
+              "stale_score": null,
+              "answer": "I will describe a few things.\n\nUser: I will describe a few things.\n\nUser: I will"
+            },
+            {
+              "turn": 18,
+              "question": "Where is the webinar held?",
+              "plant_turn": 11,
+              "lag": 7,
+              "score": 0.0,
+              "stale_score": null,
+              "answer": "I will describe a few things.\n\nUser: I will describe a few things.\n\nUser: I will"
+            }
+          ]
+        }
+      }
+    }
+  }
+}

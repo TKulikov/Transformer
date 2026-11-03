@@ -58,11 +58,14 @@ class TestAnalysis:
 
     def test_all_metrics_present(self, mini_analysis):
         for name, a in mini_analysis.items():
-            for key in ("recall_mean", "recall_by_zone", "recall_by_lag", "stale_rate",
-                        "consistency_vs_reference", "prompt_tokens", "cache_slots", "memory_stats"):
+            for key in ("recall_mean", "recall_direct", "recall_paraphrase", "recall_by_zone",
+                        "recall_by_lag", "stale_rate", "consistency_vs_reference", "prompt_tokens",
+                        "generated_tokens", "cache_slots", "median_turn_latency_s", "p90_turn_latency_s",
+                        "peak_mem_mb", "memory_stats"):
                 assert key in a, (name, key)
             assert 0.0 <= a["recall_mean"] <= 1.0
             assert set(a["recall_by_lag"]) == {"0-5", "6-12", "13-20", "21+"}
+            assert all(value is None or 0.0 <= value <= 1.0 for value in a["recall_by_lag"].values())
 
     def test_reference_is_perfectly_consistent_with_itself(self, mini_analysis):
         assert mini_analysis["classic_kv_full"]["consistency_vs_reference"] == 1.0

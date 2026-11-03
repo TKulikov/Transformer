@@ -45,12 +45,35 @@ def run_stress(bundle, args, sessions=None, strategies=None, tag="stress") -> di
 
     sessions = sessions or stress_sessions()
     strategies = strategies or stress_strategies(budget=args.budget)
-    report = {"model": bundle.name, "device": str(bundle.device), "tag": tag, "sessions": {}}
+    report = {
+        "model": bundle.name,
+        "device": str(bundle.device),
+        "tag": tag,
+        "protocol": {
+            "decoding": "greedy",
+            "max_new_tokens": args.max_new_tokens,
+            "seed": args.seed,
+            "kv_budget": args.budget,
+            "dtype": str(bundle.model.dtype),
+            "strategies": [s.describe() for s in strategies],
+        },
+        "sessions": {},
+    }
+    out_path = Path(args.out) / f"{bundle.name}_{tag}.json"
     for session in sessions:
-        runs = {
-            s.name: run_session(bundle, session, s, max_new_tokens=args.max_new_tokens, seed=args.seed)
-            for s in strategies
-        }
+        runs = {}
+        for strategy in strategies:
+            print(f"[{tag}:{bundle.name}] start={strategy.name}", flush=True)
+            runs[strategy.name] = run_session(
+                bundle, session, strategy, max_new_tokens=args.max_new_tokens, seed=args.seed
+            )
+            report["sessions"][session.name] = {
+                "turns": len(session.user_turns()),
+                "n_probes": len(session.probes),
+                "strategies": analyze_session(runs),
+            }
+            out_path.write_text(json.dumps(report, indent=2, ensure_ascii=False))
+            print(f"[{tag}:{bundle.name}] done={strategy.name}", flush=True)
         analysis = analyze_session(runs)
         report["sessions"][session.name] = {
             "turns": len(session.user_turns()),

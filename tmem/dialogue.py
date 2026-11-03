@@ -72,6 +72,10 @@ class Strategy:
                 "budget": self.kv.budget,
                 "sink": self.kv.sink,
                 "recent": self.kv.recent,
+                "observation": self.kv.observation,
+                "kernel_size": self.kv.kernel_size,
+                "pyramid_beta": self.kv.pyramid_beta,
+                "chunk_size": self.kv.chunk_size,
             },
         }
 
@@ -145,6 +149,7 @@ class DialogueRun:
                     "question": t.probe.question,
                     "plant_turn": t.probe.plant_turn,
                     "lag": lag,
+                    "paraphrase": t.probe.paraphrase,
                     "score": t.probe_score,
                     "stale_score": t.stale_score,
                     "answer": t.answer_text[:120],
@@ -161,7 +166,7 @@ class DialogueRun:
             "generated_tokens": self.total_generated_tokens,
             "cache_slots": self.total_cache_slots,
             "mean_turn_latency_s": round(self.mean_turn_latency, 4),
-            "max_cache_len": max((max(t.decode.cache_lengths, default=0) for t in self.turns), default=0),
+            "max_cache_len": max((max(t.decode.cache_max_lengths, default=0) for t in self.turns), default=0),
             "probe_scores": self.probe_scores,
             "probe_mean": (
                 round(sum(self.probe_scores.values()) / len(self.probe_scores), 4) if self.probe_scores else None

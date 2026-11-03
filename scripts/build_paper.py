@@ -1,173 +1,176 @@
-"""Render the paper (PAPER.md + PAPER.pdf) from paper_text + data tables."""
+"""Render the scientific article as PAPER.md and PAPER.pdf."""
 
 from __future__ import annotations
 
+import re
 import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-import report_data as RD
 import paper_text as PT
-from build_report import GLOSS, HEADERS, small_model_rows
+import report_data as RD
 
-OUT = RD.OUT
-FIGS = RD.FIGS
-
-COMPARE_ORDER = [
-    ("classic_kv_full", "Эталон: весь диалог в контексте + классический KV-кэш"),
-    ("sparse_sliding_128", "Конкурент: скользящий KV-кэш (128 слотов)"),
-    ("sparse_topk_128", "Конкурент: top-k по вниманию (H2O, 128)"),
-    ("window2_only", "Нижняя граница: буфер 2 хода без памяти"),
-    ("v4_rag_kv", "НАША СИСТЕМА: буфер + банк отклонений + темы в attention"),
+CONFIG_HEADERS = ["Система", "Контекст", "Память и бюджет"]
+CONFIG_ROWS = [
+    ["Чистый Qwen", "Вся история", "Классический неограниченный KV-кэш"],
+    ["StreamingLLM", "Вся история", "128 слотов: 4 sink + 124 recent"],
+    ["H2O", "Вся история", "128: 4 sink + 64 recent + до 60 heavy hitters"],
+    ["SnapKV", "Вся история", "128; observation=64; kernel=7"],
+    ["PyramidKV", "Вся история", "Среднее 128; observation=8; β=20"],
+    ["Текстовый RAG-контроль", "Буфер 5 ходов + top-4", "Только текст; сырые эмбеддинги; классический KV"],
+    ["Двухканальная память", "Буфер 5 ходов + top-4", "Текст + центрирование; латентный retrieval: до 32 K/V в 4 слоях"],
 ]
 
-
-def rows_compare(q):
-    classic = q["classic_kv_full"]
-    rows = []
-    for key, label in COMPARE_ORDER:
-        d = q.get(key)
-        if not d:
-            continue
-        factor = classic["cache_slots"] / d["cache_slots"] if d.get("cache_slots") else None
-        rows.append([label, RD.fmt(d["recall_mean"]), RD.fmt(RD.rel_tone(d, classic), "{:.2f}×"),
-                     RD.fmt(d.get("stale_rate")), f"{d['prompt_tokens']:,}", f"{d['cache_slots']:,}",
-                     RD.fmt(factor, "{:.1f}×"), f"{d['mean_turn_latency_s']:.2f}"])
-    return rows
-
-FIG_PLAN = [
-    ("architecture.png", "Рис. 1. Архитектура двухслойной памяти"),
-    ("paper_main.png", "Рис. 2. Эталон vs конкуренты vs наша система (4 оси)"),
-    ("pareto.png", "Рис. 3. Парето «точность фактов — attention-стоимость»"),
-    ("smallmodels.png", "Рис. 4. Базовые политики на малых моделях"),
-    ("training.png", "Рис. 5. Обучение читателя памяти: негативный результат"),
-]
-
-CH = ["Конфигурация", "Факты↑", "Тема ×эт.", "Устар.↓", "Prompt ток.", "Attn слоты", "×дешевле", "Лат. с/ход"]
+REPRO_COMMAND = (
+    "HF_HUB_OFFLINE=1 .venv/bin/python -m tmem.cli --model unused --battery100 "
+    "--models qwen35-4b --device cuda --dtype bfloat16 --max-new-tokens 32 "
+    "--strategies classic_kv_full sparse_sliding_128 sparse_topk_128 snapkv_128 "
+    "pyramidkv_128 rag_text_only v4_rag_kv --out results/qwen35_comparison"
+)
 
 
-def build_md(q):
-    lines = [f"# {PT.TITLE}", "", f"_{PT.AUTHORS}_", "", "## Аннотация", "", PT.ABSTRACT, ""]
-    for heading, paras in PT.SECTIONS:
+def markdown_table(headers, rows):
+    lines = ["| " + " | ".join(headers) + " |", "|" + "---|" * len(headers)]
+    return lines + ["| " + " | ".join(row) + " |" for row in rows]
+
+
+def build_md(q: dict):
+    lines = [
+        f"# {PT.TITLE}", "", f"_{PT.AUTHORS}_", "", "## Аннотация", "", PT.abstract(q), "",
+        f"**Ключевые слова:** {PT.KEYWORDS}", "",
+    ]
+    for heading, paragraphs in PT.sections(q):
         lines += [f"## {heading}", ""]
-        lines += [p + "\n" for p in paras]
-        if heading.startswith("5."):
-            lines += ["**Таблица 1. Основная батарея (Qwen3.5-4B, 107 ходов / 24 вопроса)**", "",
-                      "| " + " | ".join(CH) + " |", "|" + "---|" * len(CH)]
-            lines += ["| " + " | ".join(r) + " |" for r in rows_compare(q)]
-            lines += ["", "**Таблица 2. Малые модели (базовое сравнение политик)**", "",
-                      "| Модель: политика | Факты | Prompt токены | Attn слоты | Лат. с/ход |", "|---|---|---|---|---|"]
-            lines += ["| " + " | ".join(r) + " |" for r in small_model_rows()]
-            lines += [""]
+        lines += [paragraph + "\n" for paragraph in paragraphs]
+        if heading.startswith("3."):
+            lines += ["![Архитектура двухканальной памяти](figs/architecture.png)",
+                      "*Рисунок 1 — Архитектура предложенной системы.*", ""]
         if heading.startswith("4."):
-            lines += ["**Метрики**", "", "| Метрика | Определение |", "|---|---|"]
-            lines += [f"| {a} | {b} |" for a, b in GLOSS] + [""]
-    lines += ["## Список литературы", ""] + [f"{i+1}. {r}" for i, r in enumerate(PT.REFERENCES)]
-    lines += ["", "## Воспроизведение", "", "```bash",
-              ".venv/bin/python -m tmem.cli --model unused --battery100 --models qwen35-4b --device cuda --dtype bfloat16",
-              ".venv/bin/python -m tmem.cli --model unused --stress --models gpt2 t5-base qwen2-1.5b --device cuda",
-              ".venv/bin/python -m tmem.trainreader --steps 600",
-              ".venv/bin/python scripts/build_paper.py", "```"]
-    (OUT / "PAPER.md").write_text("\n".join(lines))
+            lines += ["**Таблица 1 — Параметры сравниваемых систем.**", ""]
+            lines += markdown_table(CONFIG_HEADERS, CONFIG_ROWS) + [""]
+        if heading.startswith("5."):
+            for caption, headers, rows in (
+                ("Таблица 2 — Качество ответов на контрольные вопросы.", RD.QUALITY_HEADERS, RD.quality_rows(q)),
+                ("Таблица 3 — Вычислительная стоимость и наблюденная латентность.", RD.COST_HEADERS, RD.cost_rows(q)),
+            ):
+                lines += [f"**{caption}**", ""] + markdown_table(headers, rows) + [""]
+            lines += [
+                "![Основное сравнение](figs/comparison.png)",
+                "*Рисунок 2 — Качество, attention-прокси и латентность на общей батарее.*", "",
+                "![Парето](figs/pareto.png)",
+                "*Рисунок 3 — Компромисс между recall и decode-side attention-прокси.*", "",
+            ]
+    lines += ["## Список литературы", ""] + [f"{i}. {ref}" for i, ref in enumerate(PT.REFERENCES, 1)]
+    lines += [
+        "", "## Доступность данных и воспроизводимость", "",
+        "Первичные результаты: `results/qwen35_comparison/qwen35-4b_battery100.json`. "
+        "Файл содержит параметры протокола, агрегированные метрики и ответ на каждый из 24 вопросов.", "",
+        "```bash", REPRO_COMMAND,
+        ".venv/bin/python scripts/build_report.py", ".venv/bin/python scripts/build_paper.py", "```",
+    ]
+    (RD.OUT / "PAPER.md").write_text("\n".join(lines) + "\n")
 
 
-def build_pdf(q):
+def build_pdf(q: dict):
     import matplotlib
-    from reportlab.lib.pagesizes import A4, landscape
-    from reportlab.lib.units import cm
     from reportlab.lib import colors
+    from reportlab.lib.pagesizes import A4, landscape
+    from reportlab.lib.styles import ParagraphStyle, getSampleStyleSheet
+    from reportlab.lib.units import cm
     from reportlab.pdfbase import pdfmetrics
     from reportlab.pdfbase.ttfonts import TTFont
-    from reportlab.platypus import (SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle,
-                                    Image, PageBreak)
-    from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+    from reportlab.platypus import Image, Paragraph, SimpleDocTemplate, Spacer, Table, TableStyle
 
     fonts = Path(matplotlib.get_data_path()) / "fonts" / "ttf"
     pdfmetrics.registerFont(TTFont("DejaVu", str(fonts / "DejaVuSans.ttf")))
     pdfmetrics.registerFont(TTFont("DejaVu-Bold", str(fonts / "DejaVuSans-Bold.ttf")))
-    pdfmetrics.registerFontFamily("DejaVu", normal="DejaVu", bold="DejaVu-Bold")
+    pdfmetrics.registerFont(TTFont("DejaVu-Italic", str(fonts / "DejaVuSans-Oblique.ttf")))
+    pdfmetrics.registerFontFamily("DejaVu", normal="DejaVu", bold="DejaVu-Bold", italic="DejaVu-Italic")
+    styles = getSampleStyleSheet()
+    body = ParagraphStyle("body", parent=styles["Normal"], fontName="DejaVu", fontSize=8.8,
+                          leading=12.1, alignment=4, spaceAfter=6)
+    heading = ParagraphStyle("heading", parent=styles["Heading2"], fontName="DejaVu-Bold",
+                             fontSize=12.5, leading=16, spaceBefore=9, spaceAfter=6)
+    small = ParagraphStyle("small", parent=body, fontSize=7.0, leading=8.8, alignment=0)
+    caption = ParagraphStyle("caption", parent=small, fontName="DejaVu-Italic", alignment=1, spaceAfter=7)
+    title = ParagraphStyle("title", parent=styles["Title"], fontName="DejaVu-Bold", fontSize=16, leading=21)
+    authors = ParagraphStyle("authors", parent=body, fontName="DejaVu-Italic", alignment=1)
+    doc = SimpleDocTemplate(
+        str(RD.OUT / "PAPER.pdf"), pagesize=landscape(A4),
+        leftMargin=1.5 * cm, rightMargin=1.5 * cm, topMargin=1.5 * cm, bottomMargin=1.4 * cm,
+        title=PT.TITLE, author=PT.AUTHORS, subject="Диалоговая память и сжатие KV-кэша",
+    )
 
-    st = getSampleStyleSheet()
-    body = ParagraphStyle("b", parent=st["Normal"], fontName="DejaVu", fontSize=9, leading=12.5,
-                          alignment=4, spaceAfter=6)
-    h1 = ParagraphStyle("h1", parent=st["Heading1"], fontName="DejaVu-Bold", fontSize=13, leading=16,
-                        spaceBefore=10, spaceAfter=6)
-    title = ParagraphStyle("t", parent=st["Title"], fontName="DejaVu-Bold", fontSize=15, leading=20)
-    small = ParagraphStyle("s", parent=body, fontSize=7.4, leading=9.4, alignment=0)
+    def on_page(canvas, document):
+        canvas.saveState()
+        canvas.setFont("DejaVu", 7)
+        canvas.setFillColor(colors.HexColor("#555555"))
+        canvas.drawString(1.5 * cm, .65 * cm, "Двухканальная смысловая память · Qwen3.5-4B")
+        canvas.drawRightString(landscape(A4)[0] - 1.5 * cm, .65 * cm, str(document.page))
+        canvas.restoreState()
 
-    doc = SimpleDocTemplate(str(OUT / "PAPER.pdf"), pagesize=landscape(A4),
-                            leftMargin=1.4 * cm, rightMargin=1.4 * cm, topMargin=1.3 * cm, bottomMargin=1.3 * cm,
-                            title=PT.TITLE)
-    story = [Paragraph(PT.TITLE, title), Paragraph(PT.AUTHORS, body), Spacer(1, 0.3 * cm),
-             Paragraph("Аннотация", h1), Paragraph(PT.ABSTRACT, body), Spacer(1, 0.2 * cm),
-             Paragraph("<b>Ключевые числа:</b> факты 83 % эталона при attention ×5 дешевле · тон 1.07× эталона · "
-                       "латентность −28 % · скользящий KV-кэш той же задачи теряет 83 % фактов · "
-                       "пост-hoc обучение читателя — негативно (n=24×3 попытки).", body)]
+    def paragraph(text):
+        match = re.match(r"^(\d+\.\d+\.\s+[^.]+\.)\s+(.*)$", text, re.DOTALL)
+        if match:
+            text = f"<b>{match.group(1)}</b> {match.group(2)}"
+        return Paragraph(text, body)
 
-    inserted_tables = False
-    for heading, paras in PT.SECTIONS:
-        story.append(Paragraph(heading, h1))
-        for p in paras:
-            story.append(Paragraph(p, body))
-        if heading.startswith("3."):
-            story.append(Image(str(FIGS / "architecture.png"), width=24.5 * cm, height=15.8 * cm))
-            story.append(Paragraph("Рис. 1. Архитектура двухслойной памяти.", small))
-        if heading.startswith("4."):
-            g = [[Paragraph("Метрика", small), Paragraph("Определение", small)]]
-            g += [[Paragraph(a, small), Paragraph(b, small)] for a, b in GLOSS]
-            t = Table(g, colWidths=[7 * cm, 21 * cm])
-            t.setStyle(TableStyle([("GRID", (0, 0), (-1, -1), 0.4, colors.grey),
-                                   ("BACKGROUND", (0, 0), (-1, 0), colors.lightgrey)]))
-            story.append(t)
-        if heading.startswith("5.") and not inserted_tables:
-            inserted_tables = True
-            story.append(Paragraph("Таблица 1. Основная батарея (Qwen3.5-4B, 107 ходов / 24 вопроса)", h1))
-            rows = rows_compare(q)
-            data = [[Paragraph(h, small) for h in CH]] + [[Paragraph(c, small) for c in r] for r in rows]
-            t = Table(data, colWidths=[10.6 * cm, 1.8 * cm, 1.8 * cm, 1.8 * cm, 2.4 * cm, 2.4 * cm,
-                                       2.0 * cm, 2.2 * cm], repeatRows=1)
-            t.setStyle(TableStyle([("GRID", (0, 0), (-1, -1), 0.4, colors.grey),
-                                   ("BACKGROUND", (0, 0), (-1, 0), colors.lightgrey),
-                                   ("ROWBACKGROUNDS", (0, 1), (-1, -1), [colors.white, colors.Color(.96, .97, 1)]),
-                                   ("BACKGROUND", (0, len(rows)), (-1, len(rows)), colors.Color(.9, .95, 1))]))
-            story.append(t)
-            story.append(PageBreak())
-            story.append(Image(str(FIGS / "paper_main.png"), width=24.5 * cm, height=16.6 * cm))
-            story.append(Paragraph("Рис. 2. Эталон (полный контекст + классический KV) vs конкурент (скользящий "
-                                   "KV-кэш) vs нижняя граница (буфер) vs наша система — по четырём осям.", small))
-            story.append(PageBreak())
-            story.append(Image(str(FIGS / "pareto.png"), width=22.5 * cm, height=14 * cm))
-            story.append(Paragraph("Рис. 3. Парето «точность фактов — стоимость внимания». Идеал — верхний левый угол.",
-                                   small))
-        if heading.startswith("6."):
-            story.append(PageBreak())
-            story.append(Image(str(FIGS / "smallmodels.png"), width=20.5 * cm, height=11.6 * cm))
-            story.append(Paragraph("Рис. 4. Базовые политики на малых моделях (GPT-2 / T5-base / Qwen2-1.5B).", small))
-            story.append(Spacer(1, 0.2 * cm))
-            hdr = ["Модель: политика", "Факты", "Prompt токены", "Attn слоты", "Лат. с/ход"]
-            data = [[Paragraph(h, small) for h in hdr]] + [[Paragraph(c, small) for c in r]
-                                                           for r in small_model_rows()]
-            t = Table(data, colWidths=[9 * cm, 2 * cm, 3 * cm, 3 * cm, 2.6 * cm], repeatRows=1)
-            t.setStyle(TableStyle([("GRID", (0, 0), (-1, -1), 0.4, colors.grey),
-                                   ("BACKGROUND", (0, 0), (-1, 0), colors.lightgrey)]))
-            story.append(t)
-            story.append(Spacer(1, 0.25 * cm))
-            story.append(Image(str(FIGS / "training.png"), width=20.5 * cm, height=11.7 * cm))
-            story.append(Paragraph("Рис. 5. Обучение читателя памяти (негативный результат при исправном "
-                                   "позитивном контроле).", small))
-    story.append(Paragraph("Список литературы", h1))
-    for i, r in enumerate(PT.REFERENCES, 1):
-        story.append(Paragraph(f"{i}. {r}", small))
-    doc.build(story)
+    def add_table(story, caption_text, headers, rows, first_width=5.0):
+        story.append(Paragraph(caption_text, heading))
+        data = [[Paragraph(h, small) for h in headers]] + [[Paragraph(str(c), small) for c in row] for row in rows]
+        remaining = 26.7 - first_width
+        widths = [first_width * cm] + [remaining / (len(headers) - 1) * cm] * (len(headers) - 1)
+        table = Table(data, colWidths=widths, repeatRows=1, hAlign="LEFT")
+        table.setStyle(TableStyle([
+            ("BACKGROUND", (0, 0), (-1, 0), colors.HexColor("#e9edf3")),
+            ("GRID", (0, 0), (-1, -1), .35, colors.HexColor("#8993a4")),
+            ("ROWBACKGROUNDS", (0, 1), (-1, -1), [colors.white, colors.HexColor("#f6f8fb")]),
+            ("VALIGN", (0, 0), (-1, -1), "TOP"),
+            ("LEFTPADDING", (0, 0), (-1, -1), 4), ("RIGHTPADDING", (0, 0), (-1, -1), 4),
+            ("TOPPADDING", (0, 0), (-1, -1), 4), ("BOTTOMPADDING", (0, 0), (-1, -1), 4),
+        ]))
+        story += [table, Spacer(1, .25 * cm)]
+
+    story = [
+        Paragraph(PT.TITLE, title), Paragraph(PT.AUTHORS, authors), Spacer(1, .2 * cm),
+        Paragraph("Аннотация", heading), Paragraph(PT.abstract(q), body),
+        Paragraph(f"<b>Ключевые слова:</b> {PT.KEYWORDS}", body),
+    ]
+    for section, paragraphs in PT.sections(q):
+        story.append(Paragraph(section, heading))
+        story += [paragraph(text) for text in paragraphs]
+        if section.startswith("3."):
+            story += [Image(str(RD.FIGS / "architecture.png"), width=23.6 * cm, height=12.6 * cm),
+                      Paragraph("Рисунок 1 — Архитектура предложенной двухканальной памяти.", caption)]
+        if section.startswith("4."):
+            add_table(story, "Таблица 1 — Параметры сравниваемых систем", CONFIG_HEADERS, CONFIG_ROWS, 4.3)
+        if section.startswith("5."):
+            add_table(story, "Таблица 2 — Качество ответов", RD.QUALITY_HEADERS, RD.quality_rows(q), 5.0)
+            add_table(story, "Таблица 3 — Стоимость и наблюденная латентность", RD.COST_HEADERS, RD.cost_rows(q), 4.0)
+            story += [Image(str(RD.FIGS / "comparison.png"), width=24.0 * cm, height=14.8 * cm),
+                      Paragraph("Рисунок 2 — Качество, attention-прокси и латентность на общей батарее.", caption),
+                      Image(str(RD.FIGS / "pareto.png"), width=21.5 * cm, height=12.7 * cm),
+                      Paragraph("Рисунок 3 — Компромисс между recall и decode-side attention-прокси.", caption)]
+    story.append(Paragraph("Список литературы", heading))
+    story += [Paragraph(f"[{i}] {ref}", small) for i, ref in enumerate(PT.REFERENCES, 1)]
+    story.append(Paragraph("Доступность данных и воспроизводимость", heading))
+    story.append(Paragraph(
+        "Первичные результаты и ответы на каждый вопрос: "
+        "results/qwen35_comparison/qwen35-4b_battery100.json. Команда запуска батареи и сборки документов "
+        "приведена в электронной версии PAPER.md.", small))
+    doc.build(story, onFirstPage=on_page, onLaterPages=on_page)
 
 
 def main():
     q = RD.q35_all()
-    if not q:
-        raise SystemExit("нет данных")
+    missing = set(RD.ORDER) - set(q)
+    if missing:
+        raise SystemExit(f"не хватает результатов: {sorted(missing)}")
+    import paper_figures
+    paper_figures.make_all()
     build_md(q)
     build_pdf(q)
-    print("paper:", OUT / "PAPER.pdf", "и", OUT / "PAPER.md")
+    print("paper:", RD.OUT / "PAPER.pdf")
 
 
 if __name__ == "__main__":

@@ -1,0 +1,474 @@
+{
+  "model": "gpt2",
+  "device": "cpu",
+  "strategies": [
+    {
+      "name": "classic_kv_full",
+      "context": "full",
+      "window": 3,
+      "memory": false,
+      "cache": "use",
+      "kv": {
+        "mode": "classic",
+        "strategy": "sliding",
+        "budget": 256,
+        "sink": 4,
+        "recent": 64
+      }
+    },
+    {
+      "name": "sparse_topk",
+      "context": "full",
+      "window": 3,
+      "memory": false,
+      "cache": "use",
+      "kv": {
+        "mode": "sparse",
+        "strategy": "topk",
+        "budget": 48,
+        "sink": 4,
+        "recent": 16
+      }
+    },
+    {
+      "name": "window_hybrid_memory",
+      "context": "window",
+      "window": 3,
+      "memory": true,
+      "cache": "use",
+      "kv": {
+        "mode": "classic",
+        "strategy": "sliding",
+        "budget": 256,
+        "sink": 4,
+        "recent": 64
+      }
+    }
+  ],
+  "sessions": {
+    "coding-buddy": {
+      "classic_kv_full": {
+        "summary": {
+          "strategy": {
+            "name": "classic_kv_full",
+            "context": "full",
+            "window": 3,
+            "memory": false,
+            "cache": "use",
+            "kv": {
+              "mode": "classic",
+              "strategy": "sliding",
+              "budget": 256,
+              "sink": 4,
+              "recent": 64
+            }
+          },
+          "turns": 10,
+          "prompt_tokens": 1352,
+          "generated_tokens": 80,
+          "cache_slots": 11096,
+          "mean_turn_latency_s": 0.3287,
+          "max_cache_len": 241,
+          "probe_scores": {
+            "turn6": 0.0,
+            "turn8": 0.0,
+            "turn9": 0.0
+          },
+          "probe_mean": 0.0
+        },
+        "answers": [
+          {
+            "turn": 1,
+            "user": "Remember this: my name is Alex and my pet cat is named Barsik.",
+            "answer": "I'm a cat lover.",
+            "probe_score": null
+          },
+          {
+            "turn": 2,
+            "user": "I am writing a Rust parser called Oxidum, version 0.4.2.",
+            "answer": "I'm writing a Rust parser called Ox",
+            "probe_score": null
+          },
+          {
+            "turn": 3,
+            "user": "Please explain a little more, continuing the same discussion in detail.",
+            "answer": "I'm writing a Rust parser called Ox",
+            "probe_score": null
+          },
+          {
+            "turn": 4,
+            "user": "Please explain a little more, continuing the same discussion in detail.",
+            "answer": "I'm writing a Rust parser called Ox",
+            "probe_score": null
+          },
+          {
+            "turn": 5,
+            "user": "Please explain a little more, continuing the same discussion in detail.",
+            "answer": "I'm writing a Rust parser called Ox",
+            "probe_score": null
+          },
+          {
+            "turn": 6,
+            "user": "Please explain a little more, continuing the same discussion in detail.",
+            "answer": "I'm writing a Rust parser called Ox",
+            "probe_score": null
+          },
+          {
+            "turn": 7,
+            "user": "What is my name?",
+            "answer": "I'm writing a Rust parser called Ox",
+            "probe_score": 0.0
+          },
+          {
+            "turn": 8,
+            "user": "Please explain a little more, continuing the same discussion in detail.",
+            "answer": "I'm writing a Rust parser called Ox",
+            "probe_score": null
+          },
+          {
+            "turn": 9,
+            "user": "How is my cat named?",
+            "answer": "I'm writing a Rust parser called Ox",
+            "probe_score": 0.0
+          },
+          {
+            "turn": 10,
+            "user": "What is the name of my Rust parser?",
+            "answer": "I'm writing a Rust parser called Ox",
+            "probe_score": 0.0
+          }
+        ]
+      },
+      "sparse_topk": {
+        "summary": {
+          "strategy": {
+            "name": "sparse_topk",
+            "context": "full",
+            "window": 3,
+            "memory": false,
+            "cache": "use",
+            "kv": {
+              "mode": "sparse",
+              "strategy": "topk",
+              "budget": 48,
+              "sink": 4,
+              "recent": 16
+            }
+          },
+          "turns": 10,
+          "prompt_tokens": 1352,
+          "generated_tokens": 80,
+          "cache_slots": 3684,
+          "mean_turn_latency_s": 0.2755,
+          "max_cache_len": 48,
+          "probe_scores": {
+            "turn6": 0.0,
+            "turn8": 0.0,
+            "turn9": 0.0
+          },
+          "probe_mean": 0.0
+        },
+        "answers": [
+          {
+            "turn": 1,
+            "user": "Remember this: my name is Alex and my pet cat is named Barsik.",
+            "answer": "I'm a cat lover.",
+            "probe_score": null
+          },
+          {
+            "turn": 2,
+            "user": "I am writing a Rust parser called Oxidum, version 0.4.2.",
+            "answer": "I'm writing a Rust parser called Rust",
+            "probe_score": null
+          },
+          {
+            "turn": 3,
+            "user": "Please explain a little more, continuing the same discussion in detail.",
+            "answer": "I'm a programmer. I'm a",
+            "probe_score": null
+          },
+          {
+            "turn": 4,
+            "user": "Please explain a little more, continuing the same discussion in detail.",
+            "answer": "I'm a programmer. I'm a",
+            "probe_score": null
+          },
+          {
+            "turn": 5,
+            "user": "Please explain a little more, continuing the same discussion in detail.",
+            "answer": "I'm writing a Rust parser called Ox",
+            "probe_score": null
+          },
+          {
+            "turn": 6,
+            "user": "Please explain a little more, continuing the same discussion in detail.",
+            "answer": "I'm a programmer.\nUser:",
+            "probe_score": null
+          },
+          {
+            "turn": 7,
+            "user": "What is my name?",
+            "answer": "I am a programmer. User: What",
+            "probe_score": 0.0
+          },
+          {
+            "turn": 8,
+            "user": "Please explain a little more, continuing the same discussion in detail.",
+            "answer": "I I I I I I I I",
+            "probe_score": null
+          },
+          {
+            "turn": 9,
+            "user": "How is my cat named?",
+            "answer": "I I I I I I I I",
+            "probe_score": 0.0
+          },
+          {
+            "turn": 10,
+            "user": "What is the name of my Rust parser?",
+            "answer": "I Rust Rust Rust Rust Rust Rust Rust",
+            "probe_score": 0.0
+          }
+        ]
+      },
+      "window_hybrid_memory": {
+        "summary": {
+          "strategy": {
+            "name": "window_hybrid_memory",
+            "context": "window",
+            "window": 3,
+            "memory": true,
+            "cache": "use",
+            "kv": {
+              "mode": "classic",
+              "strategy": "sliding",
+              "budget": 256,
+              "sink": 4,
+              "recent": 64
+            }
+          },
+          "turns": 10,
+          "prompt_tokens": 1201,
+          "generated_tokens": 80,
+          "cache_slots": 9888,
+          "mean_turn_latency_s": 0.2784,
+          "max_cache_len": 179,
+          "probe_scores": {
+            "turn6": 0.0,
+            "turn8": 0.0,
+            "turn9": 0.0
+          },
+          "probe_mean": 0.0
+        },
+        "answers": [
+          {
+            "turn": 1,
+            "user": "Remember this: my name is Alex and my pet cat is named Barsik.",
+            "answer": "I'm not going to be able to",
+            "probe_score": null
+          },
+          {
+            "turn": 2,
+            "user": "I am writing a Rust parser called Oxidum, version 0.4.2.",
+            "answer": "I'm writing a Rust parser called Ox",
+            "probe_score": null
+          },
+          {
+            "turn": 3,
+            "user": "Please explain a little more, continuing the same discussion in detail.",
+            "answer": "I'm writing a Rust parser called Ox",
+            "probe_score": null
+          },
+          {
+            "turn": 4,
+            "user": "Please explain a little more, continuing the same discussion in detail.",
+            "answer": "I'm writing a Rust parser called Ox",
+            "probe_score": null
+          },
+          {
+            "turn": 5,
+            "user": "Please explain a little more, continuing the same discussion in detail.",
+            "answer": "I'm writing a Rust parser called Ox",
+            "probe_score": null
+          },
+          {
+            "turn": 6,
+            "user": "Please explain a little more, continuing the same discussion in detail.",
+            "answer": "I'm writing a Rust parser called Ox",
+            "probe_score": null
+          },
+          {
+            "turn": 7,
+            "user": "What is my name?",
+            "answer": "I'm writing a Rust parser called Ox",
+            "probe_score": 0.0
+          },
+          {
+            "turn": 8,
+            "user": "Please explain a little more, continuing the same discussion in detail.",
+            "answer": "I'm writing a Rust parser called Ox",
+            "probe_score": null
+          },
+          {
+            "turn": 9,
+            "user": "How is my cat named?",
+            "answer": "I'm writing a Rust parser called Ox",
+            "probe_score": 0.0
+          },
+          {
+            "turn": 10,
+            "user": "What is the name of my Rust parser?",
+            "answer": "I'm writing a Rust parser called Ox",
+            "probe_score": 0.0
+          }
+        ]
+      }
+    }
+  },
+  "general_qa": {
+    "classic_kv_full": {
+      "What does a KV cache store in a transformer decoder?": {
+        "answer": "A KV cache is a collection of decoders that store the data in a transformer. The transformer is a transformer that is connected to a transformer. The",
+        "expected": [
+          "key",
+          "value"
+        ],
+        "score": 0.0
+      },
+      "What is the main drawback of the classic KV cache?": {
+        "answer": "The KV cache is a very small cache that is not used by most modern computers. It is a very small cache that is not used by most modern computers",
+        "expected": [
+          "memory",
+          "grow"
+        ],
+        "score": 0.0
+      },
+      "What does a sparse KV cache do?": {
+        "answer": "It's a way to store the data in a sparse KV cache. It's a way to store the data in a sparse KV cache. It's",
+        "expected": [
+          "evict"
+        ],
+        "score": 0.0
+      },
+      "In attention, what do Q, K and V stand for?": {
+        "answer": "Q stands for \"Q is the number of the number of the number of the number of the number of the number of the number of the number of the number",
+        "expected": [
+          "query",
+          "key",
+          "value"
+        ],
+        "score": 0.0
+      },
+      "What is the softmax used for in attention?": {
+        "answer": "The softmax is a measure of the amount of time a person spends in a particular area of the brain. It is a measure of how much time a person",
+        "expected": [
+          "probab"
+        ],
+        "score": 0.0
+      },
+      "What does positional encoding provide?": {
+        "answer": "It provides a way to encode a sequence of characters in a way that is consistent with the encoding of the characters in the sequence. For example, the following sequence",
+        "expected": [
+          "position"
+        ],
+        "score": 0.0
+      }
+    },
+    "sparse_topk": {
+      "What does a KV cache store in a transformer decoder?": {
+        "answer": "A KV cache is a collection of decoders that store the data in a transformer. The transformer is a transformer that is connected to a transformer. The",
+        "expected": [
+          "key",
+          "value"
+        ],
+        "score": 0.0
+      },
+      "What is the main drawback of the classic KV cache?": {
+        "answer": "The KV cache is a very small cache that is not used by most modern computers. It is a very small cache that is not used by most modern computers",
+        "expected": [
+          "memory",
+          "grow"
+        ],
+        "score": 0.0
+      },
+      "What does a sparse KV cache do?": {
+        "answer": "It's a way to store the data in a sparse KV cache. It's a way to store the data in a sparse KV cache. It's",
+        "expected": [
+          "evict"
+        ],
+        "score": 0.0
+      },
+      "In attention, what do Q, K and V stand for?": {
+        "answer": "Q stands for \"Q is the number of the number of the number of the number of the number of the number of the number of the number of the number",
+        "expected": [
+          "query",
+          "key",
+          "value"
+        ],
+        "score": 0.0
+      },
+      "What is the softmax used for in attention?": {
+        "answer": "The softmax is a measure of the amount of time a person spends in a particular area of the brain. It is a measure of how much time a person",
+        "expected": [
+          "probab"
+        ],
+        "score": 0.0
+      },
+      "What does positional encoding provide?": {
+        "answer": "It provides a way to encode a sequence of characters in a way that is consistent with the encoding of the characters in the sequence. For example, the following sequence",
+        "expected": [
+          "position"
+        ],
+        "score": 0.0
+      }
+    },
+    "window_hybrid_memory": {
+      "What does a KV cache store in a transformer decoder?": {
+        "answer": "A KV cache is a collection of decoders that store the data in a transformer. The transformer is a transformer that is connected to a transformer. The",
+        "expected": [
+          "key",
+          "value"
+        ],
+        "score": 0.0
+      },
+      "What is the main drawback of the classic KV cache?": {
+        "answer": "The KV cache is a very small cache that is not used by most modern computers. It is a very small cache that is not used by most modern computers",
+        "expected": [
+          "memory",
+          "grow"
+        ],
+        "score": 0.0
+      },
+      "What does a sparse KV cache do?": {
+        "answer": "It's a way to store the data in a sparse KV cache. It's a way to store the data in a sparse KV cache. It's",
+        "expected": [
+          "evict"
+        ],
+        "score": 0.0
+      },
+      "In attention, what do Q, K and V stand for?": {
+        "answer": "Q stands for \"Q is the number of the number of the number of the number of the number of the number of the number of the number of the number",
+        "expected": [
+          "query",
+          "key",
+          "value"
+        ],
+        "score": 0.0
+      },
+      "What is the softmax used for in attention?": {
+        "answer": "The softmax is a measure of the amount of time a person spends in a particular area of the brain. It is a measure of how much time a person",
+        "expected": [
+          "probab"
+        ],
+        "score": 0.0
+      },
+      "What does positional encoding provide?": {
+        "answer": "It provides a way to encode a sequence of characters in a way that is consistent with the encoding of the characters in the sequence. For example, the following sequence",
+        "expected": [
+          "position"
+        ],
+        "score": 0.0
+      }
+    }
+  }
+}

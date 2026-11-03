@@ -13,14 +13,23 @@ from __future__ import annotations
 
 import math
 import time
+from contextlib import contextmanager, nullcontext
 from dataclasses import dataclass, field
 
 import torch
 from transformers import DynamicCache
 from transformers.cache_utils import EncoderDecoderCache
 
-from .compat import cache_length, prune_cache
-from .kvcache import ImportanceTracker, KVConfig, keep_indices
+from .compat import cache_length, cache_mean_length, layer_kv, prune_cache
+from .kvcache import (
+    HeadImportanceTracker,
+    ImportanceTracker,
+    KVConfig,
+    h2o_head_indices,
+    keep_indices,
+    pyramid_budgets,
+    snapkv_indices,
+)
 
 
 @dataclass
@@ -30,16 +39,18 @@ class DecodeResult:
     Attributes:
         prompt_len: number of prompt tokens.
         token_ids: generated token ids (prompt excluded).
-        cache_lengths: cache size after every decode step (len == steps).
+        cache_lengths: mean slots per K/V layer after prefill and each step.
+        cache_max_lengths: largest per-layer cache length at the same points.
         total_cache_slots: sum of ``cache_lengths`` — proxy for attention
             FLOPs; smaller means less work per generated token.
-        latency_s: wall time of the whole loop.
+        latency_s: wall time of the whole loop, including prefill.
         peak_mem_mb: peak device memory during the call (None off-GPU).
     """
 
     prompt_len: int
     token_ids: list[int] = field(default_factory=list)
     cache_lengths: list[int] = field(default_factory=list)
+    cache_max_lengths: list[int] = field(default_factory=list)
     total_cache_slots: int = 0
     latency_s: float = 0.0
     peak_mem_mb: float | None = None
@@ -100,6 +111,116 @@ def _run_with_logits_keep(model, keep: int | None, **call_kwargs):
     return model(**call_kwargs)
 
 
+@contextmanager
+def _attention_implementation(model, implementation: str):
+    """Temporarily select a Transformers attention backend and restore it."""
+    previous = getattr(model.config, "_attn_implementation", None)
+    if previous == implementation:
+        yield
+        return
+    model.set_attn_implementation(implementation)
+    try:
+        yield
+    finally:
+        if previous is not None:
+            model.set_attn_implementation(previous)
+
+
+def _record_cache(res: DecodeResult, cache) -> None:
+    res.cache_lengths.append(cache_mean_length(cache))
+    res.cache_max_lengths.append(cache_length(cache))
+
+
+def _kv_layers(cache) -> list[tuple[int, torch.Tensor]]:
+    return [(i, keys) for i, (keys, _) in enumerate(layer_kv(cache)) if keys is not None and keys.numel()]
+
+
+def _prune_h2o(cache, tracker: HeadImportanceTracker, cfg: KVConfig) -> None:
+    if cache_length(cache) <= cfg.budget:
+        return
+    layers = _kv_layers(cache)
+    if len(layers) != len(tracker.scores):
+        raise RuntimeError("H2O attention outputs do not match the K/V cache layers")
+    keep = [
+        h2o_head_indices(tracker.scores[i], cfg, keys.shape[1])
+        for i, (_, keys) in enumerate(layers)
+    ]
+    prune_cache(cache, {layer: indices for (layer, _), indices in zip(layers, keep)})
+    tracker.prune(keep)
+
+
+def _compress_prompt_cache(cache, attentions, cfg: KVConfig) -> None:
+    layers = _kv_layers(cache)
+    if len(layers) != len(attentions):
+        raise RuntimeError("prompt attention outputs do not match the K/V cache layers")
+    budgets = (
+        pyramid_budgets(len(layers), cfg.budget, cfg.pyramid_beta, cfg.observation)
+        if cfg.strategy == "pyramidkv" else [cfg.budget] * len(layers)
+    )
+    keep = {}
+    for (layer, keys), attention, budget in zip(layers, attentions, budgets):
+        if attention is None:
+            raise RuntimeError(f"missing attention weights for K/V layer {layer}")
+        keep[layer] = snapkv_indices(
+            attention, budget, cfg.observation, cfg.kernel_size, num_key_value_heads=keys.shape[1]
+        )
+    prune_cache(cache, keep)
+
+
+def _prefill_with_scores(model, input_ids: torch.Tensor, cfg: KVConfig):
+    """Prefill a causal model with bounded attention-score memory.
+
+    H2O processes the prompt in ``chunk_size`` chunks and evicts after each
+    one. SnapKV/PyramidKV use SDPA for the prefix and materialise eager
+    attention only for the final observation window, then compress once.
+    Returns the last model output, its cache, and an H2O tracker (or ``None``).
+    """
+    device = input_ids.device
+    length = input_ids.shape[1]
+    if length <= cfg.budget:
+        out = _run_with_logits_keep(
+            model, 1, input_ids=input_ids, attention_mask=torch.ones_like(input_ids),
+            past_key_values=None, use_cache=True, output_attentions=False,
+        )
+        return out, out.past_key_values or DynamicCache(), None
+
+    if cfg.compresses_prompt:
+        split = length - cfg.observation
+        cache = None
+        with _attention_implementation(model, "sdpa"):
+            out = _run_with_logits_keep(
+                model, 1, input_ids=input_ids[:, :split], attention_mask=None,
+                position_ids=torch.arange(split, device=device).unsqueeze(0),
+                past_key_values=None, use_cache=True, output_attentions=False,
+            )
+        cache = out.past_key_values
+        with _attention_implementation(model, "eager"):
+            out = _run_with_logits_keep(
+                model, 1, input_ids=input_ids[:, split:], attention_mask=None,
+                position_ids=torch.arange(split, length, device=device).unsqueeze(0),
+                past_key_values=cache, use_cache=True, output_attentions=True,
+            )
+        cache = out.past_key_values
+        _compress_prompt_cache(cache, out.attentions, cfg)
+        return out, cache, None
+
+    tracker = HeadImportanceTracker(device)
+    cache = None
+    out = None
+    for start in range(0, length, cfg.chunk_size):
+        end = min(start + cfg.chunk_size, length)
+        with _attention_implementation(model, "eager"):
+            out = _run_with_logits_keep(
+                model, 1, input_ids=input_ids[:, start:end], attention_mask=None,
+                position_ids=torch.arange(start, end, device=device).unsqueeze(0),
+                past_key_values=cache, use_cache=True, output_attentions=True,
+            )
+        cache = out.past_key_values
+        tracker.step(out.attentions)
+        _prune_h2o(cache, tracker, cfg)
+    return out, cache, tracker
+
+
 @torch.no_grad()
 def decode_causal(
     model,
@@ -114,80 +235,76 @@ def decode_causal(
     eos_ids: tuple[int, ...] = (),
     seed: int = 0,
 ) -> DecodeResult:
-    """Decode with a causal (decoder-only) model under a cache policy.
+    """Decode one prompt under classic, StreamingLLM, H2O, SnapKV, or PyramidKV.
 
-    Args:
-        model: causal LM whose forward accepts ``past_key_values``.
-        input_ids: ``(1, L)`` prompt token ids.
-        kv: cache policy (ignored when ``cache="none"``).
-        cache: ``"use"`` (classic or sparse per ``kv``) or ``"none"``
-            (recompute the whole sequence every step — correctness baseline).
-        max_new_tokens: generation budget.
-        eos_ids: stop ids.
+    The input must have shape ``(1, length)``. Greedy decoding is used unless
+    ``do_sample`` is true; ``seed`` controls sampling only. The result contains
+    generated IDs, per-step mean/maximum cache lengths, wall seconds including
+    prefill, and peak accelerator memory in MiB. ``cache="none"`` recomputes
+    the full sequence and ignores ``kv``. Invalid input shapes raise
+    ``ValueError``; missing score outputs for score-based policies raise
+    ``RuntimeError``.
     """
     if input_ids.dim() != 2 or input_ids.shape[0] != 1:
         raise ValueError("input_ids must have shape (1, L)")
     device = input_ids.device
     res = DecodeResult(prompt_len=int(input_ids.shape[1]))
-    generator = torch.Generator(device=device)  # must live on the model's device (ROCm/CUDA included)
+    generator = torch.Generator(device=device)
     if seed is not None:
         generator.manual_seed(seed)
     if device.type == "cuda":
         torch.cuda.reset_peak_memory_stats(device)
     t0 = time.perf_counter()
 
-    tracker = ImportanceTracker(device) if kv.needs_scores else None
-    need_scores = kv.needs_scores
-
     if cache == "none":
         res.token_ids = _decode_without_cache(model, input_ids, res, max_new_tokens, do_sample, temperature, top_p, eos_ids, generator)
         res.cache_lengths = []
+        res.cache_max_lengths = []
         res.latency_s = time.perf_counter() - t0
         res.peak_mem_mb = _peak_mem(device)
         return _finish(res)
 
-    dyn = None
+    need_scores = kv.needs_step_scores
+    if kv.needs_scores:
+        out, dyn, tracker = _prefill_with_scores(model, input_ids, kv)
+        if need_scores and tracker is None:
+            tracker = HeadImportanceTracker(device)
+    else:
+        out = _run_with_logits_keep(
+            model, 1, input_ids=input_ids, attention_mask=torch.ones_like(input_ids),
+            past_key_values=None, use_cache=True, output_attentions=False,
+        )
+        dyn = out.past_key_values if out.past_key_values is not None else DynamicCache()
+        tracker = None
     positions = list(range(input_ids.shape[1]))
-    mask = torch.ones_like(input_ids)
-    out = _run_with_logits_keep(
-        model,
-        1,
-        input_ids=input_ids,
-        attention_mask=mask,
-        past_key_values=None,
-        use_cache=True,
-        output_attentions=need_scores,
-    )
-    # Take the cache the model built (handles hybrid caches like Qwen3.5
-    # where only a subset of layers store K/V at all).
-    dyn = out.past_key_values if out.past_key_values is not None else DynamicCache()
-    if need_scores:
-        tracker.step(out.attentions)
-    _prune_if_needed(dyn, positions, tracker, kv)
-    res.cache_lengths.append(cache_length(dyn))
+    if not kv.needs_scores:
+        _prune_if_needed(dyn, positions, None, kv)
+    _record_cache(res, dyn)
+    lengths = {keys.shape[-2] for _, keys in _kv_layers(dyn)}
+    if kv.strategy == "pyramidkv" and model.config.model_type == "gpt2" and len(lengths) > 1:
+        raise RuntimeError("PyramidKV requires per-layer attention masks; GPT-2 provides one shared mask")
 
     for step in range(max_new_tokens):
-        logits = out.logits[:, -1:]
-        nxt = pick_token(logits, do_sample=do_sample, temperature=temperature, top_p=top_p, generator=generator)
+        nxt = pick_token(out.logits[:, -1:], do_sample=do_sample, temperature=temperature, top_p=top_p, generator=generator)
         res.token_ids.append(nxt)
         if nxt in eos_ids or step == max_new_tokens - 1:
             break
-        cur_pos = int(positions[-1]) + 1  # true absolute position of the new token
+        cur_pos = input_ids.shape[1] + step
         pos_ids = torch.tensor([[cur_pos]], device=device)
-        attn_mask = torch.ones(1, cache_length(dyn) + 1, dtype=torch.long, device=device)
-        out = model(
-            input_ids=torch.tensor([[nxt]], device=device),
-            position_ids=pos_ids,
-            attention_mask=attn_mask,
-            past_key_values=dyn,
-            use_cache=True,
-            output_attentions=need_scores,
-        )
-        positions.append(cur_pos)  # the forward appended one cache slot
+        attn_mask = None if kv.compresses_prompt else torch.ones(1, cache_length(dyn) + 1, dtype=torch.long, device=device)
+        with _attention_implementation(model, "eager") if need_scores else nullcontext():
+            out = model(
+                input_ids=torch.tensor([[nxt]], device=device), position_ids=pos_ids,
+                attention_mask=attn_mask, past_key_values=dyn, use_cache=True,
+                output_attentions=need_scores,
+            )
+        positions.append(cur_pos)
         if need_scores:
             tracker.step(out.attentions)
-        _prune_if_needed(dyn, positions, tracker, kv)
-        res.cache_lengths.append(cache_length(dyn))
+            _prune_h2o(dyn, tracker, kv)
+        elif not kv.compresses_prompt:
+            _prune_if_needed(dyn, positions, None, kv)
+        _record_cache(res, dyn)
 
     _sync(device)
     res.latency_s = time.perf_counter() - t0

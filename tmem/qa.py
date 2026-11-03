@@ -31,8 +31,8 @@ class Probe:
     """Question asked at turn ``after_turn`` (replacing the scripted turn there).
 
     Stress mode fills ``plant_turn`` (where the fact was introduced),
-    ``expected`` (current truth) and ``stale`` (a superseded value — an
-    answer containing it shows memory/context confusion).
+    ``expected`` (current truth), ``stale`` (a superseded value whose mention
+    is counted separately) and whether the question is a paraphrase.
     """
 
     after_turn: int
@@ -40,6 +40,7 @@ class Probe:
     expected: list[str]
     plant_turn: int | None = None
     stale: list[str] = field(default_factory=list)
+    paraphrase: bool = False
 
 
 @dataclass(frozen=True)
