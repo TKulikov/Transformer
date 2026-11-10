@@ -1,10 +1,0 @@
-Loading weights:   0%|          | 0/426 [00:00<?, ?it/s]Loading weights: 100%|██████████| 426/426 [00:00<00:00, 8457.70it/s]
-  attn_output = torch.nn.functional.scaled_dot_product_attention(
-  attn_output = torch.nn.functional.scaled_dot_product_attention(
-lora trainable: 3.1M params
-recall WITHOUT memory (hallucination): 0.00 | WITH memory untrained: 0.00
-step 100: loss 0.359 eval recall 0.00
-step 200: loss 0.000 eval recall 0.00
-step 300: loss 0.000 eval recall 0.00
-recall AFTER training: 0.00
-{'hallucination_recall': 0.0, 'base_recall': 0.0, 'final_recall': 0.0, 'loss_curve': [1.40238680614857e-05, 9.216282705892809e-06, 2.562100962677505e-05, 2.3237604182213545e-05, 1.3060711353318766e-05, 1.0788337021949701e-05, 1.1316250493109692e-05, 2.2191534299054183e-05, 1.4636822925240267e-05, 1.1639808690233622e-05]}
