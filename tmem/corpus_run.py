@@ -296,7 +296,9 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--run-id", default=None, help="run directory name (default: <preset>-v1)")
     parser.add_argument("--out", default="results/corpus", help="parent directory of run directories")
     parser.add_argument("--model", default=None, help="model name for tmem.models.load_model")
-    parser.add_argument("--device", default="cpu")
+    parser.add_argument("--device", default="auto",
+                        help="cpu | cuda | auto (ROCm builds also use 'cuda': HIP exposes AMD GPUs "
+                             "under torch.cuda — 'auto' picks cuda when available, else cpu)")
     parser.add_argument("--dtype", default="auto", choices=["auto", "float32", "float16", "bfloat16"])
     parser.add_argument("--budget", type=int, default=128)
     parser.add_argument("--max-new-tokens", type=int, default=32)
@@ -318,11 +320,20 @@ def main(argv: list[str] | None = None) -> int:
     run_id = args.run_id or f"{preset}-v1"
     run_dir = Path(args.out) / run_id
 
+    import torch
+
+    device = args.device
+    if device == "auto":
+        device = "cuda" if torch.cuda.is_available() else "cpu"
+    gpu_name = torch.cuda.get_device_name(0) if device == "cuda" and torch.cuda.is_available() else None
+
     meta = {
         "run_id": run_id,
         "preset": preset,
         "model": args.model,
-        "device": args.device,
+        "device": device,
+        "gpu": gpu_name,
+        "torch": torch.__version__,           # e.g. "2.9.1+rocm6.3" — environment-drift audit
         "dtype": args.dtype,
         "git_sha": git_sha(),
         "protocol": {
@@ -337,17 +348,16 @@ def main(argv: list[str] | None = None) -> int:
     }
 
     if args.dry_run:
+        print(f"device: {device}" + (f" ({gpu_name})" if gpu_name else "") + f", torch {torch.__version__}")
         runner = None
     else:
         if not args.model:
             parser.error("--model обязателен без --dry-run")
-        import torch
-
         from .models import load_model
 
         dtype = {"auto": "auto", "float32": torch.float32, "float16": torch.float16,
                  "bfloat16": torch.bfloat16}[args.dtype]
-        bundle = load_model(args.model, device=args.device, dtype=dtype)
+        bundle = load_model(args.model, device=device, dtype=dtype)
         runner = ModelBatchRunner(bundle, strategies, max_new_tokens=args.max_new_tokens,
                                   seed=args.seed, latency_repeats=args.latency_repeats)
 
