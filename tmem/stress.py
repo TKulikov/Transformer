@@ -264,13 +264,16 @@ def analyze_session(runs: dict[str, DialogueRun], reference: str = "classic_kv_f
         cons = []
         lag_scores = {"0-5": [], "6-12": [], "13-20": [], "21+": []}
         zone_acc: dict[str, list[float]] = {}
+        kind_acc: dict[str, list[float]] = {}
         for d in details:
             score = d["score"] or 0.0
             zone = _zones(d["plant_turn"] or 0, total_turns)
             zone_acc.setdefault(zone, []).append(score)
-            lag = d["lag"] or 0
-            bucket = "0-5" if lag <= 5 else ("6-12" if lag <= 12 else ("13-20" if lag <= 20 else "21+"))
-            lag_scores[bucket].append(score)
+            kind_acc.setdefault(d.get("kind") or "direct", []).append(score)
+            lag = d["lag"]
+            if lag is not None:
+                bucket = "0-5" if lag <= 5 else ("6-12" if lag <= 12 else ("13-20" if lag <= 20 else "21+"))
+                lag_scores[bucket].append(score)
             if d["question"] in ref_answers:
                 cons.append(_jaccard(d["answer"], ref_answers[d["question"]]))
         n = max(len(details), 1)
@@ -287,6 +290,7 @@ def analyze_session(runs: dict[str, DialogueRun], reference: str = "classic_kv_f
             "recall_direct": round(sum(direct) / len(direct), 3) if direct else None,
             "recall_paraphrase": round(sum(paraphrase) / len(paraphrase), 3) if paraphrase else None,
             "recall_by_zone": {z: round(sum(v) / len(v), 3) for z, v in zone_acc.items()},
+            "recall_by_kind": {k: round(sum(v) / len(v), 3) for k, v in kind_acc.items()},
             "recall_by_lag": {k: round(sum(v) / len(v), 3) if v else None for k, v in lag_scores.items()},
             "stale_rate": round(sum(bool(d["stale_score"]) for d in details) / n, 3),
             "stale_updated_rate": round(sum(bool(d["stale_score"]) for d in updated) / len(updated), 3) if updated else None,

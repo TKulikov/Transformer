@@ -33,6 +33,15 @@ class Probe:
     Stress mode fills ``plant_turn`` (where the fact was introduced),
     ``expected`` (current truth), ``stale`` (a superseded value whose mention
     is counted separately) and whether the question is a paraphrase.
+
+    ``kind`` drives scoring (corpus benchmark):
+
+    * ``direct`` / ``paraphrase`` / ``multihop`` / ``temporal`` — keyword
+      coverage of ``expected`` (for ``temporal`` the OLD value is expected
+      and the new one usually sits in ``stale``);
+    * ``unanswerable`` — the fact was never planted: answering with any
+      ``forbidden`` value is a hallucination (score 0), anything else
+      (refusal / "don't know") scores 1.
     """
 
     after_turn: int
@@ -41,6 +50,8 @@ class Probe:
     plant_turn: int | None = None
     stale: list[str] = field(default_factory=list)
     paraphrase: bool = False
+    kind: str = "direct"
+    forbidden: list[str] = field(default_factory=list)
 
 
 @dataclass(frozen=True)
@@ -108,7 +119,16 @@ SESSIONS = [
 
 
 def score_probe_answer(text: str, probe: Probe) -> float:
-    """Keyword coverage of a generated answer against the probe's expectation."""
+    """Keyword coverage of a generated answer against the probe's expectation.
+
+    For ``kind == "unanswerable"`` the scoring is inverted: mentioning any
+    ``forbidden`` value means the model hallucinated a fact that was never
+    planted (score 0.0); any other answer (refusal, "I don't know", generic
+    text) counts as success (1.0).
+    """
+    if probe.kind == "unanswerable":
+        low = text.lower()
+        return 0.0 if any(f.lower() in low for f in probe.forbidden) else 1.0
     return keyword_score(text, probe.expected)
 
 

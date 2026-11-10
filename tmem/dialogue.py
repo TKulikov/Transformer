@@ -150,6 +150,7 @@ class DialogueRun:
                     "plant_turn": t.probe.plant_turn,
                     "lag": lag,
                     "paraphrase": t.probe.paraphrase,
+                    "kind": t.probe.kind,
                     "score": t.probe_score,
                     "stale_score": t.stale_score,
                     "answer": t.answer_text[:120],
