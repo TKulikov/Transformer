@@ -1,0 +1,260 @@
+{
+  "strategy": "snapkv_128",
+  "spec_id": "pilot-02-work-terse-adversarial",
+  "analysis": {
+    "recall_mean": 0.5,
+    "recall_direct": 0.571,
+    "recall_paraphrase": 0.25,
+    "recall_by_zone": {
+      "early": 0.364,
+      "middle": 0.714
+    },
+    "recall_by_kind": {
+      "multihop": 0.5,
+      "paraphrase": 0.25,
+      "direct": 0.5,
+      "unanswerable": 1.0
+    },
+    "recall_by_lag": {
+      "0-5": 0.6,
+      "6-12": 0.0,
+      "13-20": 0.5,
+      "21+": 0.357
+    },
+    "stale_rate": 0.0,
+    "stale_updated_rate": 0.0,
+    "consistency_vs_reference": 0.422,
+    "tone_mean": 0.809,
+    "rep_mean": 0.0009,
+    "prompt_tokens": 216379,
+    "generated_tokens": 3139,
+    "embed_tokens": 3887,
+    "cache_slots": 444692,
+    "attention_flops_proxy": 444692,
+    "max_cache_len": 159,
+    "mean_turn_latency_s": 1.6824,
+    "median_turn_latency_s": 1.635,
+    "p90_turn_latency_s": 2.2111,
+    "peak_mem_mb": 11263.78,
+    "memory_stats": null,
+    "rag_stats": {
+      "adds": 17,
+      "upserts": 28,
+      "evictions": 0,
+      "size": 17
+    },
+    "probe_details": [
+      {
+        "turn": 24,
+        "question": "Question: what is the name of the production server? And also, which ticket tracks the epic?",
+        "plant_turn": 22,
+        "lag": 2,
+        "paraphrase": false,
+        "kind": "multihop",
+        "score": 0.5,
+        "stale_score": 0.0,
+        "answer": "Based on the dialogue provided:\n\n*   **Production Server Name:** **PRJ-482** (Note: The dialogue explicitly states \"The "
+      },
+      {
+        "turn": 36,
+        "question": "Which release method does my team use?",
+        "plant_turn": 34,
+        "lag": 2,
+        "paraphrase": true,
+        "kind": "paraphrase",
+        "score": 1.0,
+        "stale_score": null,
+        "answer": "Based on the notes we just added, your team uses a **canary release** method.\n\nHere is the updated consolidated list of "
+      },
+      {
+        "turn": 37,
+        "question": "Question: which floor is the office on?",
+        "plant_turn": 33,
+        "lag": 4,
+        "paraphrase": false,
+        "kind": "direct",
+        "score": 0.0,
+        "stale_score": null,
+        "answer": "Based on the notes we just added, the office is on the **12th floor**."
+      },
+      {
+        "turn": 38,
+        "question": "At what time is the retro?",
+        "plant_turn": 31,
+        "lag": 7,
+        "paraphrase": true,
+        "kind": "paraphrase",
+        "score": 0.0,
+        "stale_score": null,
+        "answer": "The retrospective is scheduled for **3:00 PM** (12th floor, 12th floor, 12th floor)."
+      },
+      {
+        "turn": 41,
+        "question": "Question: what is the name of the production server? And also, which ticket tracks the epic?",
+        "plant_turn": 22,
+        "lag": 19,
+        "paraphrase": false,
+        "kind": "multihop",
+        "score": 0.5,
+        "stale_score": 0.0,
+        "answer": "Based on the dialogue provided:\n\n*   **Production Server Name:** Phoenix\n*   **Epic Ticket:** #402"
+      },
+      {
+        "turn": 44,
+        "question": "Who reviews my pull requests?",
+        "plant_turn": 26,
+        "lag": 18,
+        "paraphrase": false,
+        "kind": "direct",
+        "score": 1.0,
+        "stale_score": null,
+        "answer": "Based on the context provided in your dialogue history, **Dana** reviews your pull requests.\n\nHere is how you might phra"
+      },
+      {
+        "turn": 50,
+        "question": "When is the release deadline? And also, which server hosts staging?",
+        "plant_turn": 48,
+        "lag": 2,
+        "paraphrase": false,
+        "kind": "multihop",
+        "score": 0.5,
+        "stale_score": null,
+        "answer": "Based on the notes provided in our dialogue:\n\n*   **Release Deadline:** June 3\n*   **Staging Server:** The server hostin"
+      },
+      {
+        "turn": 51,
+        "question": "Which floor is the office on?",
+        "plant_turn": 33,
+        "lag": 18,
+        "paraphrase": false,
+        "kind": "direct",
+        "score": 0.0,
+        "stale_score": null,
+        "answer": "Based on the notes provided in our dialogue:\n\n*   **Office Floor:** The office is on the **12th floor**.\n*   **St"
+      },
+      {
+        "turn": 53,
+        "question": "Who leads my team?",
+        "plant_turn": 52,
+        "lag": 1,
+        "paraphrase": false,
+        "kind": "direct",
+        "score": 1.0,
+        "stale_score": null,
+        "answer": "Based on the notes we just recorded, your team is led by **Margarita**."
+      },
+      {
+        "turn": 67,
+        "question": "Which ticket tracks the epic?",
+        "plant_turn": 22,
+        "lag": 45,
+        "paraphrase": true,
+        "kind": "paraphrase",
+        "score": 0.0,
+        "stale_score": null,
+        "answer": "Based on the context of our previous dialogue, the ticket that tracks the epic is **#402**.\n\nHere is a quick summary of "
+      },
+      {
+        "turn": 80,
+        "question": "Who leads my team?",
+        "plant_turn": 52,
+        "lag": 28,
+        "paraphrase": false,
+        "kind": "direct",
+        "score": 0.0,
+        "stale_score": null,
+        "answer": "Based on the notes we just discussed, **Alex** leads your team."
+      },
+      {
+        "turn": 81,
+        "question": "Question: which CI platform do we use?",
+        "plant_turn": null,
+        "lag": null,
+        "paraphrase": false,
+        "kind": "unanswerable",
+        "score": 1.0,
+        "stale_score": null,
+        "answer": "Based on the dialogue history provided, there is **no mention** of a specific CI (Continuous Integration) platform being"
+      },
+      {
+        "turn": 83,
+        "question": "Who reviews my pull requests? And also, what is the name of my team leader?",
+        "plant_turn": 52,
+        "lag": 31,
+        "paraphrase": false,
+        "kind": "multihop",
+        "score": 0.5,
+        "stale_score": null,
+        "answer": "Based on the dialogue history provided:\n\n*   **Who reviews your pull requests?**\n    **Dana** (Note: In the earlier part"
+      },
+      {
+        "turn": 84,
+        "question": "Question: where is the company HQ?",
+        "plant_turn": null,
+        "lag": null,
+        "paraphrase": false,
+        "kind": "unanswerable",
+        "score": 1.0,
+        "stale_score": null,
+        "answer": "Based on the dialogue history provided, there is no mention of the company's headquarters location. The conversation cov"
+      },
+      {
+        "turn": 87,
+        "question": "What is the epic ticket number?",
+        "plant_turn": 22,
+        "lag": 65,
+        "paraphrase": false,
+        "kind": "direct",
+        "score": 0.0,
+        "stale_score": null,
+        "answer": "Based on the dialogue provided, the epic ticket number is **not mentioned**.\n\nThe conversation details the following inf"
+      },
+      {
+        "turn": 89,
+        "question": "Which server hosts staging?",
+        "plant_turn": 12,
+        "lag": 77,
+        "paraphrase": true,
+        "kind": "paraphrase",
+        "score": 0.0,
+        "stale_score": 0.0,
+        "answer": "Based on the dialogue provided, the specific name of the server hosting the staging environment is **not mentioned**.\n\nT"
+      },
+      {
+        "turn": 94,
+        "question": "When does my sprint end?",
+        "plant_turn": 35,
+        "lag": 59,
+        "paraphrase": false,
+        "kind": "direct",
+        "score": 1.0,
+        "stale_score": null,
+        "answer": "Based on the dialogue notes provided earlier, your current sprint ends on **Thursday**."
+      },
+      {
+        "turn": 97,
+        "question": "When is the release deadline?",
+        "plant_turn": 48,
+        "lag": 49,
+        "paraphrase": false,
+        "kind": "direct",
+        "score": 1.0,
+        "stale_score": null,
+        "answer": "Based on the context of our previous dialogue, here is the answer to your question:\n\n**The release deadline is June 15th"
+      }
+    ]
+  },
+  "e2e": {
+    "per_rep_mean_s": [
+      1.7253,
+      1.7246,
+      1.7242,
+      1.7255,
+      1.7269
+    ],
+    "mean_s": 1.7253,
+    "median_s": 1.7253,
+    "includes_retrieval": true,
+    "warmup_reps": 1
+  }
+}

@@ -1,0 +1,260 @@
+{
+  "strategy": "sparse_topk_128",
+  "spec_id": "pilot-05-work-chatty-adversarial",
+  "analysis": {
+    "recall_mean": 0.222,
+    "recall_direct": 0.286,
+    "recall_paraphrase": 0.0,
+    "recall_by_zone": {
+      "early": 0.389,
+      "middle": 0.056
+    },
+    "recall_by_kind": {
+      "multihop": 0.25,
+      "paraphrase": 0.0,
+      "direct": 0.125,
+      "unanswerable": 1.0
+    },
+    "recall_by_lag": {
+      "0-5": 0.1,
+      "6-12": 0.0,
+      "13-20": null,
+      "21+": 0.188
+    },
+    "stale_rate": 0.0,
+    "stale_updated_rate": 0.0,
+    "consistency_vs_reference": 0.2,
+    "tone_mean": 0.8217,
+    "rep_mean": 0.0004,
+    "prompt_tokens": 243551,
+    "generated_tokens": 3200,
+    "embed_tokens": 4407,
+    "cache_slots": 406144,
+    "attention_flops_proxy": 406144,
+    "max_cache_len": 128,
+    "mean_turn_latency_s": 1.9814,
+    "median_turn_latency_s": 1.9871,
+    "p90_turn_latency_s": 2.5188,
+    "peak_mem_mb": 8298.28,
+    "memory_stats": null,
+    "rag_stats": {
+      "adds": 8,
+      "upserts": 40,
+      "evictions": 0,
+      "size": 8
+    },
+    "probe_details": [
+      {
+        "turn": 21,
+        "question": "Quick question! what is the name of the staging server? And also, where is the office located?",
+        "plant_turn": 17,
+        "lag": 4,
+        "paraphrase": false,
+        "kind": "multihop",
+        "score": 0.5,
+        "stale_score": 0.0,
+        "answer": "Based on the conversation we just had, here are the details:\n\n*   **Staging Server Name:** **Falcon**\n*   **Office Locat"
+      },
+      {
+        "turn": 27,
+        "question": "By the way, where is the office located?",
+        "plant_turn": 17,
+        "lag": 10,
+        "paraphrase": true,
+        "kind": "paraphrase",
+        "score": 0.0,
+        "stale_score": null,
+        "answer": "That's a great question! Since we've been talking about your exciting project names like **Falcon** and **Phoenix**, I'd"
+      },
+      {
+        "turn": 37,
+        "question": "By the way, when is the release deadline?",
+        "plant_turn": 30,
+        "lag": 7,
+        "paraphrase": false,
+        "kind": "direct",
+        "score": 0.0,
+        "stale_score": null,
+        "answer": "That's a great question! Since we're wrapping up the sprint review and moving toward the retrospective, the release dead"
+      },
+      {
+        "turn": 39,
+        "question": "Tell me, when does the retrospective start?",
+        "plant_turn": 36,
+        "lag": 3,
+        "paraphrase": false,
+        "kind": "direct",
+        "score": 0.0,
+        "stale_score": null,
+        "answer": "The retrospective starts at **10:00 AM** today. We'll be wrapping up the sprint review right after lunch, so we have a n"
+      },
+      {
+        "turn": 42,
+        "question": "Quick question! whose review do I wait for on PRs?",
+        "plant_turn": 38,
+        "lag": 4,
+        "paraphrase": true,
+        "kind": "paraphrase",
+        "score": 0.0,
+        "stale_score": null,
+        "answer": "That's a great question! The answer usually depends on your team's specific workflow and the size of the Pull Request (P"
+      },
+      {
+        "turn": 44,
+        "question": "By the way, when does the retrospective start?",
+        "plant_turn": 36,
+        "lag": 8,
+        "paraphrase": false,
+        "kind": "direct",
+        "score": 0.0,
+        "stale_score": null,
+        "answer": "That's a great question! The retrospective usually starts **right after the sprint planning meeting** concludes, or some"
+      },
+      {
+        "turn": 45,
+        "question": "Tell me, which language is the backend written in?",
+        "plant_turn": 41,
+        "lag": 4,
+        "paraphrase": false,
+        "kind": "direct",
+        "score": 0.0,
+        "stale_score": null,
+        "answer": "Based on the dialogue we just reviewed, the backend is written in **Falcon** (the staging server) and **Phoenix** (the p"
+      },
+      {
+        "turn": 46,
+        "question": "Quick question! how do we deploy the service? And also, which server hosts production?",
+        "plant_turn": 43,
+        "lag": 3,
+        "paraphrase": false,
+        "kind": "multihop",
+        "score": 0.0,
+        "stale_score": null,
+        "answer": "Based on the dialogue we just reviewed, here are the answers to your questions:\n\n*   **How do we deploy the service?**\n "
+      },
+      {
+        "turn": 62,
+        "question": "Tell me, what is the name of the production server?",
+        "plant_turn": 16,
+        "lag": 46,
+        "paraphrase": false,
+        "kind": "direct",
+        "score": 1.0,
+        "stale_score": 0.0,
+        "answer": "Based on the dialogue you provided, the name of the production server is **Phoenix**.\n\nThe conversation mentions that th"
+      },
+      {
+        "turn": 63,
+        "question": "Quick question! where is the company HQ?",
+        "plant_turn": null,
+        "lag": null,
+        "paraphrase": false,
+        "kind": "unanswerable",
+        "score": 1.0,
+        "stale_score": null,
+        "answer": "Based on the dialogue provided, there is **no mention** of the company's headquarters location. The conversation only sp"
+      },
+      {
+        "turn": 73,
+        "question": "By the way, by which date must we release?",
+        "plant_turn": 30,
+        "lag": 43,
+        "paraphrase": true,
+        "kind": "paraphrase",
+        "score": 0.0,
+        "stale_score": null,
+        "answer": "That's a crucial question! Since we don't have the specific project timeline in our conversation yet, here are a few way"
+      },
+      {
+        "turn": 74,
+        "question": "By the way, when does my sprint end?",
+        "plant_turn": 29,
+        "lag": 45,
+        "paraphrase": false,
+        "kind": "direct",
+        "score": 0.0,
+        "stale_score": null,
+        "answer": "That's a great question to clarify your timeline! Since we don't have the specific dates for your current sprint in our "
+      },
+      {
+        "turn": 79,
+        "question": "Quick question! which language is the backend written in? And also, which server hosts production?",
+        "plant_turn": 41,
+        "lag": 38,
+        "paraphrase": false,
+        "kind": "multihop",
+        "score": 0.5,
+        "stale_score": null,
+        "answer": "Based on the dialogue provided, here is the information regarding your infrastructure:\n\n*   **Backend Language:** The ba"
+      },
+      {
+        "turn": 86,
+        "question": "Tell me, which CI platform do we use?",
+        "plant_turn": null,
+        "lag": null,
+        "paraphrase": false,
+        "kind": "unanswerable",
+        "score": 1.0,
+        "stale_score": null,
+        "answer": "Based on the dialogue provided, there is **no mention** of a specific CI (Continuous Integration) platform.\n\nThe convers"
+      },
+      {
+        "turn": 92,
+        "question": "By the way, at what time is the retro?",
+        "plant_turn": 36,
+        "lag": 56,
+        "paraphrase": true,
+        "kind": "paraphrase",
+        "score": 0.0,
+        "stale_score": null,
+        "answer": "That's a great question! Since we've been talking about your sprint and the **Falcon** staging server, the **retro** (re"
+      },
+      {
+        "turn": 94,
+        "question": "Tell me, which floor is the office on? And also, which release method does my team use?",
+        "plant_turn": 43,
+        "lag": 51,
+        "paraphrase": false,
+        "kind": "multihop",
+        "score": 0.0,
+        "stale_score": null,
+        "answer": "That's a great mix of logistical and technical questions! Since we're wrapping up this conversation about your work, her"
+      },
+      {
+        "turn": 97,
+        "question": "Quick question! who reviews my pull requests?",
+        "plant_turn": 38,
+        "lag": 59,
+        "paraphrase": false,
+        "kind": "direct",
+        "score": 0.0,
+        "stale_score": null,
+        "answer": "That's a great question! The person or team responsible for reviewing your pull requests (PRs) usually depends on your o"
+      },
+      {
+        "turn": 98,
+        "question": "By the way, when is the release deadline?",
+        "plant_turn": 30,
+        "lag": 68,
+        "paraphrase": false,
+        "kind": "direct",
+        "score": 0.0,
+        "stale_score": null,
+        "answer": "That's a crucial question! The release deadline depends entirely on your specific project timeline and the release cycle"
+      }
+    ]
+  },
+  "e2e": {
+    "per_rep_mean_s": [
+      2.0623,
+      2.0621,
+      2.0623,
+      2.062,
+      2.06
+    ],
+    "mean_s": 2.0617,
+    "median_s": 2.0621,
+    "includes_retrieval": true,
+    "warmup_reps": 1
+  }
+}

@@ -1,0 +1,260 @@
+{
+  "strategy": "sparse_topk_128",
+  "spec_id": "pilot-00-work-terse-baseline",
+  "analysis": {
+    "recall_mean": 0.222,
+    "recall_direct": 0.286,
+    "recall_paraphrase": 0.0,
+    "recall_by_zone": {
+      "early": 0.5,
+      "middle": 0.0
+    },
+    "recall_by_kind": {
+      "direct": 0.25,
+      "multihop": 0.0,
+      "paraphrase": 0.0,
+      "unanswerable": 1.0
+    },
+    "recall_by_lag": {
+      "0-5": 0.25,
+      "6-12": 0.333,
+      "13-20": 0.0,
+      "21+": 0.0
+    },
+    "stale_rate": 0.0,
+    "stale_updated_rate": null,
+    "consistency_vs_reference": 0.188,
+    "tone_mean": 0.817,
+    "rep_mean": 0.001,
+    "prompt_tokens": 215167,
+    "generated_tokens": 3161,
+    "embed_tokens": 3918,
+    "cache_slots": 400664,
+    "attention_flops_proxy": 400664,
+    "max_cache_len": 128,
+    "mean_turn_latency_s": 1.9102,
+    "median_turn_latency_s": 1.9297,
+    "p90_turn_latency_s": 2.4349,
+    "peak_mem_mb": 8303.36,
+    "memory_stats": null,
+    "rag_stats": {
+      "adds": 17,
+      "upserts": 30,
+      "evictions": 0,
+      "size": 17
+    },
+    "probe_details": [
+      {
+        "turn": 23,
+        "question": "Question: when does the retrospective start?",
+        "plant_turn": 14,
+        "lag": 9,
+        "paraphrase": false,
+        "kind": "direct",
+        "score": 0.0,
+        "stale_score": null,
+        "answer": "Based on the dialogue provided, the retrospective starts at **3:00 PM** (indicated by the phrase \"retrospective start[s]"
+      },
+      {
+        "turn": 36,
+        "question": "Question: when does my sprint end?",
+        "plant_turn": 31,
+        "lag": 5,
+        "paraphrase": false,
+        "kind": "direct",
+        "score": 1.0,
+        "stale_score": null,
+        "answer": "Your sprint ends on **Thursday at 4:00 PM**."
+      },
+      {
+        "turn": 38,
+        "question": "Question: when does my sprint end?",
+        "plant_turn": 31,
+        "lag": 7,
+        "paraphrase": false,
+        "kind": "direct",
+        "score": 1.0,
+        "stale_score": null,
+        "answer": "Your sprint ends on **Thursday at 5:00 PM**.\n\nThis is the deadline for all pull requests, code reviews, and deployment t"
+      },
+      {
+        "turn": 42,
+        "question": "What is the name of our intern? And also, what is the name of my team leader?",
+        "plant_turn": 37,
+        "lag": 5,
+        "paraphrase": false,
+        "kind": "multihop",
+        "score": 0.0,
+        "stale_score": null,
+        "answer": "Based on the details provided in our conversation so far:\n\n*   **Intern's Name:** **Dana** (She is the one reviewing you"
+      },
+      {
+        "turn": 48,
+        "question": "Question: where is the office located?",
+        "plant_turn": 43,
+        "lag": 5,
+        "paraphrase": true,
+        "kind": "paraphrase",
+        "score": 0.0,
+        "stale_score": null,
+        "answer": "Based on the notes we have drafted so far, **the location of the office is not mentioned**.\n\nThe current notes cover:\n* "
+      },
+      {
+        "turn": 50,
+        "question": "Question: what is the name of my team leader?",
+        "plant_turn": 35,
+        "lag": 15,
+        "paraphrase": true,
+        "kind": "paraphrase",
+        "score": 0.0,
+        "stale_score": null,
+        "answer": "Based on the notes provided so far, **there is no information available regarding the name of your team leader**.\n\nThe c"
+      },
+      {
+        "turn": 57,
+        "question": "Question: which CI platform do we use?",
+        "plant_turn": null,
+        "lag": null,
+        "paraphrase": false,
+        "kind": "unanswerable",
+        "score": 1.0,
+        "stale_score": null,
+        "answer": "Based on the notes provided so far, there is **no mention of a specific CI (Continuous Integration) platform** being use"
+      },
+      {
+        "turn": 58,
+        "question": "Question: what is the name of my team leader?",
+        "plant_turn": 35,
+        "lag": 23,
+        "paraphrase": true,
+        "kind": "paraphrase",
+        "score": 0.0,
+        "stale_score": null,
+        "answer": "Based on the notes provided so far, there is **no mention of the name of your team leader**.\n\nThe current documentation "
+      },
+      {
+        "turn": 59,
+        "question": "What is the epic ticket number?",
+        "plant_turn": 54,
+        "lag": 5,
+        "paraphrase": false,
+        "kind": "direct",
+        "score": 0.0,
+        "stale_score": null,
+        "answer": "The epic ticket number is **not explicitly stated** in the notes provided so far.\n\nHowever, based on the context of your"
+      },
+      {
+        "turn": 60,
+        "question": "When does the retrospective start?",
+        "plant_turn": 14,
+        "lag": 46,
+        "paraphrase": false,
+        "kind": "direct",
+        "score": 0.0,
+        "stale_score": null,
+        "answer": "Based on the notes provided in our conversation, the retrospective starts at **3:00 PM** (indicated by \"3:00 PM\" in"
+      },
+      {
+        "turn": 64,
+        "question": "What is the epic ticket number? And also, who is the new intern?",
+        "plant_turn": 54,
+        "lag": 10,
+        "paraphrase": false,
+        "kind": "multihop",
+        "score": 0.0,
+        "stale_score": null,
+        "answer": "Based on the dialogue history provided, here are the answers to your specific questions:\n\n*   **Epic Ticket Number:** Th"
+      },
+      {
+        "turn": 65,
+        "question": "Question: when does my sprint end? And also, what is the name of my team leader?",
+        "plant_turn": 35,
+        "lag": 30,
+        "paraphrase": false,
+        "kind": "multihop",
+        "score": 0.0,
+        "stale_score": null,
+        "answer": "Based on the dialogue provided, there is **no information** regarding when your sprint ends or the name of your team lea"
+      },
+      {
+        "turn": 81,
+        "question": "How do we deploy the service?",
+        "plant_turn": 28,
+        "lag": 53,
+        "paraphrase": false,
+        "kind": "direct",
+        "score": 0.0,
+        "stale_score": null,
+        "answer": "Based on the context of your IT project notes, here is a concise answer on how to deploy the service, followed by a few "
+      },
+      {
+        "turn": 82,
+        "question": "Question: which floor is the office on?",
+        "plant_turn": 43,
+        "lag": 39,
+        "paraphrase": false,
+        "kind": "direct",
+        "score": 0.0,
+        "stale_score": null,
+        "answer": "I don't have any information about your office location or which floor it is on. Could you provide those details?"
+      },
+      {
+        "turn": 83,
+        "question": "Question: when does the retrospective start?",
+        "plant_turn": 14,
+        "lag": 69,
+        "paraphrase": false,
+        "kind": "direct",
+        "score": 0.0,
+        "stale_score": null,
+        "answer": "The retrospective starts at **3:00 PM** (as noted in your timeline: \"Dana reviews pull requests... then the retrospectiv"
+      },
+      {
+        "turn": 89,
+        "question": "Question: what is the name of our intern? And also, at what time is the retro?",
+        "plant_turn": 37,
+        "lag": 52,
+        "paraphrase": false,
+        "kind": "multihop",
+        "score": 0.0,
+        "stale_score": null,
+        "answer": "Based on the notes we have drafted so far, I don't have information regarding the **name of your intern** or the **speci"
+      },
+      {
+        "turn": 90,
+        "question": "Question: where is the company HQ?",
+        "plant_turn": null,
+        "lag": null,
+        "paraphrase": false,
+        "kind": "unanswerable",
+        "score": 1.0,
+        "stale_score": null,
+        "answer": "Based on the notes we have drafted so far, I do not have information regarding the **location of your company's headquar"
+      },
+      {
+        "turn": 97,
+        "question": "Question: where is the office located?",
+        "plant_turn": 43,
+        "lag": 54,
+        "paraphrase": true,
+        "kind": "paraphrase",
+        "score": 0.0,
+        "stale_score": null,
+        "answer": "Based on the notes provided in our conversation, there is no mention of the office location. The details we have recorde"
+      }
+    ]
+  },
+  "e2e": {
+    "per_rep_mean_s": [
+      1.983,
+      1.9835,
+      1.9831,
+      1.9703,
+      2.0023
+    ],
+    "mean_s": 1.9844,
+    "median_s": 1.9831,
+    "includes_retrieval": true,
+    "warmup_reps": 1
+  }
+}

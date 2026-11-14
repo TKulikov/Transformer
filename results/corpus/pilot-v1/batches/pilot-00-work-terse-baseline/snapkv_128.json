@@ -1,0 +1,260 @@
+{
+  "strategy": "snapkv_128",
+  "spec_id": "pilot-00-work-terse-baseline",
+  "analysis": {
+    "recall_mean": 0.306,
+    "recall_direct": 0.393,
+    "recall_paraphrase": 0.0,
+    "recall_by_zone": {
+      "early": 0.625,
+      "middle": 0.05
+    },
+    "recall_by_kind": {
+      "direct": 0.375,
+      "multihop": 0.125,
+      "paraphrase": 0.0,
+      "unanswerable": 1.0
+    },
+    "recall_by_lag": {
+      "0-5": 0.375,
+      "6-12": 0.333,
+      "13-20": 0.0,
+      "21+": 0.125
+    },
+    "stale_rate": 0.0,
+    "stale_updated_rate": null,
+    "consistency_vs_reference": 0.19,
+    "tone_mean": 0.7969,
+    "rep_mean": 0.0,
+    "prompt_tokens": 212019,
+    "generated_tokens": 3115,
+    "embed_tokens": 3871,
+    "cache_slots": 441184,
+    "attention_flops_proxy": 441184,
+    "max_cache_len": 159,
+    "mean_turn_latency_s": 1.6719,
+    "median_turn_latency_s": 1.6752,
+    "p90_turn_latency_s": 2.1914,
+    "peak_mem_mb": 11235.97,
+    "memory_stats": null,
+    "rag_stats": {
+      "adds": 17,
+      "upserts": 30,
+      "evictions": 0,
+      "size": 17
+    },
+    "probe_details": [
+      {
+        "turn": 23,
+        "question": "Question: when does the retrospective start?",
+        "plant_turn": 14,
+        "lag": 9,
+        "paraphrase": false,
+        "kind": "direct",
+        "score": 0.0,
+        "stale_score": null,
+        "answer": "Your retrospective starts at **15:00** (3:00 PM)."
+      },
+      {
+        "turn": 36,
+        "question": "Question: when does my sprint end?",
+        "plant_turn": 31,
+        "lag": 5,
+        "paraphrase": false,
+        "kind": "direct",
+        "score": 1.0,
+        "stale_score": null,
+        "answer": "Your sprint ends on **Thursday**."
+      },
+      {
+        "turn": 38,
+        "question": "Question: when does my sprint end?",
+        "plant_turn": 31,
+        "lag": 7,
+        "paraphrase": false,
+        "kind": "direct",
+        "score": 1.0,
+        "stale_score": null,
+        "answer": "Your sprint ends on **Thursday**."
+      },
+      {
+        "turn": 42,
+        "question": "What is the name of our intern? And also, what is the name of my team leader?",
+        "plant_turn": 37,
+        "lag": 5,
+        "paraphrase": false,
+        "kind": "multihop",
+        "score": 0.5,
+        "stale_score": null,
+        "answer": "Based on the dialogue provided:\n\n*   **Intern's name:** Pavel\n*   **Team leader's name:** Margarata"
+      },
+      {
+        "turn": 48,
+        "question": "Question: where is the office located?",
+        "plant_turn": 43,
+        "lag": 5,
+        "paraphrase": true,
+        "kind": "paraphrase",
+        "score": 0.0,
+        "stale_score": null,
+        "answer": "The office is located on the 10th floor."
+      },
+      {
+        "turn": 50,
+        "question": "Question: what is the name of my team leader?",
+        "plant_turn": 35,
+        "lag": 15,
+        "paraphrase": true,
+        "kind": "paraphrase",
+        "score": 0.0,
+        "stale_score": null,
+        "answer": "Based on the dialogue history provided, there is a slight inconsistency in the earlier turns: one instance mentioned the"
+      },
+      {
+        "turn": 57,
+        "question": "Question: which CI platform do we use?",
+        "plant_turn": null,
+        "lag": null,
+        "paraphrase": false,
+        "kind": "unanswerable",
+        "score": 1.0,
+        "stale_score": null,
+        "answer": "Based on the context of your IT project (referencing Epic Ticket PR-482, CI/CD pipelines, and PR reviews), here is a nat"
+      },
+      {
+        "turn": 58,
+        "question": "Question: what is the name of my team leader?",
+        "plant_turn": 35,
+        "lag": 23,
+        "paraphrase": true,
+        "kind": "paraphrase",
+        "score": 0.0,
+        "stale_score": null,
+        "answer": "Based on the dialogue history provided, there is a **contradiction** regarding the name of your team leader:\n\n1.  In one"
+      },
+      {
+        "turn": 59,
+        "question": "What is the epic ticket number?",
+        "plant_turn": 54,
+        "lag": 5,
+        "paraphrase": false,
+        "kind": "direct",
+        "score": 0.0,
+        "stale_score": null,
+        "answer": "Based on the dialogue history provided, the **epic ticket number** is **EPIC-1024**.\n\n*(Note: This number was establishe"
+      },
+      {
+        "turn": 60,
+        "question": "When does the retrospective start?",
+        "plant_turn": 14,
+        "lag": 46,
+        "paraphrase": false,
+        "kind": "direct",
+        "score": 0.0,
+        "stale_score": null,
+        "answer": "Based on the dialogue history provided, there is **no specific time mentioned** for when the retrospective starts.\n\nEarl"
+      },
+      {
+        "turn": 64,
+        "question": "What is the epic ticket number? And also, who is the new intern?",
+        "plant_turn": 54,
+        "lag": 10,
+        "paraphrase": false,
+        "kind": "multihop",
+        "score": 0.0,
+        "stale_score": null,
+        "answer": "Based on the dialogue history provided:\n\n*   **Epic Ticket Number:** The number mentioned earlier in the conversation is"
+      },
+      {
+        "turn": 65,
+        "question": "Question: when does my sprint end? And also, what is the name of my team leader?",
+        "plant_turn": 35,
+        "lag": 30,
+        "paraphrase": false,
+        "kind": "multihop",
+        "score": 0.0,
+        "stale_score": null,
+        "answer": "Based on the dialogue history provided:\n\n*   **Sprint End Date:** The sprint ends on **Friday, October 24th**.\n*"
+      },
+      {
+        "turn": 81,
+        "question": "How do we deploy the service?",
+        "plant_turn": 28,
+        "lag": 53,
+        "paraphrase": false,
+        "kind": "direct",
+        "score": 1.0,
+        "stale_score": null,
+        "answer": "Based on the context of our previous dialogue where you mentioned deploying via a **canary release**, here is how we typ"
+      },
+      {
+        "turn": 82,
+        "question": "Question: which floor is the office on?",
+        "plant_turn": 43,
+        "lag": 39,
+        "paraphrase": false,
+        "kind": "direct",
+        "score": 0.0,
+        "stale_score": null,
+        "answer": "Based on the context of our previous dialogue, there was a slight inconsistency in the floor numbers mentioned (you prev"
+      },
+      {
+        "turn": 83,
+        "question": "Question: when does the retrospective start?",
+        "plant_turn": 14,
+        "lag": 69,
+        "paraphrase": false,
+        "kind": "direct",
+        "score": 0.0,
+        "stale_score": null,
+        "answer": "Based on the dialogue history provided, there is a **contradiction** regarding the start time of the retrospective:\n\n1. "
+      },
+      {
+        "turn": 89,
+        "question": "Question: what is the name of our intern? And also, at what time is the retro?",
+        "plant_turn": 37,
+        "lag": 52,
+        "paraphrase": false,
+        "kind": "multihop",
+        "score": 0.0,
+        "stale_score": null,
+        "answer": "Based on the details provided in our conversation:\n\n*   **Intern's Name:** The name of our intern is **Alex**.\n*   **Ret"
+      },
+      {
+        "turn": 90,
+        "question": "Question: where is the company HQ?",
+        "plant_turn": null,
+        "lag": null,
+        "paraphrase": false,
+        "kind": "unanswerable",
+        "score": 1.0,
+        "stale_score": null,
+        "answer": "Based on the dialogue history provided, there is **no mention** of the company's headquarters (HQ) location.\n\nThe conver"
+      },
+      {
+        "turn": 97,
+        "question": "Question: where is the office located?",
+        "plant_turn": 43,
+        "lag": 54,
+        "paraphrase": true,
+        "kind": "paraphrase",
+        "score": 0.0,
+        "stale_score": null,
+        "answer": "Based on the context of our previous dialogue, the office is located in **Building A, Floor 4, Room 302**.\n\n*(Note:"
+      }
+    ]
+  },
+  "e2e": {
+    "per_rep_mean_s": [
+      1.7097,
+      1.7101,
+      1.7106,
+      1.7068,
+      1.7336
+    ],
+    "mean_s": 1.7142,
+    "median_s": 1.7101,
+    "includes_retrieval": true,
+    "warmup_reps": 1
+  }
+}

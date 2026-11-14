@@ -1,0 +1,260 @@
+{
+  "strategy": "classic_kv_full",
+  "spec_id": "pilot-00-work-terse-baseline",
+  "analysis": {
+    "recall_mean": 0.917,
+    "recall_direct": 0.893,
+    "recall_paraphrase": 1.0,
+    "recall_by_zone": {
+      "early": 1.0,
+      "middle": 0.85
+    },
+    "recall_by_kind": {
+      "direct": 1.0,
+      "multihop": 0.625,
+      "paraphrase": 1.0,
+      "unanswerable": 1.0
+    },
+    "recall_by_lag": {
+      "0-5": 1.0,
+      "6-12": 0.833,
+      "13-20": 1.0,
+      "21+": 0.875
+    },
+    "stale_rate": 0.0,
+    "stale_updated_rate": null,
+    "consistency_vs_reference": 0.958,
+    "tone_mean": 0.8229,
+    "rep_mean": 0.0,
+    "prompt_tokens": 215425,
+    "generated_tokens": 3173,
+    "embed_tokens": 3932,
+    "cache_slots": 6909421,
+    "attention_flops_proxy": 6909421,
+    "max_cache_len": 4346,
+    "mean_turn_latency_s": 1.7496,
+    "median_turn_latency_s": 1.7075,
+    "p90_turn_latency_s": 2.3602,
+    "peak_mem_mb": 11412.2,
+    "memory_stats": null,
+    "rag_stats": {
+      "adds": 17,
+      "upserts": 30,
+      "evictions": 0,
+      "size": 17
+    },
+    "probe_details": [
+      {
+        "turn": 23,
+        "question": "Question: when does the retrospective start?",
+        "plant_turn": 14,
+        "lag": 9,
+        "paraphrase": false,
+        "kind": "direct",
+        "score": 1.0,
+        "stale_score": null,
+        "answer": "The retrospective starts at **15:30**."
+      },
+      {
+        "turn": 36,
+        "question": "Question: when does my sprint end?",
+        "plant_turn": 31,
+        "lag": 5,
+        "paraphrase": false,
+        "kind": "direct",
+        "score": 1.0,
+        "stale_score": null,
+        "answer": "Your current sprint ends on **Thursday**.\n\nHere is how you can incorporate this into your quick notes and daily updates:"
+      },
+      {
+        "turn": 38,
+        "question": "Question: when does my sprint end?",
+        "plant_turn": 31,
+        "lag": 7,
+        "paraphrase": false,
+        "kind": "direct",
+        "score": 1.0,
+        "stale_score": null,
+        "answer": "Your current sprint ends on **Thursday**.\n\nHere is how you can incorporate this into your quick notes and daily updates:"
+      },
+      {
+        "turn": 42,
+        "question": "What is the name of our intern? And also, what is the name of my team leader?",
+        "plant_turn": 37,
+        "lag": 5,
+        "paraphrase": false,
+        "kind": "multihop",
+        "score": 1.0,
+        "stale_score": null,
+        "answer": "Based on the details we've discussed:\n\n*   **Intern:** Pavel\n*   **Team Lead:** Margarita"
+      },
+      {
+        "turn": 48,
+        "question": "Question: where is the office located?",
+        "plant_turn": 43,
+        "lag": 5,
+        "paraphrase": true,
+        "kind": "paraphrase",
+        "score": 1.0,
+        "stale_score": null,
+        "answer": "The office is located on the **twelfth floor**.\n\nHere is how you can incorporate this into your quick notes and daily up"
+      },
+      {
+        "turn": 50,
+        "question": "Question: what is the name of my team leader?",
+        "plant_turn": 35,
+        "lag": 15,
+        "paraphrase": true,
+        "kind": "paraphrase",
+        "score": 1.0,
+        "stale_score": null,
+        "answer": "Based on the details we've discussed, your team lead is named **Margarita**.\n\nHere is how you can incorporate this into "
+      },
+      {
+        "turn": 57,
+        "question": "Question: which CI platform do we use?",
+        "plant_turn": null,
+        "lag": null,
+        "paraphrase": false,
+        "kind": "unanswerable",
+        "score": 1.0,
+        "stale_score": null,
+        "answer": "Based on the pattern of your conversation, you haven't explicitly stated which CI platform you use yet. However, since y"
+      },
+      {
+        "turn": 58,
+        "question": "Question: what is the name of my team leader?",
+        "plant_turn": 35,
+        "lag": 23,
+        "paraphrase": true,
+        "kind": "paraphrase",
+        "score": 1.0,
+        "stale_score": null,
+        "answer": "Based on the details we've discussed, your team lead is named **Margarita**.\n\nHere is how you can incorporate this into "
+      },
+      {
+        "turn": 59,
+        "question": "What is the epic ticket number?",
+        "plant_turn": 54,
+        "lag": 5,
+        "paraphrase": false,
+        "kind": "direct",
+        "score": 1.0,
+        "stale_score": null,
+        "answer": "The epic ticket number is **PRJ-482**.\n\nHere is how you can incorporate this into your quick notes and daily updates:\n\n*"
+      },
+      {
+        "turn": 60,
+        "question": "When does the retrospective start?",
+        "plant_turn": 14,
+        "lag": 46,
+        "paraphrase": false,
+        "kind": "direct",
+        "score": 1.0,
+        "stale_score": null,
+        "answer": "The retrospective starts at **15:30**.\n\nHere is how you can incorporate this into your quick notes and daily updates:\n\n*"
+      },
+      {
+        "turn": 64,
+        "question": "What is the epic ticket number? And also, who is the new intern?",
+        "plant_turn": 54,
+        "lag": 10,
+        "paraphrase": false,
+        "kind": "multihop",
+        "score": 0.5,
+        "stale_score": null,
+        "answer": "Based on the details we've discussed, here are the answers to your questions:\n\n*   **Epic Ticket Number:** **PRJ-482"
+      },
+      {
+        "turn": 65,
+        "question": "Question: when does my sprint end? And also, what is the name of my team leader?",
+        "plant_turn": 35,
+        "lag": 30,
+        "paraphrase": false,
+        "kind": "multihop",
+        "score": 0.5,
+        "stale_score": null,
+        "answer": "Based on the details we've discussed, here are the answers to your questions:\n\n*   **Sprint End Date:** Your current spr"
+      },
+      {
+        "turn": 81,
+        "question": "How do we deploy the service?",
+        "plant_turn": 28,
+        "lag": 53,
+        "paraphrase": false,
+        "kind": "direct",
+        "score": 1.0,
+        "stale_score": null,
+        "answer": "Based on the details we've discussed, **you deploy the service via a canary release**.\n\nHere is how you can incorporate "
+      },
+      {
+        "turn": 82,
+        "question": "Question: which floor is the office on?",
+        "plant_turn": 43,
+        "lag": 39,
+        "paraphrase": false,
+        "kind": "direct",
+        "score": 1.0,
+        "stale_score": null,
+        "answer": "The office is located on the **twelfth floor**.\n\nHere is how you can incorporate this into your quick notes and daily up"
+      },
+      {
+        "turn": 83,
+        "question": "Question: when does the retrospective start?",
+        "plant_turn": 14,
+        "lag": 69,
+        "paraphrase": false,
+        "kind": "direct",
+        "score": 1.0,
+        "stale_score": null,
+        "answer": "The retrospective starts at **15:30**.\n\nHere is how you can incorporate this into your quick notes and daily updates:\n\n*"
+      },
+      {
+        "turn": 89,
+        "question": "Question: what is the name of our intern? And also, at what time is the retro?",
+        "plant_turn": 37,
+        "lag": 52,
+        "paraphrase": false,
+        "kind": "multihop",
+        "score": 0.5,
+        "stale_score": null,
+        "answer": "Based on the details we've discussed, here are the answers to your questions:\n\n*   **Intern:** **Pavel**\n*   **Retros"
+      },
+      {
+        "turn": 90,
+        "question": "Question: where is the company HQ?",
+        "plant_turn": null,
+        "lag": null,
+        "paraphrase": false,
+        "kind": "unanswerable",
+        "score": 1.0,
+        "stale_score": null,
+        "answer": "Based on the details we've discussed, the company headquarters is located on the **twelfth floor**.\n\nHere is how you can"
+      },
+      {
+        "turn": 97,
+        "question": "Question: where is the office located?",
+        "plant_turn": 43,
+        "lag": 54,
+        "paraphrase": true,
+        "kind": "paraphrase",
+        "score": 1.0,
+        "stale_score": null,
+        "answer": "The office is located on the **twelfth floor**.\n\nHere is how you can incorporate this into your quick notes and daily up"
+      }
+    ]
+  },
+  "e2e": {
+    "per_rep_mean_s": [
+      1.7867,
+      1.7872,
+      1.7864,
+      1.7756,
+      1.7725
+    ],
+    "mean_s": 1.7817,
+    "median_s": 1.7864,
+    "includes_retrieval": true,
+    "warmup_reps": 1
+  }
+}

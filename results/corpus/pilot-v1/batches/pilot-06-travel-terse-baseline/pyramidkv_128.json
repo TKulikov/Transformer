@@ -1,0 +1,260 @@
+{
+  "strategy": "pyramidkv_128",
+  "spec_id": "pilot-06-travel-terse-baseline",
+  "analysis": {
+    "recall_mean": 0.639,
+    "recall_direct": 0.607,
+    "recall_paraphrase": 0.75,
+    "recall_by_zone": {
+      "early": 0.692,
+      "middle": 0.5
+    },
+    "recall_by_kind": {
+      "direct": 0.75,
+      "paraphrase": 0.75,
+      "multihop": 0.125,
+      "unanswerable": 1.0
+    },
+    "recall_by_lag": {
+      "0-5": 0.5,
+      "6-12": 1.0,
+      "13-20": 1.0,
+      "21+": 0.5
+    },
+    "stale_rate": 0.0,
+    "stale_updated_rate": null,
+    "consistency_vs_reference": 0.371,
+    "tone_mean": 0.8011,
+    "rep_mean": 0.0009,
+    "prompt_tokens": 210371,
+    "generated_tokens": 3112,
+    "embed_tokens": 3799,
+    "cache_slots": 439768,
+    "attention_flops_proxy": 439768,
+    "max_cache_len": 279,
+    "mean_turn_latency_s": 1.659,
+    "median_turn_latency_s": 1.657,
+    "p90_turn_latency_s": 2.1661,
+    "peak_mem_mb": 11217.89,
+    "memory_stats": null,
+    "rag_stats": {
+      "adds": 17,
+      "upserts": 32,
+      "evictions": 0,
+      "size": 17
+    },
+    "probe_details": [
+      {
+        "turn": 10,
+        "question": "Question: what is the name of the hotel?",
+        "plant_turn": 9,
+        "lag": 1,
+        "paraphrase": false,
+        "kind": "direct",
+        "score": 1.0,
+        "stale_score": null,
+        "answer": "The name of the hotel is **Miradouro**."
+      },
+      {
+        "turn": 23,
+        "question": "Question: where does the night train go?",
+        "plant_turn": 13,
+        "lag": 10,
+        "paraphrase": false,
+        "kind": "direct",
+        "score": 1.0,
+        "stale_score": null,
+        "answer": "The night train goes to **Porto**."
+      },
+      {
+        "turn": 25,
+        "question": "Question: what is the insurance policy number?",
+        "plant_turn": 24,
+        "lag": 1,
+        "paraphrase": false,
+        "kind": "direct",
+        "score": 0.0,
+        "stale_score": null,
+        "answer": "The insurance policy number is **TR-939**.\n\n*(Note: In the previous turn, the assistant made a typo and wrote \"TR-9"
+      },
+      {
+        "turn": 29,
+        "question": "What is the departure date?",
+        "plant_turn": 28,
+        "lag": 1,
+        "paraphrase": true,
+        "kind": "paraphrase",
+        "score": 1.0,
+        "stale_score": null,
+        "answer": "The departure date is **May 12**.\n\n*(Note: Based on the previous context where the flight was stated to depart on \"May 1"
+      },
+      {
+        "turn": 41,
+        "question": "Question: which city is the destination?",
+        "plant_turn": 22,
+        "lag": 19,
+        "paraphrase": true,
+        "kind": "paraphrase",
+        "score": 1.0,
+        "stale_score": null,
+        "answer": "Based on the dialogue, the destination city is **Lisbon**.\n\nThe assistant explicitly stated: \"We fly to **Lisbon** in th"
+      },
+      {
+        "turn": 49,
+        "question": "What is the insurance policy number? And also, how much money did we plan to spend?",
+        "plant_turn": 24,
+        "lag": 25,
+        "paraphrase": false,
+        "kind": "multihop",
+        "score": 0.0,
+        "stale_score": null,
+        "answer": "Based on our conversation:\n\n*   **Insurance Policy Number:** The policy number is **TR-998**.\n*   **Total Budget:** We"
+      },
+      {
+        "turn": 50,
+        "question": "What is my flight number?",
+        "plant_turn": 31,
+        "lag": 19,
+        "paraphrase": false,
+        "kind": "direct",
+        "score": 1.0,
+        "stale_score": null,
+        "answer": "Based on the dialogue provided, your flight number is **TP1264**."
+      },
+      {
+        "turn": 54,
+        "question": "Where is the visa appointment? And also, what photo gear comes with us?",
+        "plant_turn": 51,
+        "lag": 3,
+        "paraphrase": false,
+        "kind": "multihop",
+        "score": 0.5,
+        "stale_score": null,
+        "answer": "Based on our conversation, here are the details you requested:\n\n*   **Visa Appointment:** The visa appointment is at the"
+      },
+      {
+        "turn": 55,
+        "question": "What is the name of the guide? And also, which office handles the visa?",
+        "plant_turn": 51,
+        "lag": 4,
+        "paraphrase": false,
+        "kind": "multihop",
+        "score": 0.0,
+        "stale_score": null,
+        "answer": "Based on the dialogue provided:\n\n*   **Name of the guide:** The guide's name is **Miguel**.\n*   **Office handling the"
+      },
+      {
+        "turn": 62,
+        "question": "Question: what is the return flight number?",
+        "plant_turn": null,
+        "lag": null,
+        "paraphrase": false,
+        "kind": "unanswerable",
+        "score": 1.0,
+        "stale_score": null,
+        "answer": "Based on the dialogue provided, there is **no mention of a return flight or a return flight number**.\n\nThe conversation "
+      },
+      {
+        "turn": 66,
+        "question": "Question: which camera am I taking?",
+        "plant_turn": 42,
+        "lag": 24,
+        "paraphrase": false,
+        "kind": "direct",
+        "score": 1.0,
+        "stale_score": null,
+        "answer": "Based on the dialogue, you are taking the **old Zenit camera**."
+      },
+      {
+        "turn": 67,
+        "question": "Where are we flying?",
+        "plant_turn": 22,
+        "lag": 45,
+        "paraphrase": false,
+        "kind": "direct",
+        "score": 1.0,
+        "stale_score": null,
+        "answer": "Based on the dialogue, you are flying to **Lisport** (or **Lisbon**, as the text mentions \"We fly to Lisbon\" and"
+      },
+      {
+        "turn": 75,
+        "question": "Question: who is our local guide?",
+        "plant_turn": 36,
+        "lag": 39,
+        "paraphrase": true,
+        "kind": "paraphrase",
+        "score": 0.0,
+        "stale_score": null,
+        "answer": "Based on the dialogue provided, there is a conflict in the information given:\n\n1.  At one point, the assistant stated: \""
+      },
+      {
+        "turn": 83,
+        "question": "What is the insurance policy number? And also, which city does the train reach?",
+        "plant_turn": 24,
+        "lag": 59,
+        "paraphrase": false,
+        "kind": "multihop",
+        "score": 0.0,
+        "stale_score": null,
+        "answer": "Based on the dialogue provided:\n\n*   **Insurance Policy Number:** The policy number mentioned in the text is **123456789"
+      },
+      {
+        "turn": 87,
+        "question": "Question: what is the name of the hotel?",
+        "plant_turn": 9,
+        "lag": 78,
+        "paraphrase": false,
+        "kind": "direct",
+        "score": 0.0,
+        "stale_score": null,
+        "answer": "Based on the dialogue provided earlier, the name of the hotel is **Memorial**.\n\n*(Note: In the conversation history, the"
+      },
+      {
+        "turn": 97,
+        "question": "Which camera am I taking?",
+        "plant_turn": 42,
+        "lag": 55,
+        "paraphrase": false,
+        "kind": "direct",
+        "score": 1.0,
+        "stale_score": null,
+        "answer": "Based on the dialogue, you are taking the **old Zenit camera**."
+      },
+      {
+        "turn": 98,
+        "question": "Which city does the train reach?",
+        "plant_turn": 13,
+        "lag": 85,
+        "paraphrase": true,
+        "kind": "paraphrase",
+        "score": 1.0,
+        "stale_score": null,
+        "answer": "Based on the dialogue provided, the train reaches **Porto** (also spelled **Porto** or **Porto** in the text, though the"
+      },
+      {
+        "turn": 99,
+        "question": "Question: what evening show did we book?",
+        "plant_turn": null,
+        "lag": null,
+        "paraphrase": false,
+        "kind": "unanswerable",
+        "score": 1.0,
+        "stale_score": null,
+        "answer": "Based on the dialogue provided, there is **no mention of an evening show or an evening show being booked**.\n\nThe convers"
+      }
+    ]
+  },
+  "e2e": {
+    "per_rep_mean_s": [
+      1.7068,
+      1.7082,
+      1.7076,
+      1.707,
+      1.7076
+    ],
+    "mean_s": 1.7074,
+    "median_s": 1.7076,
+    "includes_retrieval": true,
+    "warmup_reps": 1
+  }
+}

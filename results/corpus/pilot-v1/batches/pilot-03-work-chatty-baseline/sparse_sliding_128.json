@@ -1,0 +1,260 @@
+{
+  "strategy": "sparse_sliding_128",
+  "spec_id": "pilot-03-work-chatty-baseline",
+  "analysis": {
+    "recall_mean": 0.222,
+    "recall_direct": 0.143,
+    "recall_paraphrase": 0.5,
+    "recall_by_zone": {
+      "early": 0.133,
+      "middle": 0.667
+    },
+    "recall_by_kind": {
+      "multihop": 0.0,
+      "direct": 0.0,
+      "paraphrase": 0.5,
+      "unanswerable": 1.0
+    },
+    "recall_by_lag": {
+      "0-5": 0.2,
+      "6-12": 0.0,
+      "13-20": 0.0,
+      "21+": 0.125
+    },
+    "stale_rate": 0.0,
+    "stale_updated_rate": null,
+    "consistency_vs_reference": 0.187,
+    "tone_mean": 0.8123,
+    "rep_mean": 0.0,
+    "prompt_tokens": 243853,
+    "generated_tokens": 3200,
+    "embed_tokens": 4398,
+    "cache_slots": 406048,
+    "attention_flops_proxy": 406048,
+    "max_cache_len": 128,
+    "mean_turn_latency_s": 1.8305,
+    "median_turn_latency_s": 1.8187,
+    "p90_turn_latency_s": 2.4392,
+    "peak_mem_mb": 12072.05,
+    "memory_stats": null,
+    "rag_stats": {
+      "adds": 10,
+      "upserts": 33,
+      "evictions": 0,
+      "size": 10
+    },
+    "probe_details": [
+      {
+        "turn": 9,
+        "question": "By the way, who leads my team? And also, where is the office located?",
+        "plant_turn": 6,
+        "lag": 3,
+        "paraphrase": false,
+        "kind": "multihop",
+        "score": 0.0,
+        "stale_score": null,
+        "answer": "That's a great question! Based on our conversation so far, I don't have specific details about who leads your team or th"
+      },
+      {
+        "turn": 12,
+        "question": "Tell me, what is the name of our intern?",
+        "plant_turn": 8,
+        "lag": 4,
+        "paraphrase": false,
+        "kind": "direct",
+        "score": 0.0,
+        "stale_score": null,
+        "answer": "Based on the dialogue we just reviewed, the name of the intern was never mentioned! The conversation touched on the inte"
+      },
+      {
+        "turn": 14,
+        "question": "By the way, which floor is the office on?",
+        "plant_turn": 3,
+        "lag": 11,
+        "paraphrase": false,
+        "kind": "direct",
+        "score": 0.0,
+        "stale_score": null,
+        "answer": "Based on the dialogue we just reviewed, the office is on **floor 14**! The conversation mentioned that the team has been"
+      },
+      {
+        "turn": 15,
+        "question": "By the way, what is the name of our intern? And also, on which day does the current sprint finish?",
+        "plant_turn": 13,
+        "lag": 2,
+        "paraphrase": false,
+        "kind": "multihop",
+        "score": 0.0,
+        "stale_score": null,
+        "answer": "Based on the dialogue provided:\n\n*   **Intern's Name:** The name of the intern is **not mentioned** in the text.\n*   **"
+      },
+      {
+        "turn": 22,
+        "question": "By the way, on which day does the current sprint finish?",
+        "plant_turn": 13,
+        "lag": 9,
+        "paraphrase": true,
+        "kind": "paraphrase",
+        "score": 0.0,
+        "stale_score": null,
+        "answer": "Based on the dialogue provided, the current sprint finish day is **not mentioned**.\n\nThe conversation includes details a"
+      },
+      {
+        "turn": 25,
+        "question": "Tell me, when does the retrospective start?",
+        "plant_turn": 21,
+        "lag": 4,
+        "paraphrase": false,
+        "kind": "direct",
+        "score": 0.0,
+        "stale_score": null,
+        "answer": "Based on the dialogue provided, the retrospective starts at **10:00 AM**.\n\nThis is mentioned in the earlier part of the "
+      },
+      {
+        "turn": 40,
+        "question": "Quick question! what is the backend stack?",
+        "plant_turn": 38,
+        "lag": 2,
+        "paraphrase": true,
+        "kind": "paraphrase",
+        "score": 1.0,
+        "stale_score": null,
+        "answer": "Based on the dialogue, the backend stack uses **Golang (Go)**.\n\nThe conversation explicitly mentions:\n*   \"It's a great "
+      },
+      {
+        "turn": 41,
+        "question": "By the way, what is the name of our intern? And also, which ticket tracks the epic?",
+        "plant_turn": 16,
+        "lag": 25,
+        "paraphrase": false,
+        "kind": "multihop",
+        "score": 0.0,
+        "stale_score": null,
+        "answer": "Based on the dialogue provided:\n\n*   **Intern's Name:** The name of the intern is **not mentioned**. The text only refer"
+      },
+      {
+        "turn": 50,
+        "question": "Tell me, where is the office located?",
+        "plant_turn": 3,
+        "lag": 47,
+        "paraphrase": true,
+        "kind": "paraphrase",
+        "score": 0.0,
+        "stale_score": null,
+        "answer": "Based on the dialogue provided, the specific location of the office is **not mentioned**.\n\nThe conversation references t"
+      },
+      {
+        "turn": 54,
+        "question": "Quick question! how do we deploy the service?",
+        "plant_turn": 39,
+        "lag": 15,
+        "paraphrase": false,
+        "kind": "direct",
+        "score": 0.0,
+        "stale_score": null,
+        "answer": "Based on the context of our previous conversation, we discussed deploying the service using **CI/CD pipelines** (likely "
+      },
+      {
+        "turn": 55,
+        "question": "Tell me, when does the retrospective start?",
+        "plant_turn": 21,
+        "lag": 34,
+        "paraphrase": false,
+        "kind": "direct",
+        "score": 0.0,
+        "stale_score": null,
+        "answer": "Based on the dialogue provided earlier, the retrospective is scheduled to start at **10:00 AM**.\n\n*(Note: This answer is"
+      },
+      {
+        "turn": 56,
+        "question": "By the way, when is the release deadline?",
+        "plant_turn": 18,
+        "lag": 38,
+        "paraphrase": false,
+        "kind": "direct",
+        "score": 0.0,
+        "stale_score": null,
+        "answer": "Based on the dialogue provided earlier, the release deadline is **not explicitly stated**.\n\nHowever, the conversation di"
+      },
+      {
+        "turn": 57,
+        "question": "Tell me, which CI platform do we use?",
+        "plant_turn": null,
+        "lag": null,
+        "paraphrase": false,
+        "kind": "unanswerable",
+        "score": 1.0,
+        "stale_score": null,
+        "answer": "Based on the dialogue provided earlier, the specific CI platform used is **not explicitly stated**.\n\nWhile the conversat"
+      },
+      {
+        "turn": 70,
+        "question": "Tell me, who leads my team?",
+        "plant_turn": 6,
+        "lag": 64,
+        "paraphrase": false,
+        "kind": "direct",
+        "score": 0.0,
+        "stale_score": null,
+        "answer": "Based on the dialogue provided, there is no mention of who leads the team. The conversation discusses various topics lik"
+      },
+      {
+        "turn": 71,
+        "question": "By the way, where is the company HQ?",
+        "plant_turn": null,
+        "lag": null,
+        "paraphrase": false,
+        "kind": "unanswerable",
+        "score": 1.0,
+        "stale_score": null,
+        "answer": "Based on the dialogue provided, there is no mention of where the company HQ is located. The conversation covers various "
+      },
+      {
+        "turn": 78,
+        "question": "Tell me, when does the retrospective start? And also, what is the name of my team leader?",
+        "plant_turn": 21,
+        "lag": 57,
+        "paraphrase": false,
+        "kind": "multihop",
+        "score": 0.0,
+        "stale_score": null,
+        "answer": "Based on the dialogue provided, here are the answers to your questions:\n\n*   **When does the retrospective start?**\n    "
+      },
+      {
+        "turn": 85,
+        "question": "Tell me, what is the epic ticket number?",
+        "plant_turn": 16,
+        "lag": 69,
+        "paraphrase": false,
+        "kind": "direct",
+        "score": 0.0,
+        "stale_score": null,
+        "answer": "Based on the dialogue provided, the **epic ticket number** is **EPIC-101**.\n\nThis was mentioned early in the conversatio"
+      },
+      {
+        "turn": 98,
+        "question": "By the way, which release method does my team use?",
+        "plant_turn": 39,
+        "lag": 59,
+        "paraphrase": true,
+        "kind": "paraphrase",
+        "score": 1.0,
+        "stale_score": null,
+        "answer": "Based on the dialogue provided, there is no mention of a specific **release method** (such as Blue/Green deployment, Can"
+      }
+    ]
+  },
+  "e2e": {
+    "per_rep_mean_s": [
+      1.8671,
+      1.8671,
+      1.8791,
+      1.8675,
+      1.867
+    ],
+    "mean_s": 1.8696,
+    "median_s": 1.8671,
+    "includes_retrieval": true,
+    "warmup_reps": 1
+  }
+}

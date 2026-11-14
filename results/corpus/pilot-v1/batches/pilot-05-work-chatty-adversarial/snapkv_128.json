@@ -1,0 +1,260 @@
+{
+  "strategy": "snapkv_128",
+  "spec_id": "pilot-05-work-chatty-adversarial",
+  "analysis": {
+    "recall_mean": 0.667,
+    "recall_direct": 0.714,
+    "recall_paraphrase": 0.5,
+    "recall_by_zone": {
+      "early": 0.833,
+      "middle": 0.5
+    },
+    "recall_by_kind": {
+      "multihop": 0.25,
+      "paraphrase": 0.5,
+      "direct": 0.875,
+      "unanswerable": 1.0
+    },
+    "recall_by_lag": {
+      "0-5": 0.8,
+      "6-12": 0.333,
+      "13-20": null,
+      "21+": 0.625
+    },
+    "stale_rate": 0.0,
+    "stale_updated_rate": 0.0,
+    "consistency_vs_reference": 0.229,
+    "tone_mean": 0.7983,
+    "rep_mean": 0.0071,
+    "prompt_tokens": 242275,
+    "generated_tokens": 3166,
+    "embed_tokens": 4368,
+    "cache_slots": 449538,
+    "attention_flops_proxy": 449538,
+    "max_cache_len": 159,
+    "mean_turn_latency_s": 1.7585,
+    "median_turn_latency_s": 1.767,
+    "p90_turn_latency_s": 2.3303,
+    "peak_mem_mb": 11923.93,
+    "memory_stats": null,
+    "rag_stats": {
+      "adds": 8,
+      "upserts": 40,
+      "evictions": 0,
+      "size": 8
+    },
+    "probe_details": [
+      {
+        "turn": 21,
+        "question": "Quick question! what is the name of the staging server? And also, where is the office located?",
+        "plant_turn": 17,
+        "lag": 4,
+        "paraphrase": false,
+        "kind": "multihop",
+        "score": 0.5,
+        "stale_score": 0.0,
+        "answer": "Based on the dialogue we just shared, here are the answers to your questions:\n\n*   **Name of the staging server:** Falco"
+      },
+      {
+        "turn": 27,
+        "question": "By the way, where is the office located?",
+        "plant_turn": 17,
+        "lag": 10,
+        "paraphrase": true,
+        "kind": "paraphrase",
+        "score": 0.0,
+        "stale_score": null,
+        "answer": "Based on the dialogue we just shared, the office is located in **the building where the conversation is taking place** ("
+      },
+      {
+        "turn": 37,
+        "question": "By the way, when is the release deadline?",
+        "plant_turn": 30,
+        "lag": 7,
+        "paraphrase": false,
+        "kind": "direct",
+        "score": 1.0,
+        "stale_score": null,
+        "answer": "Based on the dialogue we just reviewed, the release deadline is **June 3**.\n\nThe conversation mentioned: *\"By the way, w"
+      },
+      {
+        "turn": 39,
+        "question": "Tell me, when does the retrospective start?",
+        "plant_turn": 36,
+        "lag": 3,
+        "paraphrase": false,
+        "kind": "direct",
+        "score": 1.0,
+        "stale_score": null,
+        "answer": "Based on the dialogue provided, the retrospective starts at **1:30 PM** (15:30)."
+      },
+      {
+        "turn": 42,
+        "question": "Quick question! whose review do I wait for on PRs?",
+        "plant_turn": 38,
+        "lag": 4,
+        "paraphrase": true,
+        "kind": "paraphrase",
+        "score": 1.0,
+        "stale_score": null,
+        "answer": "Based on the dialogue, you should wait for **Dana's** review on your pull requests.\n\nThe text mentions: \"Dana reviews my"
+      },
+      {
+        "turn": 44,
+        "question": "By the way, when does the retrospective start?",
+        "plant_turn": 36,
+        "lag": 8,
+        "paraphrase": false,
+        "kind": "direct",
+        "score": 0.0,
+        "stale_score": null,
+        "answer": "Based on the dialogue provided, the retrospective starts at **2:00 PM** (or **14:00**).\n\nThe text explicitly states"
+      },
+      {
+        "turn": 45,
+        "question": "Tell me, which language is the backend written in?",
+        "plant_turn": 41,
+        "lag": 4,
+        "paraphrase": false,
+        "kind": "direct",
+        "score": 1.0,
+        "stale_score": null,
+        "answer": "Based on the dialogue provided, the backend is written in **Golang**.\n\nThe text explicitly states: \"Guess what? The back"
+      },
+      {
+        "turn": 46,
+        "question": "Quick question! how do we deploy the service? And also, which server hosts production?",
+        "plant_turn": 43,
+        "lag": 3,
+        "paraphrase": false,
+        "kind": "multihop",
+        "score": 0.5,
+        "stale_score": null,
+        "answer": "Based on the dialogue provided:\n\n*   **How we deploy the service:** We deploy via **canary deployments** (implied by \"vi"
+      },
+      {
+        "turn": 62,
+        "question": "Tell me, what is the name of the production server?",
+        "plant_turn": 16,
+        "lag": 46,
+        "paraphrase": false,
+        "kind": "direct",
+        "score": 1.0,
+        "stale_score": 0.0,
+        "answer": "Based on the dialogue provided, the name of the production server is **Phoenix**."
+      },
+      {
+        "turn": 63,
+        "question": "Quick question! where is the company HQ?",
+        "plant_turn": null,
+        "lag": null,
+        "paraphrase": false,
+        "kind": "unanswerable",
+        "score": 1.0,
+        "stale_score": null,
+        "answer": "Based on the dialogue we've been discussing, the company headquarters is located in the **Phoenix** server room (or meta"
+      },
+      {
+        "turn": 73,
+        "question": "By the way, by which date must we release?",
+        "plant_turn": 30,
+        "lag": 43,
+        "paraphrase": true,
+        "kind": "paraphrase",
+        "score": 1.0,
+        "stale_score": null,
+        "answer": "Based on the dialogue provided, the release date is **June 15th**.\n\nThe user mentioned, \"By the way, by which date must "
+      },
+      {
+        "turn": 74,
+        "question": "By the way, when does my sprint end?",
+        "plant_turn": 29,
+        "lag": 45,
+        "paraphrase": false,
+        "kind": "direct",
+        "score": 1.0,
+        "stale_score": null,
+        "answer": "Based on the dialogue provided earlier, the sprint ends on **Thursday**.\n\nThe user mentioned: *\"By the way, Our current "
+      },
+      {
+        "turn": 79,
+        "question": "Quick question! which language is the backend written in? And also, which server hosts production?",
+        "plant_turn": 41,
+        "lag": 38,
+        "paraphrase": false,
+        "kind": "multihop",
+        "score": 0.0,
+        "stale_score": null,
+        "answer": "Based on the dialogue provided earlier:\n\n*   **Backend Language:** The backend is written in **Go**.\n*   **Production Se"
+      },
+      {
+        "turn": 86,
+        "question": "Tell me, which CI platform do we use?",
+        "plant_turn": null,
+        "lag": null,
+        "paraphrase": false,
+        "kind": "unanswerable",
+        "score": 1.0,
+        "stale_score": null,
+        "answer": "Based on the dialogue we've had so far, there is no mention of a specific **CI (Continuous Integration) platform**.\n\nThe"
+      },
+      {
+        "turn": 92,
+        "question": "By the way, at what time is the retro?",
+        "plant_turn": 36,
+        "lag": 56,
+        "paraphrase": true,
+        "kind": "paraphrase",
+        "score": 0.0,
+        "stale_score": null,
+        "answer": "Based on the dialogue provided earlier, the retrospective starts at **10:00 AM**."
+      },
+      {
+        "turn": 94,
+        "question": "Tell me, which floor is the office on? And also, which release method does my team use?",
+        "plant_turn": 43,
+        "lag": 51,
+        "paraphrase": false,
+        "kind": "multihop",
+        "score": 0.0,
+        "stale_score": null,
+        "answer": "Based on the details we've discussed in our conversation:\n\n*   **Office Floor:** The office is located on the **12th flo"
+      },
+      {
+        "turn": 97,
+        "question": "Quick question! who reviews my pull requests?",
+        "plant_turn": 38,
+        "lag": 59,
+        "paraphrase": false,
+        "kind": "direct",
+        "score": 1.0,
+        "stale_score": null,
+        "answer": "Based on the dialogue we just built, **Dana** reviews your pull requests.\n\n*(Recall: Earlier in the conversation, it was"
+      },
+      {
+        "turn": 98,
+        "question": "By the way, when is the release deadline?",
+        "plant_turn": 30,
+        "lag": 68,
+        "paraphrase": false,
+        "kind": "direct",
+        "score": 1.0,
+        "stale_score": null,
+        "answer": "Based on the dialogue we just built, the release deadline is **June 15th**.\n\n*(Note: This information was established ea"
+      }
+    ]
+  },
+  "e2e": {
+    "per_rep_mean_s": [
+      1.824,
+      1.8192,
+      1.8209,
+      1.8143,
+      1.8143
+    ],
+    "mean_s": 1.8185,
+    "median_s": 1.8192,
+    "includes_retrieval": true,
+    "warmup_reps": 1
+  }
+}

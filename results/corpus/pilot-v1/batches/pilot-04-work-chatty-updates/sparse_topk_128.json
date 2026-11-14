@@ -1,0 +1,283 @@
+{
+  "strategy": "sparse_topk_128",
+  "spec_id": "pilot-04-work-chatty-updates",
+  "analysis": {
+    "recall_mean": 0.275,
+    "recall_direct": 0.281,
+    "recall_paraphrase": 0.25,
+    "recall_by_zone": {
+      "early": 0.643,
+      "middle": 0.077
+    },
+    "recall_by_kind": {
+      "direct": 0.125,
+      "multihop": 0.125,
+      "paraphrase": 0.25,
+      "unanswerable": 1.0,
+      "temporal": 0.5
+    },
+    "recall_by_lag": {
+      "0-5": 0.5,
+      "6-12": 0.0,
+      "13-20": 0.0,
+      "21+": 0.1
+    },
+    "stale_rate": 0.05,
+    "stale_updated_rate": 0.333,
+    "consistency_vs_reference": 0.224,
+    "tone_mean": 0.8294,
+    "rep_mean": 0.0,
+    "prompt_tokens": 242174,
+    "generated_tokens": 3161,
+    "embed_tokens": 4383,
+    "cache_slots": 401536,
+    "attention_flops_proxy": 401536,
+    "max_cache_len": 128,
+    "mean_turn_latency_s": 1.9613,
+    "median_turn_latency_s": 1.9754,
+    "p90_turn_latency_s": 2.5169,
+    "peak_mem_mb": 8308.8,
+    "memory_stats": null,
+    "rag_stats": {
+      "adds": 10,
+      "upserts": 28,
+      "evictions": 0,
+      "size": 10
+    },
+    "probe_details": [
+      {
+        "turn": 4,
+        "question": "By the way, when is the release deadline?",
+        "plant_turn": 1,
+        "lag": 3,
+        "paraphrase": false,
+        "kind": "direct",
+        "score": 1.0,
+        "stale_score": null,
+        "answer": "The release deadline is **June 3rd**. You mentioned it earlier, so I'm glad you could share that detail!"
+      },
+      {
+        "turn": 16,
+        "question": "Tell me, when is the release deadline? And also, whose review do I wait for on PRs?",
+        "plant_turn": 15,
+        "lag": 1,
+        "paraphrase": false,
+        "kind": "multihop",
+        "score": 0.5,
+        "stale_score": null,
+        "answer": "Based on our conversation so far:\n\n*   **Release Deadline:** The deadline is **June 3**.\n*   **PR Reviews:** You are wai"
+      },
+      {
+        "turn": 39,
+        "question": "Quick question! who is the new intern?",
+        "plant_turn": 38,
+        "lag": 1,
+        "paraphrase": true,
+        "kind": "paraphrase",
+        "score": 1.0,
+        "stale_score": null,
+        "answer": "Based on our conversation, the new intern is named **Pavel**."
+      },
+      {
+        "turn": 41,
+        "question": "Tell me, how do we deploy the service?",
+        "plant_turn": 36,
+        "lag": 5,
+        "paraphrase": false,
+        "kind": "direct",
+        "score": 0.0,
+        "stale_score": null,
+        "answer": "Based on the conversation, the service is deployed using a **Dana review process** (specifically, \"Dana\" or \"Dana\" revie"
+      },
+      {
+        "turn": 45,
+        "question": "Quick question! what is the name of our intern?",
+        "plant_turn": 38,
+        "lag": 7,
+        "paraphrase": false,
+        "kind": "direct",
+        "score": 0.0,
+        "stale_score": null,
+        "answer": "Based on our conversation so far, I don't have any information about the name of your intern. We've discussed the releas"
+      },
+      {
+        "turn": 51,
+        "question": "Tell me, when does my sprint end? And also, where is the office located?",
+        "plant_turn": 46,
+        "lag": 5,
+        "paraphrase": false,
+        "kind": "multihop",
+        "score": 0.0,
+        "stale_score": null,
+        "answer": "Based on the dialogue we've just had, here is what we know:\n\n*   **Sprint End Date:** The dialogue mentions a **release "
+      },
+      {
+        "turn": 53,
+        "question": "Tell me, which ticket tracks the epic?",
+        "plant_turn": 40,
+        "lag": 13,
+        "paraphrase": true,
+        "kind": "paraphrase",
+        "score": 0.0,
+        "stale_score": null,
+        "answer": "Based on the dialogue provided, there is **no mention** of a specific ticket that tracks an epic.\n\nThe conversation cove"
+      },
+      {
+        "turn": 54,
+        "question": "Quick question! who leads my team?",
+        "plant_turn": 35,
+        "lag": 19,
+        "paraphrase": false,
+        "kind": "direct",
+        "score": 0.0,
+        "stale_score": null,
+        "answer": "Based on the dialogue provided, there is **no mention** of who leads your team.\n\nThe conversation covers the following d"
+      },
+      {
+        "turn": 55,
+        "question": "Quick question! where is the company HQ?",
+        "plant_turn": null,
+        "lag": null,
+        "paraphrase": false,
+        "kind": "unanswerable",
+        "score": 1.0,
+        "stale_score": null,
+        "answer": "Based on the dialogue provided, there is **no mention** of where the company HQ is located.\n\nThe conversation covered th"
+      },
+      {
+        "turn": 59,
+        "question": "Tell me, what is the name of our intern?",
+        "plant_turn": 38,
+        "lag": 21,
+        "paraphrase": false,
+        "kind": "direct",
+        "score": 0.0,
+        "stale_score": null,
+        "answer": "Based on the dialogue provided, the name of the intern is **Dana**.\n\nThe text mentions: \"Anyway, life is full of surpris"
+      },
+      {
+        "turn": 63,
+        "question": "Quick question! what was the release deadline before it slipped?",
+        "plant_turn": 1,
+        "lag": 62,
+        "paraphrase": false,
+        "kind": "temporal",
+        "score": 0.0,
+        "stale_score": 0.0,
+        "answer": "Based on the dialogue provided, there is **no mention** of a previous release deadline or a situation where the deadline"
+      },
+      {
+        "turn": 64,
+        "question": "Quick question! which ticket tracks the epic?",
+        "plant_turn": 40,
+        "lag": 24,
+        "paraphrase": true,
+        "kind": "paraphrase",
+        "score": 0.0,
+        "stale_score": null,
+        "answer": "Based on the dialogue provided, there is **no mention** of a specific ticket that tracks the epic.\n\nThe conversation cov"
+      },
+      {
+        "turn": 65,
+        "question": "Quick question! which language is the backend written in? And also, which release method does my team use?",
+        "plant_turn": 37,
+        "lag": 28,
+        "paraphrase": false,
+        "kind": "multihop",
+        "score": 0.0,
+        "stale_score": null,
+        "answer": "Based on the dialogue provided, there is **no information** regarding:\n\n*   **The backend language:** The conversation m"
+      },
+      {
+        "turn": 67,
+        "question": "By the way, by which date must we release?",
+        "plant_turn": 1,
+        "lag": 66,
+        "paraphrase": true,
+        "kind": "paraphrase",
+        "score": 0.0,
+        "stale_score": 1.0,
+        "answer": "Based on the dialogue provided, the release deadline is **June 3**."
+      },
+      {
+        "turn": 68,
+        "question": "Tell me, when does my sprint end?",
+        "plant_turn": 46,
+        "lag": 22,
+        "paraphrase": false,
+        "kind": "direct",
+        "score": 0.0,
+        "stale_score": null,
+        "answer": "Based on the dialogue provided, there is **no mention of when your sprint ends**.\n\nThe conversation specifies the **rele"
+      },
+      {
+        "turn": 74,
+        "question": "Quick question! who reviewed my pull requests before the change?",
+        "plant_turn": 15,
+        "lag": 59,
+        "paraphrase": false,
+        "kind": "temporal",
+        "score": 1.0,
+        "stale_score": 0.0,
+        "answer": "Based on the dialogue provided, **Dana** reviewed your pull requests.\n\nThe text mentions: \"Anyway, life is full of surpr"
+      },
+      {
+        "turn": 89,
+        "question": "Tell me, which CI platform do we use?",
+        "plant_turn": null,
+        "lag": null,
+        "paraphrase": false,
+        "kind": "unanswerable",
+        "score": 1.0,
+        "stale_score": null,
+        "answer": "Based on the dialogue provided, **there is no mention of a specific CI (Continuous Integration) platform** being used.\n\n"
+      },
+      {
+        "turn": 90,
+        "question": "Quick question! which language is the backend written in? And also, on which day does the current sprint finish?",
+        "plant_turn": 46,
+        "lag": 44,
+        "paraphrase": false,
+        "kind": "multihop",
+        "score": 0.0,
+        "stale_score": null,
+        "answer": "Based on the dialogue provided, there is **no information** about:\n*   The programming language used for the backend.\n* "
+      },
+      {
+        "turn": 91,
+        "question": "Quick question! how do we deploy the service?",
+        "plant_turn": 36,
+        "lag": 55,
+        "paraphrase": false,
+        "kind": "direct",
+        "score": 0.0,
+        "stale_score": null,
+        "answer": "Based on the dialogue provided, there is **no information** about how the service is deployed.\n\nThe conversation mention"
+      },
+      {
+        "turn": 95,
+        "question": "By the way, when does the retrospective start?",
+        "plant_turn": 42,
+        "lag": 53,
+        "paraphrase": false,
+        "kind": "direct",
+        "score": 0.0,
+        "stale_score": null,
+        "answer": "Based on the dialogue provided, there is **no mention** of when the retrospective starts.\n\nThe conversation covers:\n*   "
+      }
+    ]
+  },
+  "e2e": {
+    "per_rep_mean_s": [
+      2.0405,
+      2.0407,
+      2.0689,
+      2.0427,
+      2.0405
+    ],
+    "mean_s": 2.0467,
+    "median_s": 2.0407,
+    "includes_retrieval": true,
+    "warmup_reps": 1
+  }
+}
