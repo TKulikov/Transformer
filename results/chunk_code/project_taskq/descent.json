@@ -1,0 +1,86 @@
+[
+  {
+    "task": "retry_submit",
+    "valid_code": false,
+    "reuse": {
+      "retry": true,
+      "backoff_delay": false
+    },
+    "retrieval_hit": {
+      "retry": false,
+      "backoff_delay": false
+    },
+    "answer": "```python\nimport time\nfrom typing import List, Optional, Dict, Any\n\ndef submit_with_retry(client: Any, tasks: List[Dict[str, Any]], max_retries: int = 3, base_delay: float = 1.0) -> Dict[str, Any]:\n    \"\"\"\n    Submits a list of tasks to the client with exponential backoff on transient failures.\n    \n    Args:\n        client: The task queue client instance.\n        tasks: List of task dictionaries to submit.\n        max_retries: Maximum number of retry attempts per task.\n        base_delay: Base delay in seconds for exponential backoff.\n    \n    Returns:\n        Dictionary mapping task IDs to their final status and result.\n    \"\"\"\n    results = {}\n    \n    for task in tasks:\n        task_id = task.get(\"id\")\n        payload = task.get(\"payload\")\n        \n        for",
+    "injected": [
+      "def set_status(self, task_id, status):\n        \"\"\"Update a task's status and bump its attempt counter.\"\"\"\n        task = self.get(task_id)\n        task.status = status\n        if status == \"running\":\n            task.attempts += 1\n        return task",
+      "def save_result(self, result):\n        \"\"\"Store a TaskResult and mark the task finished.\"\"\"\n        self._results[result.task_id] = result\n        self.set_status(result.task_id, \"done\" if result.ok else \"failed\")\n        return result",
+      "def result(self, task_id):\n        \"\"\"Return the stored result or None.\"\"\"\n        return self._results.get(task_id)",
+      "def get(self, task_id):\n        \"\"\"Return a task or raise TaskNotFound.\"\"\"\n        if task_id not in self._tasks:\n            raise TaskNotFound(task_id)\n        return self._tasks[task_id]",
+      "def save_result(self, result):\n        \"\"\"Store a TaskResult and mark the task finished.\"\"\"\n        self._results[result.task_id] = result\n        self.set_status(result.task_id, \"done\" if result.ok else \"failed\")\n        return result",
+      "def set_status(self, task_id, status):\n        \"\"\"Update a task's status and bump its attempt counter.\"\"\"\n        task = self.get(task_id)\n        task.status = status\n        if status == \"running\":\n            task.attempts += 1\n        return task"
+    ]
+  },
+  {
+    "task": "parse_clamp",
+    "valid_code": false,
+    "reuse": {
+      "parse_duration": false,
+      "clamp": true
+    },
+    "retrieval_hit": {
+      "parse_duration": false,
+      "clamp": false
+    },
+    "answer": "```python\nfrom utils import parse_int, clamp\n\ndef safe_timeout(text: str) -> int:\n    \"\"\"Parse a user-provided timeout string into milliseconds and clamp to a safe range.\"\"\"\n    try:\n        value = parse_int(text)\n    except ValueError:\n        raise ValueError(f\"Invalid timeout format: {text}\")\n    \n    # Define safe range: 1ms to 300000ms (5 minutes)\n    min_timeout = 1\n    max_timeout = 300000\n    \n    return clamp(value, min_timeout, max_timeout)\n```",
+    "injected": [
+      "def set_status(self, task_id, status):\n        \"\"\"Update a task's status and bump its attempt counter.\"\"\"\n        task = self.get(task_id)\n        task.status = status\n        if status == \"running\":\n            task.attempts += 1\n        return task",
+      "def result(self, task_id):\n        \"\"\"Return the stored result or None.\"\"\"\n        return self._results.get(task_id)",
+      "def get(self, task_id):\n        \"\"\"Return a task or raise TaskNotFound.\"\"\"\n        if task_id not in self._tasks:\n            raise TaskNotFound(task_id)\n        return self._tasks[task_id]",
+      "def save_result(self, result):\n        \"\"\"Store a TaskResult and mark the task finished.\"\"\"\n        self._results[result.task_id] = result\n        self.set_status(result.task_id, \"done\" if result.ok else \"failed\")\n        return result",
+      "def save_result(self, result):\n        \"\"\"Store a TaskResult and mark the task finished.\"\"\"\n        self._results[result.task_id] = result\n        self.set_status(result.task_id, \"done\" if result.ok else \"failed\")\n        return result",
+      "def set_status(self, task_id, status):\n        \"\"\"Update a task's status and bump its attempt counter.\"\"\"\n        task = self.get(task_id)\n        task.status = status\n        if status == \"running\":\n            task.attempts += 1\n        return task"
+    ]
+  },
+  {
+    "task": "batch_dedupe",
+    "valid_code": false,
+    "reuse": {
+      "chunked": false,
+      "dedupe": false
+    },
+    "retrieval_hit": {
+      "chunked": false,
+      "dedupe": false
+    },
+    "answer": "```python\nfrom typing import List, Set\n\ndef prepare_batches(task_ids: List[str], size: int) -> List[List[str]]:\n    \"\"\"\n    Remove duplicate task IDs and split them into fixed-size batches.\n    \n    Args:\n        task_ids: List of task identifiers.\n        size: Maximum number of tasks per batch.\n        \n    Returns:\n        List of batches, where each batch is a list of task IDs.\n    \"\"\"\n    # Remove duplicates while preserving order\n    seen: Set[str] = set()\n    unique_ids: List[str] = []\n    for tid in task_ids:\n        if tid not in seen:\n            seen.add(tid)\n            unique_ids.append(tid)\n    \n    # Split into batches\n    batches: List[List[str]] = []\n    for i in range(0, len(unique_ids), size):\n        batches.append(unique_ids[i",
+    "injected": [
+      "def set_status(self, task_id, status):\n        \"\"\"Update a task's status and bump its attempt counter.\"\"\"\n        task = self.get(task_id)\n        task.status = status\n        if status == \"running\":\n            task.attempts += 1\n        return task",
+      "def result(self, task_id):\n        \"\"\"Return the stored result or None.\"\"\"\n        return self._results.get(task_id)",
+      "def get(self, task_id):\n        \"\"\"Return a task or raise TaskNotFound.\"\"\"\n        if task_id not in self._tasks:\n            raise TaskNotFound(task_id)\n        return self._tasks[task_id]",
+      "def save_result(self, result):\n        \"\"\"Store a TaskResult and mark the task finished.\"\"\"\n        self._results[result.task_id] = result\n        self.set_status(result.task_id, \"done\" if result.ok else \"failed\")\n        return result",
+      "def save_result(self, result):\n        \"\"\"Store a TaskResult and mark the task finished.\"\"\"\n        self._results[result.task_id] = result\n        self.set_status(result.task_id, \"done\" if result.ok else \"failed\")\n        return result",
+      "def set_status(self, task_id, status):\n        \"\"\"Update a task's status and bump its attempt counter.\"\"\"\n        task = self.get(task_id)\n        task.status = status\n        if status == \"running\":\n            task.attempts += 1\n        return task"
+    ]
+  },
+  {
+    "task": "snapshot_metrics",
+    "valid_code": false,
+    "reuse": {
+      "snapshot": true,
+      "summary": true
+    },
+    "retrieval_hit": {
+      "snapshot": false,
+      "summary": false
+    },
+    "answer": "```python\nfrom typing import Dict, Any\n\nfrom models import TaskStore, Metrics\nfrom utils import get_task_store, get_metrics\n\nclass TaskStoreSnapshotHandler:\n    def __init__(self):\n        self._task_store = get_task_store()\n        self._metrics = get_metrics()\n\n    def get_snapshot(self) -> Dict[str, Any]:\n        \"\"\"\n        Returns a snapshot of the task store and metrics summary.\n        Reuses existing methods to ensure consistency.\n        \"\"\"\n        # Get the current state of tasks\n        tasks_snapshot = self._task_store._tasks.copy()\n        \n        # Get the current state of results\n        results_snapshot = self._task_store._results.copy()\n        \n        # Get metrics summary\n        metrics_summary = self._metrics.get_summary()\n        \n        return {\n            \"tasks\": tasks_snapshot,\n            \"results\": results_snapshot,\n            \"metrics",
+    "injected": [
+      "def set_status(self, task_id, status):\n        \"\"\"Update a task's status and bump its attempt counter.\"\"\"\n        task = self.get(task_id)\n        task.status = status\n        if status == \"running\":\n            task.attempts += 1\n        return task",
+      "def result(self, task_id):\n        \"\"\"Return the stored result or None.\"\"\"\n        return self._results.get(task_id)",
+      "def save_result(self, result):\n        \"\"\"Store a TaskResult and mark the task finished.\"\"\"\n        self._results[result.task_id] = result\n        self.set_status(result.task_id, \"done\" if result.ok else \"failed\")\n        return result",
+      "def get(self, task_id):\n        \"\"\"Return a task or raise TaskNotFound.\"\"\"\n        if task_id not in self._tasks:\n            raise TaskNotFound(task_id)\n        return self._tasks[task_id]",
+      "def save_result(self, result):\n        \"\"\"Store a TaskResult and mark the task finished.\"\"\"\n        self._results[result.task_id] = result\n        self.set_status(result.task_id, \"done\" if result.ok else \"failed\")\n        return result",
+      "def set_status(self, task_id, status):\n        \"\"\"Update a task's status and bump its attempt counter.\"\"\"\n        task = self.get(task_id)\n        task.status = status\n        if status == \"running\":\n            task.attempts += 1\n        return task"
+    ]
+  }
+]

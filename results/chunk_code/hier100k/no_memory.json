@@ -1,0 +1,60 @@
+[
+  {
+    "task": "continue",
+    "valid_code": true,
+    "reuse": {},
+    "retrieval_hit": {},
+    "branches": [],
+    "n_notes": 0,
+    "answer": "def by_region(self):\n    \"\"\"Active rows grouped by region.\"\"\"\n    return _redacted_(self.active(), \"region\")",
+    "injected": []
+  },
+  {
+    "task": "named_early",
+    "valid_code": true,
+    "reuse": {
+      "normalize_records": true,
+      "compute_total": true
+    },
+    "retrieval_hit": {
+      "normalize_records": false,
+      "compute_total": false
+    },
+    "branches": [],
+    "n_notes": 0,
+    "answer": "def build_summary_report(records):\n    \"\"\"Generate a summary report using normalize_records and compute_total.\"\"\"\n    normalized = normalize_records(records)\n    total = compute_total(normalized, \"amount\")\n    return f\"Total amount: {total}\"",
+    "injected": []
+  },
+  {
+    "task": "clean_mid",
+    "valid_code": true,
+    "reuse": {
+      "group_by": false,
+      "moving_average": false
+    },
+    "retrieval_hit": {
+      "group_by": false,
+      "moving_average": false
+    },
+    "branches": [],
+    "n_notes": 0,
+    "answer": "def trend_report(values_by_group):\n    \"\"\"Group records by region and smooth each group's numeric series before averaging.\"\"\"\n    groups = _redacted_(values_by_group, \"region\")\n    report = []\n    for region, values in groups.items():\n        smoothed = _redacted_(values, \"smooth\")\n        avg = _redacted_(smoothed, \"avg\")\n        report.append(_redacted_([region, avg]))\n    return _redacted_(report)",
+    "injected": []
+  },
+  {
+    "task": "clean_total",
+    "valid_code": true,
+    "reuse": {
+      "filter_active": false,
+      "compute_total": false
+    },
+    "retrieval_hit": {
+      "filter_active": false,
+      "compute_total": false
+    },
+    "branches": [],
+    "n_notes": 0,
+    "answer": "def export_active_total(records):\n    \"\"\"Export active records and return their total 'amount'.\"\"\"\n    active = _redacted_(records)\n    return _redacted_(active, \"amount\")",
+    "injected": []
+  }
+]

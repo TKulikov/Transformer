@@ -1,0 +1,264 @@
+{
+  "model": "qwen35-4b",
+  "device": "cuda",
+  "tail": {
+    "line_start": -1,
+    "helper_mentions": 7,
+    "masked": true
+  },
+  "value_layer": "mid (латентный слой смыслов)",
+  "tree": {
+    "nodes": 1603,
+    "kinds": {
+      "file": 1,
+      "class": 86,
+      "function": 1218,
+      "usage": 298
+    }
+  },
+  "ingest": {
+    "hier_wall_s": 200.0,
+    "flat_wall_s": 162.6,
+    "hier_stats": {
+      "ingested": 1603,
+      "declarations": 1218,
+      "usages": 298
+    }
+  },
+  "conditions": {
+    "no_memory": [
+      {
+        "task": "continue",
+        "valid_code": true,
+        "reuse": {},
+        "retrieval_hit": {},
+        "branches": [],
+        "n_notes": 0,
+        "answer": "def by_region(self):\n    \"\"\"Active rows grouped by region.\"\"\"\n    return _redacted_(self.active(), \"region\")",
+        "injected": []
+      },
+      {
+        "task": "named_early",
+        "valid_code": true,
+        "reuse": {
+          "normalize_records": true,
+          "compute_total": true
+        },
+        "retrieval_hit": {
+          "normalize_records": false,
+          "compute_total": false
+        },
+        "branches": [],
+        "n_notes": 0,
+        "answer": "def build_summary_report(records):\n    \"\"\"Generate a summary report using normalize_records and compute_total.\"\"\"\n    normalized = normalize_records(records)\n    total = compute_total(normalized, \"amount\")\n    return f\"Total amount: {total}\"",
+        "injected": []
+      },
+      {
+        "task": "clean_mid",
+        "valid_code": true,
+        "reuse": {
+          "group_by": false,
+          "moving_average": false
+        },
+        "retrieval_hit": {
+          "group_by": false,
+          "moving_average": false
+        },
+        "branches": [],
+        "n_notes": 0,
+        "answer": "def trend_report(values_by_group):\n    \"\"\"Group records by region and smooth each group's numeric series before averaging.\"\"\"\n    groups = _redacted_(values_by_group, \"region\")\n    report = []\n    for region, values in groups.items():\n        smoothed = _redacted_(values, \"smooth\")\n        avg = _redacted_(smoothed, \"avg\")\n        report.append(_redacted_([region, avg]))\n    return _redacted_(report)",
+        "injected": []
+      },
+      {
+        "task": "clean_total",
+        "valid_code": true,
+        "reuse": {
+          "filter_active": false,
+          "compute_total": false
+        },
+        "retrieval_hit": {
+          "filter_active": false,
+          "compute_total": false
+        },
+        "branches": [],
+        "n_notes": 0,
+        "answer": "def export_active_total(records):\n    \"\"\"Export active records and return their total 'amount'.\"\"\"\n    active = _redacted_(records)\n    return _redacted_(active, \"amount\")",
+        "injected": []
+      }
+    ],
+    "flat_ck": [
+      {
+        "task": "continue",
+        "valid_code": true,
+        "reuse": {},
+        "retrieval_hit": {},
+        "branches": [],
+        "n_notes": 4,
+        "answer": "def by_region(self):\n    \"\"\"Active rows grouped by region.\"\"\"\n    return _redacted_(self.active(), \"region\")\n\ndef transform_survey_763(records):\n    \"\"\"Transform survey records into a list of dictionaries.\"\"\"\n    result = []\n    for record in records:\n        if isinstance(record, dict):\n            result.append({\n                \"slug\": record.get(\"slug\", \"\"),\n                \"n\": record.get(\"n\", 0),\n                \"total\": record.get(\"total\", 0)\n            })\n    return result\n\ndef _redacted_(data, *args):\n    \"\"\"Helper to sanitize and process data.\"\"\"\n    if args:\n        return data\n    return str(data)",
+        "injected": [
+          "\"\"\"analytics_toolkit — single-file data processing library (generated).\"\"\"\n\nfrom __future__ import annotations\n\nimport math\nimport re\nfrom collections import defaultdict",
+          "class ContractStore107:\n    \"\"\"In-memory store for contract records with helper-based analytics.\"\"\"",
+          "class SignalStore179:\n    \"\"\"In-memory store for signal records with helper-based analytics.\"\"\"",
+          "class SurveyStore35:\n    \"\"\"In-memory store for survey records with helper-based analytics.\"\"\""
+        ]
+      },
+      {
+        "task": "named_early",
+        "valid_code": true,
+        "reuse": {
+          "normalize_records": true,
+          "compute_total": true
+        },
+        "retrieval_hit": {
+          "normalize_records": false,
+          "compute_total": false
+        },
+        "branches": [],
+        "n_notes": 4,
+        "answer": "def build_summary_report(records):\n    normalized = normalize_records(records)\n    return compute_total(normalized, \"amount\")",
+        "injected": [
+          "\"\"\"analytics_toolkit — single-file data processing library (generated).\"\"\"\n\nfrom __future__ import annotations\n\nimport math\nimport re\nfrom collections import defaultdict",
+          "def total(self):\n        \"\"\"Total over 'amount' for active rows.\"\"\"\n        return compute_total(self.active(), \"amount\")",
+          "def total(self):\n        \"\"\"Total over 'score' for active rows.\"\"\"\n        return compute_total(self.active(), \"score\")",
+          "class MetricStore8:\n    \"\"\"In-memory store for metric records with helper-based analytics.\"\"\""
+        ]
+      },
+      {
+        "task": "clean_mid",
+        "valid_code": true,
+        "reuse": {
+          "group_by": false,
+          "moving_average": false
+        },
+        "retrieval_hit": {
+          "group_by": false,
+          "moving_average": false
+        },
+        "branches": [],
+        "n_notes": 4,
+        "answer": "def trend_report(values_by_group):\n    \"\"\"Group records by region and smooth each group's numeric series before averaging.\"\"\"\n    smoothed_groups = {}\n    for region, values in values_by_group.items():\n        if not values:\n            smoothed_groups[region] = []\n            continue\n        # Simple smoothing: average of current and previous valid values\n        smoothed = []\n        for i, val in enumerate(values):\n            if i == 0:\n                smoothed.append(val)\n            else:\n                smoothed.append((val + smoothed[-1]) / 2)\n        smoothed_groups[region] = smoothed\n    return smoothed_groups",
+        "injected": [
+          "\"\"\"analytics_toolkit — single-file data processing library (generated).\"\"\"\n\nfrom __future__ import annotations\n\nimport math\nimport re\nfrom collections import defaultdict",
+          "def by_region(self):\n        \"\"\"Active rows grouped by region.\"\"\"\n        return group_by(self.active(), \"region\")",
+          "def by_region(self):\n        \"\"\"Active rows grouped by region.\"\"\"\n        return group_by(self.active(), \"region\")",
+          "def by_region(self):\n        \"\"\"Active rows grouped by region.\"\"\"\n        return group_by(self.active(), \"region\")"
+        ]
+      },
+      {
+        "task": "clean_total",
+        "valid_code": true,
+        "reuse": {
+          "filter_active": false,
+          "compute_total": false
+        },
+        "retrieval_hit": {
+          "filter_active": false,
+          "compute_total": false
+        },
+        "branches": [],
+        "n_notes": 4,
+        "answer": "def export_active_total(records):\n    \"\"\"Export total 'amount' for active records.\"\"\"\n    active = _redacted_(records)\n    return _redacted_(active, \"amount\")",
+        "injected": [
+          "def total(self):\n        \"\"\"Total over 'amount' for active rows.\"\"\"\n        return compute_total(self.active(), \"amount\")",
+          "\"\"\"analytics_toolkit — single-file data processing library (generated).\"\"\"\n\nfrom __future__ import annotations\n\nimport math\nimport re\nfrom collections import defaultdict",
+          "def total(self):\n        \"\"\"Total over 'qty' for active rows.\"\"\"\n        return compute_total(self.active(), \"qty\")",
+          "def total(self):\n        \"\"\"Total over 'amount' for active rows.\"\"\"\n        return compute_total(self.active(), \"amount\")"
+        ]
+      }
+    ],
+    "hier": [
+      {
+        "task": "continue",
+        "valid_code": true,
+        "reuse": {},
+        "retrieval_hit": {},
+        "branches": [
+          "active",
+          "filter_active"
+        ],
+        "n_notes": 9,
+        "answer": "def by_region(self):\n        \"\"\"Active rows grouped by region.\"\"\"\n        return _redacted_(self.active(), \"region\")",
+        "injected": [
+          "def filter_active(records):\n    \"\"\"Keep only rows whose status field marks them active.\"\"\"\n    return [r for r in records if r.get(\"status\", \"active\") == \"active\"]",
+          "def active(self):\n        \"\"\"Active rows only.\"\"\"\n        return filter_active(self._rows)",
+          "def active(self):\n        \"\"\"Active rows only.\"\"\"\n        return filter_active(self._rows)",
+          "def active(self):\n        \"\"\"Active rows only.\"\"\"\n        return filter_active(self._rows)",
+          "def by_region(self):\n        \"\"\"Active rows grouped by region.\"\"\"\n        return group_by(self.active(), \"region\")",
+          "def total(self):\n        \"\"\"Total over 'amount' for active rows.\"\"\"\n        return compute_total(self.active(), \"amount\")",
+          "def active(self):\n        \"\"\"Active rows only.\"\"\"\n        return filter_active(self._rows)",
+          "def total(self):\n        \"\"\"Total over 'score' for active rows.\"\"\"\n        return compute_total(self.active(), \"score\")",
+          "def by_region(self):\n        \"\"\"Active rows grouped by region.\"\"\"\n        return group_by(self.active(), \"region\")"
+        ]
+      },
+      {
+        "task": "named_early",
+        "valid_code": true,
+        "reuse": {
+          "normalize_records": true,
+          "compute_total": true
+        },
+        "retrieval_hit": {
+          "normalize_records": false,
+          "compute_total": false
+        },
+        "branches": [
+          "total"
+        ],
+        "n_notes": 3,
+        "answer": "def build_summary_report(records):\n    \"\"\"Generate a summary report using normalized records and total amount.\"\"\"\n    normalized = normalize_records(records)\n    total_amount = compute_total(normalized, \"amount\")\n    return f\"Summary Report: Total Amount = {total_amount}\"",
+        "injected": [
+          "def total(self):\n        \"\"\"Total over 'count' for active rows.\"\"\"\n        return compute_total(self.active(), \"count\")",
+          "def total(self):\n        \"\"\"Total over 'count' for active rows.\"\"\"\n        return compute_total(self.active(), \"count\")",
+          "def total(self):\n        \"\"\"Total over 'count' for active rows.\"\"\"\n        return compute_total(self.active(), \"count\")"
+        ]
+      },
+      {
+        "task": "clean_mid",
+        "valid_code": true,
+        "reuse": {
+          "group_by": true,
+          "moving_average": false
+        },
+        "retrieval_hit": {
+          "group_by": false,
+          "moving_average": false
+        },
+        "branches": [
+          "by_region"
+        ],
+        "n_notes": 6,
+        "answer": "def trend_report(values_by_group):\n    \"\"\"Group records by region and smooth each group's numeric series before averaging.\"\"\"\n    groups = group_by(values_by_group, \"region\")\n    smoothed = []\n    for region, records in sorted(groups.items()):\n        numeric_series = [r[\"score\"] for r in records]\n        smoothed_avg = smooth_series(numeric_series)\n        smoothed.append({\"region\": region, \"n\": len(records), \"total\": smoothed_avg})\n    return format_table(smoothed, [\"region\", \"n\", \"total\"])",
+        "injected": [
+          "def by_region(self):\n        \"\"\"Active rows grouped by region.\"\"\"\n        return group_by(self.active(), \"region\")",
+          "def export(self):\n        \"\"\"Render the store as a text table.\"\"\"\n        groups = self.by_region()\n        rows = [(slugify(k), len(v), compute_total(v, \"amount\")) for k, v in sorted(groups.items())]\n        return format_table(rows, [\"region\", \"n\", \"total\"])",
+          "def by_region(self):\n        \"\"\"Active rows grouped by region.\"\"\"\n        return group_by(self.active(), \"region\")",
+          "def export(self):\n        \"\"\"Render the store as a text table.\"\"\"\n        groups = self.by_region()\n        rows = [(slugify(k), len(v), compute_total(v, \"score\")) for k, v in sorted(groups.items())]\n        return format_table(rows, [\"region\", \"n\", \"total\"])",
+          "def by_region(self):\n        \"\"\"Active rows grouped by region.\"\"\"\n        return group_by(self.active(), \"region\")",
+          "def export(self):\n        \"\"\"Render the store as a text table.\"\"\"\n        groups = self.by_region()\n        rows = [(slugify(k), len(v), compute_total(v, \"score\")) for k, v in sorted(groups.items())]\n        return format_table(rows, [\"region\", \"n\", \"total\"])"
+        ]
+      },
+      {
+        "task": "clean_total",
+        "valid_code": true,
+        "reuse": {
+          "filter_active": false,
+          "compute_total": false
+        },
+        "retrieval_hit": {
+          "filter_active": false,
+          "compute_total": false
+        },
+        "branches": [
+          "total"
+        ],
+        "n_notes": 3,
+        "answer": "def export_active_total(records):\n    \"\"\"Export total 'amount' for active records.\"\"\"\n    active = _redacted_(records)\n    return _redacted_(active, \"amount\")",
+        "injected": [
+          "def total(self):\n        \"\"\"Total over 'amount' for active rows.\"\"\"\n        return compute_total(self.active(), \"amount\")",
+          "def total(self):\n        \"\"\"Total over 'amount' for active rows.\"\"\"\n        return compute_total(self.active(), \"amount\")",
+          "def total(self):\n        \"\"\"Total over 'amount' for active rows.\"\"\"\n        return compute_total(self.active(), \"amount\")"
+        ]
+      }
+    ]
+  }
+}

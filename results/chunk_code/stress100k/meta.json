@@ -1,0 +1,9 @@
+{
+  "tokens": 99338,
+  "lines": 9525,
+  "functions": 1218,
+  "classes": 86,
+  "generated_units": 778,
+  "target_tokens": 100000,
+  "seed": 42
+}

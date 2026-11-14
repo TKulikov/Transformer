@@ -1,0 +1,108 @@
+{
+  "model": "qwen35-4b",
+  "device": "cuda",
+  "tail": {
+    "line_start": -1,
+    "helper_mentions": 7,
+    "masked": true
+  },
+  "beta": 1.0,
+  "alpha": 0.5,
+  "variant": "hier+latent+ttl-gist",
+  "ingest": {
+    "wall_s": 165.4,
+    "stats": {
+      "ingested": 1603,
+      "declarations": 1218,
+      "usages": 298,
+      "gist_used": 4
+    }
+  },
+  "entries": [
+    {
+      "task": "continue",
+      "valid_code": true,
+      "reuse": {},
+      "retrieval_hit": {},
+      "branches": [
+        "add",
+        "export",
+        "total"
+      ],
+      "answer": "def by_region(self):\n        \"\"\"Active rows grouped by region.\"\"\"\n        return _redacted_(self.active(), \"region\")",
+      "injected": [
+        "def add(self, record):\n        \"\"\"Append one record after normalization.\"\"\"\n        self._rows.extend(normalize_records([record]))\n        return len(self._rows)",
+        "def export(self):\n        \"\"\"Render the store as a text table.\"\"\"\n        groups = self.by_region()\n        rows = [(slugify(k), len(v), compute_total(v, \"score\")) for k, v in sorted(groups.items())]\n        return format_table(rows, [\"region\", \"n\", \"total\"])",
+        "def total(self):\n        \"\"\"Total over 'score' for active rows.\"\"\"\n        return compute_total(self.active(), \"score\")"
+      ]
+    },
+    {
+      "task": "named_early",
+      "valid_code": true,
+      "reuse": {
+        "normalize_records": true,
+        "compute_total": true
+      },
+      "retrieval_hit": {
+        "normalize_records": false,
+        "compute_total": false
+      },
+      "branches": [
+        "add",
+        "total"
+      ],
+      "answer": "def build_summary_report(records):\n    \"\"\"Generate a summary report using normalize_records and compute_total over 'amount'.\"\"\"\n    normalized = normalize_records(records)\n    total_amount = compute_total(normalized, \"amount\")\n    return f\"Total amount: {total_amount}\"",
+      "injected": [
+        "def add(self, record):\n        \"\"\"Append one record after normalization.\"\"\"\n        self._rows.extend(normalize_records([record]))\n        return len(self._rows)",
+        "def total(self):\n        \"\"\"Total over 'score' for active rows.\"\"\"\n        return compute_total(self.active(), \"score\")",
+        "def add(self, record):\n        \"\"\"Append one record after normalization.\"\"\"\n        self._rows.extend(normalize_records([record]))\n        return len(self._rows)"
+      ]
+    },
+    {
+      "task": "clean_mid",
+      "valid_code": true,
+      "reuse": {
+        "group_by": false,
+        "moving_average": false
+      },
+      "retrieval_hit": {
+        "group_by": false,
+        "moving_average": false
+      },
+      "branches": [
+        "add",
+        "by_region",
+        "total"
+      ],
+      "answer": "def trend_report(values_by_group):\n    \"\"\"Groups records by region and smooths each group's numeric series before averaging.\"\"\"\n    groups = values_by_group\n    smoothed = []\n    for region, data in sorted(groups.items()):\n        if not data:\n            continue\n        # Smooth the numeric series (assumes 'latency' is the numeric field)\n        smoothed_data = _redacted_(data, \"latency\")\n        # Calculate average of smoothed values\n        avg = compute_total(smoothed_data, \"latency\") / len(smoothed_data) if smoothed_data else 0\n        smoothed.append({\"region\": region, \"avg\": avg})\n    return format_table(smoothed, [\"region\", \"avg\"])",
+      "injected": [
+        "def add(self, record):\n        \"\"\"Append one record after normalization.\"\"\"\n        self._rows.extend(normalize_records([record]))\n        return len(self._rows)",
+        "def by_region(self):\n        \"\"\"Active rows grouped by region.\"\"\"\n        return group_by(self.active(), \"region\")",
+        "def total(self):\n        \"\"\"Total over 'score' for active rows.\"\"\"\n        return compute_total(self.active(), \"score\")",
+        "def export(self):\n        \"\"\"Render the store as a text table.\"\"\"\n        groups = self.by_region()\n        rows = [(slugify(k), len(v), compute_total(v, \"score\")) for k, v in sorted(groups.items())]\n        return format_table(rows, [\"region\", \"n\", \"total\"])"
+      ]
+    },
+    {
+      "task": "clean_total",
+      "valid_code": true,
+      "reuse": {
+        "filter_active": false,
+        "compute_total": false
+      },
+      "retrieval_hit": {
+        "filter_active": false,
+        "compute_total": false
+      },
+      "branches": [
+        "add",
+        "total"
+      ],
+      "answer": "def export_active_total(records):\n    \"\"\"Export total 'amount' for active records.\"\"\"\n    active = _redacted_(records)\n    return _redacted_(active, \"amount\")",
+      "injected": [
+        "def add(self, record):\n        \"\"\"Append one record after normalization.\"\"\"\n        self._rows.extend(normalize_records([record]))\n        return len(self._rows)",
+        "def total(self):\n        \"\"\"Total over 'score' for active rows.\"\"\"\n        return compute_total(self.active(), \"score\")",
+        "def add(self, record):\n        \"\"\"Append one record after normalization.\"\"\"\n        self._rows.extend(normalize_records([record]))\n        return len(self._rows)"
+      ]
+    }
+  ]
+}

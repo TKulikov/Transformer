@@ -1,0 +1,76 @@
+[
+  {
+    "task": "continue",
+    "valid_code": true,
+    "reuse": {},
+    "retrieval_hit": {},
+    "branches": [],
+    "answer": "def validate_survey_777(payload):\n    \"\"\"Validate a survey payload: 'count' must be in [-50, 50].\"\"\"\n    if not isinstance(payload, dict):\n        return False\n    count = payload.get(\"count\")\n    if not isinstance(count, (int, float)):\n        return False\n    return -50 <= count <= 50",
+    "injected": [
+      "def summarize_session_270(records):\n    \"\"\"Summary statistics for session records over 'duration'.\"\"\"\n    rows = normalize_records(records)\n    rows = filter_active(rows)\n    total = compute_total(rows, \"duration\")\n    n = len(rows)\n    mean = total / n if n else 0.0\n    values = [r.get(\"duration\", 0.0) for r in rows if isinstance(r.get(\"duration\"), (int, float))]\n    spread = (max(values) - min(values)) if values else 0.0\n    return {\"topic\": \"session\", \"n\": n, \"total\": round(total, 2),\n            \"mean\": round(mean, 3), \"spread\": round(spread, 3)}",
+      "def summarize_shipment_300(records):\n    \"\"\"Summary statistics for shipment records over 'price'.\"\"\"\n    rows = normalize_records(records)\n    rows = filter_active(rows)\n    total = compute_total(rows, \"price\")\n    n = len(rows)\n    mean = total / n if n else 0.0\n    values = [r.get(\"price\", 0.0) for r in rows if isinstance(r.get(\"price\"), (int, float))]\n    spread = (max(values) - min(values)) if values else 0.0\n    return {\"topic\": \"shipment\", \"n\": n, \"total\": round(total, 2),\n            \"mean\": round(mean, 3), \"spread\": round(spread, 3)}",
+      "def summarize_session_340(records):\n    \"\"\"Summary statistics for session records over 'amount'.\"\"\"\n    rows = normalize_records(records)\n    rows = filter_active(rows)\n    total = compute_total(rows, \"amount\")\n    n = len(rows)\n    mean = total / n if n else 0.0\n    values = [r.get(\"amount\", 0.0) for r in rows if isinstance(r.get(\"amount\"), (int, float))]\n    spread = (max(values) - min(values)) if values else 0.0\n    return {\"topic\": \"session\", \"n\": n, \"total\": round(total, 2),\n            \"mean\": round(mean, 3), \"spread\": round(spread, 3)}",
+      "def summarize_contract_415(records):\n    \"\"\"Summary statistics for contract records over 'price'.\"\"\"\n    rows = normalize_records(records)\n    rows = filter_active(rows)\n    total = compute_total(rows, \"price\")\n    n = len(rows)\n    mean = total / n if n else 0.0\n    values = [r.get(\"price\", 0.0) for r in rows if isinstance(r.get(\"price\"), (int, float))]\n    spread = (max(values) - min(values)) if values else 0.0\n    return {\"topic\": \"contract\", \"n\": n, \"total\": round(total, 2),\n            \"mean\": round(mean, 3), \"spread\": round(spread, 3)}"
+    ]
+  },
+  {
+    "task": "named_early",
+    "valid_code": true,
+    "reuse": {
+      "normalize_records": true,
+      "compute_total": true
+    },
+    "retrieval_hit": {
+      "normalize_records": false,
+      "compute_total": false
+    },
+    "branches": [],
+    "answer": "def build_summary_report(records):\n    \"\"\"Build a summary report normalizing records, filtering active ones, and totaling 'amount'.\"\"\"\n    rows = normalize_records(records)\n    rows = filter_active(rows)\n    total = compute_total(rows, \"amount\")\n    return {\"total\": round(total, 2), \"n\": len(rows)}",
+    "injected": [
+      "def summarize_shipment_300(records):\n    \"\"\"Summary statistics for shipment records over 'price'.\"\"\"\n    rows = normalize_records(records)\n    rows = filter_active(rows)\n    total = compute_total(rows, \"price\")\n    n = len(rows)\n    mean = total / n if n else 0.0\n    values = [r.get(\"price\", 0.0) for r in rows if isinstance(r.get(\"price\"), (int, float))]\n    spread = (max(values) - min(values)) if values else 0.0\n    return {\"topic\": \"shipment\", \"n\": n, \"total\": round(total, 2),\n            \"mean\": round(mean, 3), \"spread\": round(spread, 3)}",
+      "def summarize_shipment_720(records):\n    \"\"\"Summary statistics for shipment records over 'duration'.\"\"\"\n    rows = normalize_records(records)\n    rows = filter_active(rows)\n    total = compute_total(rows, \"duration\")\n    n = len(rows)\n    mean = total / n if n else 0.0\n    values = [r.get(\"duration\", 0.0) for r in rows if isinstance(r.get(\"duration\"), (int, float))]\n    spread = (max(values) - min(values)) if values else 0.0\n    return {\"topic\": \"shipment\", \"n\": n, \"total\": round(total, 2),\n            \"mean\": round(mean, 3), \"spread\": round(spread, 3)}",
+      "def summarize_invoice_700(records):\n    \"\"\"Summary statistics for invoice records over 'qty'.\"\"\"\n    rows = normalize_records(records)\n    rows = filter_active(rows)\n    total = compute_total(rows, \"qty\")\n    n = len(rows)\n    mean = total / n if n else 0.0\n    values = [r.get(\"qty\", 0.0) for r in rows if isinstance(r.get(\"qty\"), (int, float))]\n    spread = (max(values) - min(values)) if values else 0.0\n    return {\"topic\": \"invoice\", \"n\": n, \"total\": round(total, 2),\n            \"mean\": round(mean, 3), \"spread\": round(spread, 3)}",
+      "def summarize_invoice_770(records):\n    \"\"\"Summary statistics for invoice records over 'count'.\"\"\"\n    rows = normalize_records(records)\n    rows = filter_active(rows)\n    total = compute_total(rows, \"count\")\n    n = len(rows)\n    mean = total / n if n else 0.0\n    values = [r.get(\"count\", 0.0) for r in rows if isinstance(r.get(\"count\"), (int, float))]\n    spread = (max(values) - min(values)) if values else 0.0\n    return {\"topic\": \"invoice\", \"n\": n, \"total\": round(total, 2),\n            \"mean\": round(mean, 3), \"spread\": round(spread, 3)}"
+    ]
+  },
+  {
+    "task": "clean_mid",
+    "valid_code": true,
+    "reuse": {
+      "group_by": false,
+      "moving_average": false
+    },
+    "retrieval_hit": {
+      "group_by": false,
+      "moving_average": false
+    },
+    "branches": [],
+    "answer": "def trend_report(values_by_group):\n    \"\"\"Smooth each group's series, then average the smoothed values.\"\"\"\n    smoothed_groups = {}\n    \n    for region, values in values_by_group.items():\n        if not values:\n            smoothed_groups[region] = []\n            continue\n        \n        # Sort values by index (assuming input is a list of values for the region)\n        # If values_by_group is a dict mapping region -> list of values\n        sorted_values = sorted(values)\n        \n        # Simple moving average smoothing (window size 3)\n        smoothed = []\n        window = 3\n        for i in range(len(sorted_values)):\n            start = max(0, i - window + 1)\n            end = min(len(sorted_values), i + 1)\n            window_values = sorted_values[start:end]\n            smoothed.append(sum(window_values) / len(window_values))",
+    "injected": [
+      "def summarize_shipment_300(records):\n    \"\"\"Summary statistics for shipment records over 'price'.\"\"\"\n    rows = normalize_records(records)\n    rows = filter_active(rows)\n    total = compute_total(rows, \"price\")\n    n = len(rows)\n    mean = total / n if n else 0.0\n    values = [r.get(\"price\", 0.0) for r in rows if isinstance(r.get(\"price\"), (int, float))]\n    spread = (max(values) - min(values)) if values else 0.0\n    return {\"topic\": \"shipment\", \"n\": n, \"total\": round(total, 2),\n            \"mean\": round(mean, 3), \"spread\": round(spread, 3)}",
+      "def summarize_shipment_720(records):\n    \"\"\"Summary statistics for shipment records over 'duration'.\"\"\"\n    rows = normalize_records(records)\n    rows = filter_active(rows)\n    total = compute_total(rows, \"duration\")\n    n = len(rows)\n    mean = total / n if n else 0.0\n    values = [r.get(\"duration\", 0.0) for r in rows if isinstance(r.get(\"duration\"), (int, float))]\n    spread = (max(values) - min(values)) if values else 0.0\n    return {\"topic\": \"shipment\", \"n\": n, \"total\": round(total, 2),\n            \"mean\": round(mean, 3), \"spread\": round(spread, 3)}",
+      "def summarize_shipment_370(records):\n    \"\"\"Summary statistics for shipment records over 'qty'.\"\"\"\n    rows = normalize_records(records)\n    rows = filter_active(rows)\n    total = compute_total(rows, \"qty\")\n    n = len(rows)\n    mean = total / n if n else 0.0\n    values = [r.get(\"qty\", 0.0) for r in rows if isinstance(r.get(\"qty\"), (int, float))]\n    spread = (max(values) - min(values)) if values else 0.0\n    return {\"topic\": \"shipment\", \"n\": n, \"total\": round(total, 2),\n            \"mean\": round(mean, 3), \"spread\": round(spread, 3)}",
+      "def summarize_shipment_510(records):\n    \"\"\"Summary statistics for shipment records over 'weight'.\"\"\"\n    rows = normalize_records(records)\n    rows = filter_active(rows)\n    total = compute_total(rows, \"weight\")\n    n = len(rows)\n    mean = total / n if n else 0.0\n    values = [r.get(\"weight\", 0.0) for r in rows if isinstance(r.get(\"weight\"), (int, float))]\n    spread = (max(values) - min(values)) if values else 0.0\n    return {\"topic\": \"shipment\", \"n\": n, \"total\": round(total, 2),\n            \"mean\": round(mean, 3), \"spread\": round(spread, 3)}"
+    ]
+  },
+  {
+    "task": "clean_total",
+    "valid_code": true,
+    "reuse": {
+      "filter_active": true,
+      "compute_total": true
+    },
+    "retrieval_hit": {
+      "filter_active": false,
+      "compute_total": false
+    },
+    "branches": [],
+    "answer": "def export_active_total(records):\n    \"\"\"Export total 'amount' for active records only.\"\"\"\n    rows = normalize_records(records)\n    rows = filter_active(rows)\n    total = compute_total(rows, \"amount\")\n    return {\"total\": round(total, 2)}",
+    "injected": [
+      "def summarize_shipment_300(records):\n    \"\"\"Summary statistics for shipment records over 'price'.\"\"\"\n    rows = normalize_records(records)\n    rows = filter_active(rows)\n    total = compute_total(rows, \"price\")\n    n = len(rows)\n    mean = total / n if n else 0.0\n    values = [r.get(\"price\", 0.0) for r in rows if isinstance(r.get(\"price\"), (int, float))]\n    spread = (max(values) - min(values)) if values else 0.0\n    return {\"topic\": \"shipment\", \"n\": n, \"total\": round(total, 2),\n            \"mean\": round(mean, 3), \"spread\": round(spread, 3)}",
+      "def summarize_shipment_720(records):\n    \"\"\"Summary statistics for shipment records over 'duration'.\"\"\"\n    rows = normalize_records(records)\n    rows = filter_active(rows)\n    total = compute_total(rows, \"duration\")\n    n = len(rows)\n    mean = total / n if n else 0.0\n    values = [r.get(\"duration\", 0.0) for r in rows if isinstance(r.get(\"duration\"), (int, float))]\n    spread = (max(values) - min(values)) if values else 0.0\n    return {\"topic\": \"shipment\", \"n\": n, \"total\": round(total, 2),\n            \"mean\": round(mean, 3), \"spread\": round(spread, 3)}",
+      "def summarize_shipment_510(records):\n    \"\"\"Summary statistics for shipment records over 'weight'.\"\"\"\n    rows = normalize_records(records)\n    rows = filter_active(rows)\n    total = compute_total(rows, \"weight\")\n    n = len(rows)\n    mean = total / n if n else 0.0\n    values = [r.get(\"weight\", 0.0) for r in rows if isinstance(r.get(\"weight\"), (int, float))]\n    spread = (max(values) - min(values)) if values else 0.0\n    return {\"topic\": \"shipment\", \"n\": n, \"total\": round(total, 2),\n            \"mean\": round(mean, 3), \"spread\": round(spread, 3)}",
+      "def summarize_shipment_370(records):\n    \"\"\"Summary statistics for shipment records over 'qty'.\"\"\"\n    rows = normalize_records(records)\n    rows = filter_active(rows)\n    total = compute_total(rows, \"qty\")\n    n = len(rows)\n    mean = total / n if n else 0.0\n    values = [r.get(\"qty\", 0.0) for r in rows if isinstance(r.get(\"qty\"), (int, float))]\n    spread = (max(values) - min(values)) if values else 0.0\n    return {\"topic\": \"shipment\", \"n\": n, \"total\": round(total, 2),\n            \"mean\": round(mean, 3), \"spread\": round(spread, 3)}"
+    ]
+  }
+]

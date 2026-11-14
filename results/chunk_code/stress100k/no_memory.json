@@ -1,0 +1,74 @@
+[
+  {
+    "task": "continue",
+    "valid_code": true,
+    "reuse": {},
+    "retrieval_hit": {},
+    "helper_calls": [
+      "normalize_records",
+      "filter_active",
+      "compute_total",
+      "group_by"
+    ],
+    "wall_s": 6.94,
+    "answer": "def build_summary_report(records):\n    \"\"\"Build a summary report with regional totals and smoothed trends.\"\"\"\n    rows = normalize_records(records)\n    rows = filter_active(rows)\n    \n    # Group by region\n    groups = group_by(rows, \"region\")\n    \n    # Calculate total amount for the report header\n    total_amount = compute_total(rows, \"amount\")\n    \n    # Prepare data for trend smoothing\n    trend_data = []\n    for name, group in sorted(groups.items()):\n        amounts = [r.get(\"amount\", 0.0) for r in group if isinstance(r.get(\"amount\"), (int, float))]\n        if amounts:\n            smoothed = smooth_trend(amounts)\n            trend_data.append({\n                \"region\": name,\n                \"n\": len(group),\n                \"total\": round(sum(amounts), 2),\n                \"trend\": smoothed\n            })",
+    "injected": []
+  },
+  {
+    "task": "named_early",
+    "valid_code": true,
+    "reuse": {
+      "normalize_records": true,
+      "compute_total": true
+    },
+    "retrieval_hit": {
+      "normalize_records": false,
+      "compute_total": false
+    },
+    "helper_calls": [
+      "normalize_records",
+      "filter_active",
+      "compute_total",
+      "group_by"
+    ],
+    "wall_s": 3.75,
+    "answer": "def build_summary_report(records):\n    \"\"\"Build a summary report: normalize, keep active, total 'amount', group by region.\"\"\"\n    rows = normalize_records(records)\n    rows = filter_active(rows)\n    groups = group_by(rows, \"region\")\n    report = []\n    for name, group in sorted(groups.items()):\n        total = compute_total(group, \"amount\")\n        report.append({\"region\": name, \"total\": round(total, 2)})\n    return report",
+    "injected": []
+  },
+  {
+    "task": "clean_mid",
+    "valid_code": true,
+    "reuse": {
+      "group_by": false,
+      "moving_average": false
+    },
+    "retrieval_hit": {
+      "group_by": false,
+      "moving_average": false
+    },
+    "helper_calls": [],
+    "wall_s": 6.91,
+    "answer": "def trend_report(values_by_group):\n    \"\"\"Smooth each group's numeric series and return the average of smoothed values.\"\"\"\n    smoothed_series = []\n    for group_name, values in values_by_group.items():\n        if not values:\n            smoothed_series.append((group_name, 0.0))\n            continue\n        \n        # Simple moving average with window size 3 (centered)\n        window = 3\n        smoothed = []\n        for i in range(len(values)):\n            start = max(0, i - window // 2)\n            end = min(len(values), i + window // 2 + 1)\n            window_values = values[start:end]\n            avg = sum(window_values) / len(window_values)\n            smoothed.append(avg)\n        \n        # Average the smoothed series for this group\n        group_avg = sum(smoothed) / len(smoothed)\n        smoothed",
+    "injected": []
+  },
+  {
+    "task": "clean_total",
+    "valid_code": true,
+    "reuse": {
+      "filter_active": true,
+      "compute_total": true
+    },
+    "retrieval_hit": {
+      "filter_active": false,
+      "compute_total": false
+    },
+    "helper_calls": [
+      "normalize_records",
+      "filter_active",
+      "compute_total"
+    ],
+    "wall_s": 1.73,
+    "answer": "def export_active_total(records):\n    \"\"\"Export total 'amount' for active records only.\"\"\"\n    rows = normalize_records(records)\n    rows = filter_active(rows)\n    return compute_total(rows, \"amount\")",
+    "injected": []
+  }
+]

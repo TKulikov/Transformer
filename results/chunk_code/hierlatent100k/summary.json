@@ -1,0 +1,108 @@
+{
+  "model": "qwen35-4b",
+  "device": "cuda",
+  "tail": {
+    "line_start": 9484,
+    "dropped_lines": 11
+  },
+  "beta": 1.0,
+  "alpha": 0.5,
+  "variant": "hier+latent+ttl-gist",
+  "ingest": {
+    "wall_s": 164.0,
+    "stats": {
+      "ingested": 1603,
+      "declarations": 1218,
+      "usages": 298,
+      "gist_used": 4
+    }
+  },
+  "entries": [
+    {
+      "task": "continue",
+      "valid_code": false,
+      "reuse": {},
+      "retrieval_hit": {},
+      "branches": [
+        "add",
+        "summarize_contract_415",
+        "summarize_shipment_20"
+      ],
+      "answer": "def build_summary_report(records):\n    \"\"\"Normalize, filter active, group by region, and compute smoothed trends.\"\"\"\n    rows = normalize_records(records)\n    rows = filter_active(rows)\n    \n    # Group by region (assuming 'region' key exists in normalized rows)\n    groups = {}\n    for r in rows:\n        region = r.get(\"region\", \"unknown\")\n        if region not in groups:\n            groups[region] = []\n        groups[region].append(r)\n    \n    # Calculate total amount per group and prepare for trend smoothing\n    # Assuming 'amount' is the metric to sum; adjust if 'price' or 'score' is intended\n    group_stats = {}\n    for name, group in groups.items():\n        total = sum(r.get(\"amount\", 0.0) for r in group)\n        group_stats[name] = {\"total\": total,",
+      "injected": [
+        "def add(self, record):\n        \"\"\"Append one record after normalization.\"\"\"\n        self._rows.extend(normalize_records([record]))\n        return len(self._rows)",
+        "def summarize_contract_415(records):\n    \"\"\"Summary statistics for contract records over 'price'.\"\"\"\n    rows = normalize_records(records)\n    rows = filter_active(rows)\n    total = compute_total(rows, \"price\")\n    n = len(rows)\n    mean = total / n if n else 0.0\n    values = [r.get(\"price\", 0.0) for r in rows if isinstance(r.get(\"price\"), (int, float))]\n    spread = (max(values) - min(values)) if values else 0.0\n    return {\"topic\": \"contract\", \"n\": n, \"total\": round(total, 2),\n            \"mean\": round(mean, 3), \"spread\": round(spread, 3)}",
+        "def summarize_shipment_20(records):\n    \"\"\"Summary statistics for shipment records over 'score'.\"\"\"\n    rows = normalize_records(records)\n    rows = filter_active(rows)\n    total = compute_total(rows, \"score\")\n    n = len(rows)\n    mean = total / n if n else 0.0\n    values = [r.get(\"score\", 0.0) for r in rows if isinstance(r.get(\"score\"), (int, float))]\n    spread = (max(values) - min(values)) if values else 0.0\n    return {\"topic\": \"shipment\", \"n\": n, \"total\": round(total, 2),\n            \"mean\": round(mean, 3), \"spread\": round(spread, 3)}"
+      ]
+    },
+    {
+      "task": "named_early",
+      "valid_code": true,
+      "reuse": {
+        "normalize_records": true,
+        "compute_total": true
+      },
+      "retrieval_hit": {
+        "normalize_records": false,
+        "compute_total": false
+      },
+      "branches": [
+        "add",
+        "summarize_payment_5",
+        "summarize_shipment_20"
+      ],
+      "answer": "def build_summary_report(records):\n    \"\"\"Normalize records, keep active ones, compute total 'amount', and group by region.\"\"\"\n    rows = normalize_records(records)\n    rows = filter_active(rows)\n    total = compute_total(rows, \"amount\")\n    return {\"total\": round(total, 2), \"n\": len(rows)}",
+      "injected": [
+        "def add(self, record):\n        \"\"\"Append one record after normalization.\"\"\"\n        self._rows.extend(normalize_records([record]))\n        return len(self._rows)",
+        "def summarize_payment_5(records):\n    \"\"\"Summary statistics for payment records over 'amount'.\"\"\"\n    rows = normalize_records(records)\n    rows = filter_active(rows)\n    total = compute_total(rows, \"amount\")\n    n = len(rows)\n    mean = total / n if n else 0.0\n    values = [r.get(\"amount\", 0.0) for r in rows if isinstance(r.get(\"amount\"), (int, float))]\n    spread = (max(values) - min(values)) if values else 0.0\n    return {\"topic\": \"payment\", \"n\": n, \"total\": round(total, 2),\n            \"mean\": round(mean, 3), \"spread\": round(spread, 3)}",
+        "def summarize_shipment_20(records):\n    \"\"\"Summary statistics for shipment records over 'score'.\"\"\"\n    rows = normalize_records(records)\n    rows = filter_active(rows)\n    total = compute_total(rows, \"score\")\n    n = len(rows)\n    mean = total / n if n else 0.0\n    values = [r.get(\"score\", 0.0) for r in rows if isinstance(r.get(\"score\"), (int, float))]\n    spread = (max(values) - min(values)) if values else 0.0\n    return {\"topic\": \"shipment\", \"n\": n, \"total\": round(total, 2),\n            \"mean\": round(mean, 3), \"spread\": round(spread, 3)}"
+      ]
+    },
+    {
+      "task": "clean_mid",
+      "valid_code": false,
+      "reuse": {
+        "group_by": false,
+        "moving_average": false
+      },
+      "retrieval_hit": {
+        "group_by": false,
+        "moving_average": false
+      },
+      "branches": [
+        "add",
+        "summarize_shipment_20",
+        "summarize_shipment_90"
+      ],
+      "answer": "def trend_report(values_by_group):\n    \"\"\"Smooth each group's series, then average the smoothed values.\"\"\"\n    smoothed_groups = {}\n    \n    for region, values in values_by_group.items():\n        if not values:\n            smoothed_groups[region] = []\n            continue\n        \n        # Simple moving average with window size 3 (centered)\n        # If window is odd, use it; if even, use odd-1 to keep it odd\n        window = 3 if len(values) >= 3 else len(values)\n        \n        smoothed = []\n        for i in range(len(values)):\n            start = max(0, i - window // 2)\n            end = min(len(values), i + window // 2 + 1)\n            window_values = values[start:end]\n            smoothed.append(sum(window_values) / len(window_values))\n        \n        smoothed_groups[region] =",
+      "injected": [
+        "def add(self, record):\n        \"\"\"Append one record after normalization.\"\"\"\n        self._rows.extend(normalize_records([record]))\n        return len(self._rows)",
+        "def summarize_shipment_20(records):\n    \"\"\"Summary statistics for shipment records over 'score'.\"\"\"\n    rows = normalize_records(records)\n    rows = filter_active(rows)\n    total = compute_total(rows, \"score\")\n    n = len(rows)\n    mean = total / n if n else 0.0\n    values = [r.get(\"score\", 0.0) for r in rows if isinstance(r.get(\"score\"), (int, float))]\n    spread = (max(values) - min(values)) if values else 0.0\n    return {\"topic\": \"shipment\", \"n\": n, \"total\": round(total, 2),\n            \"mean\": round(mean, 3), \"spread\": round(spread, 3)}",
+        "def summarize_shipment_90(records):\n    \"\"\"Summary statistics for shipment records over 'latency'.\"\"\"\n    rows = normalize_records(records)\n    rows = filter_active(rows)\n    total = compute_total(rows, \"latency\")\n    n = len(rows)\n    mean = total / n if n else 0.0\n    values = [r.get(\"latency\", 0.0) for r in rows if isinstance(r.get(\"latency\"), (int, float))]\n    spread = (max(values) - min(values)) if values else 0.0\n    return {\"topic\": \"shipment\", \"n\": n, \"total\": round(total, 2),\n            \"mean\": round(mean, 3), \"spread\": round(spread, 3)}"
+      ]
+    },
+    {
+      "task": "clean_total",
+      "valid_code": true,
+      "reuse": {
+        "filter_active": true,
+        "compute_total": true
+      },
+      "retrieval_hit": {
+        "filter_active": false,
+        "compute_total": false
+      },
+      "branches": [
+        "add",
+        "summarize_payment_5",
+        "summarize_shipment_20"
+      ],
+      "answer": "def export_active_total(records):\n    \"\"\"Export total 'amount' for active records only.\"\"\"\n    rows = normalize_records(records)\n    rows = filter_active(rows)\n    return compute_total(rows, \"amount\")",
+      "injected": [
+        "def add(self, record):\n        \"\"\"Append one record after normalization.\"\"\"\n        self._rows.extend(normalize_records([record]))\n        return len(self._rows)",
+        "def summarize_shipment_20(records):\n    \"\"\"Summary statistics for shipment records over 'score'.\"\"\"\n    rows = normalize_records(records)\n    rows = filter_active(rows)\n    total = compute_total(rows, \"score\")\n    n = len(rows)\n    mean = total / n if n else 0.0\n    values = [r.get(\"score\", 0.0) for r in rows if isinstance(r.get(\"score\"), (int, float))]\n    spread = (max(values) - min(values)) if values else 0.0\n    return {\"topic\": \"shipment\", \"n\": n, \"total\": round(total, 2),\n            \"mean\": round(mean, 3), \"spread\": round(spread, 3)}",
+        "def summarize_payment_5(records):\n    \"\"\"Summary statistics for payment records over 'amount'.\"\"\"\n    rows = normalize_records(records)\n    rows = filter_active(rows)\n    total = compute_total(rows, \"amount\")\n    n = len(rows)\n    mean = total / n if n else 0.0\n    values = [r.get(\"amount\", 0.0) for r in rows if isinstance(r.get(\"amount\"), (int, float))]\n    spread = (max(values) - min(values)) if values else 0.0\n    return {\"topic\": \"payment\", \"n\": n, \"total\": round(total, 2),\n            \"mean\": round(mean, 3), \"spread\": round(spread, 3)}"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,86 @@
+[
+  {
+    "task": "retry_submit",
+    "valid_code": false,
+    "reuse": {
+      "retry": true,
+      "backoff_delay": false
+    },
+    "retrieval_hit": {
+      "retry": true,
+      "backoff_delay": false
+    },
+    "answer": "```python\nimport time\nfrom typing import List, Any, Dict\n\ndef submit_with_retry(client: Any, tasks: List[Dict[str, Any]], max_retries: int = 3, base_delay: float = 1.0) -> List[Dict[str, Any]]:\n    \"\"\"\n    Submit a list of tasks to the client with exponential backoff on transient failures.\n    \n    Args:\n        client: The task queue client instance.\n        tasks: List of task dictionaries containing 'name', 'args', and 'task_id'.\n        max_retries: Maximum number of retry attempts for transient errors.\n        base_delay: Base delay in seconds for exponential backoff.\n    \n    Returns:\n        List of task results (success or failure).\n    \"\"\"\n    results = []\n    \n    for task in tasks:\n        last_error = None\n        retry_count = 0",
+    "injected": [
+      "def set_status(self, task_id, status):\n        \"\"\"Update a task's status and bump its attempt counter.\"\"\"\n        task = self.get(task_id)\n        task.status = status\n        if status == \"running\":\n            task.attempts += 1\n        return task",
+      "def run_once(self, task):\n        \"\"\"Execute a single task with retry and store its result.\"\"\"\n        self._store.set_status(task.task_id, \"running\")\n        fn = self._registry.get(task.name)\n        if fn is None:\n            result = TaskResult(task.task_id, ok=False, error=f\"unknown task {task.name!r}\")\n            return self._store.save_result(result)\n        try:\n            value = retry(lambda: fn(**task.args), attempts=self._max_retries)\n            result = TaskResult(task.task_id, ok=True, value=value)\n        except Exception as exc:  # noqa: BLE001 - report any failure as a result\n            result = TaskResult(task.task_id, ok=False, error=str(exc))\n        return self._store.save_result(result)",
+      "def cancel(self, task_id):\n        \"\"\"Cancel a pending task.\"\"\"\n        reply = self._request(\"cancel\", {\"id\": task_id})\n        return reply.payload",
+      "def status(self, task_id):\n        \"\"\"Poll a task's status and result.\"\"\"\n        reply = self._request(\"status\", {\"id\": task_id})\n        return reply.payload",
+      "def save_result(self, result):\n        \"\"\"Store a TaskResult and mark the task finished.\"\"\"\n        self._results[result.task_id] = result\n        self.set_status(result.task_id, \"done\" if result.ok else \"failed\")\n        return result",
+      "def run_batch(self):\n        \"\"\"Run the next scheduled batch; return the number executed.\"\"\"\n        batch = self._scheduler.next_batch()\n        for task in batch:\n            self.run_once(task)\n        return len(batch)"
+    ]
+  },
+  {
+    "task": "parse_clamp",
+    "valid_code": false,
+    "reuse": {
+      "parse_duration": false,
+      "clamp": true
+    },
+    "retrieval_hit": {
+      "parse_duration": false,
+      "clamp": false
+    },
+    "answer": "```python\nfrom typing import Optional\n\nfrom .utils import parse_int, clamp\n\ndef safe_timeout(text: str) -> Optional[int]:\n    \"\"\"\n    Parse a user-provided timeout string into milliseconds and clamp it to a safe range.\n    \n    Args:\n        text: A string representing the timeout value (e.g., \"30s\", \"1m\", \"1000\").\n        \n    Returns:\n        The clamped timeout in milliseconds, or None if parsing fails.\n    \"\"\"\n    try:\n        # Attempt to parse directly as an integer first\n        value = parse_int(text)\n        if value is not None:\n            return clamp(value, 1000, 3600000)  # 1s to 1h\n        \n        # Try parsing with suffixes (s, m, h)\n        import re\n        match = re",
+    "injected": [
+      "def set_status(self, task_id, status):\n        \"\"\"Update a task's status and bump its attempt counter.\"\"\"\n        task = self.get(task_id)\n        task.status = status\n        if status == \"running\":\n            task.attempts += 1\n        return task",
+      "def run_once(self, task):\n        \"\"\"Execute a single task with retry and store its result.\"\"\"\n        self._store.set_status(task.task_id, \"running\")\n        fn = self._registry.get(task.name)\n        if fn is None:\n            result = TaskResult(task.task_id, ok=False, error=f\"unknown task {task.name!r}\")\n            return self._store.save_result(result)\n        try:\n            value = retry(lambda: fn(**task.args), attempts=self._max_retries)\n            result = TaskResult(task.task_id, ok=True, value=value)\n        except Exception as exc:  # noqa: BLE001 - report any failure as a result\n            result = TaskResult(task.task_id, ok=False, error=str(exc))\n        return self._store.save_result(result)",
+      "def __call__(self, payload):\n        specs = payload.get(\"tasks\", [])\n        ids = []\n        for spec in dedupe(specs):\n            task = new_task(spec[\"id\"], spec[\"name\"], **spec.get(\"args\", {}))\n            self._store.put(task)\n            ids.append(task.task_id)\n        return {\"accepted\": ids}",
+      "def status(self, task_id):\n        \"\"\"Poll a task's status and result.\"\"\"\n        reply = self._request(\"status\", {\"id\": task_id})\n        return reply.payload",
+      "def save_result(self, result):\n        \"\"\"Store a TaskResult and mark the task finished.\"\"\"\n        self._results[result.task_id] = result\n        self.set_status(result.task_id, \"done\" if result.ok else \"failed\")\n        return result",
+      "def run_batch(self):\n        \"\"\"Run the next scheduled batch; return the number executed.\"\"\"\n        batch = self._scheduler.next_batch()\n        for task in batch:\n            self.run_once(task)\n        return len(batch)"
+    ]
+  },
+  {
+    "task": "batch_dedupe",
+    "valid_code": false,
+    "reuse": {
+      "chunked": false,
+      "dedupe": false
+    },
+    "retrieval_hit": {
+      "chunked": true,
+      "dedupe": true
+    },
+    "answer": "```python\nfrom itertools import islice\n\ndef prepare_batches(task_ids, size):\n    \"\"\"Remove duplicate task IDs and split them into fixed-size batches.\"\"\"\n    unique_ids = list(dict.fromkeys(task_ids))\n    return [list(islice(unique_ids, size)) for _ in range((len(unique_ids) + size - 1) // size)]\n```",
+    "injected": [
+      "def set_status(self, task_id, status):\n        \"\"\"Update a task's status and bump its attempt counter.\"\"\"\n        task = self.get(task_id)\n        task.status = status\n        if status == \"running\":\n            task.attempts += 1\n        return task",
+      "def run_once(self, task):\n        \"\"\"Execute a single task with retry and store its result.\"\"\"\n        self._store.set_status(task.task_id, \"running\")\n        fn = self._registry.get(task.name)\n        if fn is None:\n            result = TaskResult(task.task_id, ok=False, error=f\"unknown task {task.name!r}\")\n            return self._store.save_result(result)\n        try:\n            value = retry(lambda: fn(**task.args), attempts=self._max_retries)\n            result = TaskResult(task.task_id, ok=True, value=value)\n        except Exception as exc:  # noqa: BLE001 - report any failure as a result\n            result = TaskResult(task.task_id, ok=False, error=str(exc))\n        return self._store.save_result(result)",
+      "def flush_batch(self, tasks):\n        \"\"\"Append a batch of tasks efficiently.\"\"\"\n        with open(self._path, \"a\", encoding=\"utf-8\") as fh:\n            for batch in chunked(tasks, 64):\n                fh.writelines(json.dumps(t.__dict__) + \"\\n\" for t in batch)",
+      "def __call__(self, payload):\n        specs = payload.get(\"tasks\", [])\n        ids = []\n        for spec in dedupe(specs):\n            task = new_task(spec[\"id\"], spec[\"name\"], **spec.get(\"args\", {}))\n            self._store.put(task)\n            ids.append(task.task_id)\n        return {\"accepted\": ids}",
+      "def save_result(self, result):\n        \"\"\"Store a TaskResult and mark the task finished.\"\"\"\n        self._results[result.task_id] = result\n        self.set_status(result.task_id, \"done\" if result.ok else \"failed\")\n        return result",
+      "def run_batch(self):\n        \"\"\"Run the next scheduled batch; return the number executed.\"\"\"\n        batch = self._scheduler.next_batch()\n        for task in batch:\n            self.run_once(task)\n        return len(batch)"
+    ]
+  },
+  {
+    "task": "snapshot_metrics",
+    "valid_code": false,
+    "reuse": {
+      "snapshot": true,
+      "summary": true
+    },
+    "retrieval_hit": {
+      "snapshot": false,
+      "summary": false
+    },
+    "answer": "```python\nfrom typing import Any, Dict\n\nfrom models import TaskStore, Metrics\nfrom utils import get_current_time\n\nclass TaskStoreHandler:\n    def __init__(self, store: TaskStore, metrics: Metrics):\n        self._store = store\n        self._metrics = metrics\n\n    def get_snapshot(self) -> Dict[str, Any]:\n        \"\"\"Return a snapshot of the task store and metrics summary.\"\"\"\n        # Get all tasks and their current status\n        tasks = self._store.get_all()\n        task_counts = {}\n        for task in tasks:\n            status = task.status\n            task_counts[status] = task_counts.get(status, 0) + 1\n\n        # Get metrics summary\n        metrics_summary = self._metrics.get_summary()\n\n        return {\n            \"tasks\": {\n                \"total\": len(tasks),\n                \"by_status\": task_counts,",
+    "injected": [
+      "def set_status(self, task_id, status):\n        \"\"\"Update a task's status and bump its attempt counter.\"\"\"\n        task = self.get(task_id)\n        task.status = status\n        if status == \"running\":\n            task.attempts += 1\n        return task",
+      "def run_once(self, task):\n        \"\"\"Execute a single task with retry and store its result.\"\"\"\n        self._store.set_status(task.task_id, \"running\")\n        fn = self._registry.get(task.name)\n        if fn is None:\n            result = TaskResult(task.task_id, ok=False, error=f\"unknown task {task.name!r}\")\n            return self._store.save_result(result)\n        try:\n            value = retry(lambda: fn(**task.args), attempts=self._max_retries)\n            result = TaskResult(task.task_id, ok=True, value=value)\n        except Exception as exc:  # noqa: BLE001 - report any failure as a result\n            result = TaskResult(task.task_id, ok=False, error=str(exc))\n        return self._store.save_result(result)",
+      "def result(self, task_id):\n        \"\"\"Return the stored result or None.\"\"\"\n        return self._results.get(task_id)",
+      "def __call__(self, payload):\n        task = self._store.get(payload[\"id\"])\n        result = self._store.result(task.task_id)\n        return {\"id\": task.task_id, \"status\": task.status,\n                \"result\": None if result is None else result.value}",
+      "def save_result(self, result):\n        \"\"\"Store a TaskResult and mark the task finished.\"\"\"\n        self._results[result.task_id] = result\n        self.set_status(result.task_id, \"done\" if result.ok else \"failed\")\n        return result",
+      "def run_batch(self):\n        \"\"\"Run the next scheduled batch; return the number executed.\"\"\"\n        batch = self._scheduler.next_batch()\n        for task in batch:\n            self.run_once(task)\n        return len(batch)"
+    ]
+  }
+]

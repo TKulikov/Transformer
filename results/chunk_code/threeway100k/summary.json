@@ -1,0 +1,264 @@
+{
+  "model": "qwen35-4b",
+  "device": "cuda",
+  "tail": {
+    "line_start": 9484,
+    "dropped_lines": 11
+  },
+  "beta": 1.0,
+  "alpha": 0.5,
+  "ingest": {
+    "flat_s": 163.1,
+    "hier_s": 198.5,
+    "latent_s": 148.6,
+    "latent_stats": {
+      "adds": 1218,
+      "evictions": 0,
+      "gist_used": 4
+    }
+  },
+  "conditions": {
+    "old_flat": [
+      {
+        "task": "continue",
+        "valid_code": false,
+        "reuse": {},
+        "retrieval_hit": {},
+        "branches": [],
+        "answer": "def build_summary_report(records):\n    \"\"\"Normalize records, keep active ones, total 'amount', group by region, and render one table with a smoothed trend per region.\"\"\"\n    active_records = [r for r in records if r.get(\"active\", True)]\n    grouped = defaultdict(list)\n    for r in active_records:\n        region = r.get(\"region\", \"unknown\")\n        grouped[region].append(r.get(\"amount\", 0.0))\n    \n    report = []\n    for region, values in sorted(grouped.items()):\n        smoothed = smooth_trend(values)\n        report.append({\n            \"region\": region,\n            \"n\": len(values),\n            \"total\": round(sum(values), 2),\n            \"trend\": smoothed\n        })\n    return report\n\ndef smooth_trend(values):\n    \"\"\"Apply a simple moving average to the values.\"\"\"\n    if",
+        "injected": [
+          "\"\"\"analytics_toolkit — single-file data processing library (generated).\"\"\"\n\nfrom __future__ import annotations\n\nimport math\nimport re\nfrom collections import defaultdict",
+          "class ContractStore107:\n    \"\"\"In-memory store for contract records with helper-based analytics.\"\"\"",
+          "class SignalStore179:\n    \"\"\"In-memory store for signal records with helper-based analytics.\"\"\"",
+          "class SurveyStore35:\n    \"\"\"In-memory store for survey records with helper-based analytics.\"\"\""
+        ]
+      },
+      {
+        "task": "named_early",
+        "valid_code": false,
+        "reuse": {
+          "normalize_records": true,
+          "compute_total": true
+        },
+        "retrieval_hit": {
+          "normalize_records": false,
+          "compute_total": false
+        },
+        "branches": [],
+        "answer": "def build_summary_report(records):\n    \"\"\"Normalize records, keep active ones, total 'amount', group by region, and render one table with a smoothed trend per region.\"\"\"\n    normalized = normalize_records(records)\n    active_records = [r for r in normalized if r.get(\"active\", True)]\n    \n    # Group by region\n    groups = defaultdict(list)\n    for r in active_records:\n        region = r.get(\"region\", \"unknown\")\n        groups[region].append(r)\n    \n    # Calculate totals and prepare data for smoothing\n    region_data = {}\n    for region, rows in groups.items():\n        total_amount = compute_total(rows, \"amount\")\n        values = [r.get(\"amount\", 0.0) for r in rows if isinstance(r.get(\"amount\"), (int, float))]\n        region_data[region] = {\"total\": total_amount, \"values\":",
+        "injected": [
+          "\"\"\"analytics_toolkit — single-file data processing library (generated).\"\"\"\n\nfrom __future__ import annotations\n\nimport math\nimport re\nfrom collections import defaultdict",
+          "def total(self):\n        \"\"\"Total over 'amount' for active rows.\"\"\"\n        return compute_total(self.active(), \"amount\")",
+          "def total(self):\n        \"\"\"Total over 'score' for active rows.\"\"\"\n        return compute_total(self.active(), \"score\")",
+          "class MetricStore8:\n    \"\"\"In-memory store for metric records with helper-based analytics.\"\"\""
+        ]
+      },
+      {
+        "task": "clean_mid",
+        "valid_code": false,
+        "reuse": {
+          "group_by": false,
+          "moving_average": true
+        },
+        "retrieval_hit": {
+          "group_by": false,
+          "moving_average": false
+        },
+        "branches": [],
+        "answer": "def trend_report(values_by_group):\n    \"\"\"Smooth each group's series, then average the smoothed values.\"\"\"\n    if not values_by_group:\n        return []\n\n    smoothed_groups = {}\n    for region, values in values_by_group.items():\n        if not values:\n            continue\n        smoothed = simple_moving_average(values, window=3)\n        smoothed_groups[region] = smoothed\n\n    # Calculate average of smoothed values for each region\n    final_report = []\n    for region, smoothed in smoothed_groups.items():\n        avg_smoothed = sum(smoothed) / len(smoothed) if smoothed else 0.0\n        final_report.append({\n            \"region\": region,\n            \"trend\": round(avg_smoothed, 3)\n        })\n\n    return sorted(final_report, key=lambda x: x[\"region\"])\n\n\ndef simple_moving_average(values, window=3):",
+        "injected": [
+          "\"\"\"analytics_toolkit — single-file data processing library (generated).\"\"\"\n\nfrom __future__ import annotations\n\nimport math\nimport re\nfrom collections import defaultdict",
+          "def by_region(self):\n        \"\"\"Active rows grouped by region.\"\"\"\n        return group_by(self.active(), \"region\")",
+          "def by_region(self):\n        \"\"\"Active rows grouped by region.\"\"\"\n        return group_by(self.active(), \"region\")",
+          "def by_region(self):\n        \"\"\"Active rows grouped by region.\"\"\"\n        return group_by(self.active(), \"region\")"
+        ]
+      },
+      {
+        "task": "clean_total",
+        "valid_code": true,
+        "reuse": {
+          "filter_active": false,
+          "compute_total": true
+        },
+        "retrieval_hit": {
+          "filter_active": false,
+          "compute_total": false
+        },
+        "branches": [],
+        "answer": "def export_active_total(records):\n    \"\"\"Export total 'amount' for active records only.\"\"\"\n    return compute_total(records.active(), \"amount\")",
+        "injected": [
+          "def total(self):\n        \"\"\"Total over 'amount' for active rows.\"\"\"\n        return compute_total(self.active(), \"amount\")",
+          "\"\"\"analytics_toolkit — single-file data processing library (generated).\"\"\"\n\nfrom __future__ import annotations\n\nimport math\nimport re\nfrom collections import defaultdict",
+          "def total(self):\n        \"\"\"Total over 'qty' for active rows.\"\"\"\n        return compute_total(self.active(), \"qty\")",
+          "def total(self):\n        \"\"\"Total over 'amount' for active rows.\"\"\"\n        return compute_total(self.active(), \"amount\")"
+        ]
+      }
+    ],
+    "hier": [
+      {
+        "task": "continue",
+        "valid_code": true,
+        "reuse": {},
+        "retrieval_hit": {},
+        "branches": [
+          "active",
+          "filter_active"
+        ],
+        "answer": "def export_active_total(records):\n    \"\"\"Export total 'amount' for active rows.\"\"\"\n    active_rows = filter_active(records)\n    total = sum(r.get(\"amount\", 0.0) for r in active_rows if isinstance(r.get(\"amount\"), (int, float)))\n    return {\"status\": \"active\", \"total\": round(total, 2)}",
+        "injected": [
+          "def filter_active(records):\n    \"\"\"Keep only rows whose status field marks them active.\"\"\"\n    return [r for r in records if r.get(\"status\", \"active\") == \"active\"]",
+          "def active(self):\n        \"\"\"Active rows only.\"\"\"\n        return filter_active(self._rows)",
+          "def active(self):\n        \"\"\"Active rows only.\"\"\"\n        return filter_active(self._rows)",
+          "def active(self):\n        \"\"\"Active rows only.\"\"\"\n        return filter_active(self._rows)",
+          "def by_region(self):\n        \"\"\"Active rows grouped by region.\"\"\"\n        return group_by(self.active(), \"region\")",
+          "def total(self):\n        \"\"\"Total over 'amount' for active rows.\"\"\"\n        return compute_total(self.active(), \"amount\")",
+          "def active(self):\n        \"\"\"Active rows only.\"\"\"\n        return filter_active(self._rows)",
+          "def total(self):\n        \"\"\"Total over 'score' for active rows.\"\"\"\n        return compute_total(self.active(), \"score\")",
+          "def by_region(self):\n        \"\"\"Active rows grouped by region.\"\"\"\n        return group_by(self.active(), \"region\")"
+        ]
+      },
+      {
+        "task": "named_early",
+        "valid_code": false,
+        "reuse": {
+          "normalize_records": true,
+          "compute_total": true
+        },
+        "retrieval_hit": {
+          "normalize_records": false,
+          "compute_total": false
+        },
+        "branches": [
+          "total"
+        ],
+        "answer": "def build_summary_report(records):\n    \"\"\"Normalize records, keep active ones, total 'amount', group by region, and render one table with a smoothed trend per region.\"\"\"\n    from collections import defaultdict\n    \n    # Normalize and filter active records\n    active_records = normalize_records(records)\n    active_records = [r for r in active_records if r.get(\"active\", False)]\n    \n    # Group by region\n    groups = defaultdict(list)\n    for r in active_records:\n        region = r.get(\"region\", \"unknown\")\n        groups[region].append(r)\n    \n    # Calculate totals and prepare data for trend smoothing\n    region_data = {}\n    for region, recs in groups.items():\n        amounts = [r.get(\"amount\", 0.0) for r in recs if isinstance(r.get(\"amount\"), (int, float))]\n        total_amount = compute_total(recs,",
+        "injected": [
+          "def total(self):\n        \"\"\"Total over 'count' for active rows.\"\"\"\n        return compute_total(self.active(), \"count\")",
+          "def total(self):\n        \"\"\"Total over 'count' for active rows.\"\"\"\n        return compute_total(self.active(), \"count\")",
+          "def total(self):\n        \"\"\"Total over 'count' for active rows.\"\"\"\n        return compute_total(self.active(), \"count\")"
+        ]
+      },
+      {
+        "task": "clean_mid",
+        "valid_code": true,
+        "reuse": {
+          "group_by": false,
+          "moving_average": false
+        },
+        "retrieval_hit": {
+          "group_by": false,
+          "moving_average": false
+        },
+        "branches": [
+          "by_region"
+        ],
+        "answer": "def trend_report(values_by_group):\n    \"\"\"Smooth each group's series, then average the smoothed values.\"\"\"\n    smoothed_groups = {}\n    \n    for region, values in values_by_group.items():\n        if not values:\n            smoothed_groups[region] = 0.0\n            continue\n        \n        # Simple moving average with window size 3\n        window = 3\n        smoothed = []\n        for i in range(len(values)):\n            start = max(0, i - window + 1)\n            window_vals = values[start:i+1]\n            smoothed.append(sum(window_vals) / len(window_vals))\n        \n        # Average the smoothed series\n        avg_smoothed = sum(smoothed) / len(smoothed)\n        smoothed_groups[region] = round(avg_smoothed, 2)\n    \n    return smoothed_groups",
+        "injected": [
+          "def by_region(self):\n        \"\"\"Active rows grouped by region.\"\"\"\n        return group_by(self.active(), \"region\")",
+          "def export(self):\n        \"\"\"Render the store as a text table.\"\"\"\n        groups = self.by_region()\n        rows = [(slugify(k), len(v), compute_total(v, \"amount\")) for k, v in sorted(groups.items())]\n        return format_table(rows, [\"region\", \"n\", \"total\"])",
+          "def by_region(self):\n        \"\"\"Active rows grouped by region.\"\"\"\n        return group_by(self.active(), \"region\")",
+          "def export(self):\n        \"\"\"Render the store as a text table.\"\"\"\n        groups = self.by_region()\n        rows = [(slugify(k), len(v), compute_total(v, \"score\")) for k, v in sorted(groups.items())]\n        return format_table(rows, [\"region\", \"n\", \"total\"])",
+          "def by_region(self):\n        \"\"\"Active rows grouped by region.\"\"\"\n        return group_by(self.active(), \"region\")",
+          "def export(self):\n        \"\"\"Render the store as a text table.\"\"\"\n        groups = self.by_region()\n        rows = [(slugify(k), len(v), compute_total(v, \"score\")) for k, v in sorted(groups.items())]\n        return format_table(rows, [\"region\", \"n\", \"total\"])"
+        ]
+      },
+      {
+        "task": "clean_total",
+        "valid_code": true,
+        "reuse": {
+          "filter_active": false,
+          "compute_total": true
+        },
+        "retrieval_hit": {
+          "filter_active": false,
+          "compute_total": false
+        },
+        "branches": [
+          "total"
+        ],
+        "answer": "def export_active_total(records):\n    \"\"\"Export total 'amount' for active records only.\"\"\"\n    return compute_total(records.active(), \"amount\")",
+        "injected": [
+          "def total(self):\n        \"\"\"Total over 'amount' for active rows.\"\"\"\n        return compute_total(self.active(), \"amount\")",
+          "def total(self):\n        \"\"\"Total over 'amount' for active rows.\"\"\"\n        return compute_total(self.active(), \"amount\")",
+          "def total(self):\n        \"\"\"Total over 'amount' for active rows.\"\"\"\n        return compute_total(self.active(), \"amount\")"
+        ]
+      }
+    ],
+    "latent": [
+      {
+        "task": "continue",
+        "valid_code": true,
+        "reuse": {},
+        "retrieval_hit": {},
+        "branches": [],
+        "answer": "def validate_survey_777(payload):\n    \"\"\"Validate a survey payload: 'count' must be in [-50, 50].\"\"\"\n    if not isinstance(payload, dict):\n        return False\n    count = payload.get(\"count\")\n    if not isinstance(count, (int, float)):\n        return False\n    return -50 <= count <= 50",
+        "injected": [
+          "def summarize_session_270(records):\n    \"\"\"Summary statistics for session records over 'duration'.\"\"\"\n    rows = normalize_records(records)\n    rows = filter_active(rows)\n    total = compute_total(rows, \"duration\")\n    n = len(rows)\n    mean = total / n if n else 0.0\n    values = [r.get(\"duration\", 0.0) for r in rows if isinstance(r.get(\"duration\"), (int, float))]\n    spread = (max(values) - min(values)) if values else 0.0\n    return {\"topic\": \"session\", \"n\": n, \"total\": round(total, 2),\n            \"mean\": round(mean, 3), \"spread\": round(spread, 3)}",
+          "def summarize_shipment_300(records):\n    \"\"\"Summary statistics for shipment records over 'price'.\"\"\"\n    rows = normalize_records(records)\n    rows = filter_active(rows)\n    total = compute_total(rows, \"price\")\n    n = len(rows)\n    mean = total / n if n else 0.0\n    values = [r.get(\"price\", 0.0) for r in rows if isinstance(r.get(\"price\"), (int, float))]\n    spread = (max(values) - min(values)) if values else 0.0\n    return {\"topic\": \"shipment\", \"n\": n, \"total\": round(total, 2),\n            \"mean\": round(mean, 3), \"spread\": round(spread, 3)}",
+          "def summarize_session_340(records):\n    \"\"\"Summary statistics for session records over 'amount'.\"\"\"\n    rows = normalize_records(records)\n    rows = filter_active(rows)\n    total = compute_total(rows, \"amount\")\n    n = len(rows)\n    mean = total / n if n else 0.0\n    values = [r.get(\"amount\", 0.0) for r in rows if isinstance(r.get(\"amount\"), (int, float))]\n    spread = (max(values) - min(values)) if values else 0.0\n    return {\"topic\": \"session\", \"n\": n, \"total\": round(total, 2),\n            \"mean\": round(mean, 3), \"spread\": round(spread, 3)}",
+          "def summarize_contract_415(records):\n    \"\"\"Summary statistics for contract records over 'price'.\"\"\"\n    rows = normalize_records(records)\n    rows = filter_active(rows)\n    total = compute_total(rows, \"price\")\n    n = len(rows)\n    mean = total / n if n else 0.0\n    values = [r.get(\"price\", 0.0) for r in rows if isinstance(r.get(\"price\"), (int, float))]\n    spread = (max(values) - min(values)) if values else 0.0\n    return {\"topic\": \"contract\", \"n\": n, \"total\": round(total, 2),\n            \"mean\": round(mean, 3), \"spread\": round(spread, 3)}"
+        ]
+      },
+      {
+        "task": "named_early",
+        "valid_code": true,
+        "reuse": {
+          "normalize_records": true,
+          "compute_total": true
+        },
+        "retrieval_hit": {
+          "normalize_records": false,
+          "compute_total": false
+        },
+        "branches": [],
+        "answer": "def build_summary_report(records):\n    \"\"\"Build a summary report normalizing records, filtering active ones, and totaling 'amount'.\"\"\"\n    rows = normalize_records(records)\n    rows = filter_active(rows)\n    total = compute_total(rows, \"amount\")\n    return {\"total\": round(total, 2), \"n\": len(rows)}",
+        "injected": [
+          "def summarize_shipment_300(records):\n    \"\"\"Summary statistics for shipment records over 'price'.\"\"\"\n    rows = normalize_records(records)\n    rows = filter_active(rows)\n    total = compute_total(rows, \"price\")\n    n = len(rows)\n    mean = total / n if n else 0.0\n    values = [r.get(\"price\", 0.0) for r in rows if isinstance(r.get(\"price\"), (int, float))]\n    spread = (max(values) - min(values)) if values else 0.0\n    return {\"topic\": \"shipment\", \"n\": n, \"total\": round(total, 2),\n            \"mean\": round(mean, 3), \"spread\": round(spread, 3)}",
+          "def summarize_shipment_720(records):\n    \"\"\"Summary statistics for shipment records over 'duration'.\"\"\"\n    rows = normalize_records(records)\n    rows = filter_active(rows)\n    total = compute_total(rows, \"duration\")\n    n = len(rows)\n    mean = total / n if n else 0.0\n    values = [r.get(\"duration\", 0.0) for r in rows if isinstance(r.get(\"duration\"), (int, float))]\n    spread = (max(values) - min(values)) if values else 0.0\n    return {\"topic\": \"shipment\", \"n\": n, \"total\": round(total, 2),\n            \"mean\": round(mean, 3), \"spread\": round(spread, 3)}",
+          "def summarize_invoice_700(records):\n    \"\"\"Summary statistics for invoice records over 'qty'.\"\"\"\n    rows = normalize_records(records)\n    rows = filter_active(rows)\n    total = compute_total(rows, \"qty\")\n    n = len(rows)\n    mean = total / n if n else 0.0\n    values = [r.get(\"qty\", 0.0) for r in rows if isinstance(r.get(\"qty\"), (int, float))]\n    spread = (max(values) - min(values)) if values else 0.0\n    return {\"topic\": \"invoice\", \"n\": n, \"total\": round(total, 2),\n            \"mean\": round(mean, 3), \"spread\": round(spread, 3)}",
+          "def summarize_invoice_770(records):\n    \"\"\"Summary statistics for invoice records over 'count'.\"\"\"\n    rows = normalize_records(records)\n    rows = filter_active(rows)\n    total = compute_total(rows, \"count\")\n    n = len(rows)\n    mean = total / n if n else 0.0\n    values = [r.get(\"count\", 0.0) for r in rows if isinstance(r.get(\"count\"), (int, float))]\n    spread = (max(values) - min(values)) if values else 0.0\n    return {\"topic\": \"invoice\", \"n\": n, \"total\": round(total, 2),\n            \"mean\": round(mean, 3), \"spread\": round(spread, 3)}"
+        ]
+      },
+      {
+        "task": "clean_mid",
+        "valid_code": true,
+        "reuse": {
+          "group_by": false,
+          "moving_average": false
+        },
+        "retrieval_hit": {
+          "group_by": false,
+          "moving_average": false
+        },
+        "branches": [],
+        "answer": "def trend_report(values_by_group):\n    \"\"\"Smooth each group's series, then average the smoothed values.\"\"\"\n    smoothed_groups = {}\n    \n    for region, values in values_by_group.items():\n        if not values:\n            smoothed_groups[region] = []\n            continue\n        \n        # Sort values by index (assuming input is a list of values for the region)\n        # If values_by_group is a dict mapping region -> list of values\n        sorted_values = sorted(values)\n        \n        # Simple moving average smoothing (window size 3)\n        smoothed = []\n        window = 3\n        for i in range(len(sorted_values)):\n            start = max(0, i - window + 1)\n            end = min(len(sorted_values), i + 1)\n            window_values = sorted_values[start:end]\n            smoothed.append(sum(window_values) / len(window_values))",
+        "injected": [
+          "def summarize_shipment_300(records):\n    \"\"\"Summary statistics for shipment records over 'price'.\"\"\"\n    rows = normalize_records(records)\n    rows = filter_active(rows)\n    total = compute_total(rows, \"price\")\n    n = len(rows)\n    mean = total / n if n else 0.0\n    values = [r.get(\"price\", 0.0) for r in rows if isinstance(r.get(\"price\"), (int, float))]\n    spread = (max(values) - min(values)) if values else 0.0\n    return {\"topic\": \"shipment\", \"n\": n, \"total\": round(total, 2),\n            \"mean\": round(mean, 3), \"spread\": round(spread, 3)}",
+          "def summarize_shipment_720(records):\n    \"\"\"Summary statistics for shipment records over 'duration'.\"\"\"\n    rows = normalize_records(records)\n    rows = filter_active(rows)\n    total = compute_total(rows, \"duration\")\n    n = len(rows)\n    mean = total / n if n else 0.0\n    values = [r.get(\"duration\", 0.0) for r in rows if isinstance(r.get(\"duration\"), (int, float))]\n    spread = (max(values) - min(values)) if values else 0.0\n    return {\"topic\": \"shipment\", \"n\": n, \"total\": round(total, 2),\n            \"mean\": round(mean, 3), \"spread\": round(spread, 3)}",
+          "def summarize_shipment_370(records):\n    \"\"\"Summary statistics for shipment records over 'qty'.\"\"\"\n    rows = normalize_records(records)\n    rows = filter_active(rows)\n    total = compute_total(rows, \"qty\")\n    n = len(rows)\n    mean = total / n if n else 0.0\n    values = [r.get(\"qty\", 0.0) for r in rows if isinstance(r.get(\"qty\"), (int, float))]\n    spread = (max(values) - min(values)) if values else 0.0\n    return {\"topic\": \"shipment\", \"n\": n, \"total\": round(total, 2),\n            \"mean\": round(mean, 3), \"spread\": round(spread, 3)}",
+          "def summarize_shipment_510(records):\n    \"\"\"Summary statistics for shipment records over 'weight'.\"\"\"\n    rows = normalize_records(records)\n    rows = filter_active(rows)\n    total = compute_total(rows, \"weight\")\n    n = len(rows)\n    mean = total / n if n else 0.0\n    values = [r.get(\"weight\", 0.0) for r in rows if isinstance(r.get(\"weight\"), (int, float))]\n    spread = (max(values) - min(values)) if values else 0.0\n    return {\"topic\": \"shipment\", \"n\": n, \"total\": round(total, 2),\n            \"mean\": round(mean, 3), \"spread\": round(spread, 3)}"
+        ]
+      },
+      {
+        "task": "clean_total",
+        "valid_code": true,
+        "reuse": {
+          "filter_active": true,
+          "compute_total": true
+        },
+        "retrieval_hit": {
+          "filter_active": false,
+          "compute_total": false
+        },
+        "branches": [],
+        "answer": "def export_active_total(records):\n    \"\"\"Export total 'amount' for active records only.\"\"\"\n    rows = normalize_records(records)\n    rows = filter_active(rows)\n    total = compute_total(rows, \"amount\")\n    return {\"total\": round(total, 2)}",
+        "injected": [
+          "def summarize_shipment_300(records):\n    \"\"\"Summary statistics for shipment records over 'price'.\"\"\"\n    rows = normalize_records(records)\n    rows = filter_active(rows)\n    total = compute_total(rows, \"price\")\n    n = len(rows)\n    mean = total / n if n else 0.0\n    values = [r.get(\"price\", 0.0) for r in rows if isinstance(r.get(\"price\"), (int, float))]\n    spread = (max(values) - min(values)) if values else 0.0\n    return {\"topic\": \"shipment\", \"n\": n, \"total\": round(total, 2),\n            \"mean\": round(mean, 3), \"spread\": round(spread, 3)}",
+          "def summarize_shipment_720(records):\n    \"\"\"Summary statistics for shipment records over 'duration'.\"\"\"\n    rows = normalize_records(records)\n    rows = filter_active(rows)\n    total = compute_total(rows, \"duration\")\n    n = len(rows)\n    mean = total / n if n else 0.0\n    values = [r.get(\"duration\", 0.0) for r in rows if isinstance(r.get(\"duration\"), (int, float))]\n    spread = (max(values) - min(values)) if values else 0.0\n    return {\"topic\": \"shipment\", \"n\": n, \"total\": round(total, 2),\n            \"mean\": round(mean, 3), \"spread\": round(spread, 3)}",
+          "def summarize_shipment_510(records):\n    \"\"\"Summary statistics for shipment records over 'weight'.\"\"\"\n    rows = normalize_records(records)\n    rows = filter_active(rows)\n    total = compute_total(rows, \"weight\")\n    n = len(rows)\n    mean = total / n if n else 0.0\n    values = [r.get(\"weight\", 0.0) for r in rows if isinstance(r.get(\"weight\"), (int, float))]\n    spread = (max(values) - min(values)) if values else 0.0\n    return {\"topic\": \"shipment\", \"n\": n, \"total\": round(total, 2),\n            \"mean\": round(mean, 3), \"spread\": round(spread, 3)}",
+          "def summarize_shipment_370(records):\n    \"\"\"Summary statistics for shipment records over 'qty'.\"\"\"\n    rows = normalize_records(records)\n    rows = filter_active(rows)\n    total = compute_total(rows, \"qty\")\n    n = len(rows)\n    mean = total / n if n else 0.0\n    values = [r.get(\"qty\", 0.0) for r in rows if isinstance(r.get(\"qty\"), (int, float))]\n    spread = (max(values) - min(values)) if values else 0.0\n    return {\"topic\": \"shipment\", \"n\": n, \"total\": round(total, 2),\n            \"mean\": round(mean, 3), \"spread\": round(spread, 3)}"
+        ]
+      }
+    ]
+  }
+}

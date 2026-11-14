@@ -1,0 +1,380 @@
+{
+  "model": "qwen35-4b",
+  "device": "cuda",
+  "file_tokens": 99338,
+  "file_functions": 1218,
+  "chunking": {
+    "n_functions_ast": 1218,
+    "n_chunks": 1305,
+    "functions_wholly_in_one_chunk": 1218,
+    "coverage": 1.0,
+    "chunk_tokens_min": 13,
+    "chunk_tokens_median": 91,
+    "chunk_tokens_max": 180
+  },
+  "ingest": {
+    "chunks": 1305,
+    "wall_s": 164.4,
+    "embed_tokens": 390893,
+    "bank_stats": {
+      "adds": 1305,
+      "upserts": 0,
+      "evictions": 0
+    }
+  },
+  "conditions": {
+    "no_memory": [
+      {
+        "task": "continue",
+        "valid_code": true,
+        "reuse": {},
+        "retrieval_hit": {},
+        "helper_calls": [
+          "normalize_records",
+          "filter_active",
+          "compute_total",
+          "group_by"
+        ],
+        "wall_s": 6.94,
+        "answer": "def build_summary_report(records):\n    \"\"\"Build a summary report with regional totals and smoothed trends.\"\"\"\n    rows = normalize_records(records)\n    rows = filter_active(rows)\n    \n    # Group by region\n    groups = group_by(rows, \"region\")\n    \n    # Calculate total amount for the report header\n    total_amount = compute_total(rows, \"amount\")\n    \n    # Prepare data for trend smoothing\n    trend_data = []\n    for name, group in sorted(groups.items()):\n        amounts = [r.get(\"amount\", 0.0) for r in group if isinstance(r.get(\"amount\"), (int, float))]\n        if amounts:\n            smoothed = smooth_trend(amounts)\n            trend_data.append({\n                \"region\": name,\n                \"n\": len(group),\n                \"total\": round(sum(amounts), 2),\n                \"trend\": smoothed\n            })",
+        "injected": []
+      },
+      {
+        "task": "named_early",
+        "valid_code": true,
+        "reuse": {
+          "normalize_records": true,
+          "compute_total": true
+        },
+        "retrieval_hit": {
+          "normalize_records": false,
+          "compute_total": false
+        },
+        "helper_calls": [
+          "normalize_records",
+          "filter_active",
+          "compute_total",
+          "group_by"
+        ],
+        "wall_s": 3.75,
+        "answer": "def build_summary_report(records):\n    \"\"\"Build a summary report: normalize, keep active, total 'amount', group by region.\"\"\"\n    rows = normalize_records(records)\n    rows = filter_active(rows)\n    groups = group_by(rows, \"region\")\n    report = []\n    for name, group in sorted(groups.items()):\n        total = compute_total(group, \"amount\")\n        report.append({\"region\": name, \"total\": round(total, 2)})\n    return report",
+        "injected": []
+      },
+      {
+        "task": "clean_mid",
+        "valid_code": true,
+        "reuse": {
+          "group_by": false,
+          "moving_average": false
+        },
+        "retrieval_hit": {
+          "group_by": false,
+          "moving_average": false
+        },
+        "helper_calls": [],
+        "wall_s": 6.91,
+        "answer": "def trend_report(values_by_group):\n    \"\"\"Smooth each group's numeric series and return the average of smoothed values.\"\"\"\n    smoothed_series = []\n    for group_name, values in values_by_group.items():\n        if not values:\n            smoothed_series.append((group_name, 0.0))\n            continue\n        \n        # Simple moving average with window size 3 (centered)\n        window = 3\n        smoothed = []\n        for i in range(len(values)):\n            start = max(0, i - window // 2)\n            end = min(len(values), i + window // 2 + 1)\n            window_values = values[start:end]\n            avg = sum(window_values) / len(window_values)\n            smoothed.append(avg)\n        \n        # Average the smoothed series for this group\n        group_avg = sum(smoothed) / len(smoothed)\n        smoothed",
+        "injected": []
+      },
+      {
+        "task": "clean_total",
+        "valid_code": true,
+        "reuse": {
+          "filter_active": true,
+          "compute_total": true
+        },
+        "retrieval_hit": {
+          "filter_active": false,
+          "compute_total": false
+        },
+        "helper_calls": [
+          "normalize_records",
+          "filter_active",
+          "compute_total"
+        ],
+        "wall_s": 1.73,
+        "answer": "def export_active_total(records):\n    \"\"\"Export total 'amount' for active records only.\"\"\"\n    rows = normalize_records(records)\n    rows = filter_active(rows)\n    return compute_total(rows, \"amount\")",
+        "injected": []
+      }
+    ],
+    "ck_key": [
+      {
+        "task": "continue",
+        "valid_code": false,
+        "reuse": {},
+        "retrieval_hit": {},
+        "helper_calls": [
+          "normalize_records",
+          "filter_active",
+          "group_by"
+        ],
+        "wall_s": 6.87,
+        "answer": "def build_summary_report(records):\n    \"\"\"Normalize, keep active, total 'amount', group by region and render one table with a smoothed trend per region.\"\"\"\n    rows = normalize_records(records)\n    rows = filter_active(rows)\n    groups = group_by(rows, \"region\")\n    report = []\n    for name, group in sorted(groups.items()):\n        amounts = [r.get(\"amount\", 0.0) for r in group if isinstance(r.get(\"amount\"), (int, float))]\n        total = sum(amounts) if amounts else 0.0\n        trend = smooth_trend(amounts)\n        report.append({\n            \"region\": name,\n            \"n\": len(group),\n            \"total\": round(total, 2),\n            \"trend\": trend\n        })\n    return report\n\ndef smooth_trend(values):\n    \"\"\"Apply a simple moving average to the",
+        "injected": [
+          "\"\"\"analytics_toolkit — single-file data processing library (generated).\"\"\"\n\nfrom __future__ import annotations\n\nimport math\nimport re\nfrom collections import defaultdict",
+          "class ContractStore107:\n    \"\"\"In-memory store for contract records with helper-based analytics.\"\"\"",
+          "class SignalStore179:\n    \"\"\"In-memory store for signal records with helper-based analytics.\"\"\"",
+          "class SurveyStore35:\n    \"\"\"In-memory store for survey records with helper-based analytics.\"\"\""
+        ]
+      },
+      {
+        "task": "named_early",
+        "valid_code": false,
+        "reuse": {
+          "normalize_records": true,
+          "compute_total": true
+        },
+        "retrieval_hit": {
+          "normalize_records": false,
+          "compute_total": false
+        },
+        "helper_calls": [
+          "normalize_records",
+          "filter_active",
+          "compute_total",
+          "group_by"
+        ],
+        "wall_s": 6.84,
+        "answer": "def build_summary_report(records):\n    \"\"\"Normalize records, keep active, total 'amount', group by region, and render one table with a smoothed trend per region.\"\"\"\n    rows = normalize_records(records)\n    active_rows = filter_active(rows)\n    total_amount = compute_total(active_rows, \"amount\")\n    \n    groups = group_by(active_rows, \"region\")\n    report = []\n    \n    for name, group in sorted(groups.items()):\n        group_total = compute_total(group, \"amount\")\n        values = [r.get(\"amount\", 0.0) for r in group if isinstance(r.get(\"amount\"), (int, float))]\n        \n        # Simple smoothing: average of current and previous (or just current if first)\n        if values:\n            smoothed = sum(values) / len(values)\n        else:\n            smoothed = 0.0\n        \n        report.append({\n            \"",
+        "injected": [
+          "\"\"\"analytics_toolkit — single-file data processing library (generated).\"\"\"\n\nfrom __future__ import annotations\n\nimport math\nimport re\nfrom collections import defaultdict",
+          "def total(self):\n        \"\"\"Total over 'amount' for active rows.\"\"\"\n        return compute_total(self.active(), \"amount\")",
+          "def total(self):\n        \"\"\"Total over 'score' for active rows.\"\"\"\n        return compute_total(self.active(), \"score\")",
+          "class MetricStore8:\n    \"\"\"In-memory store for metric records with helper-based analytics.\"\"\""
+        ]
+      },
+      {
+        "task": "clean_mid",
+        "valid_code": true,
+        "reuse": {
+          "group_by": false,
+          "moving_average": false
+        },
+        "retrieval_hit": {
+          "group_by": false,
+          "moving_average": false
+        },
+        "helper_calls": [],
+        "wall_s": 6.95,
+        "answer": "def trend_report(values_by_group):\n    \"\"\"Smooth each group's series, then average the smoothed values.\"\"\"\n    if not values_by_group:\n        return []\n\n    smoothed_values = []\n    for name, values in values_by_group.items():\n        if not values:\n            continue\n        smoothed = smooth_series(values)\n        avg = sum(smoothed) / len(smoothed) if smoothed else 0.0\n        smoothed_values.append({\"region\": name, \"trend\": round(avg, 3)})\n\n    return sorted(smoothed_values, key=lambda x: x[\"region\"])\n\n\ndef smooth_series(values):\n    \"\"\"Apply a simple moving average (window=3) to the series.\"\"\"\n    if len(values) <= 2:\n        return values\n    result = []\n    for i in range(len(values)):\n        start = max(0, i - 1)",
+        "injected": [
+          "\"\"\"analytics_toolkit — single-file data processing library (generated).\"\"\"\n\nfrom __future__ import annotations\n\nimport math\nimport re\nfrom collections import defaultdict",
+          "def by_region(self):\n        \"\"\"Active rows grouped by region.\"\"\"\n        return group_by(self.active(), \"region\")",
+          "def by_region(self):\n        \"\"\"Active rows grouped by region.\"\"\"\n        return group_by(self.active(), \"region\")",
+          "def by_region(self):\n        \"\"\"Active rows grouped by region.\"\"\"\n        return group_by(self.active(), \"region\")"
+        ]
+      },
+      {
+        "task": "clean_total",
+        "valid_code": true,
+        "reuse": {
+          "filter_active": true,
+          "compute_total": true
+        },
+        "retrieval_hit": {
+          "filter_active": false,
+          "compute_total": false
+        },
+        "helper_calls": [
+          "normalize_records",
+          "filter_active",
+          "compute_total"
+        ],
+        "wall_s": 1.76,
+        "answer": "def export_active_total(records):\n    \"\"\"Export total 'amount' for active records only.\"\"\"\n    rows = normalize_records(records)\n    rows = filter_active(rows)\n    return compute_total(rows, \"amount\")",
+        "injected": [
+          "def total(self):\n        \"\"\"Total over 'amount' for active rows.\"\"\"\n        return compute_total(self.active(), \"amount\")",
+          "\"\"\"analytics_toolkit — single-file data processing library (generated).\"\"\"\n\nfrom __future__ import annotations\n\nimport math\nimport re\nfrom collections import defaultdict",
+          "def total(self):\n        \"\"\"Total over 'qty' for active rows.\"\"\"\n        return compute_total(self.active(), \"qty\")",
+          "def total(self):\n        \"\"\"Total over 'amount' for active rows.\"\"\"\n        return compute_total(self.active(), \"amount\")"
+        ]
+      }
+    ],
+    "ck_value": [
+      {
+        "task": "continue",
+        "valid_code": true,
+        "reuse": {},
+        "retrieval_hit": {},
+        "helper_calls": [
+          "clamp",
+          "slugify",
+          "parse_int"
+        ],
+        "wall_s": 3.92,
+        "answer": "def validate_contract_738(payload):\n    \"\"\"Validate a contract payload: 'count' must be in [100, 10000].\"\"\"\n    if not isinstance(payload, dict):\n        return False\n    value = parse_int(payload.get(\"count\"), default=0)\n    if value != clamp(value, 100, 10000):\n        return False\n    name = payload.get(\"name\", \"\")\n    return bool(slugify(str(name)))",
+        "injected": [
+          "class ContractStore359:\n    \"\"\"In-memory store for contract records with helper-based analytics.\"\"\"",
+          "class SignalStore179:\n    \"\"\"In-memory store for signal records with helper-based analytics.\"\"\"",
+          "class SignalStore557:\n    \"\"\"In-memory store for signal records with helper-based analytics.\"\"\"",
+          "class ContractStore737:\n    \"\"\"In-memory store for contract records with helper-based analytics.\"\"\""
+        ]
+      },
+      {
+        "task": "named_early",
+        "valid_code": true,
+        "reuse": {
+          "normalize_records": true,
+          "compute_total": true
+        },
+        "retrieval_hit": {
+          "normalize_records": false,
+          "compute_total": false
+        },
+        "helper_calls": [
+          "normalize_records",
+          "filter_active",
+          "compute_total",
+          "group_by"
+        ],
+        "wall_s": 3.89,
+        "answer": "def build_summary_report(records):\n    \"\"\"Normalize records, compute total 'amount', and group by region.\"\"\"\n    rows = normalize_records(records)\n    active_rows = filter_active(rows)\n    total_amount = compute_total(active_rows, \"amount\")\n    groups = group_by(active_rows, \"region\")\n    return {\n        \"total_amount\": round(total_amount, 2),\n        \"regions\": {name: compute_total(group, \"amount\") for name, group in groups.items()}\n    }",
+        "injected": [
+          "class SignalStore557:\n    \"\"\"In-memory store for signal records with helper-based analytics.\"\"\"",
+          "class ContractStore107:\n    \"\"\"In-memory store for contract records with helper-based analytics.\"\"\"",
+          "class ContractStore737:\n    \"\"\"In-memory store for contract records with helper-based analytics.\"\"\"",
+          "class VisitStore332:\n    \"\"\"In-memory store for visit records with helper-based analytics.\"\"\""
+        ]
+      },
+      {
+        "task": "clean_mid",
+        "valid_code": true,
+        "reuse": {
+          "group_by": false,
+          "moving_average": false
+        },
+        "retrieval_hit": {
+          "group_by": false,
+          "moving_average": false
+        },
+        "helper_calls": [],
+        "wall_s": 6.49,
+        "answer": "def trend_report(values_by_group):\n    \"\"\"Smooth each group's series, then average the smoothed values.\"\"\"\n    smoothed_series = []\n    for name, values in values_by_group.items():\n        if not values:\n            smoothed_series.append((name, 0.0))\n            continue\n        # Simple moving average with window size 3\n        window = 3\n        smoothed = []\n        for i in range(len(values)):\n            start = max(0, i - window + 1)\n            window_vals = values[start:i + 1]\n            avg = sum(window_vals) / len(window_vals)\n            smoothed.append(avg)\n        # Average the smoothed series for the group\n        group_avg = sum(smoothed) / len(smoothed)\n        smoothed_series.append((name, group_avg))\n    return smoothed_series",
+        "injected": [
+          "class SignalStore557:\n    \"\"\"In-memory store for signal records with helper-based analytics.\"\"\"",
+          "class SignalStore305:\n    \"\"\"In-memory store for signal records with helper-based analytics.\"\"\"",
+          "class MetricStore512:\n    \"\"\"In-memory store for metric records with helper-based analytics.\"\"\"",
+          "class ContractStore107:\n    \"\"\"In-memory store for contract records with helper-based analytics.\"\"\""
+        ]
+      },
+      {
+        "task": "clean_total",
+        "valid_code": true,
+        "reuse": {
+          "filter_active": true,
+          "compute_total": true
+        },
+        "retrieval_hit": {
+          "filter_active": false,
+          "compute_total": false
+        },
+        "helper_calls": [
+          "normalize_records",
+          "filter_active",
+          "compute_total"
+        ],
+        "wall_s": 1.73,
+        "answer": "def export_active_total(records):\n    \"\"\"Export total 'amount' for active records only.\"\"\"\n    rows = normalize_records(records)\n    rows = filter_active(rows)\n    return compute_total(rows, \"amount\")",
+        "injected": [
+          "class ContractStore107:\n    \"\"\"In-memory store for contract records with helper-based analytics.\"\"\"",
+          "class ContractStore359:\n    \"\"\"In-memory store for contract records with helper-based analytics.\"\"\"",
+          "class ContractStore737:\n    \"\"\"In-memory store for contract records with helper-based analytics.\"\"\"",
+          "class SurveyStore287:\n    \"\"\"In-memory store for survey records with helper-based analytics.\"\"\""
+        ]
+      }
+    ],
+    "ck_maxsim": [
+      {
+        "task": "continue",
+        "valid_code": true,
+        "reuse": {},
+        "retrieval_hit": {},
+        "helper_calls": [
+          "normalize_records",
+          "filter_active",
+          "compute_total",
+          "group_by"
+        ],
+        "wall_s": 3.96,
+        "answer": "def build_summary_report(records):\n    \"\"\"Build a summary report: normalize, keep active, total 'amount', group by region.\"\"\"\n    rows = normalize_records(records)\n    rows = filter_active(rows)\n    groups = group_by(rows, \"region\")\n    report = []\n    for name, group in sorted(groups.items()):\n        total = compute_total(group, \"amount\")\n        report.append({\"region\": name, \"n\": len(group), \"total\": round(total, 2)})\n    return report",
+        "injected": [
+          "class ContractStore359:\n    \"\"\"In-memory store for contract records with helper-based analytics.\"\"\"",
+          "class SignalStore179:\n    \"\"\"In-memory store for signal records with helper-based analytics.\"\"\"",
+          "class SignalStore557:\n    \"\"\"In-memory store for signal records with helper-based analytics.\"\"\"",
+          "class TicketStore44:\n    \"\"\"In-memory store for ticket records with helper-based analytics.\"\"\""
+        ]
+      },
+      {
+        "task": "named_early",
+        "valid_code": true,
+        "reuse": {
+          "normalize_records": true,
+          "compute_total": false
+        },
+        "retrieval_hit": {
+          "normalize_records": false,
+          "compute_total": false
+        },
+        "helper_calls": [
+          "normalize_records",
+          "filter_active",
+          "group_by"
+        ],
+        "wall_s": 6.87,
+        "answer": "def build_summary_report(records):\n    \"\"\"Normalize records, keep active, total 'amount', group by region, and render one table with a smoothed trend per region.\"\"\"\n    rows = normalize_records(records)\n    rows = filter_active(rows)\n    \n    # Group by region\n    groups = group_by(rows, \"region\")\n    \n    # Prepare data for each group: list of amounts over time (assuming 'date' or 'period' exists for trend)\n    # Since specific trend logic isn't defined in notes, we assume a 'date' field exists for trend calculation.\n    # If no date field, we return a single point or empty list.\n    group_data = []\n    for name, group in groups.items():\n        amounts = [r.get(\"amount\", 0.0) for r in group if isinstance(r.get(\"amount\"), (int, float))]\n        \n        # Simple trend smoothing",
+        "injected": [
+          "def total(self):\n        \"\"\"Total over 'score' for active rows.\"\"\"\n        return compute_total(self.active(), \"score\")",
+          "def total(self):\n        \"\"\"Total over 'score' for active rows.\"\"\"\n        return compute_total(self.active(), \"score\")",
+          "def total(self):\n        \"\"\"Total over 'score' for active rows.\"\"\"\n        return compute_total(self.active(), \"score\")",
+          "def total(self):\n        \"\"\"Total over 'score' for active rows.\"\"\"\n        return compute_total(self.active(), \"score\")"
+        ]
+      },
+      {
+        "task": "clean_mid",
+        "valid_code": false,
+        "reuse": {
+          "group_by": false,
+          "moving_average": false
+        },
+        "retrieval_hit": {
+          "group_by": false,
+          "moving_average": false
+        },
+        "helper_calls": [],
+        "wall_s": 7.02,
+        "answer": "def trend_report(values_by_group):\n    \"\"\"Smooth each group's series, then average the smoothed values.\"\"\"\n    if not values_by_group:\n        return {}\n    \n    smoothed_groups = {}\n    for group_name, values in values_by_group.items():\n        if not values:\n            smoothed_groups[group_name] = []\n            continue\n        \n        # Simple moving average smoothing (window size 3)\n        smoothed = []\n        window = 3\n        for i in range(len(values)):\n            start = max(0, i - window + 1)\n            window_vals = values[start:i+1]\n            smoothed.append(sum(window_vals) / len(window_vals))\n        \n        smoothed_groups[group_name] = smoothed\n    \n    # Average the smoothed series across groups\n    result = {}\n    for group_name, smoothed_series in smoothed_groups.items():\n        if not smoothed_series:\n            result[group",
+        "injected": [
+          "def validate_survey_777(payload):\n    \"\"\"Validate a survey payload: 'count' must be in [-50, 50].\"\"\"\n    if not isinstance(payload, dict):\n        return False\n    value = parse_int(payload.get(\"count\"), default=-50 - 1)\n    if value != clamp(value, -50, 50):\n        return False\n    name = payload.get(\"name\", \"\")\n    return bool(slugify(str(name)))\n\n\n# --- planned next (not implemented yet) -----------------------------------\n# build_summary_report(records): normalize, keep active, total 'amount',\n#   group by region and render one table with a smoothed trend per region.\n# trend_report(values_by_group): smooth each group's series, then average.\n# export_active_total(records): active rows only, total 'amount'.",
+          "class SignalStore557:\n    \"\"\"In-memory store for signal records with helper-based analytics.\"\"\"",
+          "class MetricStore512:\n    \"\"\"In-memory store for metric records with helper-based analytics.\"\"\"",
+          "class SurveyStore287:\n    \"\"\"In-memory store for survey records with helper-based analytics.\"\"\""
+        ]
+      },
+      {
+        "task": "clean_total",
+        "valid_code": true,
+        "reuse": {
+          "filter_active": true,
+          "compute_total": true
+        },
+        "retrieval_hit": {
+          "filter_active": false,
+          "compute_total": false
+        },
+        "helper_calls": [
+          "normalize_records",
+          "filter_active",
+          "compute_total"
+        ],
+        "wall_s": 1.75,
+        "answer": "def export_active_total(records):\n    \"\"\"Export total 'amount' for active records only.\"\"\"\n    rows = normalize_records(records)\n    rows = filter_active(rows)\n    return compute_total(rows, \"amount\")",
+        "injected": [
+          "class ContractStore107:\n    \"\"\"In-memory store for contract records with helper-based analytics.\"\"\"",
+          "class SurveyStore287:\n    \"\"\"In-memory store for survey records with helper-based analytics.\"\"\"",
+          "class ContractStore737:\n    \"\"\"In-memory store for contract records with helper-based analytics.\"\"\"",
+          "class ContractStore359:\n    \"\"\"In-memory store for contract records with helper-based analytics.\"\"\""
+        ]
+      }
+    ]
+  }
+}

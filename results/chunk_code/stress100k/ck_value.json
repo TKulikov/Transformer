@@ -1,0 +1,93 @@
+[
+  {
+    "task": "continue",
+    "valid_code": true,
+    "reuse": {},
+    "retrieval_hit": {},
+    "helper_calls": [
+      "clamp",
+      "slugify",
+      "parse_int"
+    ],
+    "wall_s": 3.92,
+    "answer": "def validate_contract_738(payload):\n    \"\"\"Validate a contract payload: 'count' must be in [100, 10000].\"\"\"\n    if not isinstance(payload, dict):\n        return False\n    value = parse_int(payload.get(\"count\"), default=0)\n    if value != clamp(value, 100, 10000):\n        return False\n    name = payload.get(\"name\", \"\")\n    return bool(slugify(str(name)))",
+    "injected": [
+      "class ContractStore359:\n    \"\"\"In-memory store for contract records with helper-based analytics.\"\"\"",
+      "class SignalStore179:\n    \"\"\"In-memory store for signal records with helper-based analytics.\"\"\"",
+      "class SignalStore557:\n    \"\"\"In-memory store for signal records with helper-based analytics.\"\"\"",
+      "class ContractStore737:\n    \"\"\"In-memory store for contract records with helper-based analytics.\"\"\""
+    ]
+  },
+  {
+    "task": "named_early",
+    "valid_code": true,
+    "reuse": {
+      "normalize_records": true,
+      "compute_total": true
+    },
+    "retrieval_hit": {
+      "normalize_records": false,
+      "compute_total": false
+    },
+    "helper_calls": [
+      "normalize_records",
+      "filter_active",
+      "compute_total",
+      "group_by"
+    ],
+    "wall_s": 3.89,
+    "answer": "def build_summary_report(records):\n    \"\"\"Normalize records, compute total 'amount', and group by region.\"\"\"\n    rows = normalize_records(records)\n    active_rows = filter_active(rows)\n    total_amount = compute_total(active_rows, \"amount\")\n    groups = group_by(active_rows, \"region\")\n    return {\n        \"total_amount\": round(total_amount, 2),\n        \"regions\": {name: compute_total(group, \"amount\") for name, group in groups.items()}\n    }",
+    "injected": [
+      "class SignalStore557:\n    \"\"\"In-memory store for signal records with helper-based analytics.\"\"\"",
+      "class ContractStore107:\n    \"\"\"In-memory store for contract records with helper-based analytics.\"\"\"",
+      "class ContractStore737:\n    \"\"\"In-memory store for contract records with helper-based analytics.\"\"\"",
+      "class VisitStore332:\n    \"\"\"In-memory store for visit records with helper-based analytics.\"\"\""
+    ]
+  },
+  {
+    "task": "clean_mid",
+    "valid_code": true,
+    "reuse": {
+      "group_by": false,
+      "moving_average": false
+    },
+    "retrieval_hit": {
+      "group_by": false,
+      "moving_average": false
+    },
+    "helper_calls": [],
+    "wall_s": 6.49,
+    "answer": "def trend_report(values_by_group):\n    \"\"\"Smooth each group's series, then average the smoothed values.\"\"\"\n    smoothed_series = []\n    for name, values in values_by_group.items():\n        if not values:\n            smoothed_series.append((name, 0.0))\n            continue\n        # Simple moving average with window size 3\n        window = 3\n        smoothed = []\n        for i in range(len(values)):\n            start = max(0, i - window + 1)\n            window_vals = values[start:i + 1]\n            avg = sum(window_vals) / len(window_vals)\n            smoothed.append(avg)\n        # Average the smoothed series for the group\n        group_avg = sum(smoothed) / len(smoothed)\n        smoothed_series.append((name, group_avg))\n    return smoothed_series",
+    "injected": [
+      "class SignalStore557:\n    \"\"\"In-memory store for signal records with helper-based analytics.\"\"\"",
+      "class SignalStore305:\n    \"\"\"In-memory store for signal records with helper-based analytics.\"\"\"",
+      "class MetricStore512:\n    \"\"\"In-memory store for metric records with helper-based analytics.\"\"\"",
+      "class ContractStore107:\n    \"\"\"In-memory store for contract records with helper-based analytics.\"\"\""
+    ]
+  },
+  {
+    "task": "clean_total",
+    "valid_code": true,
+    "reuse": {
+      "filter_active": true,
+      "compute_total": true
+    },
+    "retrieval_hit": {
+      "filter_active": false,
+      "compute_total": false
+    },
+    "helper_calls": [
+      "normalize_records",
+      "filter_active",
+      "compute_total"
+    ],
+    "wall_s": 1.73,
+    "answer": "def export_active_total(records):\n    \"\"\"Export total 'amount' for active records only.\"\"\"\n    rows = normalize_records(records)\n    rows = filter_active(rows)\n    return compute_total(rows, \"amount\")",
+    "injected": [
+      "class ContractStore107:\n    \"\"\"In-memory store for contract records with helper-based analytics.\"\"\"",
+      "class ContractStore359:\n    \"\"\"In-memory store for contract records with helper-based analytics.\"\"\"",
+      "class ContractStore737:\n    \"\"\"In-memory store for contract records with helper-based analytics.\"\"\"",
+      "class SurveyStore287:\n    \"\"\"In-memory store for survey records with helper-based analytics.\"\"\""
+    ]
+  }
+]
