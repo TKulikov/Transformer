@@ -1,0 +1,194 @@
+{
+  "strategy": {
+    "name": "chunks_attn",
+    "context": "window",
+    "window": 2,
+    "memory": false,
+    "memory_beta": 0.25,
+    "memory_window_crit": 10.0,
+    "memory_size": 512,
+    "memory_retrieve": 256,
+    "memory_crit": 0.8,
+    "memory_merge_k": null,
+    "rag": false,
+    "rag_crit": 0.95,
+    "rag_k": 4,
+    "rag_lambda": 0.5,
+    "rag_centered": false,
+    "memory_kv": false,
+    "kv_slots": 32,
+    "gen_chunks": true,
+    "chunk_embed": "attn",
+    "chunk_score": "key",
+    "chunk_tokens": 128,
+    "chunk_k": 4,
+    "chunk_upsert": false,
+    "chunk_centered": true,
+    "cache": "use",
+    "kv": {
+      "mode": "classic",
+      "strategy": "sliding",
+      "budget": 256,
+      "sink": 4,
+      "recent": 64,
+      "observation": 64,
+      "kernel_size": 7,
+      "pyramid_beta": 20.0,
+      "chunk_size": 256
+    }
+  },
+  "wall_s": 301.5,
+  "probe_mean": 0.6667,
+  "probe_scores": {
+    "turn8": 1.0,
+    "turn9": 1.0,
+    "turn10": 0.0
+  },
+  "retrieval_hits": {
+    "8": true,
+    "9": true,
+    "10": false
+  },
+  "mean_turn_latency_s": 18.2332,
+  "embed_tokens": 12537,
+  "prompt_tokens": 4659,
+  "chunk_stats": {
+    "adds": 25,
+    "upserts": 0,
+    "evictions": 0,
+    "size": 25
+  },
+  "rag_stats": {
+    "adds": 7,
+    "upserts": 1,
+    "evictions": 0,
+    "size": 7
+  },
+  "turns": [
+    {
+      "turn": 0,
+      "user": "Write a Python function factorial(n) that returns the factorial of n. Reply with code only.",
+      "answer": "Here's a Python function that calculates the factorial of a given number:\n\n```python\ndef factorial(n):\n    if n == 0:\n        return 1\n    else:\n        return n * factorial(n-1)\n```\n\nThis function uses recursion to calculate the factorial of a number. It checks if the input",
+      "injected": null,
+      "probe_score": null
+    },
+    {
+      "turn": 1,
+      "user": "Write a Python function reverse_string(s) that returns s reversed. Reply with code only.",
+      "answer": "Based on the given Python code, here's a Python function that reverses a string:\n\n```python\ndef reverse_string(s):\n    if len(s) == 0:\n        return s\n    else:\n        return reverse_string(s[1:]) + s[0]\n```\n\nThis function takes a string `s",
+      "injected": [
+        "def factorial(n):\n    if n == 0:\n        return 1\n    else:\n        return n * factorial(n-1)\n```\n\nThis function uses recursion to calculate the factorial of a number. It checks if the input",
+        "Here's a Python function that calculates the factorial of a given number:\n\n```python"
+      ],
+      "probe_score": null
+    },
+    {
+      "turn": 2,
+      "user": "Write a Python function count_vowels(s) that counts vowels in s. Reply with code only.",
+      "answer": "Based on the given Python code, here's a Python function that counts the number of vowels in a string:\n\n```python\ndef count_vowels(s):\n    vowels = \"aeiouAEIOU\"\n    count = 0\n    for char in s:\n        if char in vowels:\n            count +=",
+      "injected": [
+        "def reverse_string(s):\n    if len(s) == 0:\n        return s\n    else:\n        return reverse_string(s[1:]) + s[0]\n```\n\nThis function takes a string `s",
+        "Based on the given Python code, here's a Python function that reverses a string:\n\n```python",
+        "def factorial(n):\n    if n == 0:\n        return 1\n    else:\n        return n * factorial(n-1)\n```\n\nThis function uses recursion to calculate the factorial of a number. It checks if the input",
+        "Here's a Python function that calculates the factorial of a given number:\n\n```python"
+      ],
+      "probe_score": null
+    },
+    {
+      "turn": 3,
+      "user": "Thanks. Briefly, what is a pure function?",
+      "answer": "A pure function is a function that always produces the same output for the same input, regardless of the order of the inputs. It does not depend on any external state or variables, and its output is always the same for the same input. This means that a pure function can be used to create a deterministic algorithm, where",
+      "injected": [
+        "Here's a Python function that calculates the factorial of a given number:\n\n```python",
+        "def factorial(n):\n    if n == 0:\n        return 1\n    else:\n        return n * factorial(n-1)\n```\n\nThis function uses recursion to calculate the factorial of a number. It checks if the input",
+        "def reverse_string(s):\n    if len(s) == 0:\n        return s\n    else:\n        return reverse_string(s[1:]) + s[0]\n```\n\nThis function takes a string `s",
+        "Based on the given Python code, here's a Python function that reverses a string:\n\n```python"
+      ],
+      "probe_score": null
+    },
+    {
+      "turn": 4,
+      "user": "Name one style rule for clean Python code.",
+      "answer": "Based on the given Python code, here's one style rule for clean Python code:\n\n1. Use meaningful variable names that reflect the purpose of the variable. For example, instead of using \"n\" for the input number, use \"num\" or \"input_number\".\n\n2. Use descriptive function names that clearly convey the",
+      "injected": [
+        "A pure function is a function that always produces the same output for the same input, regardless of the order of the inputs. It does not depend on any external state or variables, and its output is always the same for the same input. This means that a pure function can be used to create a deterministic algorithm, where",
+        "def factorial(n):\n    if n == 0:\n        return 1\n    else:\n        return n * factorial(n-1)\n```\n\nThis function uses recursion to calculate the factorial of a number. It checks if the input",
+        "def reverse_string(s):\n    if len(s) == 0:\n        return s\n    else:\n        return reverse_string(s[1:]) + s[0]\n```\n\nThis function takes a string `s",
+        "Based on the given Python code, here's a Python function that reverses a string:\n\n```python"
+      ],
+      "probe_score": null
+    },
+    {
+      "turn": 5,
+      "user": "What does PEP 8 say about indentation?",
+      "answer": "Based on the given Python code, here's one style rule for clean Python code:\n\n1. Use meaningful variable names that reflect the purpose of the variable. For example, instead of using \"n\" for the input number, use \"num\" or \"input_number\".\n\n2. Use descriptive function names that clearly convey the",
+      "injected": [
+        "A pure function is a function that always produces the same output for the same input, regardless of the order of the inputs. It does not depend on any external state or variables, and its output is always the same for the same input. This means that a pure function can be used to create a deterministic algorithm, where",
+        "2. Use descriptive function names that clearly convey the",
+        "1. Use meaningful variable names that reflect the purpose of the variable. For example, instead of using \"n\" for the input number, use \"num\" or \"input_number\".",
+        "Based on the given Python code, here's one style rule for clean Python code:"
+      ],
+      "probe_score": null
+    },
+    {
+      "turn": 6,
+      "user": "Suggest a good name for a variable holding a list of users.",
+      "answer": "Based on the given Python code, here's one style rule for clean Python code:\n\n1. Use meaningful variable names that reflect the purpose of the variable. For example, instead of using \"n\" for the input number, use \"num\" or \"input_number\".\n\n2. Use descriptive function names that clearly convey the",
+      "injected": [
+        "Based on the given Python code, here's one style rule for clean Python code:",
+        "1. Use meaningful variable names that reflect the purpose of the variable. For example, instead of using \"n\" for the input number, use \"num\" or \"input_number\".",
+        "2. Use descriptive function names that clearly convey the",
+        "A pure function is a function that always produces the same output for the same input, regardless of the order of the inputs. It does not depend on any external state or variables, and its output is always the same for the same input. This means that a pure function can be used to create a deterministic algorithm, where"
+      ],
+      "probe_score": null
+    },
+    {
+      "turn": 7,
+      "user": "How do you usually debug a wrong result?",
+      "answer": "Based on the given Python code, here's one style rule for clean Python code:\n\n1. Use meaningful variable names that reflect the purpose of the variable. For example, instead of using \"n\" for the input number, use \"num\" or \"input_number\".\n\n2. Use descriptive function names that clearly convey the",
+      "injected": [
+        "A pure function is a function that always produces the same output for the same input, regardless of the order of the inputs. It does not depend on any external state or variables, and its output is always the same for the same input. This means that a pure function can be used to create a deterministic algorithm, where",
+        "1. Use meaningful variable names that reflect the purpose of the variable. For example, instead of using \"n\" for the input number, use \"num\" or \"input_number\".",
+        "Based on the given Python code, here's one style rule for clean Python code:",
+        "2. Use descriptive function names that clearly convey the"
+      ],
+      "probe_score": null
+    },
+    {
+      "turn": 8,
+      "user": "Write is_palindrome(s) that checks whether s reads the same backwards. Reuse the function you wrote earlier for reversing. Reply with code only.",
+      "answer": "Based on the given Python code, here's a Python function that checks whether a string is a palindrome:\n\n```python\ndef is_palindrome(s):\n    return s == reverse_string(s)\n```\n\nThis function takes a string `s` and returns `True` if it is a palindrome, and `False` otherwise",
+      "injected": [
+        "def reverse_string(s):\n    if len(s) == 0:\n        return s\n    else:\n        return reverse_string(s[1:]) + s[0]\n```\n\nThis function takes a string `s",
+        "Based on the given Python code, here's a Python function that reverses a string:\n\n```python",
+        "Here's a Python function that calculates the factorial of a given number:\n\n```python",
+        "def count_vowels(s):\n    vowels = \"aeiouAEIOU\"\n    count = 0\n    for char in s:\n        if char in vowels:\n            count +="
+      ],
+      "probe_score": 1.0
+    },
+    {
+      "turn": 9,
+      "user": "Write double_factorial(n) that returns factorial(n) * factorial(n-1). Reuse your earlier factorial function. Reply with code only.",
+      "answer": "Based on the given Python code, here's a Python function that calculates the double factorial of a given number:\n\n```python\ndef double_factorial(n):\n    if n == 0:\n        return 1\n    else:\n        return n * double_factorial(n-1)\n```\n\nThis function uses recursion to",
+      "injected": [
+        "def is_palindrome(s):\n    return s == reverse_string(s)\n```\n\nThis function takes a string `s` and returns `True` if it is a palindrome, and `False` otherwise",
+        "Based on the given Python code, here's a Python function that checks whether a string is a palindrome:\n\n```python",
+        "Here's a Python function that calculates the factorial of a given number:\n\n```python",
+        "def factorial(n):\n    if n == 0:\n        return 1\n    else:\n        return n * factorial(n-1)\n```\n\nThis function uses recursion to calculate the factorial of a number. It checks if the input"
+      ],
+      "probe_score": 1.0
+    },
+    {
+      "turn": 10,
+      "user": "Write vowel_share(s) returning the fraction of vowels in s. Reuse your earlier vowel-counting function. Reply with code only.",
+      "answer": "Based on the given Python code, here's a Python function that calculates the fraction of vowels in a given string:\n\n```python\ndef vowel_share(s):\n    vowels = \"aeiou\"\n    count = 0\n    for char in s:\n        if char in vowels:\n            count += 1\n    return",
+      "injected": [
+        "Based on the given Python code, here's a Python function that checks whether a string is a palindrome:\n\n```python",
+        "def is_palindrome(s):\n    return s == reverse_string(s)\n```\n\nThis function takes a string `s` and returns `True` if it is a palindrome, and `False` otherwise",
+        "def double_factorial(n):\n    if n == 0:\n        return 1\n    else:\n        return n * double_factorial(n-1)\n```\n\nThis function uses recursion to",
+        "Based on the given Python code, here's a Python function that calculates the double factorial of a given number:\n\n```python"
+      ],
+      "probe_score": 0.0
+    }
+  ]
+}

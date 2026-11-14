@@ -1,0 +1,184 @@
+{
+  "strategy": {
+    "name": "window_rag_userfacts",
+    "context": "window",
+    "window": 2,
+    "memory": false,
+    "memory_beta": 0.25,
+    "memory_window_crit": 10.0,
+    "memory_size": 512,
+    "memory_retrieve": 256,
+    "memory_crit": 0.8,
+    "memory_merge_k": null,
+    "rag": true,
+    "rag_crit": 0.95,
+    "rag_k": 4,
+    "rag_lambda": 0.0,
+    "rag_centered": true,
+    "memory_kv": false,
+    "kv_slots": 32,
+    "gen_chunks": false,
+    "chunk_embed": "span",
+    "chunk_score": "key",
+    "chunk_tokens": 128,
+    "chunk_k": 4,
+    "chunk_upsert": false,
+    "chunk_centered": true,
+    "cache": "use",
+    "kv": {
+      "mode": "classic",
+      "strategy": "sliding",
+      "budget": 256,
+      "sink": 4,
+      "recent": 64,
+      "observation": 64,
+      "kernel_size": 7,
+      "pyramid_beta": 20.0,
+      "chunk_size": 256
+    }
+  },
+  "wall_s": 207.9,
+  "probe_mean": 0.3333,
+  "probe_scores": {
+    "turn8": 0.0,
+    "turn9": 1.0,
+    "turn10": 0.0
+  },
+  "retrieval_hits": {
+    "8": false,
+    "9": false,
+    "10": false
+  },
+  "mean_turn_latency_s": 17.7709,
+  "embed_tokens": 899,
+  "prompt_tokens": 3994,
+  "chunk_stats": null,
+  "rag_stats": {
+    "adds": 8,
+    "upserts": 0,
+    "evictions": 0,
+    "size": 8
+  },
+  "turns": [
+    {
+      "turn": 0,
+      "user": "Write a Python function factorial(n) that returns the factorial of n. Reply with code only.",
+      "answer": "Here's a Python function that calculates the factorial of a given number:\n\n```python\ndef factorial(n):\n    if n == 0:\n        return 1\n    else:\n        return n * factorial(n-1)\n```\n\nThis function uses recursion to calculate the factorial of a number. It checks if the input",
+      "injected": [],
+      "probe_score": null
+    },
+    {
+      "turn": 1,
+      "user": "Write a Python function reverse_string(s) that returns s reversed. Reply with code only.",
+      "answer": "Here's a Python function that reverses a string:\n\n```python\ndef reverse_string(s):\n    return s[::-1]\n```\n\nThis function uses Python's slicing syntax to reverse the string. The `[::-1]` slice notation means to start at the end of the string and move backwards, with a step of",
+      "injected": [
+        "Write a Python function factorial(n) that returns the factorial of n. Reply with code only."
+      ],
+      "probe_score": null
+    },
+    {
+      "turn": 2,
+      "user": "Write a Python function count_vowels(s) that counts vowels in s. Reply with code only.",
+      "answer": "Here's a Python function that counts the number of vowels in a given string:\n\n```python\ndef count_vowels(s):\n    vowels = \"aeiouAEIOU\"\n    count = 0\n    for char in s:\n        if char in vowels:\n            count += 1\n    return count",
+      "injected": [
+        "Write a Python function reverse_string(s) that returns s reversed. Reply with code only.",
+        "Write a Python function factorial(n) that returns the factorial of n. Reply with code only."
+      ],
+      "probe_score": null
+    },
+    {
+      "turn": 3,
+      "user": "Thanks. Briefly, what is a pure function?",
+      "answer": "A pure function is a function that does not modify its input or return any side effects. It only returns the result of the computation it performs. In other words, a pure function does not depend on any external state or environment to produce its output. It is a fundamental concept in functional programming and is essential for writing clean",
+      "injected": [
+        "Write a Python function factorial(n) that returns the factorial of n. Reply with code only.",
+        "Write a Python function reverse_string(s) that returns s reversed. Reply with code only.",
+        "Write a Python function count_vowels(s) that counts vowels in s. Reply with code only."
+      ],
+      "probe_score": null
+    },
+    {
+      "turn": 4,
+      "user": "Name one style rule for clean Python code.",
+      "answer": "Based on my understanding of the Python programming language, here is one style rule for clean Python code:\n\n1. Use meaningful variable names: Variable names should be descriptive and easy to understand. Avoid using names that are too long or contain special characters.\n\n2. Use meaningful function names: Function names should be descriptive and follow a",
+      "injected": [
+        "Write a Python function reverse_string(s) that returns s reversed. Reply with code only.",
+        "Write a Python function factorial(n) that returns the factorial of n. Reply with code only.",
+        "Write a Python function count_vowels(s) that counts vowels in s. Reply with code only."
+      ],
+      "probe_score": null
+    },
+    {
+      "turn": 5,
+      "user": "What does PEP 8 say about indentation?",
+      "answer": "PEP 8 is a style guide for Python code. It provides guidelines for the indentation of code blocks, the use of whitespace, and other formatting considerations. According to PEP 8, the following are considered good practices:\n\n1. Use four spaces for indentation. This is the default in Python.\n\n2. Use",
+      "injected": [
+        "Name one style rule for clean Python code.",
+        "Write a Python function count_vowels(s) that counts vowels in s. Reply with code only.",
+        "Write a Python function reverse_string(s) that returns s reversed. Reply with code only.",
+        "Write a Python function factorial(n) that returns the factorial of n. Reply with code only."
+      ],
+      "probe_score": null
+    },
+    {
+      "turn": 6,
+      "user": "Suggest a good name for a variable holding a list of users.",
+      "answer": "Based on the context, a good name for a variable holding a list of users could be \"users_list\". This is a simple and descriptive name that accurately reflects the purpose of the variable. It's important to choose a name that is easy to understand and doesn't contain any special characters or long strings of text.",
+      "injected": [
+        "Name one style rule for clean Python code.",
+        "Write a Python function factorial(n) that returns the factorial of n. Reply with code only.",
+        "Write a Python function reverse_string(s) that returns s reversed. Reply with code only.",
+        "Write a Python function count_vowels(s) that counts vowels in s. Reply with code only."
+      ],
+      "probe_score": null
+    },
+    {
+      "turn": 7,
+      "user": "How do you usually debug a wrong result?",
+      "answer": "Based on my understanding of debugging, here are some steps to take when you encounter a wrong result:\n\n1. Identify the problem: The first step is to identify the problem. This may involve looking at the code, the input data, or the output result. It's important to understand what went wrong and what the expected",
+      "injected": [
+        "Suggest a good name for a variable holding a list of users.",
+        "Name one style rule for clean Python code.",
+        "Write a Python function factorial(n) that returns the factorial of n. Reply with code only.",
+        "Write a Python function reverse_string(s) that returns s reversed. Reply with code only."
+      ],
+      "probe_score": null
+    },
+    {
+      "turn": 8,
+      "user": "Write is_palindrome(s) that checks whether s reads the same backwards. Reuse the function you wrote earlier for reversing. Reply with code only.",
+      "answer": "Based on the previous conversation, here's the code for the function is_palindrome(s):\n\ndef is_palindrome(s):\n    s = s.lower()\n    s = s.replace(\" \", \"\")\n    return s == s[::-1]\n\nThis function takes a string s as input, converts it to lowercase and removes any spaces.",
+      "injected": [
+        "Write a Python function reverse_string(s) that returns s reversed. Reply with code only.",
+        "Write a Python function factorial(n) that returns the factorial of n. Reply with code only.",
+        "Write a Python function count_vowels(s) that counts vowels in s. Reply with code only.",
+        "Suggest a good name for a variable holding a list of users."
+      ],
+      "probe_score": 0.0
+    },
+    {
+      "turn": 9,
+      "user": "Write double_factorial(n) that returns factorial(n) * factorial(n-1). Reuse your earlier factorial function. Reply with code only.",
+      "answer": "Based on the conversation, here's the code for double_factorial(n):\n\ndef double_factorial(n):\n    return factorial(n) * factorial(n-1)\n\nThis function takes an integer n as input and returns the product of n! and (n-1)!.\n\nThe factorial function is defined as follows:\n\ndef factorial",
+      "injected": [
+        "Write is_palindrome(s) that checks whether s reads the same backwards. Reuse the function you wrote earlier for reversing. Reply with code only.",
+        "Write a Python function factorial(n) that returns the factorial of n. Reply with code only.",
+        "Write a Python function count_vowels(s) that counts vowels in s. Reply with code only.",
+        "Write a Python function reverse_string(s) that returns s reversed. Reply with code only."
+      ],
+      "probe_score": 1.0
+    },
+    {
+      "turn": 10,
+      "user": "Write vowel_share(s) returning the fraction of vowels in s. Reuse your earlier vowel-counting function. Reply with code only.",
+      "answer": "Based on the conversation, here's the code for vowel_share(s):\n\ndef vowel_share(s):\n    vowels = \"aeiou\"\n    count = 0\n    for char in s:\n        if char in vowels:\n            count += 1\n    return count / len(s)\n\nThis function takes a string s as",
+      "injected": [
+        "Write a Python function count_vowels(s) that counts vowels in s. Reply with code only.",
+        "Write is_palindrome(s) that checks whether s reads the same backwards. Reuse the function you wrote earlier for reversing. Reply with code only.",
+        "Write double_factorial(n) that returns factorial(n) * factorial(n-1). Reuse your earlier factorial function. Reply with code only.",
+        "Write a Python function reverse_string(s) that returns s reversed. Reply with code only."
+      ],
+      "probe_score": 0.0
+    }
+  ]
+}

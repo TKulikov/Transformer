@@ -1,0 +1,208 @@
+{
+  "model": "qwen2-1.5b",
+  "device": "cpu",
+  "dtype": "float32",
+  "session": "code-reuse",
+  "window": 2,
+  "max_new_tokens": 64,
+  "decoding": "greedy",
+  "strategies": {
+    "window_only": {
+      "wall_s": 208.2,
+      "probe_mean": 0.3333,
+      "probe_scores": {
+        "turn8": 0.0,
+        "turn9": 1.0,
+        "turn10": 0.0
+      },
+      "retrieval_hits": {
+        "8": false,
+        "9": false,
+        "10": false
+      },
+      "mean_turn_latency_s": 17.7808,
+      "embed_tokens": 900,
+      "prompt_tokens": 3301,
+      "chunk_stats": null,
+      "rag_stats": {
+        "adds": 7,
+        "upserts": 1,
+        "evictions": 0,
+        "size": 7
+      }
+    },
+    "window_rag_userfacts": {
+      "wall_s": 207.9,
+      "probe_mean": 0.3333,
+      "probe_scores": {
+        "turn8": 0.0,
+        "turn9": 1.0,
+        "turn10": 0.0
+      },
+      "retrieval_hits": {
+        "8": false,
+        "9": false,
+        "10": false
+      },
+      "mean_turn_latency_s": 17.7709,
+      "embed_tokens": 899,
+      "prompt_tokens": 3994,
+      "chunk_stats": null,
+      "rag_stats": {
+        "adds": 8,
+        "upserts": 0,
+        "evictions": 0,
+        "size": 8
+      }
+    },
+    "chunks_mean": {
+      "wall_s": 225.1,
+      "probe_mean": 0.3333,
+      "probe_scores": {
+        "turn8": 0.0,
+        "turn9": 1.0,
+        "turn10": 0.0
+      },
+      "retrieval_hits": {
+        "8": true,
+        "9": true,
+        "10": false
+      },
+      "mean_turn_latency_s": 18.2943,
+      "embed_tokens": 1599,
+      "prompt_tokens": 4654,
+      "chunk_stats": {
+        "adds": 23,
+        "upserts": 0,
+        "evictions": 0,
+        "size": 23
+      },
+      "rag_stats": {
+        "adds": 7,
+        "upserts": 1,
+        "evictions": 0,
+        "size": 7
+      }
+    },
+    "chunks_span": {
+      "wall_s": 286.5,
+      "probe_mean": 0.3333,
+      "probe_scores": {
+        "turn8": 0.0,
+        "turn9": 1.0,
+        "turn10": 0.0
+      },
+      "retrieval_hits": {
+        "8": true,
+        "9": true,
+        "10": false
+      },
+      "mean_turn_latency_s": 17.9429,
+      "embed_tokens": 11530,
+      "prompt_tokens": 4654,
+      "chunk_stats": {
+        "adds": 23,
+        "upserts": 0,
+        "evictions": 0,
+        "size": 23
+      },
+      "rag_stats": {
+        "adds": 7,
+        "upserts": 1,
+        "evictions": 0,
+        "size": 7
+      }
+    },
+    "chunks_attn": {
+      "wall_s": 301.5,
+      "probe_mean": 0.6667,
+      "probe_scores": {
+        "turn8": 1.0,
+        "turn9": 1.0,
+        "turn10": 0.0
+      },
+      "retrieval_hits": {
+        "8": true,
+        "9": true,
+        "10": false
+      },
+      "mean_turn_latency_s": 18.2332,
+      "embed_tokens": 12537,
+      "prompt_tokens": 4659,
+      "chunk_stats": {
+        "adds": 25,
+        "upserts": 0,
+        "evictions": 0,
+        "size": 25
+      },
+      "rag_stats": {
+        "adds": 7,
+        "upserts": 1,
+        "evictions": 0,
+        "size": 7
+      }
+    },
+    "chunks_span_value": {
+      "wall_s": 294.1,
+      "probe_mean": 0.3333,
+      "probe_scores": {
+        "turn8": 0.0,
+        "turn9": 1.0,
+        "turn10": 0.0
+      },
+      "retrieval_hits": {
+        "8": false,
+        "9": true,
+        "10": false
+      },
+      "mean_turn_latency_s": 18.1729,
+      "embed_tokens": 11618,
+      "prompt_tokens": 4290,
+      "chunk_stats": {
+        "adds": 25,
+        "upserts": 0,
+        "evictions": 0,
+        "size": 25
+      },
+      "rag_stats": {
+        "adds": 7,
+        "upserts": 1,
+        "evictions": 0,
+        "size": 7
+      }
+    },
+    "chunks_late_maxsim": {
+      "wall_s": 298.2,
+      "probe_mean": 0.0,
+      "probe_scores": {
+        "turn8": 0.0,
+        "turn9": 0.0,
+        "turn10": 0.0
+      },
+      "retrieval_hits": {
+        "8": false,
+        "9": true,
+        "10": false
+      },
+      "mean_turn_latency_s": 18.523,
+      "embed_tokens": 11357,
+      "prompt_tokens": 4742,
+      "chunk_stats": {
+        "adds": 22,
+        "upserts": 0,
+        "evictions": 0,
+        "size": 22
+      },
+      "rag_stats": {
+        "adds": 7,
+        "upserts": 1,
+        "evictions": 0,
+        "size": 7
+      }
+    }
+  },
+  "caveats": [
+    "turn9: имя factorial есть в самом вопросе — возможен echo-ложняк; чистые пробы: turn8, turn10",
+    "attn-режиму нужен eager attention (SDPA не отдаёт веса)"
+  ]
+}

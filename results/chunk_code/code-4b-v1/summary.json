@@ -1,0 +1,239 @@
+{
+  "model": "qwen35-4b",
+  "device": "cuda",
+  "dtype": "bfloat16",
+  "gpu": "AMD Radeon Graphics",
+  "torch": "2.9.1+rocm6.3",
+  "session": "code-reuse",
+  "window": 2,
+  "max_new_tokens": 64,
+  "decoding": "greedy",
+  "strategies": {
+    "window_only": {
+      "wall_s": 14.1,
+      "probe_mean": 0.3333,
+      "probe_scores": {
+        "turn8": 0.0,
+        "turn9": 1.0,
+        "turn10": 0.0
+      },
+      "retrieval_hits": {
+        "8": false,
+        "9": false,
+        "10": false
+      },
+      "mean_turn_latency_s": 1.0012,
+      "embed_tokens": 490,
+      "prompt_tokens": 2055,
+      "chunk_stats": null,
+      "rag_stats": {
+        "adds": 8,
+        "upserts": 0,
+        "evictions": 0,
+        "size": 8
+      }
+    },
+    "window_rag_userfacts": {
+      "wall_s": 11.0,
+      "probe_mean": 1.0,
+      "probe_scores": {
+        "turn8": 1.0,
+        "turn9": 1.0,
+        "turn10": 1.0
+      },
+      "retrieval_hits": {
+        "8": false,
+        "9": false,
+        "10": false
+      },
+      "mean_turn_latency_s": 0.9103,
+      "embed_tokens": 460,
+      "prompt_tokens": 2651,
+      "chunk_stats": null,
+      "rag_stats": {
+        "adds": 8,
+        "upserts": 0,
+        "evictions": 0,
+        "size": 8
+      }
+    },
+    "chunks_reqkey_span": {
+      "wall_s": 12.2,
+      "probe_mean": 1.0,
+      "probe_scores": {
+        "turn8": 1.0,
+        "turn9": 1.0,
+        "turn10": 1.0
+      },
+      "retrieval_hits": {
+        "8": true,
+        "9": true,
+        "10": true
+      },
+      "mean_turn_latency_s": 0.9326,
+      "embed_tokens": 3856,
+      "prompt_tokens": 3117,
+      "chunk_stats": {
+        "adds": 11,
+        "upserts": 0,
+        "evictions": 0,
+        "size": 11
+      },
+      "rag_stats": {
+        "adds": 8,
+        "upserts": 0,
+        "evictions": 0,
+        "size": 8
+      }
+    },
+    "chunks_contentkey_span": {
+      "wall_s": 14.0,
+      "probe_mean": 1.0,
+      "probe_scores": {
+        "turn8": 1.0,
+        "turn9": 1.0,
+        "turn10": 1.0
+      },
+      "retrieval_hits": {
+        "8": true,
+        "9": true,
+        "10": true
+      },
+      "mean_turn_latency_s": 1.0402,
+      "embed_tokens": 4416,
+      "prompt_tokens": 3304,
+      "chunk_stats": {
+        "adds": 11,
+        "upserts": 0,
+        "evictions": 0,
+        "size": 11
+      },
+      "rag_stats": {
+        "adds": 8,
+        "upserts": 0,
+        "evictions": 0,
+        "size": 8
+      }
+    },
+    "chunks_contentkey_last": {
+      "wall_s": 17.5,
+      "probe_mean": 0.6667,
+      "probe_scores": {
+        "turn8": 0.0,
+        "turn9": 1.0,
+        "turn10": 1.0
+      },
+      "retrieval_hits": {
+        "8": false,
+        "9": true,
+        "10": true
+      },
+      "mean_turn_latency_s": 1.3179,
+      "embed_tokens": 5938,
+      "prompt_tokens": 3357,
+      "chunk_stats": {
+        "adds": 14,
+        "upserts": 0,
+        "evictions": 0,
+        "size": 14
+      },
+      "rag_stats": {
+        "adds": 8,
+        "upserts": 0,
+        "evictions": 0,
+        "size": 8
+      }
+    },
+    "chunks_contentkey_mid": {
+      "wall_s": 12.2,
+      "probe_mean": 0.6667,
+      "probe_scores": {
+        "turn8": 1.0,
+        "turn9": 1.0,
+        "turn10": 0.0
+      },
+      "retrieval_hits": {
+        "8": true,
+        "9": true,
+        "10": false
+      },
+      "mean_turn_latency_s": 0.889,
+      "embed_tokens": 3983,
+      "prompt_tokens": 3012,
+      "chunk_stats": {
+        "adds": 11,
+        "upserts": 0,
+        "evictions": 0,
+        "size": 11
+      },
+      "rag_stats": {
+        "adds": 8,
+        "upserts": 0,
+        "evictions": 0,
+        "size": 8
+      }
+    },
+    "chunks_contentkey_value": {
+      "wall_s": 14.3,
+      "probe_mean": 1.0,
+      "probe_scores": {
+        "turn8": 1.0,
+        "turn9": 1.0,
+        "turn10": 1.0
+      },
+      "retrieval_hits": {
+        "8": true,
+        "9": true,
+        "10": true
+      },
+      "mean_turn_latency_s": 1.0779,
+      "embed_tokens": 4464,
+      "prompt_tokens": 3313,
+      "chunk_stats": {
+        "adds": 11,
+        "upserts": 0,
+        "evictions": 0,
+        "size": 11
+      },
+      "rag_stats": {
+        "adds": 8,
+        "upserts": 0,
+        "evictions": 0,
+        "size": 8
+      }
+    },
+    "chunks_late_maxsim": {
+      "wall_s": 14.3,
+      "probe_mean": 1.0,
+      "probe_scores": {
+        "turn8": 1.0,
+        "turn9": 1.0,
+        "turn10": 1.0
+      },
+      "retrieval_hits": {
+        "8": true,
+        "9": true,
+        "10": true
+      },
+      "mean_turn_latency_s": 1.0359,
+      "embed_tokens": 4570,
+      "prompt_tokens": 3280,
+      "chunk_stats": {
+        "adds": 11,
+        "upserts": 0,
+        "evictions": 0,
+        "size": 11
+      },
+      "rag_stats": {
+        "adds": 8,
+        "upserts": 0,
+        "evictions": 0,
+        "size": 8
+      }
+    }
+  },
+  "caveats": [
+    "turn9: имя factorial в вопросе — echo-ложняк; чистые пробы: turn8, turn10",
+    "ключ=активации блока (mean/last/mid), значение=span, центрирование обоих бегущим средним"
+  ]
+}
