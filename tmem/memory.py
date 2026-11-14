@@ -257,6 +257,23 @@ class Memory:
     def _slot_norms(self) -> torch.Tensor:
         return torch.linalg.vector_norm(self.context[0], ord=2, dim=1)
 
+    def ttl_gist(self) -> torch.Tensor | None:
+        """TTL-weighted mean of occupied slots — the live-topic state.
+
+        Unlike :func:`tmem.semantic.gist_of` (plain mean), slots that were
+        retrieved recently (high TTL) dominate, so the gist tracks the
+        current topic rather than averaging in stale slots. Returns None
+        when the bank is empty or all TTLs are zero.
+        """
+        mask = self.occupied
+        if not bool(mask.any()):
+            return None
+        w = self.ttl[mask].clamp(min=0.0)
+        if float(w.sum()) <= 0:
+            return None
+        slots = self.context[0][mask]
+        return (w[:, None] * slots).sum(dim=0) / w.sum()
+
 
 class CorrectionLayer(nn.Module):
     """nn.Module wrapper: retrieve relevant context, then ingest ``x``.

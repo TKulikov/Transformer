@@ -41,16 +41,18 @@ import torch
 
 from .semantic import model_last
 
-_CODE_BOUNDARY = re.compile(r"(?m)^(?=(?:async\s+def|def|class)\s)")
+_CODE_BOUNDARY = re.compile(r"(?m)^[ \t]*(?=(?:async[ \t]+def|def|class)[ \t])")
 _PARAGRAPH = re.compile(r"\n\s*\n")
 
 
 def chunk_text(text: str, max_tokens: int = 128, tokenizer=None) -> list[str]:
     """Split a generation into retrievable chunks.
 
-    Code is split at top-level ``def``/``class`` boundaries, prose at blank
-    lines; any piece longer than ``max_tokens`` (when a tokenizer is given)
-    is cut into consecutive token windows. Empty pieces are dropped.
+    Code is split at every ``def``/``class`` boundary including indented
+    methods (so a read file lands in memory as function-level pieces),
+    prose at blank lines; any piece longer than ``max_tokens`` (when a
+    tokenizer is given) is cut into consecutive token windows. Empty
+    pieces are dropped.
     """
     text = text.strip()
     if not text:
@@ -76,7 +78,7 @@ def chunk_text(text: str, max_tokens: int = 128, tokenizer=None) -> list[str]:
 
 
 def _forward_last(model, ids: torch.Tensor, need_attn: bool):
-    """Last hidden states (+ last-layer attentions) of a causal model or encoder.
+    """All hidden states (+ last-layer attentions) of a causal model or encoder.
 
     NOTE: SDPA/flash attention do not materialise attention weights —
     ``out.attentions`` is empty unless the model was loaded with
@@ -85,7 +87,24 @@ def _forward_last(model, ids: torch.Tensor, need_attn: bool):
     """
     out = model(input_ids=ids, output_hidden_states=True, output_attentions=need_attn)
     attn = out.attentions[-1] if (need_attn and out.attentions) else None
-    return out.hidden_states[-1], attn
+    return out.hidden_states, attn
+
+
+def _pick_layer(hidden_states, layer: str) -> torch.Tensor:
+    """Select the pooling source: last layer, latent (mid) layer, or layer mean.
+
+    The latent (mid) layer is where tokens converge into meanings — the
+    band where the v4 memory K/V is injected; contextualising values by
+    its activations keeps the representation about *content*, not about
+    the next-token output task.
+    """
+    if layer == "last":
+        return hidden_states[-1]
+    if layer == "mid":
+        return hidden_states[len(hidden_states) // 2]
+    if layer == "mean":
+        return torch.stack(hidden_states[1:]).mean(dim=0)
+    raise ValueError(f"unknown layer mode: {layer}")
 
 
 @torch.no_grad()
@@ -96,6 +115,7 @@ def embed_chunk(
     mode: str = "span",
     max_tokens: int = 256,
     context_tokens: int = 512,
+    layer: str = "last",
 ) -> tuple[torch.Tensor, torch.Tensor | None, int]:
     """Embed a generation chunk, contextualised by the chunk itself.
 
@@ -109,6 +129,10 @@ def embed_chunk(
             last position; ``late`` — span, plus per-token states returned
             for MaxSim retrieval.
         max_tokens: cap on chunk tokens; context_tokens: cap on prefix tokens.
+        layer: pooling source — ``last`` (output layer), ``mid`` (the latent
+            meaning layer, where v4 memory is injected) or ``mean`` (average
+            over layers). Contextualising by the latent layer keeps the
+            value about content rather than the next-token task.
 
     Returns:
         ``(pooled (d,), token_states (L, d) | None, n_tokens_consumed)``.
@@ -121,16 +145,19 @@ def embed_chunk(
 
     if mode == "mean" or not context:
         ids = tok(chunk, return_tensors="pt", truncation=True, max_length=max_tokens)["input_ids"].to(bundle.device)
-        hidden, _ = _forward_last(model, ids, need_attn=False)
+        hs, _ = _forward_last(model, ids, need_attn=False)
+        hidden = _pick_layer(hs, layer)
         pooled = hidden.float().mean(dim=1).squeeze(0)
         tokens = hidden.float().squeeze(0) if mode == "late" else None
         return pooled, tokens, int(ids.shape[1])
 
     ctx_ids = tok(context, return_tensors="pt", truncation=True, max_length=context_tokens)["input_ids"]
+    model_max = bundle.max_prompt_len(reserve=0)
     full = tok(context + chunk, return_tensors="pt", truncation=True,
-               max_length=int(ctx_ids.shape[1]) + max_tokens)["input_ids"].to(bundle.device)
+               max_length=min(int(ctx_ids.shape[1]) + max_tokens, model_max))["input_ids"].to(bundle.device)
     start = min(int(ctx_ids.shape[1]), int(full.shape[1]))
-    hidden, attn = _forward_last(model, full, need_attn=(mode == "attn"))
+    hs, attn = _forward_last(model, full, need_attn=(mode == "attn"))
+    hidden = _pick_layer(hs, layer)
     span = hidden[:, start:, :]
     if span.shape[1] == 0:  # chunk vanished under truncation — fall back to whole
         span = hidden
