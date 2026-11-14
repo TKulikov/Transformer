@@ -1,0 +1,16 @@
+# Transformer — правила проекта
+
+## Тесты — ЗДЕСЬ
+- Все тесты и бенчмарки этого проекта находятся в этом репозитории: `tests/` (pytest) и `tmem/` (код).
+- Диалоговые тесты: `tests/test_dialogue.py`, `tests/test_corpus*.py`; многодиалоговый бенчмарк — `tmem.corpus_run` (пресеты: pilot=12, main=48, ablation=16, sweep=8 диалогов; план — `docs/PLAN-fullscale-tests.md`).
+- Эталонная команда пилотного прогона (GPU, ROCm):
+  ```bash
+  HF_HUB_OFFLINE=1 .venv/bin/python -m tmem.corpus_run --preset pilot --model qwen35-4b \
+      --dtype bfloat16 --batches 4 --run-id pilot-v1
+  ```
+- Результаты: `results/corpus/<run_id>/` (JSON по стратегиям, `manifest.jsonl`, автоотчёт `INTERIM.md`). Повторный запуск продолжает по манифесту (resume).
+- Python — только `.venv/bin/python`. Модель `Qwen/Qwen3.5-4B` уже в HF-кэше, работать с `HF_HUB_OFFLINE=1`.
+- GPU: AMD RX 7900 XTX (24 ГБ), torch+ROCm. Перед GPU-прогоном проверить, что VRAM свободна (посторонние inference-серверы могут держать память).
+
+## Границы
+- НЕ лазить в соседние проекты (например, `~/Documents/fine_tunes`) без прямой просьбы пользователя — ни читать, ни grep-ать, ни изменять. Тесты и данные для этого проекта — здесь. См. глобальное правило в `~/.config/opencode/AGENTS.md`.
