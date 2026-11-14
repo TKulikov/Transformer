@@ -17,6 +17,7 @@ from dataclasses import dataclass, field
 
 import torch
 
+from .chunkmem import ChunkBank, chunk_text, embed_block_key, embed_chunk
 from .generate import DecodeResult, decode_causal, decode_encdec
 from .kvcache import KVConfig
 from .metrics import keyword_score
@@ -43,6 +44,15 @@ class Strategy:
     rag_centered: bool = False            # v3: deviation-from-topic scoring
     memory_kv: bool = False               # v4: activated facts enter mid-layer attention as K/V
     kv_slots: int = 32                    # max memory keys/values per attention layer
+    gen_chunks: bool = False              # chunk-memory: store generation chunks instead of user facts
+    chunk_embed: str = "span"             # mean | span | attn | late (contextualised chunk embedding)
+    chunk_key: str = "content"            # content (block layer activations) | request (legacy)
+    chunk_key_layers: str = "mean"        # last | mid | mean — which layers form the content key
+    chunk_score: str = "key"              # key (request→block) | value (request→chunk) | maxsim
+    chunk_tokens: int = 128               # max tokens per stored chunk
+    chunk_k: int = 4                      # chunks injected per turn
+    chunk_upsert: bool = False            # cosine upsert (dangerous for code — off by default)
+    chunk_centered: bool = True           # centre request keys by the running centroid
     cache: str = "use"                    # "use" | "none"
     kv: KVConfig = KVConfig.classic()
 
@@ -65,6 +75,15 @@ class Strategy:
             "rag_centered": self.rag_centered,
             "memory_kv": self.memory_kv,
             "kv_slots": self.kv_slots,
+            "gen_chunks": self.gen_chunks,
+            "chunk_embed": self.chunk_embed,
+            "chunk_key": self.chunk_key,
+            "chunk_key_layers": self.chunk_key_layers,
+            "chunk_score": self.chunk_score,
+            "chunk_tokens": self.chunk_tokens,
+            "chunk_k": self.chunk_k,
+            "chunk_upsert": self.chunk_upsert,
+            "chunk_centered": self.chunk_centered,
             "cache": self.cache,
             "kv": {
                 "mode": self.kv.mode,
@@ -112,6 +131,7 @@ class DialogueRun:
     turns: list[TurnResult] = field(default_factory=list)
     corr: "object | None" = None  # CorrectionLayer used by memory strategies (None otherwise)
     bank: "object | None" = None   # RagBank for rag strategies (None otherwise)
+    chunk_bank: "object | None" = None  # ChunkBank for gen_chunks strategies (None otherwise)
     embed_tokens: int = 0          # extra tokens spent on bank/query embedding
     kv_injected: int = 0           # v4: memory slots injected into attention (total)
     kv_steps: int = 0              # v4: attention forwards that saw memory
@@ -182,6 +202,8 @@ class DialogueRun:
             s["kv_steps"] = self.kv_steps
         if self.bank is not None:
             s["rag_stats"] = dict(self.bank.stats, size=len(self.bank.texts))
+        if self.chunk_bank is not None:
+            s["chunk_stats"] = dict(self.chunk_bank.stats, size=len(self.chunk_bank.texts))
         tone = [t.tone_score for t in self.turns if t.tone_score is not None]
         s["tone_mean"] = round(sum(tone) / len(tone), 4) if tone else None
         s["rep_mean"] = round(sum(t.rep_rate for t in self.turns) / max(len(self.turns), 1), 4)
@@ -254,6 +276,13 @@ def run_session(
     # prompt (RAG mode) only when strategy.rag is set.
     bank = RagBank(bundle.hidden_size, crit=strategy.rag_crit, device=bundle.device, centered=strategy.rag_centered)
     run.bank = bank
+    # Generation-chunk memory: stores the assistant's own output chunks,
+    # keyed by the request that produced them (task → solution retrieval).
+    chunk_bank = None
+    if strategy.gen_chunks:
+        chunk_bank = ChunkBank(bundle.hidden_size, centered=strategy.chunk_centered,
+                               upsert=strategy.chunk_upsert, device=bundle.device)
+    run.chunk_bank = chunk_bank
 
     try:
         turn_idx = 0
@@ -274,6 +303,14 @@ def run_session(
                 run.embed_tokens += n_tok
                 if strategy.rag:
                     notes = [t for t, _, _ in bank.retrieve(user_emb, k=strategy.rag_k, gist=gist_of(corr), lam=strategy.rag_lambda)]
+                if chunk_bank is not None and chunk_bank.texts:
+                    q_tokens = None
+                    if strategy.chunk_score == "maxsim":
+                        _, q_tokens, n_q = embed_chunk(bundle, user_text, mode="late")
+                        run.embed_tokens += n_q
+                    chunk_notes = [t for t, _, _ in chunk_bank.retrieve(
+                        user_emb, k=strategy.chunk_k, score=strategy.chunk_score, query_tokens=q_tokens)]
+                    notes = (notes or []) + chunk_notes
 
             context = _context(history, strategy)
             prompt_text = bundle.to_chat(_prompt(bundle, context, user_text, notes))
@@ -289,6 +326,26 @@ def run_session(
                 bank.add(user_text, user_emb, turn_idx)
             elif bank is not None:
                 bank.add(user_text, user_emb, turn_idx)
+
+            # Ingest the generation itself: chunk it, embed each chunk in the
+            # context that produced it (value), key it by the block's own
+            # layer activations so pieces of one huge generation stay
+            # distinguishable (legacy: key by the request).
+            if chunk_bank is not None and answer:
+                for ch in chunk_text(answer, max_tokens=strategy.chunk_tokens, tokenizer=bundle.tokenizer):
+                    val_emb, val_tokens, n_ch = embed_chunk(
+                        bundle, ch, context=prompt_text, mode=strategy.chunk_embed,
+                        max_tokens=strategy.chunk_tokens)
+                    run.embed_tokens += n_ch
+                    if strategy.chunk_key == "content":
+                        key_emb, n_key = embed_block_key(
+                            bundle, ch, layers=strategy.chunk_key_layers,
+                            max_tokens=strategy.chunk_tokens)
+                        run.embed_tokens += n_key
+                    else:
+                        key_emb = user_emb
+                    chunk_bank.add(ch, key_emb=key_emb, val_emb=val_emb, turn=turn_idx,
+                                   val_tokens=val_tokens if strategy.chunk_embed == "late" else None)
 
             history.append(f"User: {user_text} Assistant: {answer}")
             score = score_probe_answer(answer, question) if question else None
