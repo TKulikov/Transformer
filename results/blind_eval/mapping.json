@@ -1,0 +1,68 @@
+{
+  "item01": {
+    "dialogue": "trip",
+    "turn": 10,
+    "labels": {
+      "A": "full_context",
+      "B": "centered_rag",
+      "C": "rag_plain",
+      "D": "no_memory",
+      "E": "rag_gist"
+    }
+  },
+  "item02": {
+    "dialogue": "trip",
+    "turn": 18,
+    "labels": {
+      "A": "no_memory",
+      "B": "centered_rag",
+      "C": "full_context",
+      "D": "rag_plain",
+      "E": "rag_gist"
+    }
+  },
+  "item03": {
+    "dialogue": "guitar",
+    "turn": 10,
+    "labels": {
+      "A": "full_context",
+      "B": "rag_gist",
+      "C": "centered_rag",
+      "D": "no_memory",
+      "E": "rag_plain"
+    }
+  },
+  "item04": {
+    "dialogue": "guitar",
+    "turn": 18,
+    "labels": {
+      "A": "centered_rag",
+      "B": "rag_gist",
+      "C": "no_memory",
+      "D": "rag_plain",
+      "E": "full_context"
+    }
+  },
+  "item05": {
+    "dialogue": "garden",
+    "turn": 10,
+    "labels": {
+      "A": "rag_gist",
+      "B": "rag_plain",
+      "C": "no_memory",
+      "D": "centered_rag",
+      "E": "full_context"
+    }
+  },
+  "item06": {
+    "dialogue": "garden",
+    "turn": 18,
+    "labels": {
+      "A": "no_memory",
+      "B": "full_context",
+      "C": "centered_rag",
+      "D": "rag_plain",
+      "E": "rag_gist"
+    }
+  }
+}
