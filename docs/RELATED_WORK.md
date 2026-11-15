@@ -93,6 +93,41 @@ ActiveMem/SRSD/RAPTOR/CLAG на РЕАЛЬНЫХ code-бенчмарках со 
 (2) артикулировать, что именно residual-дерево функций даёт сверх них.
 Без этого — комбинаторная новизна, слабая для публикации.
 
+## Разбор по компонентам: TTL-банк + gist «живой темы» + mid + дерево
+
+Вопрос: есть ли у них именно наш механизм — латентный слот-банк, который
+определяет общую тему (TTL-weighted gist), обновляется от запросов с TTL
+(refresh при извлечении + decay + eviction), консьюмится из СРЕДНИХ слоёв,
+и всё это в дереве? Разбор по частям (проверено по текстам статей):
+
+| Компонент нашего механизма | Кто и что делает | Совпадает? |
+|---|---|---|
+| **TTL: refresh при извлечении + decay + eviction** | **MemoryBank** (Zhong et al., AAAI 2024): кривая Эббингауза, Importance = e^(−Δt/S), S = число извлечений, Δt сбрасывается при recall. **H-MEM** (EACL 2026), LUFY, FOREVER, MemoryOS — forgetting curve | Механизм TTL/decay ИЗВЕСТЕН, но у всех — для **ТЕКСТОВОЙ** памяти (скоринг реплик/саммари), не латентный слот-банк из активаций |
+| **Латентный банк из скрытых состояний, mid-слой** | **MemDefrag** (EMNLP 2026): per-layer hidden states как память (MemoryLLM/M+), **средние слои несут tracing-сигнал** (attention density), training-free defragmentation + forgetting. **MemoryLLM/M+** — латентный пул | Mid-layer латентная память есть; но MemDefrag — defrag/forgetting по informativeness, **не TTL-gist**, не дерево; MemoryLLM/M+ — ОБУЧАЕМЫЕ модули |
+| **Gist «живой темы» = TTL-взвешенное среднее слотов, condicionирует запрос (q + α·gist)** | Не найдено точного аналога. Ближайшее: FlashMem (last hidden state как summary), topic-aware retrieval | **ЭТОГО ТОЧНОГО МЕХАНИЗМА НЕ НАШЁЛ** — кандидат на узкую новизну |
+| **Латентное ДЕРЕВО +遗忘 + слияние похожих** | **ActiveMem** (прочитан целиком): HLMT, узлы = (e_i, parent, children); НО e_i — выход ОБУЧАЕМОГО контроллера (MLP), не raw mid-активации; запрос h_t = **LAST-token** hidden state; retrieval = **жадный спуск** (argmax cos, stop по τ); pruning по **reward-EMA** (S_EMA < τ_del), НЕ TTL; merge похожих siblings (sim > τ_merge); инъекция = soft-prompt prefix; всё ОБУЧАЕТСЯ через GRPO (RL); для траекторий агента | Дерево + merge есть, но: trained (не training-free), reward-EMA (не TTL), last-token (не mid), жадный спуск (не flat), траектории (не статические функции кода). **Нашего TTL-gist-банка НЕТ** |
+
+**Точный вывод:** связка «TTL-взвешенный gist живой темы, кондиционирующий
+запрос, из латентного слот-банка средних слоёв, в training-free семантическом
+дереве функций кода» — как единый механизм в найденных статьях НЕ встречается.
+ActiveMem ближе всех по форме (латентное дерево), но принципиально иной:
+обучаемый контроллер, reward-EMA вместо TTL, last-token запрос, жадный спуск.
+TTL-decay сам по себе — MemoryBank (текст). Mid-layer латентная память —
+MemDefrag (trained, без gist-запроса).
+
+**ВАЖНЫЕ оговорки (честно):**
+1. Поиск не исчерпывающий; «gist кондиционирует запрос» может существовать
+   под другим именем (topic-aware / context-conditioned query expansion).
+2. **Мы САМИ не изолировали пользу TTL-gist**: в факториале rag_lambda=0,
+   в content-свипе gamma=0 лучший, в semtree gist вообще не используется.
+   То есть novel-кандидат может оказаться ИНЕРТНЫМ — это надо проверить
+   абляцией alpha=0 vs alpha>0 в дереве, прежде чем заявлять вклад.
+3. Комбинаторная новизна без доказанного преимущества — слабая.
+
+**Конкретный следующий эксперимент:** абляция TTL-gist в семантическом
+дереве (alpha=0 / 0.25 / 0.5 / 1.0) на taskq_large + thread-тесте — помогает
+ ли gist «живой темы» вообще, и если да, то это наш узкий novel-механизм.
+
 ## Ключевые ссылки
 - RAPTOR: https://arxiv.org/abs/2401.18059 (ICLR 2024)
 - Memorizing Transformers: https://arxiv.org/abs/2203.08913 (ICLR 2022)
@@ -112,3 +147,7 @@ ActiveMem/SRSD/RAPTOR/CLAG на РЕАЛЬНЫХ code-бенчмарках со 
 - FlashMem: https://aclanthology.org/2026.findings-acl.230
 - Layer by Layer (mid-layer embeddings): https://arxiv.org/abs/2502.02013
 - KV-Embedding: https://arxiv.org/abs/2601.01046
+- MemoryBank (TTL/Ebbinghaus, текст): https://ojs.aaai.org/index.php/AAAI/article/view/29946 (AAAI 2024)
+- MemDefrag (mid-layer latent memory tracing): https://aclanthology.org/2026.emnlp-main.1043
+- H-MEM (hierarchical + forgetting): https://aclanthology.org/2026.eacl-long.15
+- M+ (latent hidden-state memory): https://arxiv.org/abs/2502.00592
