@@ -1,0 +1,938 @@
+{
+  "model": "qwen35-4b",
+  "device": "cuda",
+  "code": {
+    "nobank": {
+      "reuse": 9,
+      "hits": 7,
+      "def_hits": 4,
+      "ingest_s": 39.2,
+      "slots": 0,
+      "gist_used": 0,
+      "entries": [
+        {
+          "task": "retry_backoff",
+          "valid_code": false,
+          "reuse": {
+            "retry": true,
+            "backoff_delay": true
+          },
+          "retrieval_hit": {
+            "retry": false,
+            "backoff_delay": true
+          },
+          "answer": "```python\nfrom core.utils import backoff_delay, parse_duration\n\ndef reprocess_failed(records):\n    \"\"\"\n    Reprocess failed records with exponential backoff, reusing project helpers.\n    \n    Args:\n        records (list[dict]): List of failed record dictionaries.\n        \n    Returns:\n        list[dict]: Updated records with 'retry_delay_ms' added.\n    \"\"\"\n    updated_records = []\n    \n    for record in records:\n        # Parse timeout from payload (assuming record has 'payload' or similar structure)\n        # Based on timeout_ms helper, we expect a 'payload' key containing 'timeout'\n        payload = record.get(\"payload\", {})\n        timeout_ms = parse_duration(payload.get(\"timeout\", \"5s\"))\n        \n        # Calculate backoff delay based on attempt count (assuming 'attempt' exists in record)\n        attempt = record.get(\"attempt\", 0",
+          "injected": [
+            "def backoff_delay(attempt, base=100, cap=30_000):\n    \"\"\"Exponential backoff delay in ms for a zero-based attempt.\"\"\"\n    return clamp(base * (2 ** attempt), base, cap)",
+            "def timeout_ms(self, payload):\n        \"\"\"Parse a request timeout into milliseconds.\"\"\"\n        return parse_duration(payload.get(\"timeout\", \"5s\"))",
+            "def timeout_ms(self, payload):\n        \"\"\"Parse a request timeout into milliseconds.\"\"\"\n        return parse_duration(payload.get(\"timeout\", \"5s\"))",
+            "def timeout_ms(self, payload):\n        \"\"\"Parse a request timeout into milliseconds.\"\"\"\n        return parse_duration(payload.get(\"timeout\", \"5s\"))",
+            "def timeout_ms(self, payload):\n        \"\"\"Parse a request timeout into milliseconds.\"\"\"\n        return parse_duration(payload.get(\"timeout\", \"5s\"))",
+            "def timeout_ms(self, payload):\n        \"\"\"Parse a request timeout into milliseconds.\"\"\"\n        return parse_duration(payload.get(\"timeout\", \"5s\"))"
+          ],
+          "def_hits": {
+            "retry": false,
+            "backoff_delay": true
+          }
+        },
+        {
+          "task": "parse_clamp",
+          "valid_code": false,
+          "reuse": {
+            "parse_duration": true,
+            "clamp": true
+          },
+          "retrieval_hit": {
+            "parse_duration": true,
+            "clamp": true
+          },
+          "answer": "```python\ndef safe_timeout(text: str) -> int:\n    \"\"\"Parse a timeout string into milliseconds and clamp to a safe range.\"\"\"\n    from core.utils import parse_duration, clamp\n\n    raw_ms = parse_duration(text)\n    return clamp(raw_ms, 0, 1_000_000)\n```",
+          "injected": [
+            "def clamp(value, lo, hi):\n    \"\"\"Clamp value into the inclusive range [lo, hi].\"\"\"\n    return max(lo, min(hi, value))",
+            "def validate(self, payload):\n        \"\"\"Return True when the numeric field is within a safe range.\"\"\"\n        value = parse_int(payload.get(\"duration\"), -1)\n        return value == clamp(value, 0, 1_000_000)",
+            "def validate(self, payload):\n        \"\"\"Return True when the numeric field is within a safe range.\"\"\"\n        value = parse_int(payload.get(\"duration\"), -1)\n        return value == clamp(value, 0, 1_000_000)",
+            "def timeout_ms(self, payload):\n        \"\"\"Parse a request timeout into milliseconds.\"\"\"\n        return parse_duration(payload.get(\"timeout\", \"5s\"))",
+            "def timeout_ms(self, payload):\n        \"\"\"Parse a request timeout into milliseconds.\"\"\"\n        return parse_duration(payload.get(\"timeout\", \"5s\"))",
+            "def timeout_ms(self, payload):\n        \"\"\"Parse a request timeout into milliseconds.\"\"\"\n        return parse_duration(payload.get(\"timeout\", \"5s\"))"
+          ],
+          "def_hits": {
+            "parse_duration": false,
+            "clamp": true
+          }
+        },
+        {
+          "task": "batch_dedupe",
+          "valid_code": false,
+          "reuse": {
+            "dedupe": true,
+            "chunked": true
+          },
+          "retrieval_hit": {
+            "dedupe": true,
+            "chunked": true
+          },
+          "answer": "```python\nfrom core.utils import dedupe\n\ndef prepare_batches(keys, size):\n    \"\"\"Deduplicate record keys and split them into fixed-size batches.\"\"\"\n    unique_keys = dedupe(keys)\n    return list(chunked(unique_keys, size))\n```",
+          "injected": [
+            "def chunked(items, size):\n    \"\"\"Yield successive fixed-size chunks from a sequence.\"\"\"\n    for i in range(0, len(items), size):\n        yield items[i : i + size]",
+            "def clamp(value, lo, hi):\n    \"\"\"Clamp value into the inclusive range [lo, hi].\"\"\"\n    return max(lo, min(hi, value))",
+            "def process(self, records):\n        \"\"\"Deduplicate and store records with retry on transient failure.\"\"\"\n        unique = dedupe(records)\n        return retry(lambda: self._repo.bulk_put(unique))",
+            "def process(self, records):\n        \"\"\"Deduplicate and store records with retry on transient failure.\"\"\"\n        unique = dedupe(records)\n        return retry(lambda: self._repo.bulk_put(unique))",
+            "def process(self, records):\n        \"\"\"Deduplicate and store records with retry on transient failure.\"\"\"\n        unique = dedupe(records)\n        return retry(lambda: self._repo.bulk_put(unique))",
+            "def process(self, records):\n        \"\"\"Deduplicate and store records with retry on transient failure.\"\"\"\n        unique = dedupe(records)\n        return retry(lambda: self._repo.bulk_put(unique))"
+          ],
+          "def_hits": {
+            "dedupe": false,
+            "chunked": true
+          }
+        },
+        {
+          "task": "slug_total",
+          "valid_code": true,
+          "reuse": {
+            "slugify": true,
+            "compute_total": true
+          },
+          "retrieval_hit": {
+            "slugify": false,
+            "compute_total": true
+          },
+          "answer": "def name_and_total(records, field):\n    \"\"\"Slugify record names and compute total of a numeric field.\"\"\"\n    from core.utils import slugify\n    names = [slugify(r.get(\"name\", \"\")) for r in records]\n    total = compute_total(records, field)\n    return {\"names\": names, \"total\": round(total, 3)}",
+          "injected": [
+            "def compute_total(rows, field):\n    \"\"\"Sum a numeric field over dict rows.\"\"\"\n    return sum(float(r.get(field, 0) or 0) for r in rows)",
+            "def clamp(value, lo, hi):\n    \"\"\"Clamp value into the inclusive range [lo, hi].\"\"\"\n    return max(lo, min(hi, value))",
+            "def summarize(self, records):\n        \"\"\"Aggregate the numeric field and the domain metric over records.\"\"\"\n        rows = [r.__dict__ for r in records]\n        total = compute_total(rows, \"price\")\n        metric = sum(self.domain_metric(r) for r in records)\n        return {\"n\": len(records), \"total\": round(total, 3), \"metric\": round(metric, 3)}",
+            "def summarize(self, records):\n        \"\"\"Aggregate the numeric field and the domain metric over records.\"\"\"\n        rows = [r.__dict__ for r in records]\n        total = compute_total(rows, \"price\")\n        metric = sum(self.domain_metric(r) for r in records)\n        return {\"n\": len(records), \"total\": round(total, 3), \"metric\": round(metric, 3)}",
+            "def summarize(self, records):\n        \"\"\"Aggregate the numeric field and the domain metric over records.\"\"\"\n        rows = [r.__dict__ for r in records]\n        total = compute_total(rows, \"balance\")\n        metric = sum(self.domain_metric(r) for r in records)\n        return {\"n\": len(records), \"total\": round(total, 3), \"metric\": round(metric, 3)}",
+            "def summarize(self, records):\n        \"\"\"Aggregate the numeric field and the domain metric over records.\"\"\"\n        rows = [r.__dict__ for r in records]\n        total = compute_total(rows, \"strength\")\n        metric = sum(self.domain_metric(r) for r in records)\n        return {\"n\": len(records), \"total\": round(total, 3), \"metric\": round(metric, 3)}"
+          ],
+          "def_hits": {
+            "slugify": false,
+            "compute_total": true
+          }
+        },
+        {
+          "task": "invoice_summary",
+          "valid_code": false,
+          "reuse": {
+            "summarize": true,
+            "domain_metric": false
+          },
+          "retrieval_hit": {
+            "summarize": true,
+            "domain_metric": false
+          },
+          "answer": "```python\ndef summary(self, payload):\n    \"\"\"Return an aggregate summary of invoice records.\"\"\"\n    return self._service.summarize(self._service._repo.list())\n```",
+          "injected": [
+            "def __init__(self):\n        self.routes = {}\n        self.routes[\"invoice\"] = InvoiceHandler()\n        self.routes[\"order\"] = OrderHandler()\n        self.routes[\"product\"] = ProductHandler()\n        self.routes[\"payment\"] = PaymentHandler()\n        self.routes[\"shipment\"] = ShipmentHandler()\n        self.routes[\"ticket\"] = TicketHandler()\n        self.routes[\"session\"] = SessionHandler()\n        self.routes[\"metric\"] = MetricHandler()\n        self.routes[\"contract\"] = ContractHandler()\n        self.routes[\"visit\"] = VisitHandler()\n        self.routes[\"signal\"] = SignalHandler()\n        self.routes[\"batch\"] = BatchHandler()\n        self.routes[\"route\"] = RouteHandler()\n        self.routes[\"account\"] = AccountHandler()\n        self.routes[\"event\"] = EventHandler()\n        self.routes[\"document\"] = DocumentHandler()\n        self.routes[\"subscription\"] = SubscriptionHandler()\n        self.routes[\"notification\"] = NotificationHandler()",
+            "def summary(self, payload):\n        \"\"\"Return an aggregate summary of invoice records.\"\"\"\n        return self._service.summarize(self._service._repo.list())",
+            "def summary(self, payload):\n        \"\"\"Return an aggregate summary of order records.\"\"\"\n        return self._service.summarize(self._service._repo.list())",
+            "def summary(self, payload):\n        \"\"\"Return an aggregate summary of shipment records.\"\"\"\n        return self._service.summarize(self._service._repo.list())",
+            "def summary(self, payload):\n        \"\"\"Return an aggregate summary of payment records.\"\"\"\n        return self._service.summarize(self._service._repo.list())",
+            "def summary(self, payload):\n        \"\"\"Return an aggregate summary of ticket records.\"\"\"\n        return self._service.summarize(self._service._repo.list())"
+          ],
+          "def_hits": {
+            "summarize": false,
+            "domain_metric": false
+          }
+        }
+      ]
+    },
+    "static_a05": {
+      "reuse": 9,
+      "hits": 7,
+      "def_hits": 4,
+      "ingest_s": 37.3,
+      "slots": 512,
+      "gist_used": 5,
+      "entries": [
+        {
+          "task": "retry_backoff",
+          "valid_code": false,
+          "reuse": {
+            "retry": true,
+            "backoff_delay": true
+          },
+          "retrieval_hit": {
+            "retry": false,
+            "backoff_delay": true
+          },
+          "answer": "```python\nfrom core.utils import backoff_delay, parse_duration\n\ndef reprocess_failed(records):\n    \"\"\"\n    Reprocess failed records with exponential backoff, reusing project helpers.\n    \n    Args:\n        records (list[dict]): List of failed record dictionaries.\n        \n    Returns:\n        list[dict]: Updated records with 'retry_delay_ms' added.\n    \"\"\"\n    updated_records = []\n    \n    for record in records:\n        # Parse timeout from payload (assuming record has 'payload' or similar structure)\n        # Based on timeout_ms helper, we expect a 'payload' key containing 'timeout'\n        payload = record.get(\"payload\", {})\n        timeout_ms = parse_duration(payload.get(\"timeout\", \"5s\"))\n        \n        # Calculate backoff delay based on attempt count (assuming 'attempt' exists in record)\n        attempt = record.get(\"attempt\", 0",
+          "injected": [
+            "def backoff_delay(attempt, base=100, cap=30_000):\n    \"\"\"Exponential backoff delay in ms for a zero-based attempt.\"\"\"\n    return clamp(base * (2 ** attempt), base, cap)",
+            "def timeout_ms(self, payload):\n        \"\"\"Parse a request timeout into milliseconds.\"\"\"\n        return parse_duration(payload.get(\"timeout\", \"5s\"))",
+            "def timeout_ms(self, payload):\n        \"\"\"Parse a request timeout into milliseconds.\"\"\"\n        return parse_duration(payload.get(\"timeout\", \"5s\"))",
+            "def timeout_ms(self, payload):\n        \"\"\"Parse a request timeout into milliseconds.\"\"\"\n        return parse_duration(payload.get(\"timeout\", \"5s\"))",
+            "def timeout_ms(self, payload):\n        \"\"\"Parse a request timeout into milliseconds.\"\"\"\n        return parse_duration(payload.get(\"timeout\", \"5s\"))",
+            "def timeout_ms(self, payload):\n        \"\"\"Parse a request timeout into milliseconds.\"\"\"\n        return parse_duration(payload.get(\"timeout\", \"5s\"))"
+          ],
+          "def_hits": {
+            "retry": false,
+            "backoff_delay": true
+          }
+        },
+        {
+          "task": "parse_clamp",
+          "valid_code": false,
+          "reuse": {
+            "parse_duration": true,
+            "clamp": true
+          },
+          "retrieval_hit": {
+            "parse_duration": true,
+            "clamp": true
+          },
+          "answer": "```python\ndef safe_timeout(text: str) -> int:\n    \"\"\"Parse a timeout string into milliseconds and clamp to a safe range.\"\"\"\n    from core.utils import parse_duration, clamp\n\n    raw_ms = parse_duration(text)\n    return clamp(raw_ms, 0, 1_000_000)\n```",
+          "injected": [
+            "def clamp(value, lo, hi):\n    \"\"\"Clamp value into the inclusive range [lo, hi].\"\"\"\n    return max(lo, min(hi, value))",
+            "def validate(self, payload):\n        \"\"\"Return True when the numeric field is within a safe range.\"\"\"\n        value = parse_int(payload.get(\"duration\"), -1)\n        return value == clamp(value, 0, 1_000_000)",
+            "def validate(self, payload):\n        \"\"\"Return True when the numeric field is within a safe range.\"\"\"\n        value = parse_int(payload.get(\"duration\"), -1)\n        return value == clamp(value, 0, 1_000_000)",
+            "def timeout_ms(self, payload):\n        \"\"\"Parse a request timeout into milliseconds.\"\"\"\n        return parse_duration(payload.get(\"timeout\", \"5s\"))",
+            "def timeout_ms(self, payload):\n        \"\"\"Parse a request timeout into milliseconds.\"\"\"\n        return parse_duration(payload.get(\"timeout\", \"5s\"))",
+            "def timeout_ms(self, payload):\n        \"\"\"Parse a request timeout into milliseconds.\"\"\"\n        return parse_duration(payload.get(\"timeout\", \"5s\"))"
+          ],
+          "def_hits": {
+            "parse_duration": false,
+            "clamp": true
+          }
+        },
+        {
+          "task": "batch_dedupe",
+          "valid_code": false,
+          "reuse": {
+            "dedupe": true,
+            "chunked": true
+          },
+          "retrieval_hit": {
+            "dedupe": true,
+            "chunked": true
+          },
+          "answer": "```python\nfrom core.utils import dedupe\n\ndef prepare_batches(keys, size):\n    \"\"\"Deduplicate record keys and split them into fixed-size batches.\"\"\"\n    unique_keys = dedupe(keys)\n    return list(chunked(unique_keys, size))\n```",
+          "injected": [
+            "def chunked(items, size):\n    \"\"\"Yield successive fixed-size chunks from a sequence.\"\"\"\n    for i in range(0, len(items), size):\n        yield items[i : i + size]",
+            "def clamp(value, lo, hi):\n    \"\"\"Clamp value into the inclusive range [lo, hi].\"\"\"\n    return max(lo, min(hi, value))",
+            "def process(self, records):\n        \"\"\"Deduplicate and store records with retry on transient failure.\"\"\"\n        unique = dedupe(records)\n        return retry(lambda: self._repo.bulk_put(unique))",
+            "def process(self, records):\n        \"\"\"Deduplicate and store records with retry on transient failure.\"\"\"\n        unique = dedupe(records)\n        return retry(lambda: self._repo.bulk_put(unique))",
+            "def process(self, records):\n        \"\"\"Deduplicate and store records with retry on transient failure.\"\"\"\n        unique = dedupe(records)\n        return retry(lambda: self._repo.bulk_put(unique))",
+            "def process(self, records):\n        \"\"\"Deduplicate and store records with retry on transient failure.\"\"\"\n        unique = dedupe(records)\n        return retry(lambda: self._repo.bulk_put(unique))"
+          ],
+          "def_hits": {
+            "dedupe": false,
+            "chunked": true
+          }
+        },
+        {
+          "task": "slug_total",
+          "valid_code": true,
+          "reuse": {
+            "slugify": true,
+            "compute_total": true
+          },
+          "retrieval_hit": {
+            "slugify": false,
+            "compute_total": true
+          },
+          "answer": "def name_and_total(records, field):\n    \"\"\"Slugify a record name and compute the total of a numeric field over records.\"\"\"\n    name = slugify(records[0].__dict__.get(\"name\", \"\")) if records else \"\"\n    total = compute_total(records, field)\n    return name, round(total, 3)",
+          "injected": [
+            "def compute_total(rows, field):\n    \"\"\"Sum a numeric field over dict rows.\"\"\"\n    return sum(float(r.get(field, 0) or 0) for r in rows)",
+            "def new_metric(**kwargs):\n    \"\"\"Construct a metric from keyword fields.\"\"\"\n    return Metric(**kwargs)",
+            "def new_batch(**kwargs):\n    \"\"\"Construct a batch from keyword fields.\"\"\"\n    return Batch(**kwargs)",
+            "def summarize(self, records):\n        \"\"\"Aggregate the numeric field and the domain metric over records.\"\"\"\n        rows = [r.__dict__ for r in records]\n        total = compute_total(rows, \"price\")\n        metric = sum(self.domain_metric(r) for r in records)\n        return {\"n\": len(records), \"total\": round(total, 3), \"metric\": round(metric, 3)}",
+            "def summarize(self, records):\n        \"\"\"Aggregate the numeric field and the domain metric over records.\"\"\"\n        rows = [r.__dict__ for r in records]\n        total = compute_total(rows, \"price\")\n        metric = sum(self.domain_metric(r) for r in records)\n        return {\"n\": len(records), \"total\": round(total, 3), \"metric\": round(metric, 3)}",
+            "def new_route(**kwargs):\n    \"\"\"Construct a route from keyword fields.\"\"\"\n    return Route(**kwargs)"
+          ],
+          "def_hits": {
+            "slugify": false,
+            "compute_total": true
+          }
+        },
+        {
+          "task": "invoice_summary",
+          "valid_code": false,
+          "reuse": {
+            "summarize": true,
+            "domain_metric": false
+          },
+          "retrieval_hit": {
+            "summarize": true,
+            "domain_metric": false
+          },
+          "answer": "```python\ndef summary(self, payload):\n    \"\"\"Return an aggregate summary of invoice records.\"\"\"\n    return self._service.summarize(self._service._repo.list())\n```",
+          "injected": [
+            "def __init__(self):\n        self.routes = {}\n        self.routes[\"invoice\"] = InvoiceHandler()\n        self.routes[\"order\"] = OrderHandler()\n        self.routes[\"product\"] = ProductHandler()\n        self.routes[\"payment\"] = PaymentHandler()\n        self.routes[\"shipment\"] = ShipmentHandler()\n        self.routes[\"ticket\"] = TicketHandler()\n        self.routes[\"session\"] = SessionHandler()\n        self.routes[\"metric\"] = MetricHandler()\n        self.routes[\"contract\"] = ContractHandler()\n        self.routes[\"visit\"] = VisitHandler()\n        self.routes[\"signal\"] = SignalHandler()\n        self.routes[\"batch\"] = BatchHandler()\n        self.routes[\"route\"] = RouteHandler()\n        self.routes[\"account\"] = AccountHandler()\n        self.routes[\"event\"] = EventHandler()\n        self.routes[\"document\"] = DocumentHandler()\n        self.routes[\"subscription\"] = SubscriptionHandler()\n        self.routes[\"notification\"] = NotificationHandler()",
+            "def summary(self, payload):\n        \"\"\"Return an aggregate summary of invoice records.\"\"\"\n        return self._service.summarize(self._service._repo.list())",
+            "def new_metric(**kwargs):\n    \"\"\"Construct a metric from keyword fields.\"\"\"\n    return Metric(**kwargs)",
+            "def new_route(**kwargs):\n    \"\"\"Construct a route from keyword fields.\"\"\"\n    return Route(**kwargs)",
+            "def new_batch(**kwargs):\n    \"\"\"Construct a batch from keyword fields.\"\"\"\n    return Batch(**kwargs)",
+            "def summary(self, payload):\n        \"\"\"Return an aggregate summary of order records.\"\"\"\n        return self._service.summarize(self._service._repo.list())"
+          ],
+          "def_hits": {
+            "summarize": false,
+            "domain_metric": false
+          }
+        }
+      ]
+    },
+    "living_a05": {
+      "reuse": 9,
+      "hits": 7,
+      "def_hits": 4,
+      "ingest_s": 37.4,
+      "slots": 512,
+      "gist_used": 5,
+      "entries": [
+        {
+          "task": "retry_backoff",
+          "valid_code": false,
+          "reuse": {
+            "retry": true,
+            "backoff_delay": true
+          },
+          "retrieval_hit": {
+            "retry": false,
+            "backoff_delay": true
+          },
+          "answer": "```python\nfrom core.utils import backoff_delay, parse_duration\n\ndef reprocess_failed(records):\n    \"\"\"\n    Reprocess failed records with exponential backoff, reusing project helpers.\n    \n    Args:\n        records (list[dict]): List of failed record dictionaries.\n        \n    Returns:\n        list[dict]: Updated records with 'retry_delay_ms' added.\n    \"\"\"\n    updated_records = []\n    \n    for record in records:\n        # Parse timeout from payload (assuming record has 'payload' or similar structure)\n        # Based on timeout_ms helper, we expect a 'payload' key containing 'timeout'\n        payload = record.get(\"payload\", {})\n        timeout_ms = parse_duration(payload.get(\"timeout\", \"5s\"))\n        \n        # Calculate backoff delay based on attempt count (assuming 'attempt' exists in record)\n        attempt = record.get(\"attempt\", 0",
+          "injected": [
+            "def backoff_delay(attempt, base=100, cap=30_000):\n    \"\"\"Exponential backoff delay in ms for a zero-based attempt.\"\"\"\n    return clamp(base * (2 ** attempt), base, cap)",
+            "def timeout_ms(self, payload):\n        \"\"\"Parse a request timeout into milliseconds.\"\"\"\n        return parse_duration(payload.get(\"timeout\", \"5s\"))",
+            "def timeout_ms(self, payload):\n        \"\"\"Parse a request timeout into milliseconds.\"\"\"\n        return parse_duration(payload.get(\"timeout\", \"5s\"))",
+            "def timeout_ms(self, payload):\n        \"\"\"Parse a request timeout into milliseconds.\"\"\"\n        return parse_duration(payload.get(\"timeout\", \"5s\"))",
+            "def timeout_ms(self, payload):\n        \"\"\"Parse a request timeout into milliseconds.\"\"\"\n        return parse_duration(payload.get(\"timeout\", \"5s\"))",
+            "def timeout_ms(self, payload):\n        \"\"\"Parse a request timeout into milliseconds.\"\"\"\n        return parse_duration(payload.get(\"timeout\", \"5s\"))"
+          ],
+          "def_hits": {
+            "retry": false,
+            "backoff_delay": true
+          }
+        },
+        {
+          "task": "parse_clamp",
+          "valid_code": false,
+          "reuse": {
+            "parse_duration": true,
+            "clamp": true
+          },
+          "retrieval_hit": {
+            "parse_duration": true,
+            "clamp": true
+          },
+          "answer": "```python\ndef safe_timeout(text: str) -> int:\n    \"\"\"Parse a timeout string into milliseconds and clamp to a safe range.\"\"\"\n    from core.utils import parse_duration, clamp\n\n    raw_ms = parse_duration(text)\n    return clamp(raw_ms, 0, 1_000_000)\n```",
+          "injected": [
+            "def clamp(value, lo, hi):\n    \"\"\"Clamp value into the inclusive range [lo, hi].\"\"\"\n    return max(lo, min(hi, value))",
+            "def validate(self, payload):\n        \"\"\"Return True when the numeric field is within a safe range.\"\"\"\n        value = parse_int(payload.get(\"duration\"), -1)\n        return value == clamp(value, 0, 1_000_000)",
+            "def validate(self, payload):\n        \"\"\"Return True when the numeric field is within a safe range.\"\"\"\n        value = parse_int(payload.get(\"duration\"), -1)\n        return value == clamp(value, 0, 1_000_000)",
+            "def timeout_ms(self, payload):\n        \"\"\"Parse a request timeout into milliseconds.\"\"\"\n        return parse_duration(payload.get(\"timeout\", \"5s\"))",
+            "def timeout_ms(self, payload):\n        \"\"\"Parse a request timeout into milliseconds.\"\"\"\n        return parse_duration(payload.get(\"timeout\", \"5s\"))",
+            "def timeout_ms(self, payload):\n        \"\"\"Parse a request timeout into milliseconds.\"\"\"\n        return parse_duration(payload.get(\"timeout\", \"5s\"))"
+          ],
+          "def_hits": {
+            "parse_duration": false,
+            "clamp": true
+          }
+        },
+        {
+          "task": "batch_dedupe",
+          "valid_code": false,
+          "reuse": {
+            "dedupe": true,
+            "chunked": true
+          },
+          "retrieval_hit": {
+            "dedupe": true,
+            "chunked": true
+          },
+          "answer": "```python\nfrom core.utils import dedupe\n\ndef prepare_batches(keys, size):\n    \"\"\"Deduplicate record keys and split them into fixed-size batches.\"\"\"\n    unique_keys = dedupe(keys)\n    return list(chunked(unique_keys, size))\n```",
+          "injected": [
+            "def chunked(items, size):\n    \"\"\"Yield successive fixed-size chunks from a sequence.\"\"\"\n    for i in range(0, len(items), size):\n        yield items[i : i + size]",
+            "def clamp(value, lo, hi):\n    \"\"\"Clamp value into the inclusive range [lo, hi].\"\"\"\n    return max(lo, min(hi, value))",
+            "def process(self, records):\n        \"\"\"Deduplicate and store records with retry on transient failure.\"\"\"\n        unique = dedupe(records)\n        return retry(lambda: self._repo.bulk_put(unique))",
+            "def process(self, records):\n        \"\"\"Deduplicate and store records with retry on transient failure.\"\"\"\n        unique = dedupe(records)\n        return retry(lambda: self._repo.bulk_put(unique))",
+            "def process(self, records):\n        \"\"\"Deduplicate and store records with retry on transient failure.\"\"\"\n        unique = dedupe(records)\n        return retry(lambda: self._repo.bulk_put(unique))",
+            "def process(self, records):\n        \"\"\"Deduplicate and store records with retry on transient failure.\"\"\"\n        unique = dedupe(records)\n        return retry(lambda: self._repo.bulk_put(unique))"
+          ],
+          "def_hits": {
+            "dedupe": false,
+            "chunked": true
+          }
+        },
+        {
+          "task": "slug_total",
+          "valid_code": true,
+          "reuse": {
+            "slugify": true,
+            "compute_total": true
+          },
+          "retrieval_hit": {
+            "slugify": false,
+            "compute_total": true
+          },
+          "answer": "def name_and_total(records, field):\n    \"\"\"Slugify a record name and compute the total of a numeric field over records.\"\"\"\n    name = slugify(records[0].__dict__.get(\"name\", \"\")) if records else \"\"\n    total = compute_total(records, field)\n    return name, round(total, 3)",
+          "injected": [
+            "def compute_total(rows, field):\n    \"\"\"Sum a numeric field over dict rows.\"\"\"\n    return sum(float(r.get(field, 0) or 0) for r in rows)",
+            "def new_metric(**kwargs):\n    \"\"\"Construct a metric from keyword fields.\"\"\"\n    return Metric(**kwargs)",
+            "def new_batch(**kwargs):\n    \"\"\"Construct a batch from keyword fields.\"\"\"\n    return Batch(**kwargs)",
+            "def summarize(self, records):\n        \"\"\"Aggregate the numeric field and the domain metric over records.\"\"\"\n        rows = [r.__dict__ for r in records]\n        total = compute_total(rows, \"price\")\n        metric = sum(self.domain_metric(r) for r in records)\n        return {\"n\": len(records), \"total\": round(total, 3), \"metric\": round(metric, 3)}",
+            "def summarize(self, records):\n        \"\"\"Aggregate the numeric field and the domain metric over records.\"\"\"\n        rows = [r.__dict__ for r in records]\n        total = compute_total(rows, \"price\")\n        metric = sum(self.domain_metric(r) for r in records)\n        return {\"n\": len(records), \"total\": round(total, 3), \"metric\": round(metric, 3)}",
+            "def new_route(**kwargs):\n    \"\"\"Construct a route from keyword fields.\"\"\"\n    return Route(**kwargs)"
+          ],
+          "def_hits": {
+            "slugify": false,
+            "compute_total": true
+          }
+        },
+        {
+          "task": "invoice_summary",
+          "valid_code": false,
+          "reuse": {
+            "summarize": true,
+            "domain_metric": false
+          },
+          "retrieval_hit": {
+            "summarize": true,
+            "domain_metric": false
+          },
+          "answer": "```python\ndef summary(self, payload):\n    \"\"\"Return an aggregate summary of invoice records.\"\"\"\n    return self._service.summarize(self._service._repo.list())\n```",
+          "injected": [
+            "def __init__(self):\n        self.routes = {}\n        self.routes[\"invoice\"] = InvoiceHandler()\n        self.routes[\"order\"] = OrderHandler()\n        self.routes[\"product\"] = ProductHandler()\n        self.routes[\"payment\"] = PaymentHandler()\n        self.routes[\"shipment\"] = ShipmentHandler()\n        self.routes[\"ticket\"] = TicketHandler()\n        self.routes[\"session\"] = SessionHandler()\n        self.routes[\"metric\"] = MetricHandler()\n        self.routes[\"contract\"] = ContractHandler()\n        self.routes[\"visit\"] = VisitHandler()\n        self.routes[\"signal\"] = SignalHandler()\n        self.routes[\"batch\"] = BatchHandler()\n        self.routes[\"route\"] = RouteHandler()\n        self.routes[\"account\"] = AccountHandler()\n        self.routes[\"event\"] = EventHandler()\n        self.routes[\"document\"] = DocumentHandler()\n        self.routes[\"subscription\"] = SubscriptionHandler()\n        self.routes[\"notification\"] = NotificationHandler()",
+            "def summary(self, payload):\n        \"\"\"Return an aggregate summary of invoice records.\"\"\"\n        return self._service.summarize(self._service._repo.list())",
+            "def new_metric(**kwargs):\n    \"\"\"Construct a metric from keyword fields.\"\"\"\n    return Metric(**kwargs)",
+            "def new_route(**kwargs):\n    \"\"\"Construct a route from keyword fields.\"\"\"\n    return Route(**kwargs)",
+            "def new_batch(**kwargs):\n    \"\"\"Construct a batch from keyword fields.\"\"\"\n    return Batch(**kwargs)",
+            "def summary(self, payload):\n        \"\"\"Return an aggregate summary of order records.\"\"\"\n        return self._service.summarize(self._service._repo.list())"
+          ],
+          "def_hits": {
+            "summarize": false,
+            "domain_metric": false
+          }
+        }
+      ]
+    },
+    "static_a10": {
+      "reuse": 9,
+      "hits": 7,
+      "def_hits": 4,
+      "ingest_s": 38.7,
+      "slots": 512,
+      "gist_used": 5,
+      "entries": [
+        {
+          "task": "retry_backoff",
+          "valid_code": false,
+          "reuse": {
+            "retry": true,
+            "backoff_delay": true
+          },
+          "retrieval_hit": {
+            "retry": false,
+            "backoff_delay": true
+          },
+          "answer": "```python\nfrom core.utils import backoff_delay, parse_duration\n\ndef reprocess_failed(records):\n    \"\"\"\n    Reprocess failed records with exponential backoff, reusing project helpers.\n    \n    Args:\n        records (list[dict]): List of failed record dictionaries.\n        \n    Returns:\n        list[dict]: Updated records with 'retry_delay_ms' added.\n    \"\"\"\n    updated_records = []\n    \n    for record in records:\n        # Parse timeout from payload (assuming record has 'payload' or similar structure)\n        # Based on timeout_ms helper, we expect a 'payload' key containing 'timeout'\n        payload = record.get(\"payload\", {})\n        timeout_ms = parse_duration(payload.get(\"timeout\", \"5s\"))\n        \n        # Calculate backoff delay based on attempt count (assuming 'attempt' exists in record)\n        attempt = record.get(\"attempt\", 0",
+          "injected": [
+            "def backoff_delay(attempt, base=100, cap=30_000):\n    \"\"\"Exponential backoff delay in ms for a zero-based attempt.\"\"\"\n    return clamp(base * (2 ** attempt), base, cap)",
+            "def timeout_ms(self, payload):\n        \"\"\"Parse a request timeout into milliseconds.\"\"\"\n        return parse_duration(payload.get(\"timeout\", \"5s\"))",
+            "def timeout_ms(self, payload):\n        \"\"\"Parse a request timeout into milliseconds.\"\"\"\n        return parse_duration(payload.get(\"timeout\", \"5s\"))",
+            "def timeout_ms(self, payload):\n        \"\"\"Parse a request timeout into milliseconds.\"\"\"\n        return parse_duration(payload.get(\"timeout\", \"5s\"))",
+            "def timeout_ms(self, payload):\n        \"\"\"Parse a request timeout into milliseconds.\"\"\"\n        return parse_duration(payload.get(\"timeout\", \"5s\"))",
+            "def timeout_ms(self, payload):\n        \"\"\"Parse a request timeout into milliseconds.\"\"\"\n        return parse_duration(payload.get(\"timeout\", \"5s\"))"
+          ],
+          "def_hits": {
+            "retry": false,
+            "backoff_delay": true
+          }
+        },
+        {
+          "task": "parse_clamp",
+          "valid_code": false,
+          "reuse": {
+            "parse_duration": true,
+            "clamp": true
+          },
+          "retrieval_hit": {
+            "parse_duration": true,
+            "clamp": true
+          },
+          "answer": "```python\ndef safe_timeout(text: str) -> int:\n    \"\"\"Parse a timeout string into milliseconds and clamp to a safe range.\"\"\"\n    from core.utils import parse_duration, clamp\n\n    raw_ms = parse_duration(text)\n    return clamp(raw_ms, 0, 1_000_000)\n```",
+          "injected": [
+            "def clamp(value, lo, hi):\n    \"\"\"Clamp value into the inclusive range [lo, hi].\"\"\"\n    return max(lo, min(hi, value))",
+            "def validate(self, payload):\n        \"\"\"Return True when the numeric field is within a safe range.\"\"\"\n        value = parse_int(payload.get(\"duration\"), -1)\n        return value == clamp(value, 0, 1_000_000)",
+            "def validate(self, payload):\n        \"\"\"Return True when the numeric field is within a safe range.\"\"\"\n        value = parse_int(payload.get(\"duration\"), -1)\n        return value == clamp(value, 0, 1_000_000)",
+            "def timeout_ms(self, payload):\n        \"\"\"Parse a request timeout into milliseconds.\"\"\"\n        return parse_duration(payload.get(\"timeout\", \"5s\"))",
+            "def timeout_ms(self, payload):\n        \"\"\"Parse a request timeout into milliseconds.\"\"\"\n        return parse_duration(payload.get(\"timeout\", \"5s\"))",
+            "def timeout_ms(self, payload):\n        \"\"\"Parse a request timeout into milliseconds.\"\"\"\n        return parse_duration(payload.get(\"timeout\", \"5s\"))"
+          ],
+          "def_hits": {
+            "parse_duration": false,
+            "clamp": true
+          }
+        },
+        {
+          "task": "batch_dedupe",
+          "valid_code": false,
+          "reuse": {
+            "dedupe": true,
+            "chunked": true
+          },
+          "retrieval_hit": {
+            "dedupe": true,
+            "chunked": true
+          },
+          "answer": "```python\nfrom core.utils import dedupe\n\ndef prepare_batches(keys, size):\n    \"\"\"Deduplicate record keys and split them into fixed-size batches.\"\"\"\n    unique_keys = dedupe(keys)\n    return list(chunked(unique_keys, size))\n```",
+          "injected": [
+            "def clamp(value, lo, hi):\n    \"\"\"Clamp value into the inclusive range [lo, hi].\"\"\"\n    return max(lo, min(hi, value))",
+            "def chunked(items, size):\n    \"\"\"Yield successive fixed-size chunks from a sequence.\"\"\"\n    for i in range(0, len(items), size):\n        yield items[i : i + size]",
+            "def process(self, records):\n        \"\"\"Deduplicate and store records with retry on transient failure.\"\"\"\n        unique = dedupe(records)\n        return retry(lambda: self._repo.bulk_put(unique))",
+            "def process(self, records):\n        \"\"\"Deduplicate and store records with retry on transient failure.\"\"\"\n        unique = dedupe(records)\n        return retry(lambda: self._repo.bulk_put(unique))",
+            "def process(self, records):\n        \"\"\"Deduplicate and store records with retry on transient failure.\"\"\"\n        unique = dedupe(records)\n        return retry(lambda: self._repo.bulk_put(unique))",
+            "def process(self, records):\n        \"\"\"Deduplicate and store records with retry on transient failure.\"\"\"\n        unique = dedupe(records)\n        return retry(lambda: self._repo.bulk_put(unique))"
+          ],
+          "def_hits": {
+            "dedupe": false,
+            "chunked": true
+          }
+        },
+        {
+          "task": "slug_total",
+          "valid_code": true,
+          "reuse": {
+            "slugify": true,
+            "compute_total": true
+          },
+          "retrieval_hit": {
+            "slugify": false,
+            "compute_total": true
+          },
+          "answer": "def name_and_total(records, field):\n    \"\"\"Slugify record names and compute total of a numeric field.\"\"\"\n    from core.utils import slugify\n    names = [slugify(r.get(\"name\", \"\")) for r in records]\n    total = compute_total(records, field)\n    return {\"names\": names, \"total\": round(total, 3)}",
+          "injected": [
+            "def compute_total(rows, field):\n    \"\"\"Sum a numeric field over dict rows.\"\"\"\n    return sum(float(r.get(field, 0) or 0) for r in rows)",
+            "def new_metric(**kwargs):\n    \"\"\"Construct a metric from keyword fields.\"\"\"\n    return Metric(**kwargs)",
+            "def new_batch(**kwargs):\n    \"\"\"Construct a batch from keyword fields.\"\"\"\n    return Batch(**kwargs)",
+            "def new_route(**kwargs):\n    \"\"\"Construct a route from keyword fields.\"\"\"\n    return Route(**kwargs)",
+            "def summarize(self, records):\n        \"\"\"Aggregate the numeric field and the domain metric over records.\"\"\"\n        rows = [r.__dict__ for r in records]\n        total = compute_total(rows, \"price\")\n        metric = sum(self.domain_metric(r) for r in records)\n        return {\"n\": len(records), \"total\": round(total, 3), \"metric\": round(metric, 3)}",
+            "def summarize(self, records):\n        \"\"\"Aggregate the numeric field and the domain metric over records.\"\"\"\n        rows = [r.__dict__ for r in records]\n        total = compute_total(rows, \"price\")\n        metric = sum(self.domain_metric(r) for r in records)\n        return {\"n\": len(records), \"total\": round(total, 3), \"metric\": round(metric, 3)}"
+          ],
+          "def_hits": {
+            "slugify": false,
+            "compute_total": true
+          }
+        },
+        {
+          "task": "invoice_summary",
+          "valid_code": false,
+          "reuse": {
+            "summarize": true,
+            "domain_metric": false
+          },
+          "retrieval_hit": {
+            "summarize": true,
+            "domain_metric": false
+          },
+          "answer": "```python\ndef summary(self, payload):\n    \"\"\"Return an aggregate summary of invoice records.\"\"\"\n    return self._service.summarize(self._service._repo.list())\n```",
+          "injected": [
+            "def __init__(self):\n        self.routes = {}\n        self.routes[\"invoice\"] = InvoiceHandler()\n        self.routes[\"order\"] = OrderHandler()\n        self.routes[\"product\"] = ProductHandler()\n        self.routes[\"payment\"] = PaymentHandler()\n        self.routes[\"shipment\"] = ShipmentHandler()\n        self.routes[\"ticket\"] = TicketHandler()\n        self.routes[\"session\"] = SessionHandler()\n        self.routes[\"metric\"] = MetricHandler()\n        self.routes[\"contract\"] = ContractHandler()\n        self.routes[\"visit\"] = VisitHandler()\n        self.routes[\"signal\"] = SignalHandler()\n        self.routes[\"batch\"] = BatchHandler()\n        self.routes[\"route\"] = RouteHandler()\n        self.routes[\"account\"] = AccountHandler()\n        self.routes[\"event\"] = EventHandler()\n        self.routes[\"document\"] = DocumentHandler()\n        self.routes[\"subscription\"] = SubscriptionHandler()\n        self.routes[\"notification\"] = NotificationHandler()",
+            "def new_metric(**kwargs):\n    \"\"\"Construct a metric from keyword fields.\"\"\"\n    return Metric(**kwargs)",
+            "def new_route(**kwargs):\n    \"\"\"Construct a route from keyword fields.\"\"\"\n    return Route(**kwargs)",
+            "def new_batch(**kwargs):\n    \"\"\"Construct a batch from keyword fields.\"\"\"\n    return Batch(**kwargs)",
+            "def summary(self, payload):\n        \"\"\"Return an aggregate summary of invoice records.\"\"\"\n        return self._service.summarize(self._service._repo.list())",
+            "def new_signal(**kwargs):\n    \"\"\"Construct a signal from keyword fields.\"\"\"\n    return Signal(**kwargs)"
+          ],
+          "def_hits": {
+            "summarize": false,
+            "domain_metric": false
+          }
+        }
+      ]
+    },
+    "living_a10": {
+      "reuse": 9,
+      "hits": 6,
+      "def_hits": 4,
+      "ingest_s": 38.7,
+      "slots": 512,
+      "gist_used": 5,
+      "entries": [
+        {
+          "task": "retry_backoff",
+          "valid_code": false,
+          "reuse": {
+            "retry": true,
+            "backoff_delay": true
+          },
+          "retrieval_hit": {
+            "retry": false,
+            "backoff_delay": true
+          },
+          "answer": "```python\nfrom core.utils import backoff_delay, parse_duration\n\ndef reprocess_failed(records):\n    \"\"\"\n    Reprocess failed records with exponential backoff, reusing project helpers.\n    \n    Args:\n        records (list[dict]): List of failed record dictionaries.\n        \n    Returns:\n        list[dict]: Updated records with 'retry_delay_ms' added.\n    \"\"\"\n    updated_records = []\n    \n    for record in records:\n        # Parse timeout from payload (assuming record has 'payload' or similar structure)\n        # Based on timeout_ms helper, we expect a 'payload' key containing 'timeout'\n        payload = record.get(\"payload\", {})\n        timeout_ms = parse_duration(payload.get(\"timeout\", \"5s\"))\n        \n        # Calculate backoff delay based on attempt count (assuming 'attempt' exists in record)\n        attempt = record.get(\"attempt\", 0",
+          "injected": [
+            "def backoff_delay(attempt, base=100, cap=30_000):\n    \"\"\"Exponential backoff delay in ms for a zero-based attempt.\"\"\"\n    return clamp(base * (2 ** attempt), base, cap)",
+            "def timeout_ms(self, payload):\n        \"\"\"Parse a request timeout into milliseconds.\"\"\"\n        return parse_duration(payload.get(\"timeout\", \"5s\"))",
+            "def timeout_ms(self, payload):\n        \"\"\"Parse a request timeout into milliseconds.\"\"\"\n        return parse_duration(payload.get(\"timeout\", \"5s\"))",
+            "def timeout_ms(self, payload):\n        \"\"\"Parse a request timeout into milliseconds.\"\"\"\n        return parse_duration(payload.get(\"timeout\", \"5s\"))",
+            "def timeout_ms(self, payload):\n        \"\"\"Parse a request timeout into milliseconds.\"\"\"\n        return parse_duration(payload.get(\"timeout\", \"5s\"))",
+            "def timeout_ms(self, payload):\n        \"\"\"Parse a request timeout into milliseconds.\"\"\"\n        return parse_duration(payload.get(\"timeout\", \"5s\"))"
+          ],
+          "def_hits": {
+            "retry": false,
+            "backoff_delay": true
+          }
+        },
+        {
+          "task": "parse_clamp",
+          "valid_code": false,
+          "reuse": {
+            "parse_duration": true,
+            "clamp": true
+          },
+          "retrieval_hit": {
+            "parse_duration": true,
+            "clamp": true
+          },
+          "answer": "```python\ndef safe_timeout(text: str) -> int:\n    \"\"\"Parse a timeout string into milliseconds and clamp to a safe range.\"\"\"\n    from core.utils import parse_duration, clamp\n\n    raw_ms = parse_duration(text)\n    return clamp(raw_ms, 0, 1_000_000)\n```",
+          "injected": [
+            "def clamp(value, lo, hi):\n    \"\"\"Clamp value into the inclusive range [lo, hi].\"\"\"\n    return max(lo, min(hi, value))",
+            "def validate(self, payload):\n        \"\"\"Return True when the numeric field is within a safe range.\"\"\"\n        value = parse_int(payload.get(\"duration\"), -1)\n        return value == clamp(value, 0, 1_000_000)",
+            "def validate(self, payload):\n        \"\"\"Return True when the numeric field is within a safe range.\"\"\"\n        value = parse_int(payload.get(\"duration\"), -1)\n        return value == clamp(value, 0, 1_000_000)",
+            "def timeout_ms(self, payload):\n        \"\"\"Parse a request timeout into milliseconds.\"\"\"\n        return parse_duration(payload.get(\"timeout\", \"5s\"))",
+            "def timeout_ms(self, payload):\n        \"\"\"Parse a request timeout into milliseconds.\"\"\"\n        return parse_duration(payload.get(\"timeout\", \"5s\"))",
+            "def timeout_ms(self, payload):\n        \"\"\"Parse a request timeout into milliseconds.\"\"\"\n        return parse_duration(payload.get(\"timeout\", \"5s\"))"
+          ],
+          "def_hits": {
+            "parse_duration": false,
+            "clamp": true
+          }
+        },
+        {
+          "task": "batch_dedupe",
+          "valid_code": false,
+          "reuse": {
+            "dedupe": true,
+            "chunked": true
+          },
+          "retrieval_hit": {
+            "dedupe": true,
+            "chunked": true
+          },
+          "answer": "```python\nfrom core.utils import dedupe\n\ndef prepare_batches(keys, size):\n    \"\"\"Deduplicate record keys and split them into fixed-size batches.\"\"\"\n    unique_keys = dedupe(keys)\n    return list(chunked(unique_keys, size))\n```",
+          "injected": [
+            "def clamp(value, lo, hi):\n    \"\"\"Clamp value into the inclusive range [lo, hi].\"\"\"\n    return max(lo, min(hi, value))",
+            "def chunked(items, size):\n    \"\"\"Yield successive fixed-size chunks from a sequence.\"\"\"\n    for i in range(0, len(items), size):\n        yield items[i : i + size]",
+            "def process(self, records):\n        \"\"\"Deduplicate and store records with retry on transient failure.\"\"\"\n        unique = dedupe(records)\n        return retry(lambda: self._repo.bulk_put(unique))",
+            "def process(self, records):\n        \"\"\"Deduplicate and store records with retry on transient failure.\"\"\"\n        unique = dedupe(records)\n        return retry(lambda: self._repo.bulk_put(unique))",
+            "def process(self, records):\n        \"\"\"Deduplicate and store records with retry on transient failure.\"\"\"\n        unique = dedupe(records)\n        return retry(lambda: self._repo.bulk_put(unique))",
+            "def process(self, records):\n        \"\"\"Deduplicate and store records with retry on transient failure.\"\"\"\n        unique = dedupe(records)\n        return retry(lambda: self._repo.bulk_put(unique))"
+          ],
+          "def_hits": {
+            "dedupe": false,
+            "chunked": true
+          }
+        },
+        {
+          "task": "slug_total",
+          "valid_code": true,
+          "reuse": {
+            "slugify": true,
+            "compute_total": true
+          },
+          "retrieval_hit": {
+            "slugify": false,
+            "compute_total": true
+          },
+          "answer": "def name_and_total(records, field):\n    \"\"\"Slugify record names and compute total of a numeric field.\"\"\"\n    from core.utils import slugify\n    names = [slugify(r.get(\"name\", \"\")) for r in records]\n    total = compute_total(records, field)\n    return {\"names\": names, \"total\": round(total, 3)}",
+          "injected": [
+            "def compute_total(rows, field):\n    \"\"\"Sum a numeric field over dict rows.\"\"\"\n    return sum(float(r.get(field, 0) or 0) for r in rows)",
+            "def new_metric(**kwargs):\n    \"\"\"Construct a metric from keyword fields.\"\"\"\n    return Metric(**kwargs)",
+            "def new_batch(**kwargs):\n    \"\"\"Construct a batch from keyword fields.\"\"\"\n    return Batch(**kwargs)",
+            "def new_route(**kwargs):\n    \"\"\"Construct a route from keyword fields.\"\"\"\n    return Route(**kwargs)",
+            "def new_signal(**kwargs):\n    \"\"\"Construct a signal from keyword fields.\"\"\"\n    return Signal(**kwargs)",
+            "def summarize(self, records):\n        \"\"\"Aggregate the numeric field and the domain metric over records.\"\"\"\n        rows = [r.__dict__ for r in records]\n        total = compute_total(rows, \"price\")\n        metric = sum(self.domain_metric(r) for r in records)\n        return {\"n\": len(records), \"total\": round(total, 3), \"metric\": round(metric, 3)}"
+          ],
+          "def_hits": {
+            "slugify": false,
+            "compute_total": true
+          }
+        },
+        {
+          "task": "invoice_summary",
+          "valid_code": false,
+          "reuse": {
+            "summarize": true,
+            "domain_metric": false
+          },
+          "retrieval_hit": {
+            "summarize": false,
+            "domain_metric": false
+          },
+          "answer": "```python\ndef summarize(self):\n    \"\"\"Return an aggregate summary of invoice records.\"\"\"\n    return self.service.summarize()\n```",
+          "injected": [
+            "def __init__(self):\n        self.routes = {}\n        self.routes[\"invoice\"] = InvoiceHandler()\n        self.routes[\"order\"] = OrderHandler()\n        self.routes[\"product\"] = ProductHandler()\n        self.routes[\"payment\"] = PaymentHandler()\n        self.routes[\"shipment\"] = ShipmentHandler()\n        self.routes[\"ticket\"] = TicketHandler()\n        self.routes[\"session\"] = SessionHandler()\n        self.routes[\"metric\"] = MetricHandler()\n        self.routes[\"contract\"] = ContractHandler()\n        self.routes[\"visit\"] = VisitHandler()\n        self.routes[\"signal\"] = SignalHandler()\n        self.routes[\"batch\"] = BatchHandler()\n        self.routes[\"route\"] = RouteHandler()\n        self.routes[\"account\"] = AccountHandler()\n        self.routes[\"event\"] = EventHandler()\n        self.routes[\"document\"] = DocumentHandler()\n        self.routes[\"subscription\"] = SubscriptionHandler()\n        self.routes[\"notification\"] = NotificationHandler()",
+            "def new_metric(**kwargs):\n    \"\"\"Construct a metric from keyword fields.\"\"\"\n    return Metric(**kwargs)",
+            "def new_batch(**kwargs):\n    \"\"\"Construct a batch from keyword fields.\"\"\"\n    return Batch(**kwargs)",
+            "def new_route(**kwargs):\n    \"\"\"Construct a route from keyword fields.\"\"\"\n    return Route(**kwargs)",
+            "def new_signal(**kwargs):\n    \"\"\"Construct a signal from keyword fields.\"\"\"\n    return Signal(**kwargs)",
+            "def new_session(**kwargs):\n    \"\"\"Construct a session from keyword fields.\"\"\"\n    return Session(**kwargs)"
+          ],
+          "def_hits": {
+            "summarize": false,
+            "domain_metric": false
+          }
+        }
+      ]
+    }
+  },
+  "dialogue": {
+    "v3_nomem": {
+      "recall": 0.786,
+      "confusion": 0.0,
+      "tone": 0.8611,
+      "wall_s": 73.7,
+      "kv_injected": 0,
+      "probes": [
+        {
+          "q": "Слушай, а в какой город Я сейчас собираюсь-то на конференцию?",
+          "score": 0.5,
+          "stale": 0.0,
+          "answer": "Судя по всему, вы сейчас собираетесь в **Хельсинки**!\n\nВы сами в начале диалога написали: «я еду в Хельсинки на конферен"
+        },
+        {
+          "q": "А номер брони моего отеля напомни, а то вылетело из головы.",
+          "score": 1.0,
+          "stale": 0.0,
+          "answer": "Конечно! Записал: **номер брони HG-77120**.\n\nЭто важно, чтобы вы не потеряли его при пересадке или в случае форс-мажора."
+        },
+        {
+          "q": "Так, а какого числа МОЯ конференция в Хельсинки, напомни?",
+          "score": 1.0,
+          "stale": 0.0,
+          "answer": "Ваша конференция в Хельсинки — **14 марта**.\n\nХорошо, что вы напомнили! Теперь, когда мы вернулись к этому дню, давайте "
+        },
+        {
+          "q": "А как МОЕГО кота зовут, которого я дома оставляю?",
+          "score": 1.0,
+          "stale": 0.0,
+          "answer": "Твой кот зовут **Барсик**.\n\nНапомню детали из нашего разговора: ты хочешь решить, с кем оставить его на неделю, а в отел"
+        },
+        {
+          "q": "Давай соберём всё в кучу: куда я еду, зачем, и что мне нужно решить дома с котом?",
+          "score": 0.3333,
+          "stale": 0.0,
+          "answer": "Отличная идея! Давай разберем всё по полочкам, чтобы ничего не упустить перед поездкой в Хельсинки.\n\n**1. Поездка в Хель"
+        },
+        {
+          "q": "Напомни номер брони отеля в Хельсинки, я хочу перепроверить.",
+          "score": 1.0,
+          "stale": 0.0,
+          "answer": "Конечно, вот номер брони для вашего отеля в Хельсинки:\n\n**HG-77120**\n\nЗаписал, чтобы точно не потерять. Если нужно что-т"
+        },
+        {
+          "q": "И что мне нужно сделать с котом перед отъездом?",
+          "score": 0.6667,
+          "stale": 0.0,
+          "answer": "Отличный вопрос! Поскольку Барсик — это ваш питомец, а вы планируете уехать в Хельсинки, вот несколько важных шагов, кот"
+        }
+      ]
+    },
+    "kv_living_a0": {
+      "recall": 0.833,
+      "confusion": 0.143,
+      "tone": 0.8587,
+      "wall_s": 84.8,
+      "kv_injected": 249539,
+      "probes": [
+        {
+          "q": "Слушай, а в какой город Я сейчас собираюсь-то на конференцию?",
+          "score": 0.5,
+          "stale": 0.0,
+          "answer": "Судя по контексту нашего разговора, вы собираетесь в **Хельсинки**.\n\nВы сами в начале диалога написали: «я еду в Хельсин"
+        },
+        {
+          "q": "А номер брони моего отеля напомни, а то вылетело из головы.",
+          "score": 1.0,
+          "stale": 0.0,
+          "answer": "Конечно! Записал: **отель уже забронирован, номер брони HG-77120**.\n\nНе переживай, теперь это в безопасности. Удачи с ко"
+        },
+        {
+          "q": "Так, а какого числа МОЯ конференция в Хельсинки, напомни?",
+          "score": 1.0,
+          "stale": 0.0,
+          "answer": "Твоя конференция в Хельсинки — **14 марта**.\n\nНе забудь, что это уже совсем скоро, поэтому лучше сразу начать проверять "
+        },
+        {
+          "q": "А как МОЕГО кота зовут, которого я дома оставляю?",
+          "score": 1.0,
+          "stale": 0.0,
+          "answer": "К сожалению, в нашем диалоге нет информации о том, как зовут кота, которого вы оставляете дома.\n\nОднако, судя по вашему "
+        },
+        {
+          "q": "Давай соберём всё в кучу: куда я еду, зачем, и что мне нужно решить дома с котом?",
+          "score": 0.3333,
+          "stale": 0.0,
+          "answer": "Отличная идея! Давай разберем всё по пунктам, чтобы ничего не упустить:\n\n1.  **Путешествие:**\n    *   **Куда:** Хельсинк"
+        },
+        {
+          "q": "Напомни номер брони отеля в Хельсинки, я хочу перепроверить.",
+          "score": 1.0,
+          "stale": 0.5,
+          "answer": "Конечно! Ваш номер брони отеля в Хельсинки — **HG-77120**.\n\nНапомню, что вы упоминали, что жили в Адлоне прямо у Бранден"
+        },
+        {
+          "q": "И что мне нужно сделать с котом перед отъездом?",
+          "score": 1.0,
+          "stale": 0.0,
+          "answer": "Скорее всего, вы имели в виду, что нужно оставить кота Барсика. Да, это важный момент: его нужно оставить с кем-то надеж"
+        }
+      ]
+    },
+    "kv_static_a0": {
+      "recall": 0.786,
+      "confusion": 0.143,
+      "tone": 0.8564,
+      "wall_s": 83.4,
+      "kv_injected": 249539,
+      "probes": [
+        {
+          "q": "Слушай, а в какой город Я сейчас собираюсь-то на конференцию?",
+          "score": 0.5,
+          "stale": 0.0,
+          "answer": "Судя по контексту нашего разговора, вы собираетесь в **Хельсинки**.\n\nВы сами в начале диалога написали: «я еду в Хельсин"
+        },
+        {
+          "q": "А номер брони моего отеля напомни, а то вылетело из головы.",
+          "score": 1.0,
+          "stale": 0.0,
+          "answer": "Конечно! Записал: **отель уже забронирован, номер брони HG-77120**.\n\nНе переживай, теперь это в безопасности. Удачи с ко"
+        },
+        {
+          "q": "Так, а какого числа МОЯ конференция в Хельсинки, напомни?",
+          "score": 1.0,
+          "stale": 0.0,
+          "answer": "Ваша конференция в Хельсинки — **14 марта**.\n\nНе забудьте проверить дату в календаре, чтобы не пропустить регистрацию ил"
+        },
+        {
+          "q": "А как МОЕГО кота зовут, которого я дома оставляю?",
+          "score": 1.0,
+          "stale": 0.0,
+          "answer": "Вашего кота зовут **Барсик**! 🐱\n\nОн и есть тот самый, кого нужно решить, с кем оставить на неделю, пока вы уедете. И да,"
+        },
+        {
+          "q": "Давай соберём всё в кучу: куда я еду, зачем, и что мне нужно решить дома с котом?",
+          "score": 0.3333,
+          "stale": 0.0,
+          "answer": "Отличная идея! Давай структурируем всё по пунктам, чтобы ничего не упустить:\n\n### 📍 Куда и зачем едем?\n*   **Где:** Хель"
+        },
+        {
+          "q": "Напомни номер брони отеля в Хельсинки, я хочу перепроверить.",
+          "score": 1.0,
+          "stale": 0.5,
+          "answer": "Конечно! Номер вашей брони в отеле в Хельсинки: **HG-77120**.\n\nНапоминаю, что вы останавливались в Адлоне прямо у Бранде"
+        },
+        {
+          "q": "И что мне нужно сделать с котом перед отъездом?",
+          "score": 0.6667,
+          "stale": 0.0,
+          "answer": "Отличный вопрос! С Барсиком нужно быть особенно внимательным.\n\nВо-первых, **обязательно оставьте ему лакомство** (лучше "
+        }
+      ]
+    },
+    "kv_living_a05": {
+      "recall": 0.738,
+      "confusion": 0.286,
+      "tone": 0.8592,
+      "wall_s": 84.1,
+      "kv_injected": 249539,
+      "probes": [
+        {
+          "q": "Слушай, а в какой город Я сейчас собираюсь-то на конференцию?",
+          "score": 0.5,
+          "stale": 0.5,
+          "answer": "Вы собираетесь в **Хельсинки**! 🇫🇮\n\nВы упомянули в самом начале, что едете туда на конференцию 14 марта. Хотя вы уже был"
+        },
+        {
+          "q": "А номер брони моего отеля напомни, а то вылетело из головы.",
+          "score": 1.0,
+          "stale": 0.0,
+          "answer": "Конечно, Клаус! Записал: **отель уже забронирован, номер брони HG-77120**. 🏨📝\n\nНе переживай, теперь это в безопасности. "
+        },
+        {
+          "q": "Так, а какого числа МОЯ конференция в Хельсинки, напомни?",
+          "score": 1.0,
+          "stale": 0.0,
+          "answer": "Твоя конференция в Хельсинки — **14 марта**. 📅❄️\n\nНе забудь, что там может быть холодно даже в марте, так что пакеты для"
+        },
+        {
+          "q": "А как МОЕГО кота зовут, которого я дома оставляю?",
+          "score": 1.0,
+          "stale": 0.0,
+          "answer": "Ваш кот Барсик! 🐱 Он будет отлично чувствовать себя дома, пока вы в пути. Надеюсь, он не слишком сильно пострадает от от"
+        },
+        {
+          "q": "Давай соберём всё в кучу: куда я еду, зачем, и что мне нужно решить дома с котом?",
+          "score": 0.3333,
+          "stale": 0.0,
+          "answer": "Отличная идея! Давай разделим это на три четких блока, чтобы ничего не упустить:\n\n1.  **📅 Поездка в Хельсинки:**\n    *  "
+        },
+        {
+          "q": "Напомни номер брони отеля в Хельсинки, я хочу перепроверить.",
+          "score": 1.0,
+          "stale": 0.5,
+          "answer": "Конечно! 🏨📝\n\nТвой номер брони в отеле в Хельсинки: **HG-77120**.\n\nНапоминаю, что ты жила в Адлоне, прямо у Бран"
+        },
+        {
+          "q": "И что мне нужно сделать с котом перед отъездом?",
+          "score": 0.3333,
+          "stale": 0.0,
+          "answer": "Отличный вопрос! 🐱\n\nС Барсиком всё просто:\n1.  **Оставьте его с кем-то из близких** (как мы и обсуждали, иначе он один з"
+        }
+      ]
+    },
+    "kv_living_a10": {
+      "recall": 0.5,
+      "confusion": 0.429,
+      "tone": 0.8613,
+      "wall_s": 81.8,
+      "kv_injected": 247491,
+      "probes": [
+        {
+          "q": "Слушай, а в какой город Я сейчас собираюсь-то на конференцию?",
+          "score": 0.5,
+          "stale": 0.5,
+          "answer": "Вы собираетесь в **Хельсинки**! 🇫🇮\n\nВы упомянули в самом начале, что едете туда 14 марта. Хотя вы только что вспомнили с"
+        },
+        {
+          "q": "А номер брони моего отеля напомни, а то вылетело из головы.",
+          "score": 1.0,
+          "stale": 0.0,
+          "answer": "Конечно! Записал: **Отель забронирован, номер брони HG-77120**. 🏨\n\nНе переживай, теперь это в безопасности. Удачи с конф"
+        },
+        {
+          "q": "Так, а какого числа МОЯ конференция в Хельсинки, напомни?",
+          "score": 1.0,
+          "stale": 0.0,
+          "answer": "Твоя конференция в Хельсинки — **14 марта**.\n\nНе забудь проверить, всё ли готово к вылету!"
+        },
+        {
+          "q": "А как МОЕГО кота зовут, которого я дома оставляю?",
+          "score": 0.0,
+          "stale": 1.0,
+          "answer": "К сожалению, в нашем диалоге нет информации о том, как зовут вашего кота, который останется дома. Мы обсуждали котика др"
+        },
+        {
+          "q": "Давай соберём всё в кучу: куда я еду, зачем, и что мне нужно решить дома с котом?",
+          "score": 0.3333,
+          "stale": 0.0,
+          "answer": "Отличная идея! Давай разберем всё по пунктам, чтобы ничего не упустить:\n\n1.  **Поездка в Хельсинки:**\n    *   **Дата:** "
+        },
+        {
+          "q": "Напомни номер брони отеля в Хельсинки, я хочу перепроверить.",
+          "score": 0.0,
+          "stale": 1.0,
+          "answer": "Конечно! Номер вашей брони в отеле в Хельсинки — это **142-й номер в отеле «Adlon Hotel Helsinki»** (напоминаю, что вы у"
+        },
+        {
+          "q": "И что мне нужно сделать с котом перед отъездом?",
+          "score": 0.6667,
+          "stale": 0.0,
+          "answer": "С Барсиком всё будет в порядке! Как мы и обсуждали, его нужно оставить с кем-то надежным, чтобы он не заскучал один.\n\nВо"
+        }
+      ]
+    }
+  }
+}

@@ -58,3 +58,6 @@
 - [x] rag_layer-абляция: battery100, RAG-эмбеддинг last (hidden_state[-1]) vs mid (латентный) — `scripts/rag_layer_ablation.sh`.
 - [x] Код-ретест поисков: `scripts/code_search_retest.py` → `results/chunk_code/search_retest/` (8 условий, K/V не нужен, mid не обобщается, flat_legacy лидирует).
 - [x] Файл-резидуальный банк: `tmem/fileres.py` + `scripts/file_residual_eval.py` → `results/chunk_code/fileres/` (hits лучше, но stage 1 слеп к utils; reuse ниже flat_legacy).
+- [x] Семантическое дерево: `tmem/semtree.py` → `results/chunk_code/semtree{,_deep}/` (mean_t60 reuse 9/10 дважды; глубина не помогает; механизм = RAPTOR/CLAG/EverMemOS).
+- [x] Живая память (TTL/gist абляция): `scripts/living_memory_eval.py` → `results/living_memory/` — тезис «живая память=ядро» НЕ подтверждён: код 9/10 при любом alpha; диалог gist монотонно вредит (confusion 0→0.429), чистый v3 лучший.
+- [x] Prior art / новизна: `docs/RELATED_WORK.md` — почти все механизмы опубликованы; K/V-инъекция не нова и не работает; вклад сужается до эмпирического/негативного.
