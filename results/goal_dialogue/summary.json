@@ -1,0 +1,33 @@
+{
+  "model": "qwen35-4b",
+  "device": "cuda",
+  "window": 2,
+  "turns": 31,
+  "n_probes": 5,
+  "conditions": {
+    "v3_clean": {
+      "goal_recall": 0.8,
+      "goal_confusion": 0.4,
+      "tone": 0.8871,
+      "wall_s": 62.3
+    },
+    "living_merge": {
+      "goal_recall": 0.8,
+      "goal_confusion": 0.6,
+      "tone": 0.8911,
+      "wall_s": 62.0
+    },
+    "living_nomerge": {
+      "goal_recall": 0.533,
+      "goal_confusion": 0.2,
+      "tone": 0.8908,
+      "wall_s": 61.2
+    },
+    "static_merge": {
+      "goal_recall": 0.8,
+      "goal_confusion": 0.6,
+      "tone": 0.8911,
+      "wall_s": 61.4
+    }
+  }
+}
