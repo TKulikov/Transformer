@@ -49,6 +49,7 @@ class Memory:
         device: torch.device | str | None = None,
         dtype: torch.dtype = torch.float32,
         merge_k: float | None = None,
+        decay: bool = True,
     ) -> None:
         if d_model <= 0 or size <= 0:
             raise ValueError("d_model and size must be positive")
@@ -59,6 +60,7 @@ class Memory:
         self.device = torch.device(device) if device is not None else torch.device("cpu")
         self.dtype = dtype
         self.merge_k = merge_k
+        self.decay = decay   # False = статический банк (TTL не стареет, без eviction)
         self.clear()
 
     # ------------------------------------------------------------------ state
@@ -114,16 +116,18 @@ class Memory:
         relevant = self.context[0, chosen].unsqueeze(0)                        # (n, 1, d) -> (1, n, d)
 
         # TTL: boost retrieved (+2 capped at 6), decay all by 1, evict <= 0.
-        boosted = torch.clamp(self.ttl[chosen] + self.TTL_HIT_BONUS, max=self.TTL_MAX)
-        self.ttl.scatter_(0, chosen, boosted)
-        self.ttl -= 1
-        expired = (self.ttl <= 0) & self.occupied
-        n_ev = int(expired.sum())
-        if n_ev:
-            self.context[0, expired] = 0
-            self.ttl[expired] = 0
-            self.occupied[expired] = False
-            self.stats["evictions"] += n_ev
+        # decay=False замораживает TTL (статический банк) — для абляции живой динамики.
+        if self.decay:
+            boosted = torch.clamp(self.ttl[chosen] + self.TTL_HIT_BONUS, max=self.TTL_MAX)
+            self.ttl.scatter_(0, chosen, boosted)
+            self.ttl -= 1
+            expired = (self.ttl <= 0) & self.occupied
+            n_ev = int(expired.sum())
+            if n_ev:
+                self.context[0, expired] = 0
+                self.ttl[expired] = 0
+                self.occupied[expired] = False
+                self.stats["evictions"] += n_ev
         self.count_element = int(self.occupied.sum())
 
         self.stats["retrievals"] += chosen.numel()
@@ -291,6 +295,7 @@ class CorrectionLayer(nn.Module):
         crit: float = 0.8,
         max_to_new: float = 0.4,
         merge_k: float | None = None,
+        decay: bool = True,
     ) -> None:
         super().__init__()
         self.d_model = d_model
@@ -298,7 +303,7 @@ class CorrectionLayer(nn.Module):
         self.window_crit = window_crit
         self.crit = crit
         self.max_to_new = max_to_new
-        self.memory = Memory(d_model, size=size, merge_k=merge_k)
+        self.memory = Memory(d_model, size=size, merge_k=merge_k, decay=decay)
 
     def forward(self, x: torch.Tensor) -> tuple[torch.Tensor, int]:
         """Retrieve then update; returns ``(relevant, actual_count)``."""

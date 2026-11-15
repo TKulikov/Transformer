@@ -42,6 +42,7 @@ import torch
 from .chunkmem import embed_block_key, embed_chunk
 from .hiermem import CodeNode
 from .latentrag import latent_mean
+from .memory import Memory
 
 
 def _norm(v: torch.Tensor) -> torch.Tensor:
@@ -60,12 +61,18 @@ class SemTreeBank:
     """
 
     def __init__(self, nodes: list[CodeNode], space: str = "mid", tau: float = 0.6,
-                 device: torch.device | str = "cpu") -> None:
+                 device: torch.device | str = "cpu", use_bank: bool = False,
+                 alpha: float = 0.5, decay: bool = True, slot_size: int = 512) -> None:
         self.nodes = nodes
         self.funcs = [n for n in nodes if n.kind == "function"]
         self.space = space
         self.tau = tau
         self.device = torch.device(device)
+        self.use_bank = use_bank   # живой TTL слот-банк + gist-кондиционирование запроса
+        self.alpha = alpha         # сила gist: q' = q + alpha*gist (0 = банк не влияет на поиск)
+        self.decay = decay         # TTL-динамика банка (False = статический)
+        self.slot_size = slot_size
+        self.bank = None
         self.raw: dict[str, torch.Tensor] = {}   # nid -> {"mid": (d,), "mean": (d,)}
         self.gmean: dict[str, torch.Tensor] = {}
         self.dev: torch.Tensor | None = None     # (n, d) нормированные отклонения
@@ -79,15 +86,22 @@ class SemTreeBank:
     @torch.no_grad()
     def ingest(self, bundle, max_tokens: int = 256) -> None:
         """Эмбеддинг каждой функции: mid-span в контексте окружения + mean-ключ."""
+        if self.use_bank:
+            self.bank = Memory(bundle.hidden_size, size=self.slot_size,
+                               merge_k=0.25, decay=self.decay, device=self.device)
         mids, means = [], []
         for n in self.funcs:
             parent = self.nodes[n.parent] if n.parent is not None else None
             ctx = parent.text if parent is not None else ""
-            a, _, _ = embed_chunk(bundle, n.text, context=ctx, mode="span",
-                                  layer="mid", max_tokens=max_tokens)
+            a, a_toks, _ = embed_chunk(bundle, n.text, context=ctx, mode="late",
+                                       layer="mid", max_tokens=max_tokens)
             mk, _ = embed_block_key(bundle, n.text, layers="mean", max_tokens=max_tokens)
             mids.append(a.float().to(self.device))
             means.append(mk.float().to(self.device))
+            if self.bank is not None and a_toks is not None and a_toks.shape[0] > 0:
+                # код-активации не проходят диалоговый gate — смягчаем (как LatentRagBank)
+                self.bank.update(a_toks.to(self.device), crit=0.95,
+                                 max_to_new=1.0, window_crit=-1e9)
             self.stats["functions"] += 1
         self.raw = {"mid": torch.stack(mids), "mean": torch.stack(means)}
         self.recluster(self.space, self.tau)
@@ -174,13 +188,17 @@ class SemTreeBank:
     def _count(node: dict) -> int:
         return 1 + sum(SemTreeBank._count(c) for c in node["children"])
 
-    def query_vec(self, bundle, query: str, max_tokens: int = 256) -> torch.Tensor:
-        """Запрос в том же пространстве, что и ключи (mid или mean)."""
+    def query_raw(self, bundle, query: str, max_tokens: int = 256) -> torch.Tensor:
+        """Сырой вектор запроса в пространстве ключей (mid или mean), без центрирования."""
         if self.space == "mid":
             q = latent_mean(bundle, query, max_tokens)
         else:
             q, _ = embed_block_key(bundle, query, layers="mean", max_tokens=max_tokens)
-        return _norm(q.float().to(self.device) - self.gmean[self.space])
+        return q.float().to(self.device)
+
+    def query_vec(self, bundle, query: str, max_tokens: int = 256) -> torch.Tensor:
+        """Запрос в том же пространстве, что и ключи (mid или mean), центрированный."""
+        return _norm(self.query_raw(bundle, query, max_tokens) - self.gmean[self.space])
 
     @torch.no_grad()
     def retrieve(self, bundle, query: str, k_clusters: int = 3, k: int = 6,
@@ -200,7 +218,16 @@ class SemTreeBank:
             (top-k [(node, score, "leaf")], диагностика выбранных групп 1-го
             уровня [{"cluster": id, "size": n, "members": [имена top-3]}]).
         """
-        dq = self.query_vec(bundle, query, max_tokens)
+        q_raw = self.query_raw(bundle, query, max_tokens)
+        if self.bank is not None:
+            # живая память: запрос обновляет банк (refresh/decay/eviction при decay=True)
+            self.bank.get_relevant(q_raw.view(1, 1, -1))
+            if self.alpha > 0:
+                g = self.bank.ttl_gist()
+                if g is not None:
+                    q_raw = q_raw + self.alpha * g.to(q_raw.device)
+                    self.stats["gist_used"] = self.stats.get("gist_used", 0) + 1
+        dq = _norm(q_raw - self.gmean[self.space])
         if mode == "descent":
             scored = self._descent(dq, k_clusters, k)
         else:

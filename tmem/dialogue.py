@@ -37,6 +37,7 @@ class Strategy:
     memory_retrieve: int = 256            # slots retrieved per call
     memory_crit: float = 0.8              # merge threshold (v2: 0.95)
     memory_merge_k: float | None = None   # EMA merge strength (None = v1 mean)
+    memory_decay: bool = True             # TTL-динамика (False = статический банк, абляция живой памяти)
     rag: bool = False                     # text-preserving fact bank in prompt
     rag_crit: float = 0.95                # upsert dedup threshold
     rag_k: int = 4                        # facts injected per turn
@@ -69,6 +70,7 @@ class Strategy:
             "memory_retrieve": self.memory_retrieve,
             "memory_crit": self.memory_crit,
             "memory_merge_k": self.memory_merge_k,
+            "memory_decay": self.memory_decay,
             "rag": self.rag,
             "rag_crit": self.rag_crit,
             "rag_k": self.rag_k,
@@ -260,6 +262,7 @@ def run_session(
             retrieve_count=strategy.memory_retrieve,
             crit=strategy.memory_crit,
             merge_k=strategy.memory_merge_k,
+            decay=strategy.memory_decay,
         )
         handle = bundle.memory_target().register_forward_pre_hook(hook, with_kwargs=True)
     run.corr = corr
@@ -271,6 +274,7 @@ def run_session(
             _, corr = bundle.make_memory_hook(
                 size=strategy.memory_size, window_crit=strategy.memory_window_crit,
                 crit=strategy.memory_crit, merge_k=strategy.memory_merge_k,
+                decay=strategy.memory_decay,
             )
             run.corr = corr
         kv_wrappers = install_kv_memory(bundle.model, corr, max_slots=strategy.kv_slots)

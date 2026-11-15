@@ -111,6 +111,7 @@ class ModelBundle:
         crit: float = 0.8,
         max_to_new: float = 0.4,
         merge_k: float | None = None,
+        decay: bool = True,
     ):
         """Create ``(hook, correction_layer)`` for this bundle's architecture."""
         corr = CorrectionLayer(
@@ -121,6 +122,7 @@ class ModelBundle:
             crit=crit,
             max_to_new=max_to_new,
             merge_k=merge_k,
+            decay=decay,
         )
         if self.kind == "encdec":
             return make_encoder_injection_hook(corr), corr
