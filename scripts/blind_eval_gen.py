@@ -52,7 +52,7 @@ def main() -> None:
         for cond, cfg in CONDITIONS.items():
             strat = Strategy(f"{name}_{cond}", window=2, **cfg)
             t0 = time.perf_counter()
-            run = run_session(bundle, session, strat, max_new_tokens=64, seed=0)
+            run = run_session(bundle, session, strat, max_new_tokens=180, seed=0)
             replies[(name, cond)] = [t.answer_text for t in run.turns]
             print(f"  {name}/{cond}: {len(run.turns)} ходов ({time.perf_counter()-t0:.0f}s)", flush=True)
 
