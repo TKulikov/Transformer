@@ -1,0 +1,107 @@
+[
+  {
+    "task": "retry_backoff",
+    "valid_code": false,
+    "reuse": {
+      "retry": true,
+      "backoff_delay": false
+    },
+    "retrieval_hit": {
+      "retry": true,
+      "backoff_delay": false
+    },
+    "answer": "```python\nfrom core.utils import exponential_backoff, dedupe\nfrom models import Record\nfrom repositories import Repo\n\ndef reprocess_failed(records: list[Record]) -> int:\n    \"\"\"\n    Reprocess failed records using exponential backoff.\n    \n    Args:\n        records: List of records that failed previous processing.\n        \n    Returns:\n        Number of successfully reprocessed records.\n    \"\"\"\n    successful_count = 0\n    \n    for record in records:\n        # Deduplicate to avoid infinite loops on the same record\n        unique_records = dedupe([record])\n        \n        # Apply exponential backoff delay before retry\n        delay = exponential_backoff(attempts=1)\n        import time\n        time.sleep(delay)\n        \n        # Attempt to store the record with retry logic\n        try:\n            # Simulate the retry pattern from the project's process method\n            success = False",
+    "injected": [
+      "\"\"\"taskq_large — large multi-file memory testbed.\"\"\"",
+      "def process(self, records):\n        \"\"\"Deduplicate and store records with retry on transient failure.\"\"\"\n        unique = dedupe(records)\n        return retry(lambda: self._repo.bulk_put(unique))",
+      "def process(self, records):\n        \"\"\"Deduplicate and store records with retry on transient failure.\"\"\"\n        unique = dedupe(records)\n        return retry(lambda: self._repo.bulk_put(unique))",
+      "def process(self, records):\n        \"\"\"Deduplicate and store records with retry on transient failure.\"\"\"\n        unique = dedupe(records)\n        return retry(lambda: self._repo.bulk_put(unique))",
+      "def process(self, records):\n        \"\"\"Deduplicate and store records with retry on transient failure.\"\"\"\n        unique = dedupe(records)\n        return retry(lambda: self._repo.bulk_put(unique))",
+      "def process(self, records):\n        \"\"\"Deduplicate and store records with retry on transient failure.\"\"\"\n        unique = dedupe(records)\n        return retry(lambda: self._repo.bulk_put(unique))"
+    ]
+  },
+  {
+    "task": "parse_clamp",
+    "valid_code": false,
+    "reuse": {
+      "parse_duration": true,
+      "clamp": true
+    },
+    "retrieval_hit": {
+      "parse_duration": true,
+      "clamp": true
+    },
+    "answer": "```python\ndef safe_timeout(text: str) -> int:\n    \"\"\"Parse a timeout string into milliseconds and clamp to a safe range.\"\"\"\n    raw_ms = parse_duration(text)\n    return clamp(raw_ms, 0, 1_000_000)\n```",
+    "injected": [
+      "\"\"\"taskq_large — large multi-file memory testbed.\"\"\"",
+      "def validate(self, payload):\n        \"\"\"Return True when the numeric field is within a safe range.\"\"\"\n        value = parse_int(payload.get(\"duration\"), -1)\n        return value == clamp(value, 0, 1_000_000)",
+      "def validate(self, payload):\n        \"\"\"Return True when the numeric field is within a safe range.\"\"\"\n        value = parse_int(payload.get(\"duration\"), -1)\n        return value == clamp(value, 0, 1_000_000)",
+      "def timeout_ms(self, payload):\n        \"\"\"Parse a request timeout into milliseconds.\"\"\"\n        return parse_duration(payload.get(\"timeout\", \"5s\"))",
+      "def timeout_ms(self, payload):\n        \"\"\"Parse a request timeout into milliseconds.\"\"\"\n        return parse_duration(payload.get(\"timeout\", \"5s\"))",
+      "def timeout_ms(self, payload):\n        \"\"\"Parse a request timeout into milliseconds.\"\"\"\n        return parse_duration(payload.get(\"timeout\", \"5s\"))"
+    ]
+  },
+  {
+    "task": "batch_dedupe",
+    "valid_code": false,
+    "reuse": {
+      "dedupe": true,
+      "chunked": false
+    },
+    "retrieval_hit": {
+      "dedupe": true,
+      "chunked": false
+    },
+    "answer": "```python\nfrom core.utils import dedupe\n\ndef prepare_batches(keys, size):\n    \"\"\"Deduplicate record keys and split them into fixed-size batches.\"\"\"\n    unique_keys = dedupe(keys)\n    return [unique_keys[i:i + size] for i in range(0, len(unique_keys), size)]\n```",
+    "injected": [
+      "\"\"\"taskq_large — large multi-file memory testbed.\"\"\"",
+      "def new_batch(**kwargs):\n    \"\"\"Construct a batch from keyword fields.\"\"\"\n    return Batch(**kwargs)",
+      "class BatchService:\n    \"\"\"Validates, transforms and aggregates batch records.\"\"\"",
+      "class BatchRepository:\n    \"\"\"In-memory store of batch records with batch helpers.\"\"\"",
+      "class BatchHandler:\n    \"\"\"Routes batch CRUD requests to the service.\"\"\"",
+      "def process(self, records):\n        \"\"\"Deduplicate and store records with retry on transient failure.\"\"\"\n        unique = dedupe(records)\n        return retry(lambda: self._repo.bulk_put(unique))"
+    ]
+  },
+  {
+    "task": "slug_total",
+    "valid_code": true,
+    "reuse": {
+      "slugify": true,
+      "compute_total": true
+    },
+    "retrieval_hit": {
+      "slugify": false,
+      "compute_total": true
+    },
+    "answer": "def name_and_total(records, field):\n    \"\"\"Slugify record names and compute total of a numeric field.\"\"\"\n    from core.utils import slugify\n    names = [slugify(r.get(\"name\", \"\")) for r in records]\n    total = compute_total(records, field)\n    return names, total",
+    "injected": [
+      "\"\"\"taskq_large — large multi-file memory testbed.\"\"\"",
+      "def compute_total(rows, field):\n    \"\"\"Sum a numeric field over dict rows.\"\"\"\n    return sum(float(r.get(field, 0) or 0) for r in rows)",
+      "def new_order(**kwargs):\n    \"\"\"Construct a order from keyword fields.\"\"\"\n    return Order(**kwargs)",
+      "def new_invoice(**kwargs):\n    \"\"\"Construct a invoice from keyword fields.\"\"\"\n    return Invoice(**kwargs)",
+      "def new_payment(**kwargs):\n    \"\"\"Construct a payment from keyword fields.\"\"\"\n    return Payment(**kwargs)",
+      "def new_metric(**kwargs):\n    \"\"\"Construct a metric from keyword fields.\"\"\"\n    return Metric(**kwargs)"
+    ]
+  },
+  {
+    "task": "invoice_summary",
+    "valid_code": false,
+    "reuse": {
+      "summarize": true,
+      "domain_metric": true
+    },
+    "retrieval_hit": {
+      "summarize": false,
+      "domain_metric": false
+    },
+    "answer": "```python\nfrom typing import Dict, Any\n\nfrom core.utils import get_domain_metric\nfrom models.invoice import Invoice\nfrom services.invoice_service import InvoiceService\n\n\nclass InvoiceHandler:\n    \"\"\"Routes invoice CRUD requests to the service.\"\"\"\n\n    def get_summary(self) -> Dict[str, Any]:\n        \"\"\"Returns an aggregate summary of invoice records.\"\"\"\n        service = InvoiceService()\n        summary = service.summarize()\n        return {\n            \"domain_metric\": get_domain_metric(\"invoice\", summary),\n            \"data\": summary\n        }\n```",
+    "injected": [
+      "class InvoiceHandler:\n    \"\"\"Routes invoice CRUD requests to the service.\"\"\"",
+      "class ContractHandler:\n    \"\"\"Routes contract CRUD requests to the service.\"\"\"",
+      "class AccountHandler:\n    \"\"\"Routes account CRUD requests to the service.\"\"\"",
+      "class BatchHandler:\n    \"\"\"Routes batch CRUD requests to the service.\"\"\"",
+      "class InvoiceService:\n    \"\"\"Validates, transforms and aggregates invoice records.\"\"\"",
+      "class OrderHandler:\n    \"\"\"Routes order CRUD requests to the service.\"\"\""
+    ]
+  }
+]

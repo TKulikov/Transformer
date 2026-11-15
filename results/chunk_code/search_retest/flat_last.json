@@ -1,0 +1,107 @@
+[
+  {
+    "task": "retry_backoff",
+    "valid_code": false,
+    "reuse": {
+      "retry": false,
+      "backoff_delay": true
+    },
+    "retrieval_hit": {
+      "retry": false,
+      "backoff_delay": true
+    },
+    "answer": "```python\nfrom core.utils import backoff_delay\n\ndef reprocess_failed(self, records):\n    \"\"\"Retry processing with explicit exponential backoff.\"\"\"\n    for attempt in range(3):\n        try:\n            return self._repo.bulk_put(records)\n        except Exception:  # noqa: BLE001\n            _ = backoff_delay(attempt)\n    return 0\n```",
+    "injected": [
+      "class BatchService:\n    \"\"\"Validates, transforms and aggregates batch records.\"\"\"",
+      "class BatchRepository:\n    \"\"\"In-memory store of batch records with batch helpers.\"\"\"",
+      "class Server:\n    \"\"\"Dispatches framed requests to the matching resource handler.\"\"\"",
+      "class SignalRepository:\n    \"\"\"In-memory store of signal records with batch helpers.\"\"\"",
+      "class SignalService:\n    \"\"\"Validates, transforms and aggregates signal records.\"\"\"",
+      "def reprocess_failed(self, records):\n        \"\"\"Retry processing with explicit exponential backoff.\"\"\"\n        for attempt in range(3):\n            try:\n                return self._repo.bulk_put(records)\n            except Exception:  # noqa: BLE001\n                _ = backoff_delay(attempt)\n        return 0"
+    ]
+  },
+  {
+    "task": "parse_clamp",
+    "valid_code": false,
+    "reuse": {
+      "parse_duration": true,
+      "clamp": true
+    },
+    "retrieval_hit": {
+      "parse_duration": true,
+      "clamp": true
+    },
+    "answer": "```python\ndef safe_timeout(text: str) -> int:\n    \"\"\"Parse a timeout string into milliseconds and clamp to a safe range.\"\"\"\n    value = parse_duration(text)\n    return clamp(value, 0, 1_000_000)\n```",
+    "injected": [
+      "def validate(self, payload):\n        \"\"\"Return True when the numeric field is within a safe range.\"\"\"\n        value = parse_int(payload.get(\"duration\"), -1)\n        return value == clamp(value, 0, 1_000_000)",
+      "def validate(self, payload):\n        \"\"\"Return True when the numeric field is within a safe range.\"\"\"\n        value = parse_int(payload.get(\"duration\"), -1)\n        return value == clamp(value, 0, 1_000_000)",
+      "def timeout_ms(self, payload):\n        \"\"\"Parse a request timeout into milliseconds.\"\"\"\n        return parse_duration(payload.get(\"timeout\", \"5s\"))",
+      "def timeout_ms(self, payload):\n        \"\"\"Parse a request timeout into milliseconds.\"\"\"\n        return parse_duration(payload.get(\"timeout\", \"5s\"))",
+      "def timeout_ms(self, payload):\n        \"\"\"Parse a request timeout into milliseconds.\"\"\"\n        return parse_duration(payload.get(\"timeout\", \"5s\"))",
+      "def timeout_ms(self, payload):\n        \"\"\"Parse a request timeout into milliseconds.\"\"\"\n        return parse_duration(payload.get(\"timeout\", \"5s\"))"
+    ]
+  },
+  {
+    "task": "batch_dedupe",
+    "valid_code": false,
+    "reuse": {
+      "dedupe": false,
+      "chunked": false
+    },
+    "retrieval_hit": {
+      "dedupe": false,
+      "chunked": false
+    },
+    "answer": "```python\nfrom typing import List, Set, Any\nfrom core.utils.helpers import deduplicate_keys, split_into_batches\n\ndef prepare_batches(keys: List[Any], size: int) -> List[List[Any]]:\n    \"\"\"\n    Deduplicates record keys and splits them into fixed-size batches.\n    \n    Args:\n        keys: List of record keys to process.\n        size: Maximum number of items per batch.\n        \n    Returns:\n        List of batches, where each batch is a list of keys.\n    \"\"\"\n    # Deduplicate keys while preserving order\n    unique_keys = deduplicate_keys(keys)\n    \n    # Split into fixed-size batches\n    return split_into_batches(unique_keys, size)\n```",
+    "injected": [
+      "class BatchService:\n    \"\"\"Validates, transforms and aggregates batch records.\"\"\"",
+      "def new_batch(**kwargs):\n    \"\"\"Construct a batch from keyword fields.\"\"\"\n    return Batch(**kwargs)",
+      "class BatchRepository:\n    \"\"\"In-memory store of batch records with batch helpers.\"\"\"",
+      "class MetricService:\n    \"\"\"Validates, transforms and aggregates metric records.\"\"\"",
+      "class DocumentService:\n    \"\"\"Validates, transforms and aggregates document records.\"\"\"",
+      "class DocumentRepository:\n    \"\"\"In-memory store of document records with batch helpers.\"\"\""
+    ]
+  },
+  {
+    "task": "slug_total",
+    "valid_code": false,
+    "reuse": {
+      "slugify": true,
+      "compute_total": false
+    },
+    "retrieval_hit": {
+      "slugify": false,
+      "compute_total": false
+    },
+    "answer": "```python\ndef name_and_total(records, field):\n    \"\"\"\n    Slugifies the name of the first record and computes the total of the specified numeric field.\n    \n    Args:\n        records (list): List of record dictionaries.\n        field (str): Name of the numeric field to sum.\n    \n    Returns:\n        tuple: (slugified_name, total_sum)\n    \"\"\"\n    if not records:\n        return (\"\", 0)\n    \n    # Slugify the name of the first record\n    name = slugify(records[0].get(\"name\", \"\"))\n    \n    # Compute the total of the specified field\n    total = sum(record.get(field, 0) for record in records)\n    \n    return name, total\n```",
+    "injected": [
+      "class DocumentService:\n    \"\"\"Validates, transforms and aggregates document records.\"\"\"",
+      "class InvoiceService:\n    \"\"\"Validates, transforms and aggregates invoice records.\"\"\"",
+      "def new_metric(**kwargs):\n    \"\"\"Construct a metric from keyword fields.\"\"\"\n    return Metric(**kwargs)",
+      "class MetricService:\n    \"\"\"Validates, transforms and aggregates metric records.\"\"\"",
+      "class SubscriptionService:\n    \"\"\"Validates, transforms and aggregates subscription records.\"\"\"",
+      "def new_product(**kwargs):\n    \"\"\"Construct a product from keyword fields.\"\"\"\n    return Product(**kwargs)"
+    ]
+  },
+  {
+    "task": "invoice_summary",
+    "valid_code": false,
+    "reuse": {
+      "summarize": true,
+      "domain_metric": false
+    },
+    "retrieval_hit": {
+      "summarize": false,
+      "domain_metric": false
+    },
+    "answer": "```python\nfrom typing import Dict, Any\n\nclass InvoiceHandler:\n    \"\"\"Routes invoice CRUD requests to the service.\"\"\"\n\n    def get_invoice_summary(self) -> Dict[str, Any]:\n        \"\"\"Returns an aggregate summary of invoice records.\"\"\"\n        service = self._get_invoice_service()\n        return service.summarize()\n\n    def _get_invoice_service(self) -> \"InvoiceService\":\n        \"\"\"Internal helper to retrieve the invoice service instance.\"\"\"\n        # In a real implementation, this would resolve the service from a dependency container\n        from core.dependencies import get_service\n        return get_service(\"InvoiceService\")\n```",
+    "injected": [
+      "class InvoiceHandler:\n    \"\"\"Routes invoice CRUD requests to the service.\"\"\"",
+      "class InvoiceRepository:\n    \"\"\"In-memory store of invoice records with batch helpers.\"\"\"",
+      "class ContractHandler:\n    \"\"\"Routes contract CRUD requests to the service.\"\"\"",
+      "class ContractService:\n    \"\"\"Validates, transforms and aggregates contract records.\"\"\"",
+      "class InvoiceService:\n    \"\"\"Validates, transforms and aggregates invoice records.\"\"\"",
+      "class SubscriptionRepository:\n    \"\"\"In-memory store of subscription records with batch helpers.\"\"\""
+    ]
+  }
+]
