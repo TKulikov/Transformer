@@ -1,0 +1,713 @@
+{
+  "model": "qwen35-4b",
+  "device": "cuda",
+  "n_seeds": 8,
+  "code": {
+    "n_seeds": 8,
+    "rows": [
+      {
+        "seed": 0,
+        "standard": {
+          "reuse": 8,
+          "hits": 7,
+          "def_hits": 4,
+          "per_task": [
+            {
+              "task": "retry_backoff",
+              "reuse": 1,
+              "hits": 1,
+              "def_hits": 1
+            },
+            {
+              "task": "parse_clamp",
+              "reuse": 2,
+              "hits": 2,
+              "def_hits": 1
+            },
+            {
+              "task": "batch_dedupe",
+              "reuse": 2,
+              "hits": 2,
+              "def_hits": 1
+            },
+            {
+              "task": "slug_total",
+              "reuse": 2,
+              "hits": 1,
+              "def_hits": 1
+            },
+            {
+              "task": "invoice_summary",
+              "reuse": 1,
+              "hits": 1,
+              "def_hits": 0
+            }
+          ]
+        },
+        "memctx_keys": {
+          "reuse": 8,
+          "hits": 8,
+          "def_hits": 4,
+          "per_task": [
+            {
+              "task": "retry_backoff",
+              "reuse": 1,
+              "hits": 2,
+              "def_hits": 1
+            },
+            {
+              "task": "parse_clamp",
+              "reuse": 2,
+              "hits": 2,
+              "def_hits": 1
+            },
+            {
+              "task": "batch_dedupe",
+              "reuse": 2,
+              "hits": 2,
+              "def_hits": 1
+            },
+            {
+              "task": "slug_total",
+              "reuse": 2,
+              "hits": 1,
+              "def_hits": 1
+            },
+            {
+              "task": "invoice_summary",
+              "reuse": 1,
+              "hits": 1,
+              "def_hits": 0
+            }
+          ]
+        },
+        "d_hits": 1,
+        "d_def": 0,
+        "d_reuse": 0
+      },
+      {
+        "seed": 1,
+        "standard": {
+          "reuse": 8,
+          "hits": 8,
+          "def_hits": 5,
+          "per_task": [
+            {
+              "task": "retry_backoff",
+              "reuse": 2,
+              "hits": 2,
+              "def_hits": 2
+            },
+            {
+              "task": "parse_clamp",
+              "reuse": 2,
+              "hits": 2,
+              "def_hits": 1
+            },
+            {
+              "task": "batch_dedupe",
+              "reuse": 1,
+              "hits": 2,
+              "def_hits": 1
+            },
+            {
+              "task": "slug_total",
+              "reuse": 2,
+              "hits": 1,
+              "def_hits": 1
+            },
+            {
+              "task": "invoice_summary",
+              "reuse": 1,
+              "hits": 1,
+              "def_hits": 0
+            }
+          ]
+        },
+        "memctx_keys": {
+          "reuse": 8,
+          "hits": 8,
+          "def_hits": 5,
+          "per_task": [
+            {
+              "task": "retry_backoff",
+              "reuse": 2,
+              "hits": 2,
+              "def_hits": 2
+            },
+            {
+              "task": "parse_clamp",
+              "reuse": 2,
+              "hits": 2,
+              "def_hits": 1
+            },
+            {
+              "task": "batch_dedupe",
+              "reuse": 1,
+              "hits": 2,
+              "def_hits": 1
+            },
+            {
+              "task": "slug_total",
+              "reuse": 2,
+              "hits": 1,
+              "def_hits": 1
+            },
+            {
+              "task": "invoice_summary",
+              "reuse": 1,
+              "hits": 1,
+              "def_hits": 0
+            }
+          ]
+        },
+        "d_hits": 0,
+        "d_def": 0,
+        "d_reuse": 0
+      },
+      {
+        "seed": 2,
+        "standard": {
+          "reuse": 8,
+          "hits": 7,
+          "def_hits": 4,
+          "per_task": [
+            {
+              "task": "retry_backoff",
+              "reuse": 1,
+              "hits": 1,
+              "def_hits": 1
+            },
+            {
+              "task": "parse_clamp",
+              "reuse": 2,
+              "hits": 2,
+              "def_hits": 1
+            },
+            {
+              "task": "batch_dedupe",
+              "reuse": 2,
+              "hits": 2,
+              "def_hits": 1
+            },
+            {
+              "task": "slug_total",
+              "reuse": 2,
+              "hits": 1,
+              "def_hits": 1
+            },
+            {
+              "task": "invoice_summary",
+              "reuse": 1,
+              "hits": 1,
+              "def_hits": 0
+            }
+          ]
+        },
+        "memctx_keys": {
+          "reuse": 8,
+          "hits": 8,
+          "def_hits": 4,
+          "per_task": [
+            {
+              "task": "retry_backoff",
+              "reuse": 1,
+              "hits": 2,
+              "def_hits": 1
+            },
+            {
+              "task": "parse_clamp",
+              "reuse": 2,
+              "hits": 2,
+              "def_hits": 1
+            },
+            {
+              "task": "batch_dedupe",
+              "reuse": 2,
+              "hits": 2,
+              "def_hits": 1
+            },
+            {
+              "task": "slug_total",
+              "reuse": 2,
+              "hits": 1,
+              "def_hits": 1
+            },
+            {
+              "task": "invoice_summary",
+              "reuse": 1,
+              "hits": 1,
+              "def_hits": 0
+            }
+          ]
+        },
+        "d_hits": 1,
+        "d_def": 0,
+        "d_reuse": 0
+      },
+      {
+        "seed": 3,
+        "standard": {
+          "reuse": 8,
+          "hits": 8,
+          "def_hits": 5,
+          "per_task": [
+            {
+              "task": "retry_backoff",
+              "reuse": 2,
+              "hits": 2,
+              "def_hits": 2
+            },
+            {
+              "task": "parse_clamp",
+              "reuse": 2,
+              "hits": 2,
+              "def_hits": 1
+            },
+            {
+              "task": "batch_dedupe",
+              "reuse": 1,
+              "hits": 2,
+              "def_hits": 1
+            },
+            {
+              "task": "slug_total",
+              "reuse": 2,
+              "hits": 1,
+              "def_hits": 1
+            },
+            {
+              "task": "invoice_summary",
+              "reuse": 1,
+              "hits": 1,
+              "def_hits": 0
+            }
+          ]
+        },
+        "memctx_keys": {
+          "reuse": 8,
+          "hits": 8,
+          "def_hits": 5,
+          "per_task": [
+            {
+              "task": "retry_backoff",
+              "reuse": 2,
+              "hits": 2,
+              "def_hits": 2
+            },
+            {
+              "task": "parse_clamp",
+              "reuse": 2,
+              "hits": 2,
+              "def_hits": 1
+            },
+            {
+              "task": "batch_dedupe",
+              "reuse": 1,
+              "hits": 2,
+              "def_hits": 1
+            },
+            {
+              "task": "slug_total",
+              "reuse": 2,
+              "hits": 1,
+              "def_hits": 1
+            },
+            {
+              "task": "invoice_summary",
+              "reuse": 1,
+              "hits": 1,
+              "def_hits": 0
+            }
+          ]
+        },
+        "d_hits": 0,
+        "d_def": 0,
+        "d_reuse": 0
+      },
+      {
+        "seed": 4,
+        "standard": {
+          "reuse": 8,
+          "hits": 8,
+          "def_hits": 5,
+          "per_task": [
+            {
+              "task": "retry_backoff",
+              "reuse": 2,
+              "hits": 2,
+              "def_hits": 2
+            },
+            {
+              "task": "parse_clamp",
+              "reuse": 2,
+              "hits": 2,
+              "def_hits": 1
+            },
+            {
+              "task": "batch_dedupe",
+              "reuse": 1,
+              "hits": 2,
+              "def_hits": 1
+            },
+            {
+              "task": "slug_total",
+              "reuse": 2,
+              "hits": 1,
+              "def_hits": 1
+            },
+            {
+              "task": "invoice_summary",
+              "reuse": 1,
+              "hits": 1,
+              "def_hits": 0
+            }
+          ]
+        },
+        "memctx_keys": {
+          "reuse": 8,
+          "hits": 8,
+          "def_hits": 5,
+          "per_task": [
+            {
+              "task": "retry_backoff",
+              "reuse": 2,
+              "hits": 2,
+              "def_hits": 2
+            },
+            {
+              "task": "parse_clamp",
+              "reuse": 2,
+              "hits": 2,
+              "def_hits": 1
+            },
+            {
+              "task": "batch_dedupe",
+              "reuse": 1,
+              "hits": 2,
+              "def_hits": 1
+            },
+            {
+              "task": "slug_total",
+              "reuse": 2,
+              "hits": 1,
+              "def_hits": 1
+            },
+            {
+              "task": "invoice_summary",
+              "reuse": 1,
+              "hits": 1,
+              "def_hits": 0
+            }
+          ]
+        },
+        "d_hits": 0,
+        "d_def": 0,
+        "d_reuse": 0
+      },
+      {
+        "seed": 5,
+        "standard": {
+          "reuse": 8,
+          "hits": 8,
+          "def_hits": 5,
+          "per_task": [
+            {
+              "task": "retry_backoff",
+              "reuse": 2,
+              "hits": 2,
+              "def_hits": 2
+            },
+            {
+              "task": "parse_clamp",
+              "reuse": 2,
+              "hits": 2,
+              "def_hits": 1
+            },
+            {
+              "task": "batch_dedupe",
+              "reuse": 1,
+              "hits": 2,
+              "def_hits": 1
+            },
+            {
+              "task": "slug_total",
+              "reuse": 2,
+              "hits": 1,
+              "def_hits": 1
+            },
+            {
+              "task": "invoice_summary",
+              "reuse": 1,
+              "hits": 1,
+              "def_hits": 0
+            }
+          ]
+        },
+        "memctx_keys": {
+          "reuse": 7,
+          "hits": 8,
+          "def_hits": 5,
+          "per_task": [
+            {
+              "task": "retry_backoff",
+              "reuse": 2,
+              "hits": 2,
+              "def_hits": 2
+            },
+            {
+              "task": "parse_clamp",
+              "reuse": 2,
+              "hits": 2,
+              "def_hits": 1
+            },
+            {
+              "task": "batch_dedupe",
+              "reuse": 1,
+              "hits": 2,
+              "def_hits": 1
+            },
+            {
+              "task": "slug_total",
+              "reuse": 1,
+              "hits": 1,
+              "def_hits": 1
+            },
+            {
+              "task": "invoice_summary",
+              "reuse": 1,
+              "hits": 1,
+              "def_hits": 0
+            }
+          ]
+        },
+        "d_hits": 0,
+        "d_def": 0,
+        "d_reuse": -1
+      },
+      {
+        "seed": 6,
+        "standard": {
+          "reuse": 8,
+          "hits": 8,
+          "def_hits": 5,
+          "per_task": [
+            {
+              "task": "retry_backoff",
+              "reuse": 2,
+              "hits": 2,
+              "def_hits": 2
+            },
+            {
+              "task": "parse_clamp",
+              "reuse": 2,
+              "hits": 2,
+              "def_hits": 1
+            },
+            {
+              "task": "batch_dedupe",
+              "reuse": 1,
+              "hits": 2,
+              "def_hits": 1
+            },
+            {
+              "task": "slug_total",
+              "reuse": 2,
+              "hits": 1,
+              "def_hits": 1
+            },
+            {
+              "task": "invoice_summary",
+              "reuse": 1,
+              "hits": 1,
+              "def_hits": 0
+            }
+          ]
+        },
+        "memctx_keys": {
+          "reuse": 8,
+          "hits": 8,
+          "def_hits": 5,
+          "per_task": [
+            {
+              "task": "retry_backoff",
+              "reuse": 2,
+              "hits": 2,
+              "def_hits": 2
+            },
+            {
+              "task": "parse_clamp",
+              "reuse": 2,
+              "hits": 2,
+              "def_hits": 1
+            },
+            {
+              "task": "batch_dedupe",
+              "reuse": 1,
+              "hits": 2,
+              "def_hits": 1
+            },
+            {
+              "task": "slug_total",
+              "reuse": 2,
+              "hits": 1,
+              "def_hits": 1
+            },
+            {
+              "task": "invoice_summary",
+              "reuse": 1,
+              "hits": 1,
+              "def_hits": 0
+            }
+          ]
+        },
+        "d_hits": 0,
+        "d_def": 0,
+        "d_reuse": 0
+      },
+      {
+        "seed": 7,
+        "standard": {
+          "reuse": 8,
+          "hits": 8,
+          "def_hits": 5,
+          "per_task": [
+            {
+              "task": "retry_backoff",
+              "reuse": 2,
+              "hits": 2,
+              "def_hits": 2
+            },
+            {
+              "task": "parse_clamp",
+              "reuse": 2,
+              "hits": 2,
+              "def_hits": 1
+            },
+            {
+              "task": "batch_dedupe",
+              "reuse": 1,
+              "hits": 2,
+              "def_hits": 1
+            },
+            {
+              "task": "slug_total",
+              "reuse": 2,
+              "hits": 1,
+              "def_hits": 1
+            },
+            {
+              "task": "invoice_summary",
+              "reuse": 1,
+              "hits": 1,
+              "def_hits": 0
+            }
+          ]
+        },
+        "memctx_keys": {
+          "reuse": 8,
+          "hits": 8,
+          "def_hits": 5,
+          "per_task": [
+            {
+              "task": "retry_backoff",
+              "reuse": 2,
+              "hits": 2,
+              "def_hits": 2
+            },
+            {
+              "task": "parse_clamp",
+              "reuse": 2,
+              "hits": 2,
+              "def_hits": 1
+            },
+            {
+              "task": "batch_dedupe",
+              "reuse": 1,
+              "hits": 2,
+              "def_hits": 1
+            },
+            {
+              "task": "slug_total",
+              "reuse": 2,
+              "hits": 1,
+              "def_hits": 1
+            },
+            {
+              "task": "invoice_summary",
+              "reuse": 1,
+              "hits": 1,
+              "def_hits": 0
+            }
+          ]
+        },
+        "d_hits": 0,
+        "d_def": 0,
+        "d_reuse": 0
+      }
+    ],
+    "hits_delta": {
+      "mean": 0.25,
+      "std": 0.463,
+      "t": 1.528,
+      "df": 7,
+      "pos": 2,
+      "neg": 0,
+      "zero": 6
+    },
+    "def_delta": {
+      "mean": 0.0,
+      "std": 0.0,
+      "t": 0.0,
+      "df": 7,
+      "pos": 0,
+      "neg": 0,
+      "zero": 8
+    },
+    "reuse_delta": {
+      "mean": -0.125,
+      "std": 0.354,
+      "t": -1.0,
+      "df": 7,
+      "pos": 0,
+      "neg": 1,
+      "zero": 7
+    },
+    "std_mean": {
+      "reuse": 8.0,
+      "hits": 7.75,
+      "def_hits": 4.75
+    },
+    "mem_mean": {
+      "reuse": 7.88,
+      "hits": 8.0,
+      "def_hits": 4.75
+    }
+  },
+  "dialogue": {
+    "v3_clean": {
+      "recall": 0.595,
+      "confusion": 0.0,
+      "tone": 0.8542,
+      "kv_injected": 0
+    },
+    "v3_clean_last": {
+      "recall": 0.786,
+      "confusion": 0.0,
+      "tone": 0.8611,
+      "kv_injected": 0
+    },
+    "additive_v1": {
+      "recall": 0.643,
+      "confusion": 0.143,
+      "tone": 0.8765,
+      "kv_injected": 0
+    },
+    "kv_v4": {
+      "recall": 0.738,
+      "confusion": 0.286,
+      "tone": 0.8515,
+      "kv_injected": 249539
+    }
+  }
+}
