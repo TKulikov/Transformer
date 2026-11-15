@@ -59,6 +59,40 @@
 Transformers/Memory³/FeatLens, (3) выбрать A или B. Механизмы цитировать как
 известные; вклад — в эмпирическом разложении и негативных результатах.
 
+## Уточнение: связка ЦЕЛИКОМ (дерево + латентный слой + свои активации + код)
+
+Вопрос: делал ли кто-то именно комбинацию «семантическое дерево, где ключи =
+собственные латентные (mid) активации генератора, вспоминание в том же
+пространстве, для кода, training-free»? Прицельный поиск нашёл очень близкое:
+
+| Работа | Что делает | Насколько закрывает нашу связку |
+|---|---|---|
+| **ActiveMem** (arXiv:2609.33244, сен 2026) | «Dynamic Latent Memory Trees»: иерархическое дерево, инкрементально хранящее латентные абстракции СОБСТВЕННЫХ hidden states модели («current hidden representation = execution state»); бенчмарки включая KodCode, BigCodeBench | **Почти наша связка**: дерево + латентные свои активации + код. Отличие: dependency-aware execution trees для траекторий агента, не residual-кластеры статических функций для reuse |
+| **SRSD** (EMNLP Findings 2026, aclanthology 2026.findings-emnlp.40) | Training-free: СОБСТВЕННЫЕ intermediate-layer hidden states как семантический индекс; **prompt-conditioned centering + L2-norm** (та же анизотропия, та же ссылка Ethayarajh 2019!); mid-to-late layer plateau + layer selection; **до 5.42× на project-level CODE generation** | Закрывает «свои mid-активации + центрирование + training-free + код». Отличие: плоский индекс для speculative decoding, не дерево памяти |
+| **MemTree** (ICLR 2025, Accenture) | Динамическое дерево памяти: узел = текст + semantic embedding; онлайн-адаптация по сходству эмбеддингов нового и существующего | Онлайн семантическое дерево (текстовые эмбеддинги, не свои hidden-state) |
+| **Hierarchical Embedding Fusion for RAG Code** (arXiv:2603.06593, фев 2026) | Иерархическое дерево эмбеддингов кода (chunk→file→module→repo), fusion маленьким трансформером, retrieved векторы → pseudo-tokens в генератор | Дерево кодовых эмбеддингов + инъекция в генератор. Но ВНЕШНИЙ энкодер (Qwen3-Embedding-8B) + ОБУЧАЕМЫЕ fuser/projector |
+| **FlashMem** (ACL Findings 2026) | «Intrinsic Latent Memory via Computation Reuse»: backbone как pre-computed encoder, свои last hidden states → латентная память, без auxiliary encoder | Свои активации как память, без внешнего энкодера. Но last-layer, не дерево, не код |
+| **Layer by Layer** (ICML, arXiv:2502.02013) | Intermediate layers consistently outperform final на 32 MTEB задачах | Наш вывод «mid лучше last» опубликован широко |
+| **KV-Embedding** (arXiv:2601.01046, янв 2026) | Training-free эмбеддинги из internal states decoder-LLM, layer selection; «middle layers — самые дискриминативные» | Свои активации + mid + training-free (общий текст) |
+
+**Честный итог по связке:** комбинация «свои латентные активации + центрирование +
+дерево + код + training-free» в целом ЗАКРЫТА недавними работами (ActiveMem —
+дерево из своих активаций для кода; SRSD — свои центрированные mid-активации
+training-free для кода). Точный пересечение «residual-кластеры статических
+функций кода в дереве из собственных mid-эмбеддингов, training-free, для reuse
+хелперов» как единая статья, кажется, не занят — но это УЗКИЙ комбинаторный
+зазор между очень свежими активными работами (2025–2026), и:
+- каждый компонент опубликован, часть дословно (центрирование в SRSD — та же
+  формула и та же ссылка);
+- наши доказательства слабы (n=1, кастомный testbed, 9/10);
+- ActiveMem/SRSD уже показывают жизнеспособность ядра («свои активации как
+  латентная память/индекс для кода»).
+
+Чтобы заявить вклад, нужно: (1) показать явное преимущество над
+ActiveMem/SRSD/RAPTOR/CLAG на РЕАЛЬНЫХ code-бенчмарках со статистикой;
+(2) артикулировать, что именно residual-дерево функций даёт сверх них.
+Без этого — комбинаторная новизна, слабая для публикации.
+
 ## Ключевые ссылки
 - RAPTOR: https://arxiv.org/abs/2401.18059 (ICLR 2024)
 - Memorizing Transformers: https://arxiv.org/abs/2203.08913 (ICLR 2022)
@@ -71,3 +105,10 @@ Transformers/Memory³/FeatLens, (3) выбрать A или B. Механизм�
 - Hydra: https://arxiv.org/abs/2602.11671
 - MEMCoder: https://github.com/THU-Agent/MEMCoder
 - Repo-level RACG survey: https://arxiv.org/abs/2510.04905
+- ActiveMem (latent memory trees): https://arxiv.org/abs/2609.33244
+- SRSD (own mid-layer states, code): https://aclanthology.org/2026.findings-emnlp.40
+- MemTree: ICLR 2025, Accenture
+- Hierarchical Embedding Fusion (code): https://arxiv.org/abs/2603.06593
+- FlashMem: https://aclanthology.org/2026.findings-acl.230
+- Layer by Layer (mid-layer embeddings): https://arxiv.org/abs/2502.02013
+- KV-Embedding: https://arxiv.org/abs/2601.01046
