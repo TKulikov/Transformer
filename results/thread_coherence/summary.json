@@ -1,0 +1,33 @@
+{
+  "model": "qwen35-4b",
+  "device": "cuda",
+  "window": 2,
+  "turns": 39,
+  "n_probes": 7,
+  "conditions": {
+    "v3_clean": {
+      "recall": 0.595,
+      "confusion_stale": 0.0,
+      "tone": 0.8542,
+      "wall_s": 76.6
+    },
+    "v3_clean_last": {
+      "recall": 0.786,
+      "confusion_stale": 0.0,
+      "tone": 0.8611,
+      "wall_s": 74.0
+    },
+    "additive_v1": {
+      "recall": 0.643,
+      "confusion_stale": 0.143,
+      "tone": 0.8765,
+      "wall_s": 75.9
+    },
+    "kv_v4": {
+      "recall": 0.548,
+      "confusion_stale": 0.143,
+      "tone": 0.8499,
+      "wall_s": 83.0
+    }
+  }
+}
