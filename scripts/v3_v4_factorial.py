@@ -56,17 +56,19 @@ def main() -> None:
     session = build_battery_100()
     strategies = build_strategies()
     runs = {}
-    recalls = {}
+    metrics = {}
     for s in strategies:
         t0 = time.perf_counter()
         print(f"=== {s.name} ===", flush=True)
         runs[s.name] = run_session(bundle, session, s, max_new_tokens=MAX_NEW, seed=0)
         a = analyze_session({s.name: runs[s.name]})[s.name]
-        recalls[s.name] = a["recall_mean"]
-        print(f"  recall={a['recall_mean']} wall={time.perf_counter()-t0:.0f}s", flush=True)
+        metrics[s.name] = {"recall": a["recall_mean"], "tone": a.get("tone_mean"),
+                           "rep": a["rep_mean"]}
+        print(f"  recall={a['recall_mean']} tone={a.get('tone_mean')} "
+              f"rep={a['rep_mean']} wall={time.perf_counter()-t0:.0f}s", flush=True)
         (DIR / "summary.json").write_text(
-            json.dumps({"rag_layer": RAG_LAYER, "recalls": recalls}, indent=2), encoding="utf-8")
-    write_report(recalls)
+            json.dumps({"rag_layer": RAG_LAYER, "metrics": metrics}, indent=2), encoding="utf-8")
+    write_report(metrics)
     print("готово:", DIR, flush=True)
 
 
@@ -82,29 +84,43 @@ def _marginal(recalls, knob_idx, val):
     return sum(vals) / len(vals) if vals else None
 
 
-def write_report(recalls: dict) -> None:
+def _flat(metrics, key):
+    return {n: m[key] for n, m in metrics.items() if m.get(key) is not None}
+
+
+def write_report(metrics: dict) -> None:
     lines = [
         "# Факторная абляция v3 vs v4 (battery100, rag_layer=mid)",
         "",
         "Сетка: окно {2,5} × центрирование {0,1} × латентный K/V {0,1}.",
-        "w2_c1_kv0 = v3_rag_centroid; w5_c1_kv1 = v4_rag_kv; w5_c0_kv0 = rag_text_only.",
+        "w2_c1_kv0 = v3; w5_c1_kv1 = v4; w5_c0_kv0 = rag_text_only.",
+        "**tone** — нить/тема диалога (косинус ответа к банку); целевая метрика K/V-канала.",
+        "**rep** — деградация (повторы). recall — факты (работа RAG, не K/V).",
         "",
-        "| window | centered | KV | recall |",
-        "|---|---|---|---|",
+        "| window | centered | KV | recall | tone | rep |",
+        "|---|---|---|---|---|---|",
     ]
-    for name, r in recalls.items():
+    for name, m in metrics.items():
         parts = name.replace("w", "").replace("_c", " ").replace("_kv", " ").split()
-        lines.append(f"| {parts[0]} | {parts[1]} | {parts[2]} | {r:.3f} |")
-    lines += ["", "## Маргинальные эффекты (среднее по двум другим ручкам)", "",
-              "| Ручка | off → on | Δ |", "|---|---|---|"]
-    for idx, label in [(0, "окно 2→5"), (1, "центрирование"), (2, "латентный K/V")]:
-        off, on = _marginal(recalls, idx, False), _marginal(recalls, idx, True)
-        delta = f"{on-off:+.3f}" if (off is not None and on is not None) else "—"
-        lines.append(f"| {label} | {off:.3f} → {on:.3f} | {delta} |")
-    lines += ["", "## v3 vs v4 (как в батарее)", "",
-              f"- v3 (w2_c1_kv0): {recalls.get('w2_c1_kv0')}",
-              f"- v4 (w5_c1_kv1): {recalls.get('w5_c1_kv1')}",
-              f"- rag_text_only (w5_c0_kv0): {recalls.get('w5_c0_kv0')}", ""]
+        tone = f"{m['tone']:.3f}" if m.get("tone") is not None else "—"
+        lines.append(f"| {parts[0]} | {parts[1]} | {parts[2]} | {m['recall']:.3f} | {tone} | {m['rep']:.3f} |")
+    for key in ("tone", "recall"):
+        flat = _flat(metrics, key)
+        lines += ["", f"## Маргинальные эффекты по {key} (среднее по двум другим ручкам)", "",
+                  "| Ручка | off → on | Δ |", "|---|---|---|"]
+        for idx, label in [(0, "окно 2→5"), (1, "центрирование"), (2, "латентный K/V")]:
+            off, on = _marginal(flat, idx, False), _marginal(flat, idx, True)
+            delta = f"{on-off:+.3f}" if (off is not None and on is not None) else "—"
+            off_s = f"{off:.3f}" if off is not None else "—"
+            on_s = f"{on:.3f}" if on is not None else "—"
+            lines.append(f"| {label} | {off_s} → {on_s} | {delta} |")
+    lines += ["", "## v3 vs v4 (recall / tone)", ""]
+    for nm, label in [("w2_c1_kv0", "v3"), ("w5_c1_kv1", "v4"), ("w5_c0_kv0", "rag_text_only"),
+                      ("w5_c1_kv0", "best-recall (w5,c1,noKV)")]:
+        m = metrics.get(nm, {})
+        tone = f"{m['tone']:.3f}" if m.get("tone") is not None else "—"
+        lines.append(f"- {label} ({nm}): recall {m.get('recall')} / tone {tone}")
+    lines += [""]
     (DIR / "REPORT.md").write_text("\n".join(lines), encoding="utf-8")
     print("\n".join(lines))
 
