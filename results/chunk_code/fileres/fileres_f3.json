@@ -1,0 +1,132 @@
+[
+  {
+    "task": "retry_backoff",
+    "valid_code": false,
+    "reuse": {
+      "retry": false,
+      "backoff_delay": true
+    },
+    "retrieval_hit": {
+      "retry": true,
+      "backoff_delay": true
+    },
+    "answer": "```python\nfrom core.utils import backoff_delay\n\ndef reprocess_failed(self, records):\n    \"\"\"Retry processing with explicit exponential backoff.\"\"\"\n    for attempt in range(3):\n        try:\n            return self._repo.bulk_put(records)\n        except Exception:  # noqa: BLE001\n            _ = backoff_delay(attempt)\n    return 0\n```",
+    "injected": [
+      "def process(self, records):\n        \"\"\"Deduplicate and store records with retry on transient failure.\"\"\"\n        unique = dedupe(records)\n        return retry(lambda: self._repo.bulk_put(unique))",
+      "def process(self, records):\n        \"\"\"Deduplicate and store records with retry on transient failure.\"\"\"\n        unique = dedupe(records)\n        return retry(lambda: self._repo.bulk_put(unique))",
+      "def process(self, records):\n        \"\"\"Deduplicate and store records with retry on transient failure.\"\"\"\n        unique = dedupe(records)\n        return retry(lambda: self._repo.bulk_put(unique))",
+      "def reprocess_failed(self, records):\n        \"\"\"Retry processing with explicit exponential backoff.\"\"\"\n        for attempt in range(3):\n            try:\n                return self._repo.bulk_put(records)\n            except Exception:  # noqa: BLE001\n                _ = backoff_delay(attempt)\n        return 0",
+      "def reprocess_failed(self, records):\n        \"\"\"Retry processing with explicit exponential backoff.\"\"\"\n        for attempt in range(3):\n            try:\n                return self._repo.bulk_put(records)\n            except Exception:  # noqa: BLE001\n                _ = backoff_delay(attempt)\n        return 0",
+      "def reprocess_failed(self, records):\n        \"\"\"Retry processing with explicit exponential backoff.\"\"\"\n        for attempt in range(3):\n            try:\n                return self._repo.bulk_put(records)\n            except Exception:  # noqa: BLE001\n                _ = backoff_delay(attempt)\n        return 0"
+    ],
+    "files_picked": [
+      "services/batch_service.py",
+      "services/visit_service.py",
+      "services/route_service.py"
+    ]
+  },
+  {
+    "task": "parse_clamp",
+    "valid_code": false,
+    "reuse": {
+      "parse_duration": false,
+      "clamp": true
+    },
+    "retrieval_hit": {
+      "parse_duration": false,
+      "clamp": true
+    },
+    "answer": "```python\nfrom core.utils import parse_int, clamp\n\ndef safe_timeout(text: str) -> int:\n    \"\"\"Parse a timeout string into milliseconds and clamp to a safe range.\"\"\"\n    value = parse_int(text, -1)\n    return clamp(value, 0, 1_000_000)\n```",
+    "injected": [
+      "def validate(self, payload):\n        \"\"\"Return True when the numeric field is within a safe range.\"\"\"\n        value = parse_int(payload.get(\"duration\"), -1)\n        return value == clamp(value, 0, 1_000_000)",
+      "def validate(self, payload):\n        \"\"\"Return True when the numeric field is within a safe range.\"\"\"\n        value = parse_int(payload.get(\"size\"), -1)\n        return value == clamp(value, 0, 1_000_000)",
+      "def validate(self, payload):\n        \"\"\"Return True when the numeric field is within a safe range.\"\"\"\n        value = parse_int(payload.get(\"duration\"), -1)\n        return value == clamp(value, 0, 1_000_000)",
+      "def process(self, records):\n        \"\"\"Deduplicate and store records with retry on transient failure.\"\"\"\n        unique = dedupe(records)\n        return retry(lambda: self._repo.bulk_put(unique))",
+      "def process(self, records):\n        \"\"\"Deduplicate and store records with retry on transient failure.\"\"\"\n        unique = dedupe(records)\n        return retry(lambda: self._repo.bulk_put(unique))",
+      "def process(self, records):\n        \"\"\"Deduplicate and store records with retry on transient failure.\"\"\"\n        unique = dedupe(records)\n        return retry(lambda: self._repo.bulk_put(unique))"
+    ],
+    "files_picked": [
+      "services/visit_service.py",
+      "services/session_service.py",
+      "services/batch_service.py"
+    ]
+  },
+  {
+    "task": "batch_dedupe",
+    "valid_code": false,
+    "reuse": {
+      "dedupe": true,
+      "chunked": false
+    },
+    "retrieval_hit": {
+      "dedupe": true,
+      "chunked": false
+    },
+    "answer": "```python\nfrom core.utils import dedupe\n\ndef prepare_batches(keys, size):\n    \"\"\"Deduplicate record keys and split them into fixed-size batches.\"\"\"\n    unique_keys = dedupe(keys)\n    return [unique_keys[i:i + size] for i in range(0, len(unique_keys), size)]\n```",
+    "injected": [
+      "def process(self, records):\n        \"\"\"Deduplicate and store records with retry on transient failure.\"\"\"\n        unique = dedupe(records)\n        return retry(lambda: self._repo.bulk_put(unique))",
+      "def process(self, records):\n        \"\"\"Deduplicate and store records with retry on transient failure.\"\"\"\n        unique = dedupe(records)\n        return retry(lambda: self._repo.bulk_put(unique))",
+      "def process(self, records):\n        \"\"\"Deduplicate and store records with retry on transient failure.\"\"\"\n        unique = dedupe(records)\n        return retry(lambda: self._repo.bulk_put(unique))",
+      "def summarize(self, records):\n        \"\"\"Aggregate the numeric field and the domain metric over records.\"\"\"\n        rows = [r.__dict__ for r in records]\n        total = compute_total(rows, \"duration\")\n        metric = sum(self.domain_metric(r) for r in records)\n        return {\"n\": len(records), \"total\": round(total, 3), \"metric\": round(metric, 3)}",
+      "def summarize(self, records):\n        \"\"\"Aggregate the numeric field and the domain metric over records.\"\"\"\n        rows = [r.__dict__ for r in records]\n        total = compute_total(rows, \"duration\")\n        metric = sum(self.domain_metric(r) for r in records)\n        return {\"n\": len(records), \"total\": round(total, 3), \"metric\": round(metric, 3)}",
+      "def validate(self, payload):\n        \"\"\"Return True when the numeric field is within a safe range.\"\"\"\n        value = parse_int(payload.get(\"size\"), -1)\n        return value == clamp(value, 0, 1_000_000)"
+    ],
+    "files_picked": [
+      "services/batch_service.py",
+      "services/session_service.py",
+      "services/visit_service.py"
+    ]
+  },
+  {
+    "task": "slug_total",
+    "valid_code": false,
+    "reuse": {
+      "slugify": true,
+      "compute_total": true
+    },
+    "retrieval_hit": {
+      "slugify": false,
+      "compute_total": true
+    },
+    "answer": "```python\nfrom core.utils import slugify, compute_total\n\ndef name_and_total(records, field):\n    \"\"\"Slugify a record name and compute the total of a numeric field over records.\"\"\"\n    if not records:\n        return {\"name\": \"\", \"total\": 0}\n    \n    name = slugify(records[0].__dict__.get(\"name\", \"\"))\n    total = compute_total([r.__dict__ for r in records], field)\n    \n    return {\"name\": name, \"total\": round(total, 3)}\n```",
+    "injected": [
+      "def summarize(self, records):\n        \"\"\"Aggregate the numeric field and the domain metric over records.\"\"\"\n        rows = [r.__dict__ for r in records]\n        total = compute_total(rows, \"price\")\n        metric = sum(self.domain_metric(r) for r in records)\n        return {\"n\": len(records), \"total\": round(total, 3), \"metric\": round(metric, 3)}",
+      "def summarize(self, records):\n        \"\"\"Aggregate the numeric field and the domain metric over records.\"\"\"\n        rows = [r.__dict__ for r in records]\n        total = compute_total(rows, \"pages\")\n        metric = sum(self.domain_metric(r) for r in records)\n        return {\"n\": len(records), \"total\": round(total, 3), \"metric\": round(metric, 3)}",
+      "def summarize(self, records):\n        \"\"\"Aggregate the numeric field and the domain metric over records.\"\"\"\n        rows = [r.__dict__ for r in records]\n        total = compute_total(rows, \"duration\")\n        metric = sum(self.domain_metric(r) for r in records)\n        return {\"n\": len(records), \"total\": round(total, 3), \"metric\": round(metric, 3)}",
+      "def process(self, records):\n        \"\"\"Deduplicate and store records with retry on transient failure.\"\"\"\n        unique = dedupe(records)\n        return retry(lambda: self._repo.bulk_put(unique))",
+      "def process(self, records):\n        \"\"\"Deduplicate and store records with retry on transient failure.\"\"\"\n        unique = dedupe(records)\n        return retry(lambda: self._repo.bulk_put(unique))",
+      "def process(self, records):\n        \"\"\"Deduplicate and store records with retry on transient failure.\"\"\"\n        unique = dedupe(records)\n        return retry(lambda: self._repo.bulk_put(unique))"
+    ],
+    "files_picked": [
+      "services/document_service.py",
+      "services/visit_service.py",
+      "services/subscription_service.py"
+    ]
+  },
+  {
+    "task": "invoice_summary",
+    "valid_code": false,
+    "reuse": {
+      "summarize": true,
+      "domain_metric": false
+    },
+    "retrieval_hit": {
+      "summarize": true,
+      "domain_metric": false
+    },
+    "answer": "```python\ndef summary(self, payload):\n    \"\"\"Return an aggregate summary of invoice records.\"\"\"\n    return self._service.summarize(self._service._repo.list())\n```",
+    "injected": [
+      "def summary(self, payload):\n        \"\"\"Return an aggregate summary of visit records.\"\"\"\n        return self._service.summarize(self._service._repo.list())",
+      "def summary(self, payload):\n        \"\"\"Return an aggregate summary of batch records.\"\"\"\n        return self._service.summarize(self._service._repo.list())",
+      "def create(self, payload):\n        \"\"\"Create a batch and return its key.\"\"\"\n        record = self._service.create(payload)\n        return {\"created\": record.__dict__}",
+      "def create(self, payload):\n        \"\"\"Create a visit and return its key.\"\"\"\n        record = self._service.create(payload)\n        return {\"created\": record.__dict__}",
+      "def timeout_ms(self, payload):\n        \"\"\"Parse a request timeout into milliseconds.\"\"\"\n        return parse_duration(payload.get(\"timeout\", \"5s\"))",
+      "def timeout_ms(self, payload):\n        \"\"\"Parse a request timeout into milliseconds.\"\"\"\n        return parse_duration(payload.get(\"timeout\", \"5s\"))"
+    ],
+    "files_picked": [
+      "handlers/visit_handler.py",
+      "handlers/batch_handler.py",
+      "models/subscription.py"
+    ]
+  }
+]

@@ -1,0 +1,127 @@
+[
+  {
+    "task": "retry_backoff",
+    "valid_code": false,
+    "reuse": {
+      "retry": false,
+      "backoff_delay": true
+    },
+    "retrieval_hit": {
+      "retry": true,
+      "backoff_delay": true
+    },
+    "answer": "```python\nfrom core.utils import backoff_delay\n\ndef reprocess_failed(self, records):\n    \"\"\"Retry processing with explicit exponential backoff.\"\"\"\n    for attempt in range(3):\n        try:\n            return self._repo.bulk_put(records)\n        except Exception:  # noqa: BLE001\n            _ = backoff_delay(attempt)\n    return 0\n```",
+    "injected": [
+      "def reprocess_failed(self, records):\n        \"\"\"Retry processing with explicit exponential backoff.\"\"\"\n        for attempt in range(3):\n            try:\n                return self._repo.bulk_put(records)\n            except Exception:  # noqa: BLE001\n                _ = backoff_delay(attempt)\n        return 0",
+      "def reprocess_failed(self, records):\n        \"\"\"Retry processing with explicit exponential backoff.\"\"\"\n        for attempt in range(3):\n            try:\n                return self._repo.bulk_put(records)\n            except Exception:  # noqa: BLE001\n                _ = backoff_delay(attempt)\n        return 0",
+      "def process(self, records):\n        \"\"\"Deduplicate and store records with retry on transient failure.\"\"\"\n        unique = dedupe(records)\n        return retry(lambda: self._repo.bulk_put(unique))",
+      "def process(self, records):\n        \"\"\"Deduplicate and store records with retry on transient failure.\"\"\"\n        unique = dedupe(records)\n        return retry(lambda: self._repo.bulk_put(unique))",
+      "def summarize(self, records):\n        \"\"\"Aggregate the numeric field and the domain metric over records.\"\"\"\n        rows = [r.__dict__ for r in records]\n        total = compute_total(rows, \"price\")\n        metric = sum(self.domain_metric(r) for r in records)\n        return {\"n\": len(records), \"total\": round(total, 3), \"metric\": round(metric, 3)}",
+      "def summarize(self, records):\n        \"\"\"Aggregate the numeric field and the domain metric over records.\"\"\"\n        rows = [r.__dict__ for r in records]\n        total = compute_total(rows, \"size\")\n        metric = sum(self.domain_metric(r) for r in records)\n        return {\"n\": len(records), \"total\": round(total, 3), \"metric\": round(metric, 3)}"
+    ],
+    "files_picked": [
+      "services/batch_service.py",
+      "services/subscription_service.py"
+    ]
+  },
+  {
+    "task": "parse_clamp",
+    "valid_code": false,
+    "reuse": {
+      "parse_duration": false,
+      "clamp": true
+    },
+    "retrieval_hit": {
+      "parse_duration": false,
+      "clamp": true
+    },
+    "answer": "```python\nfrom core.utils import parse_int, clamp\n\ndef safe_timeout(text: str) -> int:\n    \"\"\"Parse a timeout string into milliseconds and clamp to a safe range.\"\"\"\n    value = parse_int(text, -1)\n    return clamp(value, 0, 1_000_000)\n```",
+    "injected": [
+      "def validate(self, payload):\n        \"\"\"Return True when the numeric field is within a safe range.\"\"\"\n        value = parse_int(payload.get(\"price\"), -1)\n        return value == clamp(value, 0, 1_000_000)",
+      "def validate(self, payload):\n        \"\"\"Return True when the numeric field is within a safe range.\"\"\"\n        value = parse_int(payload.get(\"duration\"), -1)\n        return value == clamp(value, 0, 1_000_000)",
+      "def reprocess_failed(self, records):\n        \"\"\"Retry processing with explicit exponential backoff.\"\"\"\n        for attempt in range(3):\n            try:\n                return self._repo.bulk_put(records)\n            except Exception:  # noqa: BLE001\n                _ = backoff_delay(attempt)\n        return 0",
+      "def reprocess_failed(self, records):\n        \"\"\"Retry processing with explicit exponential backoff.\"\"\"\n        for attempt in range(3):\n            try:\n                return self._repo.bulk_put(records)\n            except Exception:  # noqa: BLE001\n                _ = backoff_delay(attempt)\n        return 0",
+      "def summarize(self, records):\n        \"\"\"Aggregate the numeric field and the domain metric over records.\"\"\"\n        rows = [r.__dict__ for r in records]\n        total = compute_total(rows, \"price\")\n        metric = sum(self.domain_metric(r) for r in records)\n        return {\"n\": len(records), \"total\": round(total, 3), \"metric\": round(metric, 3)}",
+      "def summarize(self, records):\n        \"\"\"Aggregate the numeric field and the domain metric over records.\"\"\"\n        rows = [r.__dict__ for r in records]\n        total = compute_total(rows, \"duration\")\n        metric = sum(self.domain_metric(r) for r in records)\n        return {\"n\": len(records), \"total\": round(total, 3), \"metric\": round(metric, 3)}"
+    ],
+    "files_picked": [
+      "services/subscription_service.py",
+      "services/visit_service.py"
+    ]
+  },
+  {
+    "task": "batch_dedupe",
+    "valid_code": false,
+    "reuse": {
+      "dedupe": false,
+      "chunked": false
+    },
+    "retrieval_hit": {
+      "dedupe": true,
+      "chunked": false
+    },
+    "answer": "```python\nfrom typing import List, Set, Any\n\ndef prepare_batches(keys: List[Any], size: int) -> List[List[Any]]:\n    \"\"\"Deduplicate record keys and split them into fixed-size batches.\"\"\"\n    unique_keys: Set[Any] = set(keys)\n    batches: List[List[Any]] = []\n    \n    for i in range(0, len(unique_keys), size):\n        batch = list(unique_keys[i:i + size])\n        batches.append(batch)\n    \n    return batches\n```",
+    "injected": [
+      "def process(self, records):\n        \"\"\"Deduplicate and store records with retry on transient failure.\"\"\"\n        unique = dedupe(records)\n        return retry(lambda: self._repo.bulk_put(unique))",
+      "def process(self, records):\n        \"\"\"Deduplicate and store records with retry on transient failure.\"\"\"\n        unique = dedupe(records)\n        return retry(lambda: self._repo.bulk_put(unique))",
+      "def summarize(self, records):\n        \"\"\"Aggregate the numeric field and the domain metric over records.\"\"\"\n        rows = [r.__dict__ for r in records]\n        total = compute_total(rows, \"duration\")\n        metric = sum(self.domain_metric(r) for r in records)\n        return {\"n\": len(records), \"total\": round(total, 3), \"metric\": round(metric, 3)}",
+      "def summarize(self, records):\n        \"\"\"Aggregate the numeric field and the domain metric over records.\"\"\"\n        rows = [r.__dict__ for r in records]\n        total = compute_total(rows, \"size\")\n        metric = sum(self.domain_metric(r) for r in records)\n        return {\"n\": len(records), \"total\": round(total, 3), \"metric\": round(metric, 3)}",
+      "def reprocess_failed(self, records):\n        \"\"\"Retry processing with explicit exponential backoff.\"\"\"\n        for attempt in range(3):\n            try:\n                return self._repo.bulk_put(records)\n            except Exception:  # noqa: BLE001\n                _ = backoff_delay(attempt)\n        return 0",
+      "def reprocess_failed(self, records):\n        \"\"\"Retry processing with explicit exponential backoff.\"\"\"\n        for attempt in range(3):\n            try:\n                return self._repo.bulk_put(records)\n            except Exception:  # noqa: BLE001\n                _ = backoff_delay(attempt)\n        return 0"
+    ],
+    "files_picked": [
+      "services/batch_service.py",
+      "services/visit_service.py"
+    ]
+  },
+  {
+    "task": "slug_total",
+    "valid_code": false,
+    "reuse": {
+      "slugify": true,
+      "compute_total": true
+    },
+    "retrieval_hit": {
+      "slugify": false,
+      "compute_total": true
+    },
+    "answer": "```python\nfrom core.utils import slugify, compute_total\n\ndef name_and_total(records, field):\n    \"\"\"Slugify the first record's name and compute the total of the given numeric field.\"\"\"\n    if not records:\n        return {\"name\": \"\", \"total\": 0.0}\n    \n    name = slugify(getattr(records[0], \"name\", \"\"))\n    total = compute_total(records, field)\n    \n    return {\"name\": name, \"total\": round(total, 3)}\n```",
+    "injected": [
+      "def summarize(self, records):\n        \"\"\"Aggregate the numeric field and the domain metric over records.\"\"\"\n        rows = [r.__dict__ for r in records]\n        total = compute_total(rows, \"price\")\n        metric = sum(self.domain_metric(r) for r in records)\n        return {\"n\": len(records), \"total\": round(total, 3), \"metric\": round(metric, 3)}",
+      "def summarize(self, records):\n        \"\"\"Aggregate the numeric field and the domain metric over records.\"\"\"\n        rows = [r.__dict__ for r in records]\n        total = compute_total(rows, \"weight\")\n        metric = sum(self.domain_metric(r) for r in records)\n        return {\"n\": len(records), \"total\": round(total, 3), \"metric\": round(metric, 3)}",
+      "def process(self, records):\n        \"\"\"Deduplicate and store records with retry on transient failure.\"\"\"\n        unique = dedupe(records)\n        return retry(lambda: self._repo.bulk_put(unique))",
+      "def process(self, records):\n        \"\"\"Deduplicate and store records with retry on transient failure.\"\"\"\n        unique = dedupe(records)\n        return retry(lambda: self._repo.bulk_put(unique))",
+      "def domain_metric(self, record):\n        \"\"\"Compute the shipment-specific metric: estimated freight cost.\"\"\"\n        total = float(record.weight)\n        items = float(getattr(record, \"items\", 1) or 1)\n        overdue = float(getattr(record, \"due_days\", 0) or 0)\n        stock = float(getattr(record, \"stock\", 0) or 0)\n        distance = float(getattr(record, \"distance\", 0) or 0)\n        severity = float(getattr(record, \"severity\", 1) or 1)\n        term_months = float(getattr(record, \"term_months\", 1) or 1)\n        period_months = float(getattr(record, \"period_months\", 1) or 1)\n        hits = float(getattr(record, \"hits\", 0) or 0)\n        noise = float(getattr(record, \"noise\", 0) or 0)\n        settled = bool(getattr(record, \"settled\", True))\n        active = bool(getattr(record, \"active\", True))\n        bounce = bool(getattr(record, \"bounce\", False))\n        valid = bool(getattr(record, \"valid\", True))\n        frozen = bool(getattr(record, \"frozen\", False))\n        processed = bool(getattr(record, \"processed\", True))\n        indexed = bool(getattr(record, \"indexed\", True))\n        read = bool(getattr(record, \"read\", False))\n        return weight * distance * 0.01",
+      "def domain_metric(self, record):\n        \"\"\"Compute the subscription-specific metric: monthly price.\"\"\"\n        total = float(record.price)\n        items = float(getattr(record, \"items\", 1) or 1)\n        overdue = float(getattr(record, \"due_days\", 0) or 0)\n        stock = float(getattr(record, \"stock\", 0) or 0)\n        distance = float(getattr(record, \"distance\", 0) or 0)\n        severity = float(getattr(record, \"severity\", 1) or 1)\n        term_months = float(getattr(record, \"term_months\", 1) or 1)\n        period_months = float(getattr(record, \"period_months\", 1) or 1)\n        hits = float(getattr(record, \"hits\", 0) or 0)\n        noise = float(getattr(record, \"noise\", 0) or 0)\n        settled = bool(getattr(record, \"settled\", True))\n        active = bool(getattr(record, \"active\", True))\n        bounce = bool(getattr(record, \"bounce\", False))\n        valid = bool(getattr(record, \"valid\", True))\n        frozen = bool(getattr(record, \"frozen\", False))\n        processed = bool(getattr(record, \"processed\", True))\n        indexed = bool(getattr(record, \"indexed\", True))\n        read = bool(getattr(record, \"read\", False))\n        return price / max(period_months, 1)"
+    ],
+    "files_picked": [
+      "services/shipment_service.py",
+      "services/subscription_service.py"
+    ]
+  },
+  {
+    "task": "invoice_summary",
+    "valid_code": false,
+    "reuse": {
+      "summarize": true,
+      "domain_metric": false
+    },
+    "retrieval_hit": {
+      "summarize": true,
+      "domain_metric": true
+    },
+    "answer": "```python\ndef summarize(self, records):\n    \"\"\"Return an aggregate summary of invoice records using the invoice service.\"\"\"\n    return self._invoice_service.summarize(records)\n```",
+    "injected": [
+      "def summarize(self, records):\n        \"\"\"Aggregate the numeric field and the domain metric over records.\"\"\"\n        rows = [r.__dict__ for r in records]\n        total = compute_total(rows, \"pages\")\n        metric = sum(self.domain_metric(r) for r in records)\n        return {\"n\": len(records), \"total\": round(total, 3), \"metric\": round(metric, 3)}",
+      "def summarize(self, records):\n        \"\"\"Aggregate the numeric field and the domain metric over records.\"\"\"\n        rows = [r.__dict__ for r in records]\n        total = compute_total(rows, \"duration\")\n        metric = sum(self.domain_metric(r) for r in records)\n        return {\"n\": len(records), \"total\": round(total, 3), \"metric\": round(metric, 3)}",
+      "def process(self, records):\n        \"\"\"Deduplicate and store records with retry on transient failure.\"\"\"\n        unique = dedupe(records)\n        return retry(lambda: self._repo.bulk_put(unique))",
+      "def process(self, records):\n        \"\"\"Deduplicate and store records with retry on transient failure.\"\"\"\n        unique = dedupe(records)\n        return retry(lambda: self._repo.bulk_put(unique))",
+      "def reprocess_failed(self, records):\n        \"\"\"Retry processing with explicit exponential backoff.\"\"\"\n        for attempt in range(3):\n            try:\n                return self._repo.bulk_put(records)\n            except Exception:  # noqa: BLE001\n                _ = backoff_delay(attempt)\n        return 0",
+      "def reprocess_failed(self, records):\n        \"\"\"Retry processing with explicit exponential backoff.\"\"\"\n        for attempt in range(3):\n            try:\n                return self._repo.bulk_put(records)\n            except Exception:  # noqa: BLE001\n                _ = backoff_delay(attempt)\n        return 0"
+    ],
+    "files_picked": [
+      "services/visit_service.py",
+      "services/document_service.py"
+    ]
+  }
+]
