@@ -244,7 +244,8 @@ class SemTreeBank:
 
     @torch.no_grad()
     def retrieve(self, bundle, query: str, k_clusters: int = 3, k: int = 6,
-                 max_tokens: int = 256, mode: str = "flat"
+                 max_tokens: int = 256, mode: str = "flat",
+                 diverse: bool = False, lam_div: float = 0.5
                  ) -> tuple[list[tuple[CodeNode, float, str]], list[dict]]:
         """Поиск по дереву: flat (top групп 1-го уровня) или descent (beam-спуск).
 
@@ -273,7 +274,7 @@ class SemTreeBank:
         if mode == "descent":
             scored = self._descent(dq, k_clusters, k)
         else:
-            scored = self._flat(dq, k_clusters, k)
+            scored = self._flat(dq, k_clusters, k, diverse=diverse, lam_div=lam_div)
         results = [(self.funcs[i], s, "leaf") for s, i in scored]
         owner = {}
         for j, cl in enumerate(self.clusters):
@@ -289,7 +290,8 @@ class SemTreeBank:
                              "members": [self.funcs[x].name for x in cl["members"][:3]]})
         return results, diag
 
-    def _flat(self, dq: torch.Tensor, k_clusters: int, k: int) -> list[tuple[float, int]]:
+    def _flat(self, dq: torch.Tensor, k_clusters: int, k: int,
+              diverse: bool = False, lam_div: float = 0.5) -> list[tuple[float, int]]:
         scored_cl = sorted(((float(_norm(cl["centroid"]) @ dq), j)
                             for j, cl in enumerate(self.clusters)), reverse=True)
         scored: list[tuple[float, int]] = []
@@ -303,7 +305,37 @@ class SemTreeBank:
                 for i in cl["members"]:
                     scored.append((float(self.residuals[i] @ q_res), i))
         scored.sort(key=lambda t: -t[0])
+        if diverse:
+            return self._mmr(scored, k, lam_div)
         return scored[:k]
+
+    def _mmr(self, scored: list[tuple[float, int]], k: int, lam: float) -> list[tuple[float, int]]:
+        """Maximal Marginal Relevance: баланс релевантности и разнообразия.
+
+        Жадкий выбор k кандидатов: argmax lam·rel − (1−lam)·max_sim(выбранные).
+        Разводит клоны (например 5 одинаковых timeout_ms), чтобы погребённые
+        нужные функции (retry) всплывали надёжно, а не через случайный сдвиг.
+        """
+        if not scored:
+            return []
+        rmax = scored[0][0]
+        rmin = scored[-1][0]
+        span = (rmax - rmin) or 1.0
+        remaining = list(scored)
+        selected: list[tuple[float, int]] = []
+        sel_idx: list[int] = []
+        while remaining and len(selected) < k:
+            best, best_score = None, -1e9
+            for s, i in remaining:
+                rel = (s - rmin) / span
+                sim = max((float(self.dev[i] @ self.dev[j]) for j in sel_idx), default=0.0)
+                mmr = lam * rel - (1.0 - lam) * sim
+                if mmr > best_score:
+                    best_score, best = mmr, (s, i)
+            selected.append(best)
+            sel_idx.append(best[1])
+            remaining.remove(best)
+        return selected
 
     def _descent(self, dq: torch.Tensor, beam: int, k: int) -> list[tuple[float, int]]:
         beam_nodes = [(self.tree, 0.0)]

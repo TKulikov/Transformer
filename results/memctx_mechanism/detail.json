@@ -1,0 +1,169 @@
+{
+  "n_clusters_std": 30,
+  "n_clusters_mem": 29,
+  "tasks": [
+    {
+      "task": "retry_backoff",
+      "defs_std": {
+        "retry": false,
+        "backoff_delay": true
+      },
+      "defs_mem": {
+        "retry": true,
+        "backoff_delay": true
+      },
+      "gained": [
+        "retry"
+      ],
+      "lost": [],
+      "top_std": [
+        "backoff_delay",
+        "timeout_ms",
+        "timeout_ms",
+        "timeout_ms",
+        "timeout_ms",
+        "timeout_ms"
+      ],
+      "top_mem": [
+        "backoff_delay",
+        "retry",
+        "process",
+        "process",
+        "timeout_ms",
+        "process"
+      ],
+      "mechanism": [
+        {
+          "helper": "retry",
+          "cos_key_std_mem": 0.9987,
+          "cluster_std": 4,
+          "cluster_mem": 4,
+          "cluster_size_std": 20,
+          "cluster_size_mem": 20,
+          "in_top_std": false,
+          "in_top_mem": true
+        }
+      ]
+    },
+    {
+      "task": "parse_clamp",
+      "defs_std": {
+        "parse_duration": false,
+        "clamp": true
+      },
+      "defs_mem": {
+        "parse_duration": false,
+        "clamp": true
+      },
+      "gained": [],
+      "lost": [],
+      "top_std": [
+        "clamp",
+        "validate",
+        "validate",
+        "timeout_ms",
+        "timeout_ms",
+        "timeout_ms"
+      ],
+      "top_mem": [
+        "clamp",
+        "validate",
+        "validate",
+        "validate",
+        "validate",
+        "timeout_ms"
+      ],
+      "mechanism": []
+    },
+    {
+      "task": "batch_dedupe",
+      "defs_std": {
+        "dedupe": false,
+        "chunked": true
+      },
+      "defs_mem": {
+        "dedupe": false,
+        "chunked": true
+      },
+      "gained": [],
+      "lost": [],
+      "top_std": [
+        "chunked",
+        "clamp",
+        "process",
+        "process",
+        "process",
+        "process"
+      ],
+      "top_mem": [
+        "chunked",
+        "clamp",
+        "process",
+        "process",
+        "process",
+        "process"
+      ],
+      "mechanism": []
+    },
+    {
+      "task": "slug_total",
+      "defs_std": {
+        "slugify": false,
+        "compute_total": true
+      },
+      "defs_mem": {
+        "slugify": false,
+        "compute_total": true
+      },
+      "gained": [],
+      "lost": [],
+      "top_std": [
+        "compute_total",
+        "clamp",
+        "summarize",
+        "summarize",
+        "summarize",
+        "summarize"
+      ],
+      "top_mem": [
+        "compute_total",
+        "clamp",
+        "summarize",
+        "summarize",
+        "summarize",
+        "summarize"
+      ],
+      "mechanism": []
+    },
+    {
+      "task": "invoice_summary",
+      "defs_std": {
+        "summarize": false,
+        "domain_metric": false
+      },
+      "defs_mem": {
+        "summarize": false,
+        "domain_metric": false
+      },
+      "gained": [],
+      "lost": [],
+      "top_std": [
+        "__init__",
+        "summary",
+        "summary",
+        "summary",
+        "summary",
+        "summary"
+      ],
+      "top_mem": [
+        "__init__",
+        "summary",
+        "summary",
+        "new_metric",
+        "new_invoice",
+        "new_shipment"
+      ],
+      "mechanism": []
+    }
+  ]
+}
