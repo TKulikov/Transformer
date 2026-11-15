@@ -39,19 +39,18 @@
    (решённая) цель/узел. Порог tau критичен (низкий→grab-bag, высокий→фрагментация).
 
 ## Фазы (каждая независимо проверяема)
-- [ ] Фаза 0: скелет пакета + config + vector (cosine/centroid/center/MMR) +
+- [x] Фаза 0: скелет пакета + config + vector (cosine/centroid/center/MMR) +
       cluster (дендрограмма) + unit-тесты (offline, CPU). Проверка: pytest зелёный.
-- [ ] Фаза 1 (spike, риск): model.py (load/embed/generate) + spike_embed.py —
-      проверить output_hidden_states на гибриде, форму [N,2560], выбор слоя.
-      Проверка: spike печатает формы, cos(a,a)=1, разные тексты <1. VRAM free first.
-- [ ] Фаза 2: tree (two-stage + write-back) + bank (static keys, tiers, use-score)
+- [x] Фаза 1 (spike, риск): model.py (load/embed/generate) + spike_embed.py —
+      output_hidden_states на гибриде работает, [N,2560], слой 15, self-cos=1.
+- [x] Фаза 2: tree (two-stage + write-back) + bank (static keys, tiers, use-score)
       + prefetch (TTL по шагу) + retrieve (единый каскад) + тесты на fake-эмбеддингах.
-      Проверка: pytest зелёный (ассимиляция/создание, MMR never-worse, TTL, tiers).
-- [ ] Фаза 3: goal (gen/compress/fidelity/decompose/judge) + planner (план-шаг +
-      chunked generation + write-back). Модель-зависимо. Проверка: smoke на 1 задаче.
-- [ ] Фаза 4: scripts_code/eval_retrieval.py на testbeds/taskq — абляция
-      flat-centered vs goal-routed vs +prefetch; метрики hits/reuse/def-hits.
-      Проверка: results/code/<run>/ + отчёт. GPU, последовательно, вотчер.
+- [x] Фаза 3: goal (gen/compress/fidelity/decompose/judge) + planner (план-шаг +
+      chunked generation + write-back). Smoke端到end на GPU: 2 чанка, fidelity 0.884.
+- [x] Фаза 4: scripts_code/eval_retrieval.py на testbeds/taskq — 8 условий, 45
+      запросов, bootstrap CI + paired. Итог: goal routing load-bearing (+9/-0),
+      центрирование/диверсификация НЕ помогают на code (контраст с диалогом),
+      prefetch +0, needroute коллапсирует. docs/CODE_BRANCH_FINDINGS.md.
 
 ## Риски / fallback
 - output_hidden_states на гибриде может отличаться → spike до постройки всего;
