@@ -48,6 +48,10 @@ class CodeNode:
     key_raw: torch.Tensor | None = None   # абсолютный ключ (mean активаций)
     key_res: torch.Tensor | None = None   # нормированное отклонение от родителя
     val: torch.Tensor | None = None       # контекстуализированное значение
+    # компоненты ключа (вариант 3): хранятся для дешёвого rekey(β, γ)
+    _qrec: torch.Tensor | None = None     # mid-mean сигнатуры+docstring (запрос)
+    _a: torch.Tensor | None = None        # mid-span тела в контексте родителя (latent)
+    _content: torch.Tensor | None = None  # изолированный mid-mean тела (содержание)
 
 
 def _norm(v: torch.Tensor) -> torch.Tensor:
@@ -337,10 +341,11 @@ class HierLatentBank:
     запрос; слот-банк наполняется латентными per-token состояниями тел.
     """
 
-    def __init__(self, nodes: list[CodeNode], beta: float = 1.0,
+    def __init__(self, nodes: list[CodeNode], beta: float = 1.0, gamma: float = 0.0,
                  slot_size: int = 512, device: torch.device | str = "cpu") -> None:
         self.nodes = nodes
         self.beta = beta
+        self.gamma = gamma
         self.device = torch.device(device)
         self.slots = None  # создаётся в ingest, когда известен d_model
         self._slot_size = slot_size
@@ -360,10 +365,12 @@ class HierLatentBank:
                 q_rec = latent_mean(bundle, request_proxy(node), max_tokens)
                 a, a_toks, _ = embed_chunk(bundle, node.text, context=ctx, mode="late",
                                            layer="mid", max_tokens=max_tokens)
+                content = latent_mean(bundle, node.text, max_tokens)  # вариант 3: содержание
                 if a_toks is not None and a_toks.shape[0] > 0:
                     self.slots.update(a_toks.to(self.device), crit=0.95,
                                       max_to_new=1.0, window_crit=-1e9)
-                raw = _norm(q_rec + self.beta * a)
+                node._qrec, node._a, node._content = q_rec, a, content
+                raw = _norm(q_rec + self.beta * a + self.gamma * content)
                 self._n += 1
                 m = raw if self.mean is None else self.mean
                 self.mean = (m * (self._n - 1) + raw) / self._n
@@ -380,6 +387,27 @@ class HierLatentBank:
                 p = self.nodes[p.parent]
             self.file_of[node.nid] = p.nid if (p.kind == "file" and p.parent is not None) else node.nid
             self.stats["ingested"] += 1
+
+    def rekey(self, beta: float, gamma: float) -> None:
+        """Пересобрать ключи из сохранённых компонент (без embed-форвардов).
+
+        key = norm(q_rec + beta·a + gamma·content); пересчитывает бегущее
+        среднее и residual-ключи. Позволяет свипать beta/gamma после одной
+        ингестии. gamma=0 — базовый ключ (без content-вектора).
+        """
+        self.beta, self.gamma = beta, gamma
+        self.mean = None
+        self._n = 0
+        for node in self.nodes:  # родители раньше детей
+            if node.kind == "function" and node._qrec is not None:
+                raw = _norm(node._qrec + beta * node._a + gamma * node._content)
+                node.key_raw = raw.to(self.device)
+                self._n += 1
+                m = raw if self.mean is None else self.mean
+                self.mean = (m * (self._n - 1) + raw) / self._n
+            parent = self.nodes[node.parent] if node.parent is not None else None
+            node.key_res = _norm(node.key_raw - parent.key_raw) if parent is not None \
+                else _norm(node.key_raw)
 
     def _center(self, v: torch.Tensor) -> torch.Tensor:
         return _norm(v - self.mean) if self.mean is not None else _norm(v)

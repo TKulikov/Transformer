@@ -1,0 +1,252 @@
+{
+  "model": "qwen35-4b",
+  "device": "cuda",
+  "beta": 1.0,
+  "ingest_s": 67.3,
+  "gammas": {
+    "0.0": {
+      "reuse": 7,
+      "hits": 6,
+      "tasks": [
+        {
+          "task": "retry_backoff",
+          "reuse": {
+            "retry": false,
+            "backoff_delay": true
+          },
+          "hit": {
+            "retry": false,
+            "backoff_delay": true
+          }
+        },
+        {
+          "task": "parse_clamp",
+          "reuse": {
+            "parse_duration": true,
+            "clamp": true
+          },
+          "hit": {
+            "parse_duration": true,
+            "clamp": true
+          }
+        },
+        {
+          "task": "batch_dedupe",
+          "reuse": {
+            "dedupe": false,
+            "chunked": false
+          },
+          "hit": {
+            "dedupe": false,
+            "chunked": false
+          }
+        },
+        {
+          "task": "slug_total",
+          "reuse": {
+            "slugify": true,
+            "compute_total": true
+          },
+          "hit": {
+            "slugify": false,
+            "compute_total": true
+          }
+        },
+        {
+          "task": "invoice_summary",
+          "reuse": {
+            "summarize": true,
+            "domain_metric": true
+          },
+          "hit": {
+            "summarize": true,
+            "domain_metric": true
+          }
+        }
+      ]
+    },
+    "0.5": {
+      "reuse": 5,
+      "hits": 5,
+      "tasks": [
+        {
+          "task": "retry_backoff",
+          "reuse": {
+            "retry": false,
+            "backoff_delay": true
+          },
+          "hit": {
+            "retry": false,
+            "backoff_delay": true
+          }
+        },
+        {
+          "task": "parse_clamp",
+          "reuse": {
+            "parse_duration": false,
+            "clamp": true
+          },
+          "hit": {
+            "parse_duration": false,
+            "clamp": true
+          }
+        },
+        {
+          "task": "batch_dedupe",
+          "reuse": {
+            "dedupe": false,
+            "chunked": false
+          },
+          "hit": {
+            "dedupe": false,
+            "chunked": false
+          }
+        },
+        {
+          "task": "slug_total",
+          "reuse": {
+            "slugify": true,
+            "compute_total": true
+          },
+          "hit": {
+            "slugify": false,
+            "compute_total": true
+          }
+        },
+        {
+          "task": "invoice_summary",
+          "reuse": {
+            "summarize": true,
+            "domain_metric": false
+          },
+          "hit": {
+            "summarize": true,
+            "domain_metric": true
+          }
+        }
+      ]
+    },
+    "1.0": {
+      "reuse": 6,
+      "hits": 5,
+      "tasks": [
+        {
+          "task": "retry_backoff",
+          "reuse": {
+            "retry": false,
+            "backoff_delay": true
+          },
+          "hit": {
+            "retry": false,
+            "backoff_delay": true
+          }
+        },
+        {
+          "task": "parse_clamp",
+          "reuse": {
+            "parse_duration": false,
+            "clamp": true
+          },
+          "hit": {
+            "parse_duration": false,
+            "clamp": true
+          }
+        },
+        {
+          "task": "batch_dedupe",
+          "reuse": {
+            "dedupe": false,
+            "chunked": false
+          },
+          "hit": {
+            "dedupe": false,
+            "chunked": false
+          }
+        },
+        {
+          "task": "slug_total",
+          "reuse": {
+            "slugify": true,
+            "compute_total": true
+          },
+          "hit": {
+            "slugify": false,
+            "compute_total": true
+          }
+        },
+        {
+          "task": "invoice_summary",
+          "reuse": {
+            "summarize": true,
+            "domain_metric": true
+          },
+          "hit": {
+            "summarize": true,
+            "domain_metric": true
+          }
+        }
+      ]
+    },
+    "2.0": {
+      "reuse": 6,
+      "hits": 6,
+      "tasks": [
+        {
+          "task": "retry_backoff",
+          "reuse": {
+            "retry": false,
+            "backoff_delay": true
+          },
+          "hit": {
+            "retry": false,
+            "backoff_delay": true
+          }
+        },
+        {
+          "task": "parse_clamp",
+          "reuse": {
+            "parse_duration": false,
+            "clamp": true
+          },
+          "hit": {
+            "parse_duration": false,
+            "clamp": true
+          }
+        },
+        {
+          "task": "batch_dedupe",
+          "reuse": {
+            "dedupe": true,
+            "chunked": false
+          },
+          "hit": {
+            "dedupe": true,
+            "chunked": false
+          }
+        },
+        {
+          "task": "slug_total",
+          "reuse": {
+            "slugify": true,
+            "compute_total": true
+          },
+          "hit": {
+            "slugify": false,
+            "compute_total": true
+          }
+        },
+        {
+          "task": "invoice_summary",
+          "reuse": {
+            "summarize": true,
+            "domain_metric": false
+          },
+          "hit": {
+            "summarize": true,
+            "domain_metric": true
+          }
+        }
+      ]
+    }
+  }
+}
