@@ -10,7 +10,9 @@ set -u
 PATTERN="${1:?usage: wait_and_report.sh <pgrep-pattern> <reports...>}"
 shift
 echo "[watch $(date '+%F %T')] жду завершения: $PATTERN"
-while pgrep -f "$PATTERN" >/dev/null 2>&1; do sleep 30; done
+# pgrep -f матчит и cmdline самого вотчера (паттерн передан аргументом),
+# поэтому исключаем процессы wait_and_report, иначе цикл ждёт сам себя вечно.
+while pgrep -af "$PATTERN" | grep -v 'wait_and_report' | grep -q .; do sleep 30; done
 echo "[watch $(date '+%F %T')] процессы завершены, сводка:"
 for f in "$@"; do
   echo
