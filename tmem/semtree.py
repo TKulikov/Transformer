@@ -37,16 +37,35 @@ embed-форвардов (свип порога/пространства деш�
 
 from __future__ import annotations
 
+from contextlib import contextmanager
+
 import torch
 
 from .chunkmem import embed_block_key, embed_chunk
 from .hiermem import CodeNode
+from .kvinject import install_kv_memory, uninstall_kv_memory
 from .latentrag import latent_mean
-from .memory import Memory
+from .memory import CorrectionLayer, Memory
 
 
 def _norm(v: torch.Tensor) -> torch.Tensor:
     return v / torch.clamp(v.norm(), min=1e-8)
+
+
+@contextmanager
+def memory_injected(bundle, corr: CorrectionLayer, max_slots: int = 32):
+    """Временно инжектирует живые слоты банка как K/V в attention модели.
+
+    Используется при КОДИРОВАНИИ: эмбеддинг текста считается в контексте
+    живой памяти (слоты входят в attention mid-слоёв), т.е. представление
+    контекстуализировано текущим состоянием банка. Банк при этом и читается,
+    и обновляется (живая динамика). По выходе обёртки снимаются.
+    """
+    wrappers = install_kv_memory(bundle.model, corr, max_slots=max_slots)
+    try:
+        yield wrappers
+    finally:
+        uninstall_kv_memory(bundle.model)
 
 
 class SemTreeBank:
@@ -62,7 +81,8 @@ class SemTreeBank:
 
     def __init__(self, nodes: list[CodeNode], space: str = "mid", tau: float = 0.6,
                  device: torch.device | str = "cpu", use_bank: bool = False,
-                 alpha: float = 0.5, decay: bool = True, slot_size: int = 512) -> None:
+                 alpha: float = 0.5, decay: bool = True, slot_size: int = 512,
+                 memory_context: bool = False, memctx_query: bool = True) -> None:
         self.nodes = nodes
         self.funcs = [n for n in nodes if n.kind == "function"]
         self.space = space
@@ -73,6 +93,9 @@ class SemTreeBank:
         self.decay = decay         # TTL-динамика банка (False = статический)
         self.slot_size = slot_size
         self.bank = None
+        self.memory_context = memory_context   # K/V-инжект живой памяти при КОДИРОВАНИИ эмбеддингов
+        self.memctx_query = memctx_query       # контекстуализировать и запрос тоже
+        self.corr = None                       # живой банк для memory_context
         self.raw: dict[str, torch.Tensor] = {}   # nid -> {"mid": (d,), "mean": (d,)}
         self.gmean: dict[str, torch.Tensor] = {}
         self.dev: torch.Tensor | None = None     # (n, d) нормированные отклонения
@@ -89,13 +112,24 @@ class SemTreeBank:
         if self.use_bank:
             self.bank = Memory(bundle.hidden_size, size=self.slot_size,
                                merge_k=0.25, decay=self.decay, device=self.device)
+        if self.memory_context:
+            # живой банк: смягчённый gate для код-активаций; читается+пишется при кодировании
+            self.corr = CorrectionLayer(bundle.hidden_size, size=self.slot_size,
+                                        retrieve_count=256, window_crit=-1e9,
+                                        crit=0.95, max_to_new=1.0, merge_k=0.25, decay=self.decay)
         mids, means = [], []
         for n in self.funcs:
             parent = self.nodes[n.parent] if n.parent is not None else None
             ctx = parent.text if parent is not None else ""
-            a, a_toks, _ = embed_chunk(bundle, n.text, context=ctx, mode="late",
-                                       layer="mid", max_tokens=max_tokens)
-            mk, _ = embed_block_key(bundle, n.text, layers="mean", max_tokens=max_tokens)
+            if self.memory_context:
+                with memory_injected(bundle, self.corr):
+                    a, a_toks, _ = embed_chunk(bundle, n.text, context=ctx, mode="late",
+                                               layer="mid", max_tokens=max_tokens)
+                    mk, _ = embed_block_key(bundle, n.text, layers="mean", max_tokens=max_tokens)
+            else:
+                a, a_toks, _ = embed_chunk(bundle, n.text, context=ctx, mode="late",
+                                           layer="mid", max_tokens=max_tokens)
+                mk, _ = embed_block_key(bundle, n.text, layers="mean", max_tokens=max_tokens)
             mids.append(a.float().to(self.device))
             means.append(mk.float().to(self.device))
             if self.bank is not None and a_toks is not None and a_toks.shape[0] > 0:
@@ -104,6 +138,8 @@ class SemTreeBank:
                                  max_to_new=1.0, window_crit=-1e9)
             self.stats["functions"] += 1
         self.raw = {"mid": torch.stack(mids), "mean": torch.stack(means)}
+        if self.memory_context:
+            self.stats["memctx_slots"] = self.corr.memory.count_element
         self.recluster(self.space, self.tau)
 
     def recluster(self, space: str, tau: float, max_depth: int = 1) -> None:
@@ -190,6 +226,12 @@ class SemTreeBank:
 
     def query_raw(self, bundle, query: str, max_tokens: int = 256) -> torch.Tensor:
         """Сырой вектор запроса в пространстве ключей (mid или mean), без центрирования."""
+        if self.memory_context and self.memctx_query and self.corr is not None:
+            with memory_injected(bundle, self.corr):
+                return self._query_embed(bundle, query, max_tokens)
+        return self._query_embed(bundle, query, max_tokens)
+
+    def _query_embed(self, bundle, query: str, max_tokens: int) -> torch.Tensor:
         if self.space == "mid":
             q = latent_mean(bundle, query, max_tokens)
         else:
