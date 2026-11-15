@@ -1,0 +1,1019 @@
+{
+  "model": "qwen35-4b",
+  "device": "cuda",
+  "n_steps": 36,
+  "window": 1,
+  "k": 5,
+  "conditions": {
+    "static": {
+      "reuse": 2,
+      "rewrite": 0,
+      "miss": 58,
+      "total": 60,
+      "bank_size": 41,
+      "steps": [
+        {
+          "i": 0,
+          "phase": "core",
+          "step": "validate_record",
+          "should": [],
+          "score": {},
+          "cum_reuse": 0,
+          "cum_total": 0
+        },
+        {
+          "i": 1,
+          "phase": "core",
+          "step": "normalize_amount",
+          "should": [],
+          "score": {},
+          "cum_reuse": 0,
+          "cum_total": 0
+        },
+        {
+          "i": 2,
+          "phase": "core",
+          "step": "dedupe_by_id",
+          "should": [],
+          "score": {},
+          "cum_reuse": 0,
+          "cum_total": 0
+        },
+        {
+          "i": 3,
+          "phase": "core",
+          "step": "parse_timestamp",
+          "should": [],
+          "score": {},
+          "cum_reuse": 0,
+          "cum_total": 0
+        },
+        {
+          "i": 4,
+          "phase": "core",
+          "step": "format_currency",
+          "should": [],
+          "score": {},
+          "cum_reuse": 0,
+          "cum_total": 0
+        },
+        {
+          "i": 5,
+          "phase": "core",
+          "step": "clamp_value",
+          "should": [],
+          "score": {},
+          "cum_reuse": 0,
+          "cum_total": 0
+        },
+        {
+          "i": 6,
+          "phase": "core",
+          "step": "retry_operation",
+          "should": [],
+          "score": {},
+          "cum_reuse": 0,
+          "cum_total": 0
+        },
+        {
+          "i": 7,
+          "phase": "core",
+          "step": "cache_lookup",
+          "should": [],
+          "score": {},
+          "cum_reuse": 0,
+          "cum_total": 0
+        },
+        {
+          "i": 8,
+          "phase": "core",
+          "step": "log_event",
+          "should": [],
+          "score": {},
+          "cum_reuse": 0,
+          "cum_total": 0
+        },
+        {
+          "i": 9,
+          "phase": "core",
+          "step": "compute_metric",
+          "should": [],
+          "score": {},
+          "cum_reuse": 0,
+          "cum_total": 0
+        },
+        {
+          "i": 10,
+          "phase": "core",
+          "step": "slugify_name",
+          "should": [],
+          "score": {},
+          "cum_reuse": 0,
+          "cum_total": 0
+        },
+        {
+          "i": 11,
+          "phase": "core",
+          "step": "chunk_list",
+          "should": [],
+          "score": {},
+          "cum_reuse": 0,
+          "cum_total": 0
+        },
+        {
+          "i": 12,
+          "phase": "service",
+          "step": "ingest_records",
+          "should": [
+            "validate_record",
+            "normalize_amount"
+          ],
+          "score": {
+            "validate_record": "miss",
+            "normalize_amount": "miss"
+          },
+          "cum_reuse": 0,
+          "cum_total": 2
+        },
+        {
+          "i": 13,
+          "phase": "service",
+          "step": "clean_records",
+          "should": [
+            "dedupe_by_id",
+            "clamp_value"
+          ],
+          "score": {
+            "dedupe_by_id": "miss",
+            "clamp_value": "miss"
+          },
+          "cum_reuse": 0,
+          "cum_total": 4
+        },
+        {
+          "i": 14,
+          "phase": "service",
+          "step": "enrich_records",
+          "should": [
+            "parse_timestamp",
+            "format_currency"
+          ],
+          "score": {
+            "parse_timestamp": "miss",
+            "format_currency": "miss"
+          },
+          "cum_reuse": 0,
+          "cum_total": 6
+        },
+        {
+          "i": 15,
+          "phase": "service",
+          "step": "resilient_call",
+          "should": [
+            "retry_operation",
+            "cache_lookup"
+          ],
+          "score": {
+            "retry_operation": "miss",
+            "cache_lookup": "miss"
+          },
+          "cum_reuse": 0,
+          "cum_total": 8
+        },
+        {
+          "i": 16,
+          "phase": "service",
+          "step": "audit_trail",
+          "should": [
+            "log_event",
+            "compute_metric"
+          ],
+          "score": {
+            "log_event": "miss",
+            "compute_metric": "miss"
+          },
+          "cum_reuse": 0,
+          "cum_total": 10
+        },
+        {
+          "i": 17,
+          "phase": "service",
+          "step": "name_records",
+          "should": [
+            "slugify_name",
+            "validate_record"
+          ],
+          "score": {
+            "slugify_name": "miss",
+            "validate_record": "miss"
+          },
+          "cum_reuse": 0,
+          "cum_total": 12
+        },
+        {
+          "i": 18,
+          "phase": "service",
+          "step": "batch_records",
+          "should": [
+            "chunk_list",
+            "dedupe_by_id"
+          ],
+          "score": {
+            "chunk_list": "reuse",
+            "dedupe_by_id": "reuse"
+          },
+          "cum_reuse": 2,
+          "cum_total": 14
+        },
+        {
+          "i": 19,
+          "phase": "service",
+          "step": "time_series",
+          "should": [
+            "parse_timestamp",
+            "compute_metric"
+          ],
+          "score": {
+            "parse_timestamp": "miss",
+            "compute_metric": "miss"
+          },
+          "cum_reuse": 2,
+          "cum_total": 16
+        },
+        {
+          "i": 20,
+          "phase": "service",
+          "step": "money_report",
+          "should": [
+            "format_currency",
+            "compute_metric"
+          ],
+          "score": {
+            "format_currency": "miss",
+            "compute_metric": "miss"
+          },
+          "cum_reuse": 2,
+          "cum_total": 18
+        },
+        {
+          "i": 21,
+          "phase": "service",
+          "step": "safe_transform",
+          "should": [
+            "clamp_value",
+            "normalize_amount"
+          ],
+          "score": {
+            "clamp_value": "miss",
+            "normalize_amount": "miss"
+          },
+          "cum_reuse": 2,
+          "cum_total": 20
+        },
+        {
+          "i": 22,
+          "phase": "service",
+          "step": "cached_ingest",
+          "should": [
+            "cache_lookup",
+            "validate_record"
+          ],
+          "score": {
+            "cache_lookup": "miss",
+            "validate_record": "miss"
+          },
+          "cum_reuse": 2,
+          "cum_total": 22
+        },
+        {
+          "i": 23,
+          "phase": "service",
+          "step": "logged_batch",
+          "should": [
+            "log_event",
+            "chunk_list"
+          ],
+          "score": {
+            "log_event": "miss",
+            "chunk_list": "miss"
+          },
+          "cum_reuse": 2,
+          "cum_total": 24
+        },
+        {
+          "i": 24,
+          "phase": "pipeline",
+          "step": "etl_pipeline",
+          "should": [
+            "ingest_records",
+            "clean_records",
+            "compute_metric"
+          ],
+          "score": {
+            "ingest_records": "miss",
+            "clean_records": "miss",
+            "compute_metric": "miss"
+          },
+          "cum_reuse": 2,
+          "cum_total": 27
+        },
+        {
+          "i": 25,
+          "phase": "pipeline",
+          "step": "report_pipeline",
+          "should": [
+            "enrich_records",
+            "money_report",
+            "format_currency"
+          ],
+          "score": {
+            "enrich_records": "miss",
+            "money_report": "miss",
+            "format_currency": "miss"
+          },
+          "cum_reuse": 2,
+          "cum_total": 30
+        },
+        {
+          "i": 26,
+          "phase": "pipeline",
+          "step": "resilient_etl",
+          "should": [
+            "resilient_call",
+            "ingest_records",
+            "retry_operation"
+          ],
+          "score": {
+            "resilient_call": "miss",
+            "ingest_records": "miss",
+            "retry_operation": "miss"
+          },
+          "cum_reuse": 2,
+          "cum_total": 33
+        },
+        {
+          "i": 27,
+          "phase": "pipeline",
+          "step": "audit_pipeline",
+          "should": [
+            "audit_trail",
+            "clean_records",
+            "log_event"
+          ],
+          "score": {
+            "audit_trail": "miss",
+            "clean_records": "miss",
+            "log_event": "miss"
+          },
+          "cum_reuse": 2,
+          "cum_total": 36
+        },
+        {
+          "i": 28,
+          "phase": "pipeline",
+          "step": "naming_pipeline",
+          "should": [
+            "name_records",
+            "batch_records",
+            "slugify_name"
+          ],
+          "score": {
+            "name_records": "miss",
+            "batch_records": "miss",
+            "slugify_name": "miss"
+          },
+          "cum_reuse": 2,
+          "cum_total": 39
+        },
+        {
+          "i": 29,
+          "phase": "pipeline",
+          "step": "timeseries_pipeline",
+          "should": [
+            "time_series",
+            "enrich_records",
+            "parse_timestamp"
+          ],
+          "score": {
+            "time_series": "miss",
+            "enrich_records": "miss",
+            "parse_timestamp": "miss"
+          },
+          "cum_reuse": 2,
+          "cum_total": 42
+        },
+        {
+          "i": 30,
+          "phase": "pipeline",
+          "step": "safe_etl",
+          "should": [
+            "safe_transform",
+            "ingest_records",
+            "clamp_value"
+          ],
+          "score": {
+            "safe_transform": "miss",
+            "ingest_records": "miss",
+            "clamp_value": "miss"
+          },
+          "cum_reuse": 2,
+          "cum_total": 45
+        },
+        {
+          "i": 31,
+          "phase": "pipeline",
+          "step": "cached_pipeline",
+          "should": [
+            "cached_ingest",
+            "clean_records",
+            "cache_lookup"
+          ],
+          "score": {
+            "cached_ingest": "miss",
+            "clean_records": "miss",
+            "cache_lookup": "miss"
+          },
+          "cum_reuse": 2,
+          "cum_total": 48
+        },
+        {
+          "i": 32,
+          "phase": "pipeline",
+          "step": "logged_pipeline",
+          "should": [
+            "logged_batch",
+            "audit_trail",
+            "log_event"
+          ],
+          "score": {
+            "logged_batch": "miss",
+            "audit_trail": "miss",
+            "log_event": "miss"
+          },
+          "cum_reuse": 2,
+          "cum_total": 51
+        },
+        {
+          "i": 33,
+          "phase": "pipeline",
+          "step": "money_pipeline",
+          "should": [
+            "money_report",
+            "clean_records",
+            "compute_metric"
+          ],
+          "score": {
+            "money_report": "miss",
+            "clean_records": "miss",
+            "compute_metric": "miss"
+          },
+          "cum_reuse": 2,
+          "cum_total": 54
+        },
+        {
+          "i": 34,
+          "phase": "pipeline",
+          "step": "full_pipeline",
+          "should": [
+            "etl_pipeline",
+            "report_pipeline",
+            "compute_metric"
+          ],
+          "score": {
+            "etl_pipeline": "miss",
+            "report_pipeline": "miss",
+            "compute_metric": "miss"
+          },
+          "cum_reuse": 2,
+          "cum_total": 57
+        },
+        {
+          "i": 35,
+          "phase": "pipeline",
+          "step": "resilient_full",
+          "should": [
+            "resilient_etl",
+            "audit_pipeline",
+            "retry_operation"
+          ],
+          "score": {
+            "resilient_etl": "miss",
+            "audit_pipeline": "miss",
+            "retry_operation": "miss"
+          },
+          "cum_reuse": 2,
+          "cum_total": 60
+        }
+      ],
+      "wall_s": 341.5,
+      "core_reuse": "0/0",
+      "service_reuse": "2/24",
+      "pipeline_reuse": "0/36"
+    },
+    "living_memctx": {
+      "reuse": 6,
+      "rewrite": 0,
+      "miss": 54,
+      "total": 60,
+      "bank_size": 36,
+      "steps": [
+        {
+          "i": 0,
+          "phase": "core",
+          "step": "validate_record",
+          "should": [],
+          "score": {},
+          "cum_reuse": 0,
+          "cum_total": 0
+        },
+        {
+          "i": 1,
+          "phase": "core",
+          "step": "normalize_amount",
+          "should": [],
+          "score": {},
+          "cum_reuse": 0,
+          "cum_total": 0
+        },
+        {
+          "i": 2,
+          "phase": "core",
+          "step": "dedupe_by_id",
+          "should": [],
+          "score": {},
+          "cum_reuse": 0,
+          "cum_total": 0
+        },
+        {
+          "i": 3,
+          "phase": "core",
+          "step": "parse_timestamp",
+          "should": [],
+          "score": {},
+          "cum_reuse": 0,
+          "cum_total": 0
+        },
+        {
+          "i": 4,
+          "phase": "core",
+          "step": "format_currency",
+          "should": [],
+          "score": {},
+          "cum_reuse": 0,
+          "cum_total": 0
+        },
+        {
+          "i": 5,
+          "phase": "core",
+          "step": "clamp_value",
+          "should": [],
+          "score": {},
+          "cum_reuse": 0,
+          "cum_total": 0
+        },
+        {
+          "i": 6,
+          "phase": "core",
+          "step": "retry_operation",
+          "should": [],
+          "score": {},
+          "cum_reuse": 0,
+          "cum_total": 0
+        },
+        {
+          "i": 7,
+          "phase": "core",
+          "step": "cache_lookup",
+          "should": [],
+          "score": {},
+          "cum_reuse": 0,
+          "cum_total": 0
+        },
+        {
+          "i": 8,
+          "phase": "core",
+          "step": "log_event",
+          "should": [],
+          "score": {},
+          "cum_reuse": 0,
+          "cum_total": 0
+        },
+        {
+          "i": 9,
+          "phase": "core",
+          "step": "compute_metric",
+          "should": [],
+          "score": {},
+          "cum_reuse": 0,
+          "cum_total": 0
+        },
+        {
+          "i": 10,
+          "phase": "core",
+          "step": "slugify_name",
+          "should": [],
+          "score": {},
+          "cum_reuse": 0,
+          "cum_total": 0
+        },
+        {
+          "i": 11,
+          "phase": "core",
+          "step": "chunk_list",
+          "should": [],
+          "score": {},
+          "cum_reuse": 0,
+          "cum_total": 0
+        },
+        {
+          "i": 12,
+          "phase": "service",
+          "step": "ingest_records",
+          "should": [
+            "validate_record",
+            "normalize_amount"
+          ],
+          "score": {
+            "validate_record": "reuse",
+            "normalize_amount": "miss"
+          },
+          "cum_reuse": 1,
+          "cum_total": 2
+        },
+        {
+          "i": 13,
+          "phase": "service",
+          "step": "clean_records",
+          "should": [
+            "dedupe_by_id",
+            "clamp_value"
+          ],
+          "score": {
+            "dedupe_by_id": "miss",
+            "clamp_value": "miss"
+          },
+          "cum_reuse": 1,
+          "cum_total": 4
+        },
+        {
+          "i": 14,
+          "phase": "service",
+          "step": "enrich_records",
+          "should": [
+            "parse_timestamp",
+            "format_currency"
+          ],
+          "score": {
+            "parse_timestamp": "miss",
+            "format_currency": "miss"
+          },
+          "cum_reuse": 1,
+          "cum_total": 6
+        },
+        {
+          "i": 15,
+          "phase": "service",
+          "step": "resilient_call",
+          "should": [
+            "retry_operation",
+            "cache_lookup"
+          ],
+          "score": {
+            "retry_operation": "miss",
+            "cache_lookup": "miss"
+          },
+          "cum_reuse": 1,
+          "cum_total": 8
+        },
+        {
+          "i": 16,
+          "phase": "service",
+          "step": "audit_trail",
+          "should": [
+            "log_event",
+            "compute_metric"
+          ],
+          "score": {
+            "log_event": "miss",
+            "compute_metric": "miss"
+          },
+          "cum_reuse": 1,
+          "cum_total": 10
+        },
+        {
+          "i": 17,
+          "phase": "service",
+          "step": "name_records",
+          "should": [
+            "slugify_name",
+            "validate_record"
+          ],
+          "score": {
+            "slugify_name": "miss",
+            "validate_record": "reuse"
+          },
+          "cum_reuse": 2,
+          "cum_total": 12
+        },
+        {
+          "i": 18,
+          "phase": "service",
+          "step": "batch_records",
+          "should": [
+            "chunk_list",
+            "dedupe_by_id"
+          ],
+          "score": {
+            "chunk_list": "miss",
+            "dedupe_by_id": "reuse"
+          },
+          "cum_reuse": 3,
+          "cum_total": 14
+        },
+        {
+          "i": 19,
+          "phase": "service",
+          "step": "time_series",
+          "should": [
+            "parse_timestamp",
+            "compute_metric"
+          ],
+          "score": {
+            "parse_timestamp": "miss",
+            "compute_metric": "miss"
+          },
+          "cum_reuse": 3,
+          "cum_total": 16
+        },
+        {
+          "i": 20,
+          "phase": "service",
+          "step": "money_report",
+          "should": [
+            "format_currency",
+            "compute_metric"
+          ],
+          "score": {
+            "format_currency": "miss",
+            "compute_metric": "miss"
+          },
+          "cum_reuse": 3,
+          "cum_total": 18
+        },
+        {
+          "i": 21,
+          "phase": "service",
+          "step": "safe_transform",
+          "should": [
+            "clamp_value",
+            "normalize_amount"
+          ],
+          "score": {
+            "clamp_value": "miss",
+            "normalize_amount": "miss"
+          },
+          "cum_reuse": 3,
+          "cum_total": 20
+        },
+        {
+          "i": 22,
+          "phase": "service",
+          "step": "cached_ingest",
+          "should": [
+            "cache_lookup",
+            "validate_record"
+          ],
+          "score": {
+            "cache_lookup": "miss",
+            "validate_record": "miss"
+          },
+          "cum_reuse": 3,
+          "cum_total": 22
+        },
+        {
+          "i": 23,
+          "phase": "service",
+          "step": "logged_batch",
+          "should": [
+            "log_event",
+            "chunk_list"
+          ],
+          "score": {
+            "log_event": "reuse",
+            "chunk_list": "miss"
+          },
+          "cum_reuse": 4,
+          "cum_total": 24
+        },
+        {
+          "i": 24,
+          "phase": "pipeline",
+          "step": "etl_pipeline",
+          "should": [
+            "ingest_records",
+            "clean_records",
+            "compute_metric"
+          ],
+          "score": {
+            "ingest_records": "miss",
+            "clean_records": "miss",
+            "compute_metric": "miss"
+          },
+          "cum_reuse": 4,
+          "cum_total": 27
+        },
+        {
+          "i": 25,
+          "phase": "pipeline",
+          "step": "report_pipeline",
+          "should": [
+            "enrich_records",
+            "money_report",
+            "format_currency"
+          ],
+          "score": {
+            "enrich_records": "miss",
+            "money_report": "miss",
+            "format_currency": "miss"
+          },
+          "cum_reuse": 4,
+          "cum_total": 30
+        },
+        {
+          "i": 26,
+          "phase": "pipeline",
+          "step": "resilient_etl",
+          "should": [
+            "resilient_call",
+            "ingest_records",
+            "retry_operation"
+          ],
+          "score": {
+            "resilient_call": "miss",
+            "ingest_records": "miss",
+            "retry_operation": "miss"
+          },
+          "cum_reuse": 4,
+          "cum_total": 33
+        },
+        {
+          "i": 27,
+          "phase": "pipeline",
+          "step": "audit_pipeline",
+          "should": [
+            "audit_trail",
+            "clean_records",
+            "log_event"
+          ],
+          "score": {
+            "audit_trail": "miss",
+            "clean_records": "miss",
+            "log_event": "miss"
+          },
+          "cum_reuse": 4,
+          "cum_total": 36
+        },
+        {
+          "i": 28,
+          "phase": "pipeline",
+          "step": "naming_pipeline",
+          "should": [
+            "name_records",
+            "batch_records",
+            "slugify_name"
+          ],
+          "score": {
+            "name_records": "miss",
+            "batch_records": "miss",
+            "slugify_name": "miss"
+          },
+          "cum_reuse": 4,
+          "cum_total": 39
+        },
+        {
+          "i": 29,
+          "phase": "pipeline",
+          "step": "timeseries_pipeline",
+          "should": [
+            "time_series",
+            "enrich_records",
+            "parse_timestamp"
+          ],
+          "score": {
+            "time_series": "miss",
+            "enrich_records": "miss",
+            "parse_timestamp": "miss"
+          },
+          "cum_reuse": 4,
+          "cum_total": 42
+        },
+        {
+          "i": 30,
+          "phase": "pipeline",
+          "step": "safe_etl",
+          "should": [
+            "safe_transform",
+            "ingest_records",
+            "clamp_value"
+          ],
+          "score": {
+            "safe_transform": "miss",
+            "ingest_records": "reuse",
+            "clamp_value": "miss"
+          },
+          "cum_reuse": 5,
+          "cum_total": 45
+        },
+        {
+          "i": 31,
+          "phase": "pipeline",
+          "step": "cached_pipeline",
+          "should": [
+            "cached_ingest",
+            "clean_records",
+            "cache_lookup"
+          ],
+          "score": {
+            "cached_ingest": "miss",
+            "clean_records": "miss",
+            "cache_lookup": "miss"
+          },
+          "cum_reuse": 5,
+          "cum_total": 48
+        },
+        {
+          "i": 32,
+          "phase": "pipeline",
+          "step": "logged_pipeline",
+          "should": [
+            "logged_batch",
+            "audit_trail",
+            "log_event"
+          ],
+          "score": {
+            "logged_batch": "reuse",
+            "audit_trail": "miss",
+            "log_event": "miss"
+          },
+          "cum_reuse": 6,
+          "cum_total": 51
+        },
+        {
+          "i": 33,
+          "phase": "pipeline",
+          "step": "money_pipeline",
+          "should": [
+            "money_report",
+            "clean_records",
+            "compute_metric"
+          ],
+          "score": {
+            "money_report": "miss",
+            "clean_records": "miss",
+            "compute_metric": "miss"
+          },
+          "cum_reuse": 6,
+          "cum_total": 54
+        },
+        {
+          "i": 34,
+          "phase": "pipeline",
+          "step": "full_pipeline",
+          "should": [
+            "etl_pipeline",
+            "report_pipeline",
+            "compute_metric"
+          ],
+          "score": {
+            "etl_pipeline": "miss",
+            "report_pipeline": "miss",
+            "compute_metric": "miss"
+          },
+          "cum_reuse": 6,
+          "cum_total": 57
+        },
+        {
+          "i": 35,
+          "phase": "pipeline",
+          "step": "resilient_full",
+          "should": [
+            "resilient_etl",
+            "audit_pipeline",
+            "retry_operation"
+          ],
+          "score": {
+            "resilient_etl": "miss",
+            "audit_pipeline": "miss",
+            "retry_operation": "miss"
+          },
+          "cum_reuse": 6,
+          "cum_total": 60
+        }
+      ],
+      "wall_s": 337.3,
+      "core_reuse": "0/0",
+      "service_reuse": "4/24",
+      "pipeline_reuse": "2/36"
+    }
+  }
+}
