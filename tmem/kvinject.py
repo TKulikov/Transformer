@@ -71,7 +71,8 @@ class KVMemoryAttention:
             mem_v = a.v_proj(mem).view(1, n, -1, a.head_dim).transpose(1, 2)
             key_states = torch.cat([key_states, mem_k], dim=-2)
             value_states = torch.cat([value_states, mem_v], dim=-2)
-            attention_mask = _extend_mask(attention_mask, key_states.shape[-2] - n, n, key_states.dtype)
+            attention_mask = _extend_mask(attention_mask, key_states.shape[-2] - n, n,
+                                          key_states.dtype, hidden_states.shape[1], hidden_states.device)
             self.stats["injected_slots"] += n
 
         attn_output, attn_weights = self._attention(a, query_states, key_states, value_states, attention_mask, kwargs)
@@ -90,18 +91,31 @@ class KVMemoryAttention:
         return iface(a, q, k, v, mask, dropout=0.0, scaling=a.scaling, **kwargs)
 
 
-def _extend_mask(mask, real_keys: int, mem: int, dtype: torch.dtype):
+def _extend_mask(mask, real_keys: int, mem: int, dtype: torch.dtype, s_q: int, device):
     """Append ``mem`` visible columns to a 4-D additive mask.
 
-    ``None`` mask means the fast path: single-token queries see everything
-    (fine for memory), while multi-token prefill needs an explicit
-    causal + memory mask built here.
+    ``None`` mask + single-token query (decode): sdpa treats absent mask as
+    fully visible — memory visible, fine. ``None`` mask + multi-token prefill:
+    sdpa would apply ``is_causal=True`` over the EXTENDED key length and mask
+    the appended memory columns as 'future' (zero contribution) — so we build
+    an explicit causal mask over the real keys (with KV-cache offset) plus
+    visible (zero) memory columns.
     """
-    if mask is None:
-        return None  # q==1 decode: sdpa treats absent mask as fully visible
-    b, h, s_q, s_k = mask.shape
-    extra = torch.zeros(b, h, s_q, mem, dtype=dtype, device=mask.device)
-    return torch.cat([mask, extra], dim=-1)
+    if mask is not None:
+        b, h, sq, s_k = mask.shape
+        extra = torch.zeros(b, h, sq, mem, dtype=dtype, device=mask.device)
+        return torch.cat([mask, extra], dim=-1)
+    if s_q == 1:
+        return None  # decode: fully visible
+    neg = torch.finfo(dtype).min
+    past_len = real_keys - s_q
+    q_pos = torch.arange(s_q, device=device)[:, None] + past_len   # (s_q, 1)
+    k_pos = torch.arange(real_keys, device=device)[None, :]        # (1, real_keys)
+    causal = k_pos <= q_pos
+    m_real = torch.zeros(s_q, real_keys, dtype=dtype, device=device)
+    m_real.masked_fill_(~causal, neg)
+    m_mem = torch.zeros(s_q, mem, dtype=dtype, device=device)      # память видна всем
+    return torch.cat([m_real, m_mem], dim=-1)[None, None, :, :]
 
 
 def install_kv_memory(model, corr: CorrectionLayer, layers: list[int] | None = None, max_slots: int = 32):
