@@ -1,0 +1,1077 @@
+{
+  "model": "qwen35-4b",
+  "lam_div": 0.5,
+  "n_orders": 8,
+  "rows": [
+    {
+      "order": "orig",
+      "std_plain": {
+        "hits": 7,
+        "def_hits": 4,
+        "per": [
+          {
+            "task": "retry_backoff",
+            "hits": 1,
+            "def_hits": 1
+          },
+          {
+            "task": "parse_clamp",
+            "hits": 2,
+            "def_hits": 1
+          },
+          {
+            "task": "batch_dedupe",
+            "hits": 2,
+            "def_hits": 1
+          },
+          {
+            "task": "slug_total",
+            "hits": 1,
+            "def_hits": 1
+          },
+          {
+            "task": "invoice_summary",
+            "hits": 1,
+            "def_hits": 0
+          }
+        ]
+      },
+      "std_diverse": {
+        "hits": 8,
+        "def_hits": 5,
+        "per": [
+          {
+            "task": "retry_backoff",
+            "hits": 2,
+            "def_hits": 2
+          },
+          {
+            "task": "parse_clamp",
+            "hits": 2,
+            "def_hits": 1
+          },
+          {
+            "task": "batch_dedupe",
+            "hits": 2,
+            "def_hits": 1
+          },
+          {
+            "task": "slug_total",
+            "hits": 1,
+            "def_hits": 1
+          },
+          {
+            "task": "invoice_summary",
+            "hits": 1,
+            "def_hits": 0
+          }
+        ]
+      },
+      "mem_plain": {
+        "hits": 8,
+        "def_hits": 5,
+        "per": [
+          {
+            "task": "retry_backoff",
+            "hits": 2,
+            "def_hits": 2
+          },
+          {
+            "task": "parse_clamp",
+            "hits": 2,
+            "def_hits": 1
+          },
+          {
+            "task": "batch_dedupe",
+            "hits": 2,
+            "def_hits": 1
+          },
+          {
+            "task": "slug_total",
+            "hits": 1,
+            "def_hits": 1
+          },
+          {
+            "task": "invoice_summary",
+            "hits": 1,
+            "def_hits": 0
+          }
+        ]
+      },
+      "mem_diverse": {
+        "hits": 8,
+        "def_hits": 5,
+        "per": [
+          {
+            "task": "retry_backoff",
+            "hits": 2,
+            "def_hits": 2
+          },
+          {
+            "task": "parse_clamp",
+            "hits": 2,
+            "def_hits": 1
+          },
+          {
+            "task": "batch_dedupe",
+            "hits": 2,
+            "def_hits": 1
+          },
+          {
+            "task": "slug_total",
+            "hits": 1,
+            "def_hits": 1
+          },
+          {
+            "task": "invoice_summary",
+            "hits": 1,
+            "def_hits": 0
+          }
+        ]
+      }
+    },
+    {
+      "order": 0,
+      "std_plain": {
+        "hits": 7,
+        "def_hits": 4,
+        "per": [
+          {
+            "task": "retry_backoff",
+            "hits": 1,
+            "def_hits": 1
+          },
+          {
+            "task": "parse_clamp",
+            "hits": 2,
+            "def_hits": 1
+          },
+          {
+            "task": "batch_dedupe",
+            "hits": 2,
+            "def_hits": 1
+          },
+          {
+            "task": "slug_total",
+            "hits": 1,
+            "def_hits": 1
+          },
+          {
+            "task": "invoice_summary",
+            "hits": 1,
+            "def_hits": 0
+          }
+        ]
+      },
+      "std_diverse": {
+        "hits": 8,
+        "def_hits": 4,
+        "per": [
+          {
+            "task": "retry_backoff",
+            "hits": 2,
+            "def_hits": 1
+          },
+          {
+            "task": "parse_clamp",
+            "hits": 2,
+            "def_hits": 1
+          },
+          {
+            "task": "batch_dedupe",
+            "hits": 2,
+            "def_hits": 1
+          },
+          {
+            "task": "slug_total",
+            "hits": 1,
+            "def_hits": 1
+          },
+          {
+            "task": "invoice_summary",
+            "hits": 1,
+            "def_hits": 0
+          }
+        ]
+      },
+      "mem_plain": {
+        "hits": 8,
+        "def_hits": 4,
+        "per": [
+          {
+            "task": "retry_backoff",
+            "hits": 2,
+            "def_hits": 1
+          },
+          {
+            "task": "parse_clamp",
+            "hits": 2,
+            "def_hits": 1
+          },
+          {
+            "task": "batch_dedupe",
+            "hits": 2,
+            "def_hits": 1
+          },
+          {
+            "task": "slug_total",
+            "hits": 1,
+            "def_hits": 1
+          },
+          {
+            "task": "invoice_summary",
+            "hits": 1,
+            "def_hits": 0
+          }
+        ]
+      },
+      "mem_diverse": {
+        "hits": 8,
+        "def_hits": 4,
+        "per": [
+          {
+            "task": "retry_backoff",
+            "hits": 2,
+            "def_hits": 1
+          },
+          {
+            "task": "parse_clamp",
+            "hits": 2,
+            "def_hits": 1
+          },
+          {
+            "task": "batch_dedupe",
+            "hits": 2,
+            "def_hits": 1
+          },
+          {
+            "task": "slug_total",
+            "hits": 1,
+            "def_hits": 1
+          },
+          {
+            "task": "invoice_summary",
+            "hits": 1,
+            "def_hits": 0
+          }
+        ]
+      }
+    },
+    {
+      "order": 1,
+      "std_plain": {
+        "hits": 8,
+        "def_hits": 5,
+        "per": [
+          {
+            "task": "retry_backoff",
+            "hits": 2,
+            "def_hits": 2
+          },
+          {
+            "task": "parse_clamp",
+            "hits": 2,
+            "def_hits": 1
+          },
+          {
+            "task": "batch_dedupe",
+            "hits": 2,
+            "def_hits": 1
+          },
+          {
+            "task": "slug_total",
+            "hits": 1,
+            "def_hits": 1
+          },
+          {
+            "task": "invoice_summary",
+            "hits": 1,
+            "def_hits": 0
+          }
+        ]
+      },
+      "std_diverse": {
+        "hits": 8,
+        "def_hits": 5,
+        "per": [
+          {
+            "task": "retry_backoff",
+            "hits": 2,
+            "def_hits": 2
+          },
+          {
+            "task": "parse_clamp",
+            "hits": 2,
+            "def_hits": 1
+          },
+          {
+            "task": "batch_dedupe",
+            "hits": 2,
+            "def_hits": 1
+          },
+          {
+            "task": "slug_total",
+            "hits": 1,
+            "def_hits": 1
+          },
+          {
+            "task": "invoice_summary",
+            "hits": 1,
+            "def_hits": 0
+          }
+        ]
+      },
+      "mem_plain": {
+        "hits": 8,
+        "def_hits": 5,
+        "per": [
+          {
+            "task": "retry_backoff",
+            "hits": 2,
+            "def_hits": 2
+          },
+          {
+            "task": "parse_clamp",
+            "hits": 2,
+            "def_hits": 1
+          },
+          {
+            "task": "batch_dedupe",
+            "hits": 2,
+            "def_hits": 1
+          },
+          {
+            "task": "slug_total",
+            "hits": 1,
+            "def_hits": 1
+          },
+          {
+            "task": "invoice_summary",
+            "hits": 1,
+            "def_hits": 0
+          }
+        ]
+      },
+      "mem_diverse": {
+        "hits": 8,
+        "def_hits": 5,
+        "per": [
+          {
+            "task": "retry_backoff",
+            "hits": 2,
+            "def_hits": 2
+          },
+          {
+            "task": "parse_clamp",
+            "hits": 2,
+            "def_hits": 1
+          },
+          {
+            "task": "batch_dedupe",
+            "hits": 2,
+            "def_hits": 1
+          },
+          {
+            "task": "slug_total",
+            "hits": 1,
+            "def_hits": 1
+          },
+          {
+            "task": "invoice_summary",
+            "hits": 1,
+            "def_hits": 0
+          }
+        ]
+      }
+    },
+    {
+      "order": 2,
+      "std_plain": {
+        "hits": 7,
+        "def_hits": 4,
+        "per": [
+          {
+            "task": "retry_backoff",
+            "hits": 1,
+            "def_hits": 1
+          },
+          {
+            "task": "parse_clamp",
+            "hits": 2,
+            "def_hits": 1
+          },
+          {
+            "task": "batch_dedupe",
+            "hits": 2,
+            "def_hits": 1
+          },
+          {
+            "task": "slug_total",
+            "hits": 1,
+            "def_hits": 1
+          },
+          {
+            "task": "invoice_summary",
+            "hits": 1,
+            "def_hits": 0
+          }
+        ]
+      },
+      "std_diverse": {
+        "hits": 8,
+        "def_hits": 4,
+        "per": [
+          {
+            "task": "retry_backoff",
+            "hits": 2,
+            "def_hits": 1
+          },
+          {
+            "task": "parse_clamp",
+            "hits": 2,
+            "def_hits": 1
+          },
+          {
+            "task": "batch_dedupe",
+            "hits": 2,
+            "def_hits": 1
+          },
+          {
+            "task": "slug_total",
+            "hits": 1,
+            "def_hits": 1
+          },
+          {
+            "task": "invoice_summary",
+            "hits": 1,
+            "def_hits": 0
+          }
+        ]
+      },
+      "mem_plain": {
+        "hits": 8,
+        "def_hits": 4,
+        "per": [
+          {
+            "task": "retry_backoff",
+            "hits": 2,
+            "def_hits": 1
+          },
+          {
+            "task": "parse_clamp",
+            "hits": 2,
+            "def_hits": 1
+          },
+          {
+            "task": "batch_dedupe",
+            "hits": 2,
+            "def_hits": 1
+          },
+          {
+            "task": "slug_total",
+            "hits": 1,
+            "def_hits": 1
+          },
+          {
+            "task": "invoice_summary",
+            "hits": 1,
+            "def_hits": 0
+          }
+        ]
+      },
+      "mem_diverse": {
+        "hits": 8,
+        "def_hits": 4,
+        "per": [
+          {
+            "task": "retry_backoff",
+            "hits": 2,
+            "def_hits": 1
+          },
+          {
+            "task": "parse_clamp",
+            "hits": 2,
+            "def_hits": 1
+          },
+          {
+            "task": "batch_dedupe",
+            "hits": 2,
+            "def_hits": 1
+          },
+          {
+            "task": "slug_total",
+            "hits": 1,
+            "def_hits": 1
+          },
+          {
+            "task": "invoice_summary",
+            "hits": 1,
+            "def_hits": 0
+          }
+        ]
+      }
+    },
+    {
+      "order": 3,
+      "std_plain": {
+        "hits": 8,
+        "def_hits": 5,
+        "per": [
+          {
+            "task": "retry_backoff",
+            "hits": 2,
+            "def_hits": 2
+          },
+          {
+            "task": "parse_clamp",
+            "hits": 2,
+            "def_hits": 1
+          },
+          {
+            "task": "batch_dedupe",
+            "hits": 2,
+            "def_hits": 1
+          },
+          {
+            "task": "slug_total",
+            "hits": 1,
+            "def_hits": 1
+          },
+          {
+            "task": "invoice_summary",
+            "hits": 1,
+            "def_hits": 0
+          }
+        ]
+      },
+      "std_diverse": {
+        "hits": 8,
+        "def_hits": 5,
+        "per": [
+          {
+            "task": "retry_backoff",
+            "hits": 2,
+            "def_hits": 2
+          },
+          {
+            "task": "parse_clamp",
+            "hits": 2,
+            "def_hits": 1
+          },
+          {
+            "task": "batch_dedupe",
+            "hits": 2,
+            "def_hits": 1
+          },
+          {
+            "task": "slug_total",
+            "hits": 1,
+            "def_hits": 1
+          },
+          {
+            "task": "invoice_summary",
+            "hits": 1,
+            "def_hits": 0
+          }
+        ]
+      },
+      "mem_plain": {
+        "hits": 8,
+        "def_hits": 5,
+        "per": [
+          {
+            "task": "retry_backoff",
+            "hits": 2,
+            "def_hits": 2
+          },
+          {
+            "task": "parse_clamp",
+            "hits": 2,
+            "def_hits": 1
+          },
+          {
+            "task": "batch_dedupe",
+            "hits": 2,
+            "def_hits": 1
+          },
+          {
+            "task": "slug_total",
+            "hits": 1,
+            "def_hits": 1
+          },
+          {
+            "task": "invoice_summary",
+            "hits": 1,
+            "def_hits": 0
+          }
+        ]
+      },
+      "mem_diverse": {
+        "hits": 8,
+        "def_hits": 5,
+        "per": [
+          {
+            "task": "retry_backoff",
+            "hits": 2,
+            "def_hits": 2
+          },
+          {
+            "task": "parse_clamp",
+            "hits": 2,
+            "def_hits": 1
+          },
+          {
+            "task": "batch_dedupe",
+            "hits": 2,
+            "def_hits": 1
+          },
+          {
+            "task": "slug_total",
+            "hits": 1,
+            "def_hits": 1
+          },
+          {
+            "task": "invoice_summary",
+            "hits": 1,
+            "def_hits": 0
+          }
+        ]
+      }
+    },
+    {
+      "order": 4,
+      "std_plain": {
+        "hits": 8,
+        "def_hits": 5,
+        "per": [
+          {
+            "task": "retry_backoff",
+            "hits": 2,
+            "def_hits": 2
+          },
+          {
+            "task": "parse_clamp",
+            "hits": 2,
+            "def_hits": 1
+          },
+          {
+            "task": "batch_dedupe",
+            "hits": 2,
+            "def_hits": 1
+          },
+          {
+            "task": "slug_total",
+            "hits": 1,
+            "def_hits": 1
+          },
+          {
+            "task": "invoice_summary",
+            "hits": 1,
+            "def_hits": 0
+          }
+        ]
+      },
+      "std_diverse": {
+        "hits": 8,
+        "def_hits": 5,
+        "per": [
+          {
+            "task": "retry_backoff",
+            "hits": 2,
+            "def_hits": 2
+          },
+          {
+            "task": "parse_clamp",
+            "hits": 2,
+            "def_hits": 1
+          },
+          {
+            "task": "batch_dedupe",
+            "hits": 2,
+            "def_hits": 1
+          },
+          {
+            "task": "slug_total",
+            "hits": 1,
+            "def_hits": 1
+          },
+          {
+            "task": "invoice_summary",
+            "hits": 1,
+            "def_hits": 0
+          }
+        ]
+      },
+      "mem_plain": {
+        "hits": 8,
+        "def_hits": 5,
+        "per": [
+          {
+            "task": "retry_backoff",
+            "hits": 2,
+            "def_hits": 2
+          },
+          {
+            "task": "parse_clamp",
+            "hits": 2,
+            "def_hits": 1
+          },
+          {
+            "task": "batch_dedupe",
+            "hits": 2,
+            "def_hits": 1
+          },
+          {
+            "task": "slug_total",
+            "hits": 1,
+            "def_hits": 1
+          },
+          {
+            "task": "invoice_summary",
+            "hits": 1,
+            "def_hits": 0
+          }
+        ]
+      },
+      "mem_diverse": {
+        "hits": 8,
+        "def_hits": 5,
+        "per": [
+          {
+            "task": "retry_backoff",
+            "hits": 2,
+            "def_hits": 2
+          },
+          {
+            "task": "parse_clamp",
+            "hits": 2,
+            "def_hits": 1
+          },
+          {
+            "task": "batch_dedupe",
+            "hits": 2,
+            "def_hits": 1
+          },
+          {
+            "task": "slug_total",
+            "hits": 1,
+            "def_hits": 1
+          },
+          {
+            "task": "invoice_summary",
+            "hits": 1,
+            "def_hits": 0
+          }
+        ]
+      }
+    },
+    {
+      "order": 5,
+      "std_plain": {
+        "hits": 8,
+        "def_hits": 5,
+        "per": [
+          {
+            "task": "retry_backoff",
+            "hits": 2,
+            "def_hits": 2
+          },
+          {
+            "task": "parse_clamp",
+            "hits": 2,
+            "def_hits": 1
+          },
+          {
+            "task": "batch_dedupe",
+            "hits": 2,
+            "def_hits": 1
+          },
+          {
+            "task": "slug_total",
+            "hits": 1,
+            "def_hits": 1
+          },
+          {
+            "task": "invoice_summary",
+            "hits": 1,
+            "def_hits": 0
+          }
+        ]
+      },
+      "std_diverse": {
+        "hits": 8,
+        "def_hits": 5,
+        "per": [
+          {
+            "task": "retry_backoff",
+            "hits": 2,
+            "def_hits": 2
+          },
+          {
+            "task": "parse_clamp",
+            "hits": 2,
+            "def_hits": 1
+          },
+          {
+            "task": "batch_dedupe",
+            "hits": 2,
+            "def_hits": 1
+          },
+          {
+            "task": "slug_total",
+            "hits": 1,
+            "def_hits": 1
+          },
+          {
+            "task": "invoice_summary",
+            "hits": 1,
+            "def_hits": 0
+          }
+        ]
+      },
+      "mem_plain": {
+        "hits": 8,
+        "def_hits": 5,
+        "per": [
+          {
+            "task": "retry_backoff",
+            "hits": 2,
+            "def_hits": 2
+          },
+          {
+            "task": "parse_clamp",
+            "hits": 2,
+            "def_hits": 1
+          },
+          {
+            "task": "batch_dedupe",
+            "hits": 2,
+            "def_hits": 1
+          },
+          {
+            "task": "slug_total",
+            "hits": 1,
+            "def_hits": 1
+          },
+          {
+            "task": "invoice_summary",
+            "hits": 1,
+            "def_hits": 0
+          }
+        ]
+      },
+      "mem_diverse": {
+        "hits": 8,
+        "def_hits": 5,
+        "per": [
+          {
+            "task": "retry_backoff",
+            "hits": 2,
+            "def_hits": 2
+          },
+          {
+            "task": "parse_clamp",
+            "hits": 2,
+            "def_hits": 1
+          },
+          {
+            "task": "batch_dedupe",
+            "hits": 2,
+            "def_hits": 1
+          },
+          {
+            "task": "slug_total",
+            "hits": 1,
+            "def_hits": 1
+          },
+          {
+            "task": "invoice_summary",
+            "hits": 1,
+            "def_hits": 0
+          }
+        ]
+      }
+    },
+    {
+      "order": 6,
+      "std_plain": {
+        "hits": 8,
+        "def_hits": 5,
+        "per": [
+          {
+            "task": "retry_backoff",
+            "hits": 2,
+            "def_hits": 2
+          },
+          {
+            "task": "parse_clamp",
+            "hits": 2,
+            "def_hits": 1
+          },
+          {
+            "task": "batch_dedupe",
+            "hits": 2,
+            "def_hits": 1
+          },
+          {
+            "task": "slug_total",
+            "hits": 1,
+            "def_hits": 1
+          },
+          {
+            "task": "invoice_summary",
+            "hits": 1,
+            "def_hits": 0
+          }
+        ]
+      },
+      "std_diverse": {
+        "hits": 8,
+        "def_hits": 5,
+        "per": [
+          {
+            "task": "retry_backoff",
+            "hits": 2,
+            "def_hits": 2
+          },
+          {
+            "task": "parse_clamp",
+            "hits": 2,
+            "def_hits": 1
+          },
+          {
+            "task": "batch_dedupe",
+            "hits": 2,
+            "def_hits": 1
+          },
+          {
+            "task": "slug_total",
+            "hits": 1,
+            "def_hits": 1
+          },
+          {
+            "task": "invoice_summary",
+            "hits": 1,
+            "def_hits": 0
+          }
+        ]
+      },
+      "mem_plain": {
+        "hits": 8,
+        "def_hits": 5,
+        "per": [
+          {
+            "task": "retry_backoff",
+            "hits": 2,
+            "def_hits": 2
+          },
+          {
+            "task": "parse_clamp",
+            "hits": 2,
+            "def_hits": 1
+          },
+          {
+            "task": "batch_dedupe",
+            "hits": 2,
+            "def_hits": 1
+          },
+          {
+            "task": "slug_total",
+            "hits": 1,
+            "def_hits": 1
+          },
+          {
+            "task": "invoice_summary",
+            "hits": 1,
+            "def_hits": 0
+          }
+        ]
+      },
+      "mem_diverse": {
+        "hits": 8,
+        "def_hits": 5,
+        "per": [
+          {
+            "task": "retry_backoff",
+            "hits": 2,
+            "def_hits": 2
+          },
+          {
+            "task": "parse_clamp",
+            "hits": 2,
+            "def_hits": 1
+          },
+          {
+            "task": "batch_dedupe",
+            "hits": 2,
+            "def_hits": 1
+          },
+          {
+            "task": "slug_total",
+            "hits": 1,
+            "def_hits": 1
+          },
+          {
+            "task": "invoice_summary",
+            "hits": 1,
+            "def_hits": 0
+          }
+        ]
+      }
+    }
+  ],
+  "diverse_effect_hits": {
+    "mean": 0.375,
+    "std": 0.518,
+    "t": 2.049,
+    "df": 7,
+    "pos": 3,
+    "neg": 0,
+    "zero": 5
+  },
+  "diverse_effect_def": {
+    "mean": 0.125,
+    "std": 0.354,
+    "t": 1.0,
+    "df": 7,
+    "pos": 1,
+    "neg": 0,
+    "zero": 7
+  },
+  "memctx_plain_hits": {
+    "mean": 0.375,
+    "std": 0.518,
+    "t": 2.049,
+    "df": 7,
+    "pos": 3,
+    "neg": 0,
+    "zero": 5
+  },
+  "memctx_diverse_hits": {
+    "mean": 0.0,
+    "std": 0.0,
+    "t": 0.0,
+    "df": 7,
+    "pos": 0,
+    "neg": 0,
+    "zero": 8
+  },
+  "means": {
+    "std_plain": {
+      "hits": 7.62,
+      "def_hits": 4.62
+    },
+    "std_diverse": {
+      "hits": 8.0,
+      "def_hits": 4.75
+    },
+    "mem_plain": {
+      "hits": 8.0,
+      "def_hits": 4.75
+    },
+    "mem_diverse": {
+      "hits": 8.0,
+      "def_hits": 4.75
+    }
+  }
+}
