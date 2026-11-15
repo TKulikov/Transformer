@@ -1,0 +1,1982 @@
+{
+  "layer": 11,
+  "k": 6,
+  "n_funcs": 79,
+  "n_queries": 45,
+  "metrics": {
+    "flat_plain": {
+      "hit@1": 0.689,
+      "hit@3": 0.733,
+      "hit@6": 0.733,
+      "hit@6_ci": [
+        0.6,
+        0.844
+      ],
+      "mrr": 0.711,
+      "mrr_ci": [
+        0.578,
+        0.833
+      ]
+    },
+    "flat_diverse": {
+      "hit@1": 0.689,
+      "hit@3": 0.733,
+      "hit@6": 0.733,
+      "hit@6_ci": [
+        0.6,
+        0.844
+      ],
+      "mrr": 0.711,
+      "mrr_ci": [
+        0.578,
+        0.833
+      ]
+    },
+    "flat_centered": {
+      "hit@1": 0.711,
+      "hit@3": 0.733,
+      "hit@6": 0.733,
+      "hit@6_ci": [
+        0.6,
+        0.844
+      ],
+      "mrr": 0.722,
+      "mrr_ci": [
+        0.578,
+        0.844
+      ]
+    },
+    "flat_centered_diverse": {
+      "hit@1": 0.711,
+      "hit@3": 0.733,
+      "hit@6": 0.733,
+      "hit@6_ci": [
+        0.6,
+        0.844
+      ],
+      "mrr": 0.722,
+      "mrr_ci": [
+        0.578,
+        0.844
+      ]
+    },
+    "goal_uncentered": {
+      "hit@1": 0.756,
+      "hit@3": 0.8,
+      "hit@6": 0.911,
+      "hit@6_ci": [
+        0.822,
+        0.978
+      ],
+      "mrr": 0.799,
+      "mrr_ci": [
+        0.686,
+        0.898
+      ]
+    },
+    "goal_centered": {
+      "hit@1": 0.822,
+      "hit@3": 0.844,
+      "hit@6": 0.867,
+      "hit@6_ci": [
+        0.756,
+        0.956
+      ],
+      "mrr": 0.837,
+      "mrr_ci": [
+        0.726,
+        0.933
+      ]
+    },
+    "goal_prefetch": {
+      "hit@1": 0.822,
+      "hit@3": 0.844,
+      "hit@6": 0.867,
+      "hit@6_ci": [
+        0.756,
+        0.956
+      ],
+      "mrr": 0.837,
+      "mrr_ci": [
+        0.726,
+        0.933
+      ]
+    },
+    "needroute": {
+      "hit@1": 0.267,
+      "hit@3": 0.267,
+      "hit@6": 0.267,
+      "hit@6_ci": [
+        0.133,
+        0.4
+      ],
+      "mrr": 0.267,
+      "mrr_ci": [
+        0.133,
+        0.4
+      ]
+    }
+  },
+  "paired": {
+    "diversification_flat": {
+      "baseline": "flat_plain",
+      "treatment": "flat_diverse",
+      "better": 0,
+      "worse": 0,
+      "equal": 45
+    },
+    "centering_flat": {
+      "baseline": "flat_plain",
+      "treatment": "flat_centered",
+      "better": 3,
+      "worse": 2,
+      "equal": 40
+    },
+    "routing": {
+      "baseline": "flat_centered_diverse",
+      "treatment": "goal_centered",
+      "better": 6,
+      "worse": 0,
+      "equal": 39
+    },
+    "centering_goal": {
+      "baseline": "goal_uncentered",
+      "treatment": "goal_centered",
+      "better": 3,
+      "worse": 2,
+      "equal": 40
+    },
+    "prefetch": {
+      "baseline": "goal_centered",
+      "treatment": "goal_prefetch",
+      "better": 0,
+      "worse": 0,
+      "equal": 45
+    },
+    "oracle_vs_needroute": {
+      "baseline": "goal_centered",
+      "treatment": "needroute",
+      "better": 0,
+      "worse": 27,
+      "equal": 18
+    }
+  },
+  "detail": {
+    "flat_plain": [
+      {
+        "need": "reject a request whose token is not in the allowed set",
+        "target": "auth.AuthMiddleware.before",
+        "rank": 1
+      },
+      {
+        "need": "Deny the request if its token is absent from the permitted list.",
+        "target": "auth.AuthMiddleware.before",
+        "rank": 1
+      },
+      {
+        "need": "Deny the request if its token is absent from the permitted list.",
+        "target": "auth.AuthMiddleware.before",
+        "rank": 1
+      },
+      {
+        "need": "store a task result and mark the task finished",
+        "target": "storage.TaskStore.save_result",
+        "rank": 1
+      },
+      {
+        "need": "Save the outcome of the task and update its status to indicate completion.",
+        "target": "storage.TaskStore.save_result",
+        "rank": 1
+      },
+      {
+        "need": "Save the outcome of the task and update its status to indicate completion.",
+        "target": "storage.TaskStore.save_result",
+        "rank": 1
+      },
+      {
+        "need": "get all tasks still waiting to run, oldest first",
+        "target": "storage.TaskStore.pending",
+        "rank": 1
+      },
+      {
+        "need": "Retrieve all pending tasks and sort them by creation time in ascending order.",
+        "target": "storage.TaskStore.pending",
+        "rank": 1
+      },
+      {
+        "need": "Retrieve all pending tasks and sort them by creation time in ascending order.",
+        "target": "storage.TaskStore.pending",
+        "rank": 1
+      },
+      {
+        "need": "update a task status and bump its attempt counter",
+        "target": "storage.TaskStore.set_status",
+        "rank": 1
+      },
+      {
+        "need": "Update the task's status and increment its attempt counter.",
+        "target": "storage.TaskStore.set_status",
+        "rank": 1
+      },
+      {
+        "need": "Update the task's status and increment its attempt counter.",
+        "target": "storage.TaskStore.set_status",
+        "rank": 1
+      },
+      {
+        "need": "move failed tasks back to pending for another attempt",
+        "target": "scheduler.Scheduler.requeue_failed",
+        "rank": 1
+      },
+      {
+        "need": "Failed tasks should be returned to the pending queue to allow for a retry.",
+        "target": "scheduler.Scheduler.requeue_failed",
+        "rank": 1
+      },
+      {
+        "need": "Failed tasks should be returned to the pending queue to allow for a retry.",
+        "target": "scheduler.Scheduler.requeue_failed",
+        "rank": 1
+      },
+      {
+        "need": "return up to batch_size pending tasks to run",
+        "target": "scheduler.Scheduler.next_batch",
+        "rank": 1
+      },
+      {
+        "need": "Return the maximum number of pending tasks equal to the batch_size for execution.",
+        "target": "scheduler.Scheduler.next_batch",
+        "rank": 1
+      },
+      {
+        "need": "Return the maximum number of pending tasks equal to the batch_size for execution.",
+        "target": "scheduler.Scheduler.next_batch",
+        "rank": 1
+      },
+      {
+        "need": "serialize a message to a length-prefixed JSON byte frame",
+        "target": "protocol.encode_message",
+        "rank": 1
+      },
+      {
+        "need": "Convert the message into a JSON object, then wrap it within a byte frame that includes its total length as a prefix.",
+        "target": "protocol.encode_message",
+        "rank": 1
+      },
+      {
+        "need": "Convert the message into a JSON object, then wrap it within a byte frame that includes its total length as a prefix.",
+        "target": "protocol.encode_message",
+        "rank": 1
+      },
+      {
+        "need": "parse a length-prefixed JSON frame into a message",
+        "target": "protocol.decode_message",
+        "rank": null
+      },
+      {
+        "need": "Extract a message by parsing a JSON frame that is preceded by a length indicator.",
+        "target": "protocol.decode_message",
+        "rank": null
+      },
+      {
+        "need": "Extract a message by parsing a JSON frame that is preceded by a length indicator.",
+        "target": "protocol.decode_message",
+        "rank": null
+      },
+      {
+        "need": "check whether a key is within its sliding-window rate budget",
+        "target": "ratelimit.RateLimiter.allow",
+        "rank": null
+      },
+      {
+        "need": "Verify if a specific key's traffic volume stays within its allocated sliding-window rate limit.",
+        "target": "ratelimit.RateLimiter.allow",
+        "rank": null
+      },
+      {
+        "need": "Verify if a specific key's traffic volume stays within its allocated sliding-window rate limit.",
+        "target": "ratelimit.RateLimiter.allow",
+        "rank": null
+      },
+      {
+        "need": "exponential backoff delay in ms for a zero-based attempt index",
+        "target": "utils.backoff_delay",
+        "rank": 1
+      },
+      {
+        "need": "The delay in milliseconds should increase exponentially based on the zero-based attempt index.",
+        "target": "utils.backoff_delay",
+        "rank": 1
+      },
+      {
+        "need": "The delay in milliseconds should increase exponentially based on the zero-based attempt index.",
+        "target": "utils.backoff_delay",
+        "rank": 1
+      },
+      {
+        "need": "call a function with exponential backoff and retry on failure",
+        "target": "utils.retry",
+        "rank": null
+      },
+      {
+        "need": "Invoke the specified function with exponential backoff logic to automatically retry upon encountering any failure.",
+        "target": "utils.retry",
+        "rank": null
+      },
+      {
+        "need": "Invoke the specified function with exponential backoff logic to automatically retry upon encountering any failure.",
+        "target": "utils.retry",
+        "rank": null
+      },
+      {
+        "need": "parse a duration like 500ms or 2s into milliseconds",
+        "target": "utils.parse_duration",
+        "rank": 2
+      },
+      {
+        "need": "Convert various duration formats, such as \"500ms\" or \"2s\", into a standardized millisecond value.",
+        "target": "utils.parse_duration",
+        "rank": 1
+      },
+      {
+        "need": "Convert various duration formats, such as \"500ms\" or \"2s\", into a standardized millisecond value.",
+        "target": "utils.parse_duration",
+        "rank": 1
+      },
+      {
+        "need": "stable deduplication preserving first-occurrence order",
+        "target": "utils.dedupe",
+        "rank": 2
+      },
+      {
+        "need": "Maintain a stable order of unique elements by preserving the sequence of their first appearance.",
+        "target": "utils.dedupe",
+        "rank": 1
+      },
+      {
+        "need": "Maintain a stable order of unique elements by preserving the sequence of their first appearance.",
+        "target": "utils.dedupe",
+        "rank": 1
+      },
+      {
+        "need": "clamp a value into an inclusive range",
+        "target": "utils.clamp",
+        "rank": 1
+      },
+      {
+        "need": "Restrict a value to fall within a specified minimum and maximum boundary.",
+        "target": "utils.clamp",
+        "rank": 1
+      },
+      {
+        "need": "Restrict a value to fall within a specified minimum and maximum boundary.",
+        "target": "utils.clamp",
+        "rank": 1
+      },
+      {
+        "need": "yield successive fixed-size chunks from a sequence",
+        "target": "utils.chunked",
+        "rank": null
+      },
+      {
+        "need": "Produce consecutive, equally sized segments from a given sequence.",
+        "target": "utils.chunked",
+        "rank": null
+      },
+      {
+        "need": "Produce consecutive, equally sized segments from a given sequence.",
+        "target": "utils.chunked",
+        "rank": null
+      }
+    ],
+    "flat_diverse": [
+      {
+        "need": "reject a request whose token is not in the allowed set",
+        "target": "auth.AuthMiddleware.before",
+        "rank": 1
+      },
+      {
+        "need": "Deny the request if its token is absent from the permitted list.",
+        "target": "auth.AuthMiddleware.before",
+        "rank": 1
+      },
+      {
+        "need": "Deny the request if its token is absent from the permitted list.",
+        "target": "auth.AuthMiddleware.before",
+        "rank": 1
+      },
+      {
+        "need": "store a task result and mark the task finished",
+        "target": "storage.TaskStore.save_result",
+        "rank": 1
+      },
+      {
+        "need": "Save the outcome of the task and update its status to indicate completion.",
+        "target": "storage.TaskStore.save_result",
+        "rank": 1
+      },
+      {
+        "need": "Save the outcome of the task and update its status to indicate completion.",
+        "target": "storage.TaskStore.save_result",
+        "rank": 1
+      },
+      {
+        "need": "get all tasks still waiting to run, oldest first",
+        "target": "storage.TaskStore.pending",
+        "rank": 1
+      },
+      {
+        "need": "Retrieve all pending tasks and sort them by creation time in ascending order.",
+        "target": "storage.TaskStore.pending",
+        "rank": 1
+      },
+      {
+        "need": "Retrieve all pending tasks and sort them by creation time in ascending order.",
+        "target": "storage.TaskStore.pending",
+        "rank": 1
+      },
+      {
+        "need": "update a task status and bump its attempt counter",
+        "target": "storage.TaskStore.set_status",
+        "rank": 1
+      },
+      {
+        "need": "Update the task's status and increment its attempt counter.",
+        "target": "storage.TaskStore.set_status",
+        "rank": 1
+      },
+      {
+        "need": "Update the task's status and increment its attempt counter.",
+        "target": "storage.TaskStore.set_status",
+        "rank": 1
+      },
+      {
+        "need": "move failed tasks back to pending for another attempt",
+        "target": "scheduler.Scheduler.requeue_failed",
+        "rank": 1
+      },
+      {
+        "need": "Failed tasks should be returned to the pending queue to allow for a retry.",
+        "target": "scheduler.Scheduler.requeue_failed",
+        "rank": 1
+      },
+      {
+        "need": "Failed tasks should be returned to the pending queue to allow for a retry.",
+        "target": "scheduler.Scheduler.requeue_failed",
+        "rank": 1
+      },
+      {
+        "need": "return up to batch_size pending tasks to run",
+        "target": "scheduler.Scheduler.next_batch",
+        "rank": 1
+      },
+      {
+        "need": "Return the maximum number of pending tasks equal to the batch_size for execution.",
+        "target": "scheduler.Scheduler.next_batch",
+        "rank": 1
+      },
+      {
+        "need": "Return the maximum number of pending tasks equal to the batch_size for execution.",
+        "target": "scheduler.Scheduler.next_batch",
+        "rank": 1
+      },
+      {
+        "need": "serialize a message to a length-prefixed JSON byte frame",
+        "target": "protocol.encode_message",
+        "rank": 1
+      },
+      {
+        "need": "Convert the message into a JSON object, then wrap it within a byte frame that includes its total length as a prefix.",
+        "target": "protocol.encode_message",
+        "rank": 1
+      },
+      {
+        "need": "Convert the message into a JSON object, then wrap it within a byte frame that includes its total length as a prefix.",
+        "target": "protocol.encode_message",
+        "rank": 1
+      },
+      {
+        "need": "parse a length-prefixed JSON frame into a message",
+        "target": "protocol.decode_message",
+        "rank": null
+      },
+      {
+        "need": "Extract a message by parsing a JSON frame that is preceded by a length indicator.",
+        "target": "protocol.decode_message",
+        "rank": null
+      },
+      {
+        "need": "Extract a message by parsing a JSON frame that is preceded by a length indicator.",
+        "target": "protocol.decode_message",
+        "rank": null
+      },
+      {
+        "need": "check whether a key is within its sliding-window rate budget",
+        "target": "ratelimit.RateLimiter.allow",
+        "rank": null
+      },
+      {
+        "need": "Verify if a specific key's traffic volume stays within its allocated sliding-window rate limit.",
+        "target": "ratelimit.RateLimiter.allow",
+        "rank": null
+      },
+      {
+        "need": "Verify if a specific key's traffic volume stays within its allocated sliding-window rate limit.",
+        "target": "ratelimit.RateLimiter.allow",
+        "rank": null
+      },
+      {
+        "need": "exponential backoff delay in ms for a zero-based attempt index",
+        "target": "utils.backoff_delay",
+        "rank": 1
+      },
+      {
+        "need": "The delay in milliseconds should increase exponentially based on the zero-based attempt index.",
+        "target": "utils.backoff_delay",
+        "rank": 1
+      },
+      {
+        "need": "The delay in milliseconds should increase exponentially based on the zero-based attempt index.",
+        "target": "utils.backoff_delay",
+        "rank": 1
+      },
+      {
+        "need": "call a function with exponential backoff and retry on failure",
+        "target": "utils.retry",
+        "rank": null
+      },
+      {
+        "need": "Invoke the specified function with exponential backoff logic to automatically retry upon encountering any failure.",
+        "target": "utils.retry",
+        "rank": null
+      },
+      {
+        "need": "Invoke the specified function with exponential backoff logic to automatically retry upon encountering any failure.",
+        "target": "utils.retry",
+        "rank": null
+      },
+      {
+        "need": "parse a duration like 500ms or 2s into milliseconds",
+        "target": "utils.parse_duration",
+        "rank": 2
+      },
+      {
+        "need": "Convert various duration formats, such as \"500ms\" or \"2s\", into a standardized millisecond value.",
+        "target": "utils.parse_duration",
+        "rank": 1
+      },
+      {
+        "need": "Convert various duration formats, such as \"500ms\" or \"2s\", into a standardized millisecond value.",
+        "target": "utils.parse_duration",
+        "rank": 1
+      },
+      {
+        "need": "stable deduplication preserving first-occurrence order",
+        "target": "utils.dedupe",
+        "rank": 2
+      },
+      {
+        "need": "Maintain a stable order of unique elements by preserving the sequence of their first appearance.",
+        "target": "utils.dedupe",
+        "rank": 1
+      },
+      {
+        "need": "Maintain a stable order of unique elements by preserving the sequence of their first appearance.",
+        "target": "utils.dedupe",
+        "rank": 1
+      },
+      {
+        "need": "clamp a value into an inclusive range",
+        "target": "utils.clamp",
+        "rank": 1
+      },
+      {
+        "need": "Restrict a value to fall within a specified minimum and maximum boundary.",
+        "target": "utils.clamp",
+        "rank": 1
+      },
+      {
+        "need": "Restrict a value to fall within a specified minimum and maximum boundary.",
+        "target": "utils.clamp",
+        "rank": 1
+      },
+      {
+        "need": "yield successive fixed-size chunks from a sequence",
+        "target": "utils.chunked",
+        "rank": null
+      },
+      {
+        "need": "Produce consecutive, equally sized segments from a given sequence.",
+        "target": "utils.chunked",
+        "rank": null
+      },
+      {
+        "need": "Produce consecutive, equally sized segments from a given sequence.",
+        "target": "utils.chunked",
+        "rank": null
+      }
+    ],
+    "flat_centered": [
+      {
+        "need": "reject a request whose token is not in the allowed set",
+        "target": "auth.AuthMiddleware.before",
+        "rank": 1
+      },
+      {
+        "need": "Deny the request if its token is absent from the permitted list.",
+        "target": "auth.AuthMiddleware.before",
+        "rank": 1
+      },
+      {
+        "need": "Deny the request if its token is absent from the permitted list.",
+        "target": "auth.AuthMiddleware.before",
+        "rank": 1
+      },
+      {
+        "need": "store a task result and mark the task finished",
+        "target": "storage.TaskStore.save_result",
+        "rank": 1
+      },
+      {
+        "need": "Save the outcome of the task and update its status to indicate completion.",
+        "target": "storage.TaskStore.save_result",
+        "rank": 1
+      },
+      {
+        "need": "Save the outcome of the task and update its status to indicate completion.",
+        "target": "storage.TaskStore.save_result",
+        "rank": 1
+      },
+      {
+        "need": "get all tasks still waiting to run, oldest first",
+        "target": "storage.TaskStore.pending",
+        "rank": 1
+      },
+      {
+        "need": "Retrieve all pending tasks and sort them by creation time in ascending order.",
+        "target": "storage.TaskStore.pending",
+        "rank": 1
+      },
+      {
+        "need": "Retrieve all pending tasks and sort them by creation time in ascending order.",
+        "target": "storage.TaskStore.pending",
+        "rank": 1
+      },
+      {
+        "need": "update a task status and bump its attempt counter",
+        "target": "storage.TaskStore.set_status",
+        "rank": 1
+      },
+      {
+        "need": "Update the task's status and increment its attempt counter.",
+        "target": "storage.TaskStore.set_status",
+        "rank": 1
+      },
+      {
+        "need": "Update the task's status and increment its attempt counter.",
+        "target": "storage.TaskStore.set_status",
+        "rank": 1
+      },
+      {
+        "need": "move failed tasks back to pending for another attempt",
+        "target": "scheduler.Scheduler.requeue_failed",
+        "rank": 1
+      },
+      {
+        "need": "Failed tasks should be returned to the pending queue to allow for a retry.",
+        "target": "scheduler.Scheduler.requeue_failed",
+        "rank": 1
+      },
+      {
+        "need": "Failed tasks should be returned to the pending queue to allow for a retry.",
+        "target": "scheduler.Scheduler.requeue_failed",
+        "rank": 1
+      },
+      {
+        "need": "return up to batch_size pending tasks to run",
+        "target": "scheduler.Scheduler.next_batch",
+        "rank": 1
+      },
+      {
+        "need": "Return the maximum number of pending tasks equal to the batch_size for execution.",
+        "target": "scheduler.Scheduler.next_batch",
+        "rank": null
+      },
+      {
+        "need": "Return the maximum number of pending tasks equal to the batch_size for execution.",
+        "target": "scheduler.Scheduler.next_batch",
+        "rank": null
+      },
+      {
+        "need": "serialize a message to a length-prefixed JSON byte frame",
+        "target": "protocol.encode_message",
+        "rank": 1
+      },
+      {
+        "need": "Convert the message into a JSON object, then wrap it within a byte frame that includes its total length as a prefix.",
+        "target": "protocol.encode_message",
+        "rank": 1
+      },
+      {
+        "need": "Convert the message into a JSON object, then wrap it within a byte frame that includes its total length as a prefix.",
+        "target": "protocol.encode_message",
+        "rank": 1
+      },
+      {
+        "need": "parse a length-prefixed JSON frame into a message",
+        "target": "protocol.decode_message",
+        "rank": null
+      },
+      {
+        "need": "Extract a message by parsing a JSON frame that is preceded by a length indicator.",
+        "target": "protocol.decode_message",
+        "rank": null
+      },
+      {
+        "need": "Extract a message by parsing a JSON frame that is preceded by a length indicator.",
+        "target": "protocol.decode_message",
+        "rank": null
+      },
+      {
+        "need": "check whether a key is within its sliding-window rate budget",
+        "target": "ratelimit.RateLimiter.allow",
+        "rank": null
+      },
+      {
+        "need": "Verify if a specific key's traffic volume stays within its allocated sliding-window rate limit.",
+        "target": "ratelimit.RateLimiter.allow",
+        "rank": null
+      },
+      {
+        "need": "Verify if a specific key's traffic volume stays within its allocated sliding-window rate limit.",
+        "target": "ratelimit.RateLimiter.allow",
+        "rank": null
+      },
+      {
+        "need": "exponential backoff delay in ms for a zero-based attempt index",
+        "target": "utils.backoff_delay",
+        "rank": 1
+      },
+      {
+        "need": "The delay in milliseconds should increase exponentially based on the zero-based attempt index.",
+        "target": "utils.backoff_delay",
+        "rank": 1
+      },
+      {
+        "need": "The delay in milliseconds should increase exponentially based on the zero-based attempt index.",
+        "target": "utils.backoff_delay",
+        "rank": 1
+      },
+      {
+        "need": "call a function with exponential backoff and retry on failure",
+        "target": "utils.retry",
+        "rank": null
+      },
+      {
+        "need": "Invoke the specified function with exponential backoff logic to automatically retry upon encountering any failure.",
+        "target": "utils.retry",
+        "rank": null
+      },
+      {
+        "need": "Invoke the specified function with exponential backoff logic to automatically retry upon encountering any failure.",
+        "target": "utils.retry",
+        "rank": null
+      },
+      {
+        "need": "parse a duration like 500ms or 2s into milliseconds",
+        "target": "utils.parse_duration",
+        "rank": 2
+      },
+      {
+        "need": "Convert various duration formats, such as \"500ms\" or \"2s\", into a standardized millisecond value.",
+        "target": "utils.parse_duration",
+        "rank": 1
+      },
+      {
+        "need": "Convert various duration formats, such as \"500ms\" or \"2s\", into a standardized millisecond value.",
+        "target": "utils.parse_duration",
+        "rank": 1
+      },
+      {
+        "need": "stable deduplication preserving first-occurrence order",
+        "target": "utils.dedupe",
+        "rank": 1
+      },
+      {
+        "need": "Maintain a stable order of unique elements by preserving the sequence of their first appearance.",
+        "target": "utils.dedupe",
+        "rank": 1
+      },
+      {
+        "need": "Maintain a stable order of unique elements by preserving the sequence of their first appearance.",
+        "target": "utils.dedupe",
+        "rank": 1
+      },
+      {
+        "need": "clamp a value into an inclusive range",
+        "target": "utils.clamp",
+        "rank": 1
+      },
+      {
+        "need": "Restrict a value to fall within a specified minimum and maximum boundary.",
+        "target": "utils.clamp",
+        "rank": 1
+      },
+      {
+        "need": "Restrict a value to fall within a specified minimum and maximum boundary.",
+        "target": "utils.clamp",
+        "rank": 1
+      },
+      {
+        "need": "yield successive fixed-size chunks from a sequence",
+        "target": "utils.chunked",
+        "rank": null
+      },
+      {
+        "need": "Produce consecutive, equally sized segments from a given sequence.",
+        "target": "utils.chunked",
+        "rank": 1
+      },
+      {
+        "need": "Produce consecutive, equally sized segments from a given sequence.",
+        "target": "utils.chunked",
+        "rank": 1
+      }
+    ],
+    "flat_centered_diverse": [
+      {
+        "need": "reject a request whose token is not in the allowed set",
+        "target": "auth.AuthMiddleware.before",
+        "rank": 1
+      },
+      {
+        "need": "Deny the request if its token is absent from the permitted list.",
+        "target": "auth.AuthMiddleware.before",
+        "rank": 1
+      },
+      {
+        "need": "Deny the request if its token is absent from the permitted list.",
+        "target": "auth.AuthMiddleware.before",
+        "rank": 1
+      },
+      {
+        "need": "store a task result and mark the task finished",
+        "target": "storage.TaskStore.save_result",
+        "rank": 1
+      },
+      {
+        "need": "Save the outcome of the task and update its status to indicate completion.",
+        "target": "storage.TaskStore.save_result",
+        "rank": 1
+      },
+      {
+        "need": "Save the outcome of the task and update its status to indicate completion.",
+        "target": "storage.TaskStore.save_result",
+        "rank": 1
+      },
+      {
+        "need": "get all tasks still waiting to run, oldest first",
+        "target": "storage.TaskStore.pending",
+        "rank": 1
+      },
+      {
+        "need": "Retrieve all pending tasks and sort them by creation time in ascending order.",
+        "target": "storage.TaskStore.pending",
+        "rank": 1
+      },
+      {
+        "need": "Retrieve all pending tasks and sort them by creation time in ascending order.",
+        "target": "storage.TaskStore.pending",
+        "rank": 1
+      },
+      {
+        "need": "update a task status and bump its attempt counter",
+        "target": "storage.TaskStore.set_status",
+        "rank": 1
+      },
+      {
+        "need": "Update the task's status and increment its attempt counter.",
+        "target": "storage.TaskStore.set_status",
+        "rank": 1
+      },
+      {
+        "need": "Update the task's status and increment its attempt counter.",
+        "target": "storage.TaskStore.set_status",
+        "rank": 1
+      },
+      {
+        "need": "move failed tasks back to pending for another attempt",
+        "target": "scheduler.Scheduler.requeue_failed",
+        "rank": 1
+      },
+      {
+        "need": "Failed tasks should be returned to the pending queue to allow for a retry.",
+        "target": "scheduler.Scheduler.requeue_failed",
+        "rank": 1
+      },
+      {
+        "need": "Failed tasks should be returned to the pending queue to allow for a retry.",
+        "target": "scheduler.Scheduler.requeue_failed",
+        "rank": 1
+      },
+      {
+        "need": "return up to batch_size pending tasks to run",
+        "target": "scheduler.Scheduler.next_batch",
+        "rank": 1
+      },
+      {
+        "need": "Return the maximum number of pending tasks equal to the batch_size for execution.",
+        "target": "scheduler.Scheduler.next_batch",
+        "rank": null
+      },
+      {
+        "need": "Return the maximum number of pending tasks equal to the batch_size for execution.",
+        "target": "scheduler.Scheduler.next_batch",
+        "rank": null
+      },
+      {
+        "need": "serialize a message to a length-prefixed JSON byte frame",
+        "target": "protocol.encode_message",
+        "rank": 1
+      },
+      {
+        "need": "Convert the message into a JSON object, then wrap it within a byte frame that includes its total length as a prefix.",
+        "target": "protocol.encode_message",
+        "rank": 1
+      },
+      {
+        "need": "Convert the message into a JSON object, then wrap it within a byte frame that includes its total length as a prefix.",
+        "target": "protocol.encode_message",
+        "rank": 1
+      },
+      {
+        "need": "parse a length-prefixed JSON frame into a message",
+        "target": "protocol.decode_message",
+        "rank": null
+      },
+      {
+        "need": "Extract a message by parsing a JSON frame that is preceded by a length indicator.",
+        "target": "protocol.decode_message",
+        "rank": null
+      },
+      {
+        "need": "Extract a message by parsing a JSON frame that is preceded by a length indicator.",
+        "target": "protocol.decode_message",
+        "rank": null
+      },
+      {
+        "need": "check whether a key is within its sliding-window rate budget",
+        "target": "ratelimit.RateLimiter.allow",
+        "rank": null
+      },
+      {
+        "need": "Verify if a specific key's traffic volume stays within its allocated sliding-window rate limit.",
+        "target": "ratelimit.RateLimiter.allow",
+        "rank": null
+      },
+      {
+        "need": "Verify if a specific key's traffic volume stays within its allocated sliding-window rate limit.",
+        "target": "ratelimit.RateLimiter.allow",
+        "rank": null
+      },
+      {
+        "need": "exponential backoff delay in ms for a zero-based attempt index",
+        "target": "utils.backoff_delay",
+        "rank": 1
+      },
+      {
+        "need": "The delay in milliseconds should increase exponentially based on the zero-based attempt index.",
+        "target": "utils.backoff_delay",
+        "rank": 1
+      },
+      {
+        "need": "The delay in milliseconds should increase exponentially based on the zero-based attempt index.",
+        "target": "utils.backoff_delay",
+        "rank": 1
+      },
+      {
+        "need": "call a function with exponential backoff and retry on failure",
+        "target": "utils.retry",
+        "rank": null
+      },
+      {
+        "need": "Invoke the specified function with exponential backoff logic to automatically retry upon encountering any failure.",
+        "target": "utils.retry",
+        "rank": null
+      },
+      {
+        "need": "Invoke the specified function with exponential backoff logic to automatically retry upon encountering any failure.",
+        "target": "utils.retry",
+        "rank": null
+      },
+      {
+        "need": "parse a duration like 500ms or 2s into milliseconds",
+        "target": "utils.parse_duration",
+        "rank": 2
+      },
+      {
+        "need": "Convert various duration formats, such as \"500ms\" or \"2s\", into a standardized millisecond value.",
+        "target": "utils.parse_duration",
+        "rank": 1
+      },
+      {
+        "need": "Convert various duration formats, such as \"500ms\" or \"2s\", into a standardized millisecond value.",
+        "target": "utils.parse_duration",
+        "rank": 1
+      },
+      {
+        "need": "stable deduplication preserving first-occurrence order",
+        "target": "utils.dedupe",
+        "rank": 1
+      },
+      {
+        "need": "Maintain a stable order of unique elements by preserving the sequence of their first appearance.",
+        "target": "utils.dedupe",
+        "rank": 1
+      },
+      {
+        "need": "Maintain a stable order of unique elements by preserving the sequence of their first appearance.",
+        "target": "utils.dedupe",
+        "rank": 1
+      },
+      {
+        "need": "clamp a value into an inclusive range",
+        "target": "utils.clamp",
+        "rank": 1
+      },
+      {
+        "need": "Restrict a value to fall within a specified minimum and maximum boundary.",
+        "target": "utils.clamp",
+        "rank": 1
+      },
+      {
+        "need": "Restrict a value to fall within a specified minimum and maximum boundary.",
+        "target": "utils.clamp",
+        "rank": 1
+      },
+      {
+        "need": "yield successive fixed-size chunks from a sequence",
+        "target": "utils.chunked",
+        "rank": null
+      },
+      {
+        "need": "Produce consecutive, equally sized segments from a given sequence.",
+        "target": "utils.chunked",
+        "rank": 1
+      },
+      {
+        "need": "Produce consecutive, equally sized segments from a given sequence.",
+        "target": "utils.chunked",
+        "rank": 1
+      }
+    ],
+    "goal_uncentered": [
+      {
+        "need": "reject a request whose token is not in the allowed set",
+        "target": "auth.AuthMiddleware.before",
+        "rank": 1
+      },
+      {
+        "need": "Deny the request if its token is absent from the permitted list.",
+        "target": "auth.AuthMiddleware.before",
+        "rank": 1
+      },
+      {
+        "need": "Deny the request if its token is absent from the permitted list.",
+        "target": "auth.AuthMiddleware.before",
+        "rank": 1
+      },
+      {
+        "need": "store a task result and mark the task finished",
+        "target": "storage.TaskStore.save_result",
+        "rank": 1
+      },
+      {
+        "need": "Save the outcome of the task and update its status to indicate completion.",
+        "target": "storage.TaskStore.save_result",
+        "rank": 1
+      },
+      {
+        "need": "Save the outcome of the task and update its status to indicate completion.",
+        "target": "storage.TaskStore.save_result",
+        "rank": 1
+      },
+      {
+        "need": "get all tasks still waiting to run, oldest first",
+        "target": "storage.TaskStore.pending",
+        "rank": 1
+      },
+      {
+        "need": "Retrieve all pending tasks and sort them by creation time in ascending order.",
+        "target": "storage.TaskStore.pending",
+        "rank": 1
+      },
+      {
+        "need": "Retrieve all pending tasks and sort them by creation time in ascending order.",
+        "target": "storage.TaskStore.pending",
+        "rank": 1
+      },
+      {
+        "need": "update a task status and bump its attempt counter",
+        "target": "storage.TaskStore.set_status",
+        "rank": 1
+      },
+      {
+        "need": "Update the task's status and increment its attempt counter.",
+        "target": "storage.TaskStore.set_status",
+        "rank": 1
+      },
+      {
+        "need": "Update the task's status and increment its attempt counter.",
+        "target": "storage.TaskStore.set_status",
+        "rank": 1
+      },
+      {
+        "need": "move failed tasks back to pending for another attempt",
+        "target": "scheduler.Scheduler.requeue_failed",
+        "rank": 1
+      },
+      {
+        "need": "Failed tasks should be returned to the pending queue to allow for a retry.",
+        "target": "scheduler.Scheduler.requeue_failed",
+        "rank": 1
+      },
+      {
+        "need": "Failed tasks should be returned to the pending queue to allow for a retry.",
+        "target": "scheduler.Scheduler.requeue_failed",
+        "rank": 1
+      },
+      {
+        "need": "return up to batch_size pending tasks to run",
+        "target": "scheduler.Scheduler.next_batch",
+        "rank": 1
+      },
+      {
+        "need": "Return the maximum number of pending tasks equal to the batch_size for execution.",
+        "target": "scheduler.Scheduler.next_batch",
+        "rank": 1
+      },
+      {
+        "need": "Return the maximum number of pending tasks equal to the batch_size for execution.",
+        "target": "scheduler.Scheduler.next_batch",
+        "rank": 1
+      },
+      {
+        "need": "serialize a message to a length-prefixed JSON byte frame",
+        "target": "protocol.encode_message",
+        "rank": 1
+      },
+      {
+        "need": "Convert the message into a JSON object, then wrap it within a byte frame that includes its total length as a prefix.",
+        "target": "protocol.encode_message",
+        "rank": 1
+      },
+      {
+        "need": "Convert the message into a JSON object, then wrap it within a byte frame that includes its total length as a prefix.",
+        "target": "protocol.encode_message",
+        "rank": 1
+      },
+      {
+        "need": "parse a length-prefixed JSON frame into a message",
+        "target": "protocol.decode_message",
+        "rank": null
+      },
+      {
+        "need": "Extract a message by parsing a JSON frame that is preceded by a length indicator.",
+        "target": "protocol.decode_message",
+        "rank": null
+      },
+      {
+        "need": "Extract a message by parsing a JSON frame that is preceded by a length indicator.",
+        "target": "protocol.decode_message",
+        "rank": null
+      },
+      {
+        "need": "check whether a key is within its sliding-window rate budget",
+        "target": "ratelimit.RateLimiter.allow",
+        "rank": 6
+      },
+      {
+        "need": "Verify if a specific key's traffic volume stays within its allocated sliding-window rate limit.",
+        "target": "ratelimit.RateLimiter.allow",
+        "rank": 5
+      },
+      {
+        "need": "Verify if a specific key's traffic volume stays within its allocated sliding-window rate limit.",
+        "target": "ratelimit.RateLimiter.allow",
+        "rank": 5
+      },
+      {
+        "need": "exponential backoff delay in ms for a zero-based attempt index",
+        "target": "utils.backoff_delay",
+        "rank": 1
+      },
+      {
+        "need": "The delay in milliseconds should increase exponentially based on the zero-based attempt index.",
+        "target": "utils.backoff_delay",
+        "rank": 1
+      },
+      {
+        "need": "The delay in milliseconds should increase exponentially based on the zero-based attempt index.",
+        "target": "utils.backoff_delay",
+        "rank": 1
+      },
+      {
+        "need": "call a function with exponential backoff and retry on failure",
+        "target": "utils.retry",
+        "rank": null
+      },
+      {
+        "need": "Invoke the specified function with exponential backoff logic to automatically retry upon encountering any failure.",
+        "target": "utils.retry",
+        "rank": 5
+      },
+      {
+        "need": "Invoke the specified function with exponential backoff logic to automatically retry upon encountering any failure.",
+        "target": "utils.retry",
+        "rank": 5
+      },
+      {
+        "need": "parse a duration like 500ms or 2s into milliseconds",
+        "target": "utils.parse_duration",
+        "rank": 2
+      },
+      {
+        "need": "Convert various duration formats, such as \"500ms\" or \"2s\", into a standardized millisecond value.",
+        "target": "utils.parse_duration",
+        "rank": 1
+      },
+      {
+        "need": "Convert various duration formats, such as \"500ms\" or \"2s\", into a standardized millisecond value.",
+        "target": "utils.parse_duration",
+        "rank": 1
+      },
+      {
+        "need": "stable deduplication preserving first-occurrence order",
+        "target": "utils.dedupe",
+        "rank": 1
+      },
+      {
+        "need": "Maintain a stable order of unique elements by preserving the sequence of their first appearance.",
+        "target": "utils.dedupe",
+        "rank": 1
+      },
+      {
+        "need": "Maintain a stable order of unique elements by preserving the sequence of their first appearance.",
+        "target": "utils.dedupe",
+        "rank": 1
+      },
+      {
+        "need": "clamp a value into an inclusive range",
+        "target": "utils.clamp",
+        "rank": 1
+      },
+      {
+        "need": "Restrict a value to fall within a specified minimum and maximum boundary.",
+        "target": "utils.clamp",
+        "rank": 1
+      },
+      {
+        "need": "Restrict a value to fall within a specified minimum and maximum boundary.",
+        "target": "utils.clamp",
+        "rank": 1
+      },
+      {
+        "need": "yield successive fixed-size chunks from a sequence",
+        "target": "utils.chunked",
+        "rank": 2
+      },
+      {
+        "need": "Produce consecutive, equally sized segments from a given sequence.",
+        "target": "utils.chunked",
+        "rank": 1
+      },
+      {
+        "need": "Produce consecutive, equally sized segments from a given sequence.",
+        "target": "utils.chunked",
+        "rank": 1
+      }
+    ],
+    "goal_centered": [
+      {
+        "need": "reject a request whose token is not in the allowed set",
+        "target": "auth.AuthMiddleware.before",
+        "rank": 1
+      },
+      {
+        "need": "Deny the request if its token is absent from the permitted list.",
+        "target": "auth.AuthMiddleware.before",
+        "rank": 1
+      },
+      {
+        "need": "Deny the request if its token is absent from the permitted list.",
+        "target": "auth.AuthMiddleware.before",
+        "rank": 1
+      },
+      {
+        "need": "store a task result and mark the task finished",
+        "target": "storage.TaskStore.save_result",
+        "rank": 1
+      },
+      {
+        "need": "Save the outcome of the task and update its status to indicate completion.",
+        "target": "storage.TaskStore.save_result",
+        "rank": 1
+      },
+      {
+        "need": "Save the outcome of the task and update its status to indicate completion.",
+        "target": "storage.TaskStore.save_result",
+        "rank": 1
+      },
+      {
+        "need": "get all tasks still waiting to run, oldest first",
+        "target": "storage.TaskStore.pending",
+        "rank": 1
+      },
+      {
+        "need": "Retrieve all pending tasks and sort them by creation time in ascending order.",
+        "target": "storage.TaskStore.pending",
+        "rank": 1
+      },
+      {
+        "need": "Retrieve all pending tasks and sort them by creation time in ascending order.",
+        "target": "storage.TaskStore.pending",
+        "rank": 1
+      },
+      {
+        "need": "update a task status and bump its attempt counter",
+        "target": "storage.TaskStore.set_status",
+        "rank": 1
+      },
+      {
+        "need": "Update the task's status and increment its attempt counter.",
+        "target": "storage.TaskStore.set_status",
+        "rank": 1
+      },
+      {
+        "need": "Update the task's status and increment its attempt counter.",
+        "target": "storage.TaskStore.set_status",
+        "rank": 1
+      },
+      {
+        "need": "move failed tasks back to pending for another attempt",
+        "target": "scheduler.Scheduler.requeue_failed",
+        "rank": 1
+      },
+      {
+        "need": "Failed tasks should be returned to the pending queue to allow for a retry.",
+        "target": "scheduler.Scheduler.requeue_failed",
+        "rank": 1
+      },
+      {
+        "need": "Failed tasks should be returned to the pending queue to allow for a retry.",
+        "target": "scheduler.Scheduler.requeue_failed",
+        "rank": 1
+      },
+      {
+        "need": "return up to batch_size pending tasks to run",
+        "target": "scheduler.Scheduler.next_batch",
+        "rank": 1
+      },
+      {
+        "need": "Return the maximum number of pending tasks equal to the batch_size for execution.",
+        "target": "scheduler.Scheduler.next_batch",
+        "rank": 1
+      },
+      {
+        "need": "Return the maximum number of pending tasks equal to the batch_size for execution.",
+        "target": "scheduler.Scheduler.next_batch",
+        "rank": 1
+      },
+      {
+        "need": "serialize a message to a length-prefixed JSON byte frame",
+        "target": "protocol.encode_message",
+        "rank": 1
+      },
+      {
+        "need": "Convert the message into a JSON object, then wrap it within a byte frame that includes its total length as a prefix.",
+        "target": "protocol.encode_message",
+        "rank": 1
+      },
+      {
+        "need": "Convert the message into a JSON object, then wrap it within a byte frame that includes its total length as a prefix.",
+        "target": "protocol.encode_message",
+        "rank": 1
+      },
+      {
+        "need": "parse a length-prefixed JSON frame into a message",
+        "target": "protocol.decode_message",
+        "rank": null
+      },
+      {
+        "need": "Extract a message by parsing a JSON frame that is preceded by a length indicator.",
+        "target": "protocol.decode_message",
+        "rank": null
+      },
+      {
+        "need": "Extract a message by parsing a JSON frame that is preceded by a length indicator.",
+        "target": "protocol.decode_message",
+        "rank": null
+      },
+      {
+        "need": "check whether a key is within its sliding-window rate budget",
+        "target": "ratelimit.RateLimiter.allow",
+        "rank": 6
+      },
+      {
+        "need": "Verify if a specific key's traffic volume stays within its allocated sliding-window rate limit.",
+        "target": "ratelimit.RateLimiter.allow",
+        "rank": 1
+      },
+      {
+        "need": "Verify if a specific key's traffic volume stays within its allocated sliding-window rate limit.",
+        "target": "ratelimit.RateLimiter.allow",
+        "rank": 1
+      },
+      {
+        "need": "exponential backoff delay in ms for a zero-based attempt index",
+        "target": "utils.backoff_delay",
+        "rank": 1
+      },
+      {
+        "need": "The delay in milliseconds should increase exponentially based on the zero-based attempt index.",
+        "target": "utils.backoff_delay",
+        "rank": 1
+      },
+      {
+        "need": "The delay in milliseconds should increase exponentially based on the zero-based attempt index.",
+        "target": "utils.backoff_delay",
+        "rank": 1
+      },
+      {
+        "need": "call a function with exponential backoff and retry on failure",
+        "target": "utils.retry",
+        "rank": null
+      },
+      {
+        "need": "Invoke the specified function with exponential backoff logic to automatically retry upon encountering any failure.",
+        "target": "utils.retry",
+        "rank": null
+      },
+      {
+        "need": "Invoke the specified function with exponential backoff logic to automatically retry upon encountering any failure.",
+        "target": "utils.retry",
+        "rank": null
+      },
+      {
+        "need": "parse a duration like 500ms or 2s into milliseconds",
+        "target": "utils.parse_duration",
+        "rank": 2
+      },
+      {
+        "need": "Convert various duration formats, such as \"500ms\" or \"2s\", into a standardized millisecond value.",
+        "target": "utils.parse_duration",
+        "rank": 1
+      },
+      {
+        "need": "Convert various duration formats, such as \"500ms\" or \"2s\", into a standardized millisecond value.",
+        "target": "utils.parse_duration",
+        "rank": 1
+      },
+      {
+        "need": "stable deduplication preserving first-occurrence order",
+        "target": "utils.dedupe",
+        "rank": 1
+      },
+      {
+        "need": "Maintain a stable order of unique elements by preserving the sequence of their first appearance.",
+        "target": "utils.dedupe",
+        "rank": 1
+      },
+      {
+        "need": "Maintain a stable order of unique elements by preserving the sequence of their first appearance.",
+        "target": "utils.dedupe",
+        "rank": 1
+      },
+      {
+        "need": "clamp a value into an inclusive range",
+        "target": "utils.clamp",
+        "rank": 1
+      },
+      {
+        "need": "Restrict a value to fall within a specified minimum and maximum boundary.",
+        "target": "utils.clamp",
+        "rank": 1
+      },
+      {
+        "need": "Restrict a value to fall within a specified minimum and maximum boundary.",
+        "target": "utils.clamp",
+        "rank": 1
+      },
+      {
+        "need": "yield successive fixed-size chunks from a sequence",
+        "target": "utils.chunked",
+        "rank": 1
+      },
+      {
+        "need": "Produce consecutive, equally sized segments from a given sequence.",
+        "target": "utils.chunked",
+        "rank": 1
+      },
+      {
+        "need": "Produce consecutive, equally sized segments from a given sequence.",
+        "target": "utils.chunked",
+        "rank": 1
+      }
+    ],
+    "goal_prefetch": [
+      {
+        "need": "reject a request whose token is not in the allowed set",
+        "target": "auth.AuthMiddleware.before",
+        "rank": 1
+      },
+      {
+        "need": "Deny the request if its token is absent from the permitted list.",
+        "target": "auth.AuthMiddleware.before",
+        "rank": 1
+      },
+      {
+        "need": "Deny the request if its token is absent from the permitted list.",
+        "target": "auth.AuthMiddleware.before",
+        "rank": 1
+      },
+      {
+        "need": "store a task result and mark the task finished",
+        "target": "storage.TaskStore.save_result",
+        "rank": 1
+      },
+      {
+        "need": "Save the outcome of the task and update its status to indicate completion.",
+        "target": "storage.TaskStore.save_result",
+        "rank": 1
+      },
+      {
+        "need": "Save the outcome of the task and update its status to indicate completion.",
+        "target": "storage.TaskStore.save_result",
+        "rank": 1
+      },
+      {
+        "need": "get all tasks still waiting to run, oldest first",
+        "target": "storage.TaskStore.pending",
+        "rank": 1
+      },
+      {
+        "need": "Retrieve all pending tasks and sort them by creation time in ascending order.",
+        "target": "storage.TaskStore.pending",
+        "rank": 1
+      },
+      {
+        "need": "Retrieve all pending tasks and sort them by creation time in ascending order.",
+        "target": "storage.TaskStore.pending",
+        "rank": 1
+      },
+      {
+        "need": "update a task status and bump its attempt counter",
+        "target": "storage.TaskStore.set_status",
+        "rank": 1
+      },
+      {
+        "need": "Update the task's status and increment its attempt counter.",
+        "target": "storage.TaskStore.set_status",
+        "rank": 1
+      },
+      {
+        "need": "Update the task's status and increment its attempt counter.",
+        "target": "storage.TaskStore.set_status",
+        "rank": 1
+      },
+      {
+        "need": "move failed tasks back to pending for another attempt",
+        "target": "scheduler.Scheduler.requeue_failed",
+        "rank": 1
+      },
+      {
+        "need": "Failed tasks should be returned to the pending queue to allow for a retry.",
+        "target": "scheduler.Scheduler.requeue_failed",
+        "rank": 1
+      },
+      {
+        "need": "Failed tasks should be returned to the pending queue to allow for a retry.",
+        "target": "scheduler.Scheduler.requeue_failed",
+        "rank": 1
+      },
+      {
+        "need": "return up to batch_size pending tasks to run",
+        "target": "scheduler.Scheduler.next_batch",
+        "rank": 1
+      },
+      {
+        "need": "Return the maximum number of pending tasks equal to the batch_size for execution.",
+        "target": "scheduler.Scheduler.next_batch",
+        "rank": 1
+      },
+      {
+        "need": "Return the maximum number of pending tasks equal to the batch_size for execution.",
+        "target": "scheduler.Scheduler.next_batch",
+        "rank": 1
+      },
+      {
+        "need": "serialize a message to a length-prefixed JSON byte frame",
+        "target": "protocol.encode_message",
+        "rank": 1
+      },
+      {
+        "need": "Convert the message into a JSON object, then wrap it within a byte frame that includes its total length as a prefix.",
+        "target": "protocol.encode_message",
+        "rank": 1
+      },
+      {
+        "need": "Convert the message into a JSON object, then wrap it within a byte frame that includes its total length as a prefix.",
+        "target": "protocol.encode_message",
+        "rank": 1
+      },
+      {
+        "need": "parse a length-prefixed JSON frame into a message",
+        "target": "protocol.decode_message",
+        "rank": null
+      },
+      {
+        "need": "Extract a message by parsing a JSON frame that is preceded by a length indicator.",
+        "target": "protocol.decode_message",
+        "rank": null
+      },
+      {
+        "need": "Extract a message by parsing a JSON frame that is preceded by a length indicator.",
+        "target": "protocol.decode_message",
+        "rank": null
+      },
+      {
+        "need": "check whether a key is within its sliding-window rate budget",
+        "target": "ratelimit.RateLimiter.allow",
+        "rank": 6
+      },
+      {
+        "need": "Verify if a specific key's traffic volume stays within its allocated sliding-window rate limit.",
+        "target": "ratelimit.RateLimiter.allow",
+        "rank": 1
+      },
+      {
+        "need": "Verify if a specific key's traffic volume stays within its allocated sliding-window rate limit.",
+        "target": "ratelimit.RateLimiter.allow",
+        "rank": 1
+      },
+      {
+        "need": "exponential backoff delay in ms for a zero-based attempt index",
+        "target": "utils.backoff_delay",
+        "rank": 1
+      },
+      {
+        "need": "The delay in milliseconds should increase exponentially based on the zero-based attempt index.",
+        "target": "utils.backoff_delay",
+        "rank": 1
+      },
+      {
+        "need": "The delay in milliseconds should increase exponentially based on the zero-based attempt index.",
+        "target": "utils.backoff_delay",
+        "rank": 1
+      },
+      {
+        "need": "call a function with exponential backoff and retry on failure",
+        "target": "utils.retry",
+        "rank": null
+      },
+      {
+        "need": "Invoke the specified function with exponential backoff logic to automatically retry upon encountering any failure.",
+        "target": "utils.retry",
+        "rank": null
+      },
+      {
+        "need": "Invoke the specified function with exponential backoff logic to automatically retry upon encountering any failure.",
+        "target": "utils.retry",
+        "rank": null
+      },
+      {
+        "need": "parse a duration like 500ms or 2s into milliseconds",
+        "target": "utils.parse_duration",
+        "rank": 2
+      },
+      {
+        "need": "Convert various duration formats, such as \"500ms\" or \"2s\", into a standardized millisecond value.",
+        "target": "utils.parse_duration",
+        "rank": 1
+      },
+      {
+        "need": "Convert various duration formats, such as \"500ms\" or \"2s\", into a standardized millisecond value.",
+        "target": "utils.parse_duration",
+        "rank": 1
+      },
+      {
+        "need": "stable deduplication preserving first-occurrence order",
+        "target": "utils.dedupe",
+        "rank": 1
+      },
+      {
+        "need": "Maintain a stable order of unique elements by preserving the sequence of their first appearance.",
+        "target": "utils.dedupe",
+        "rank": 1
+      },
+      {
+        "need": "Maintain a stable order of unique elements by preserving the sequence of their first appearance.",
+        "target": "utils.dedupe",
+        "rank": 1
+      },
+      {
+        "need": "clamp a value into an inclusive range",
+        "target": "utils.clamp",
+        "rank": 1
+      },
+      {
+        "need": "Restrict a value to fall within a specified minimum and maximum boundary.",
+        "target": "utils.clamp",
+        "rank": 1
+      },
+      {
+        "need": "Restrict a value to fall within a specified minimum and maximum boundary.",
+        "target": "utils.clamp",
+        "rank": 1
+      },
+      {
+        "need": "yield successive fixed-size chunks from a sequence",
+        "target": "utils.chunked",
+        "rank": 1
+      },
+      {
+        "need": "Produce consecutive, equally sized segments from a given sequence.",
+        "target": "utils.chunked",
+        "rank": 1
+      },
+      {
+        "need": "Produce consecutive, equally sized segments from a given sequence.",
+        "target": "utils.chunked",
+        "rank": 1
+      }
+    ],
+    "needroute": [
+      {
+        "need": "reject a request whose token is not in the allowed set",
+        "target": "auth.AuthMiddleware.before",
+        "rank": null
+      },
+      {
+        "need": "Deny the request if its token is absent from the permitted list.",
+        "target": "auth.AuthMiddleware.before",
+        "rank": null
+      },
+      {
+        "need": "Deny the request if its token is absent from the permitted list.",
+        "target": "auth.AuthMiddleware.before",
+        "rank": null
+      },
+      {
+        "need": "store a task result and mark the task finished",
+        "target": "storage.TaskStore.save_result",
+        "rank": 1
+      },
+      {
+        "need": "Save the outcome of the task and update its status to indicate completion.",
+        "target": "storage.TaskStore.save_result",
+        "rank": 1
+      },
+      {
+        "need": "Save the outcome of the task and update its status to indicate completion.",
+        "target": "storage.TaskStore.save_result",
+        "rank": 1
+      },
+      {
+        "need": "get all tasks still waiting to run, oldest first",
+        "target": "storage.TaskStore.pending",
+        "rank": 1
+      },
+      {
+        "need": "Retrieve all pending tasks and sort them by creation time in ascending order.",
+        "target": "storage.TaskStore.pending",
+        "rank": 1
+      },
+      {
+        "need": "Retrieve all pending tasks and sort them by creation time in ascending order.",
+        "target": "storage.TaskStore.pending",
+        "rank": 1
+      },
+      {
+        "need": "update a task status and bump its attempt counter",
+        "target": "storage.TaskStore.set_status",
+        "rank": 1
+      },
+      {
+        "need": "Update the task's status and increment its attempt counter.",
+        "target": "storage.TaskStore.set_status",
+        "rank": 1
+      },
+      {
+        "need": "Update the task's status and increment its attempt counter.",
+        "target": "storage.TaskStore.set_status",
+        "rank": 1
+      },
+      {
+        "need": "move failed tasks back to pending for another attempt",
+        "target": "scheduler.Scheduler.requeue_failed",
+        "rank": null
+      },
+      {
+        "need": "Failed tasks should be returned to the pending queue to allow for a retry.",
+        "target": "scheduler.Scheduler.requeue_failed",
+        "rank": null
+      },
+      {
+        "need": "Failed tasks should be returned to the pending queue to allow for a retry.",
+        "target": "scheduler.Scheduler.requeue_failed",
+        "rank": null
+      },
+      {
+        "need": "return up to batch_size pending tasks to run",
+        "target": "scheduler.Scheduler.next_batch",
+        "rank": null
+      },
+      {
+        "need": "Return the maximum number of pending tasks equal to the batch_size for execution.",
+        "target": "scheduler.Scheduler.next_batch",
+        "rank": null
+      },
+      {
+        "need": "Return the maximum number of pending tasks equal to the batch_size for execution.",
+        "target": "scheduler.Scheduler.next_batch",
+        "rank": null
+      },
+      {
+        "need": "serialize a message to a length-prefixed JSON byte frame",
+        "target": "protocol.encode_message",
+        "rank": 1
+      },
+      {
+        "need": "Convert the message into a JSON object, then wrap it within a byte frame that includes its total length as a prefix.",
+        "target": "protocol.encode_message",
+        "rank": 1
+      },
+      {
+        "need": "Convert the message into a JSON object, then wrap it within a byte frame that includes its total length as a prefix.",
+        "target": "protocol.encode_message",
+        "rank": 1
+      },
+      {
+        "need": "parse a length-prefixed JSON frame into a message",
+        "target": "protocol.decode_message",
+        "rank": null
+      },
+      {
+        "need": "Extract a message by parsing a JSON frame that is preceded by a length indicator.",
+        "target": "protocol.decode_message",
+        "rank": null
+      },
+      {
+        "need": "Extract a message by parsing a JSON frame that is preceded by a length indicator.",
+        "target": "protocol.decode_message",
+        "rank": null
+      },
+      {
+        "need": "check whether a key is within its sliding-window rate budget",
+        "target": "ratelimit.RateLimiter.allow",
+        "rank": null
+      },
+      {
+        "need": "Verify if a specific key's traffic volume stays within its allocated sliding-window rate limit.",
+        "target": "ratelimit.RateLimiter.allow",
+        "rank": null
+      },
+      {
+        "need": "Verify if a specific key's traffic volume stays within its allocated sliding-window rate limit.",
+        "target": "ratelimit.RateLimiter.allow",
+        "rank": null
+      },
+      {
+        "need": "exponential backoff delay in ms for a zero-based attempt index",
+        "target": "utils.backoff_delay",
+        "rank": null
+      },
+      {
+        "need": "The delay in milliseconds should increase exponentially based on the zero-based attempt index.",
+        "target": "utils.backoff_delay",
+        "rank": null
+      },
+      {
+        "need": "The delay in milliseconds should increase exponentially based on the zero-based attempt index.",
+        "target": "utils.backoff_delay",
+        "rank": null
+      },
+      {
+        "need": "call a function with exponential backoff and retry on failure",
+        "target": "utils.retry",
+        "rank": null
+      },
+      {
+        "need": "Invoke the specified function with exponential backoff logic to automatically retry upon encountering any failure.",
+        "target": "utils.retry",
+        "rank": null
+      },
+      {
+        "need": "Invoke the specified function with exponential backoff logic to automatically retry upon encountering any failure.",
+        "target": "utils.retry",
+        "rank": null
+      },
+      {
+        "need": "parse a duration like 500ms or 2s into milliseconds",
+        "target": "utils.parse_duration",
+        "rank": null
+      },
+      {
+        "need": "Convert various duration formats, such as \"500ms\" or \"2s\", into a standardized millisecond value.",
+        "target": "utils.parse_duration",
+        "rank": null
+      },
+      {
+        "need": "Convert various duration formats, such as \"500ms\" or \"2s\", into a standardized millisecond value.",
+        "target": "utils.parse_duration",
+        "rank": null
+      },
+      {
+        "need": "stable deduplication preserving first-occurrence order",
+        "target": "utils.dedupe",
+        "rank": null
+      },
+      {
+        "need": "Maintain a stable order of unique elements by preserving the sequence of their first appearance.",
+        "target": "utils.dedupe",
+        "rank": null
+      },
+      {
+        "need": "Maintain a stable order of unique elements by preserving the sequence of their first appearance.",
+        "target": "utils.dedupe",
+        "rank": null
+      },
+      {
+        "need": "clamp a value into an inclusive range",
+        "target": "utils.clamp",
+        "rank": null
+      },
+      {
+        "need": "Restrict a value to fall within a specified minimum and maximum boundary.",
+        "target": "utils.clamp",
+        "rank": null
+      },
+      {
+        "need": "Restrict a value to fall within a specified minimum and maximum boundary.",
+        "target": "utils.clamp",
+        "rank": null
+      },
+      {
+        "need": "yield successive fixed-size chunks from a sequence",
+        "target": "utils.chunked",
+        "rank": null
+      },
+      {
+        "need": "Produce consecutive, equally sized segments from a given sequence.",
+        "target": "utils.chunked",
+        "rank": null
+      },
+      {
+        "need": "Produce consecutive, equally sized segments from a given sequence.",
+        "target": "utils.chunked",
+        "rank": null
+      }
+    ]
+  }
+}
