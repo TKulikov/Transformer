@@ -69,6 +69,28 @@ def dendrogram(vecs: torch.Tensor) -> list[Merge]:
     return merges
 
 
+def root_split(merges: list[Merge], n_leaves: int) -> tuple[tuple[int, ...], tuple[int, ...], float] | None:
+    """Return the two groups of the final (root) merge and the gap before it.
+
+    The root merge joins two subtrees; their leaf members are the two candidate
+    subgoals of a binary decomposition. The gap (root height minus previous
+    height) measures how clean the split is. Returns (groupA, groupB, gap), or
+    None when fewer than 2 merges exist (no internal split to validate).
+    """
+    if len(merges) < 2:
+        return None
+    clusters: dict[int, tuple[int, ...]] = {i: (i,) for i in range(n_leaves)}
+    next_id = n_leaves
+    for m in merges[:-1]:
+        del clusters[m.a]
+        del clusters[m.b]
+        clusters[next_id] = m.members
+        next_id += 1
+    last = merges[-1]
+    gap = last.height - merges[-2].height
+    return clusters[last.a], clusters[last.b], gap
+
+
 def largest_gap_cut(merges: list[Merge], n_leaves: int) -> tuple[list[tuple[int, ...]], float]:
     """Cut the dendrogram at the largest gap between consecutive merge heights.
 
