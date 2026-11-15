@@ -1,24 +1,21 @@
 """Phase-4 retrieval ablation on the taskq codebase (decomposed + stats).
 
-Disentangles the three mechanisms that the dialogue work found load-bearing —
-centering, MMR diversification, and goal routing — plus the prefetch cascade and
-realistic (need-based, non-oracle) routing. Conditions:
+Disentangles centering, MMR diversification, goal routing, the prefetch cascade,
+need-based routing, and (with --realism) routing by a GENERATED goal instead of
+the oracle goal — measuring how far practical routing falls below the upper bound.
 
-  flat_plain            flat, no centering, pure relevance (lam=1)
-  flat_diverse          flat, no centering, MMR (lam=0.5)
-  flat_centered         flat, global centering, pure relevance
-  flat_centered_diverse flat, global centering, MMR
-  goal_uncentered       goal tree, no centering, MMR
-  goal_centered         goal tree, local centering, MMR        [workhorse]
-  goal_prefetch         goal_centered + prefetch unified cascade
-  needroute             goal tree routed by the NEED (no oracle goal), MMR
+Conditions (kind, centered, lambda, prefetch, route_mode):
+  flat_plain / flat_diverse / flat_centered / flat_centered_diverse
+  goal_uncentered / goal_centered / goal_prefetch
+  needroute        (route by the need — collapses)
+  goal_generated   (--realism: route by GoalBuilder's generated goal embedding)
 
-Queries: each handcrafted need + 2 model paraphrases (n=45) to give statistical
-power (retrieval is deterministic, so variance comes from query variation).
-Reports hit@1/3/6, MRR, 95% bootstrap CI over queries, and paired never-worse
-counts for key contrasts. Saves results/code/retrieval/<run-id>/. GPU run:
+Queries: each handcrafted need + 2 model paraphrases (n=45). Reports hit@1/3/6,
+MRR, 95% bootstrap CI, paired never-worse contrasts, and routing accuracy for
+goal_generated. Saves results/code/retrieval/<run-id>/. GPU run:
 
     HF_HUB_OFFLINE=1 .venv/bin/python scripts_code/eval_retrieval.py --run-id r2
+    HF_HUB_OFFLINE=1 .venv/bin/python scripts_code/eval_retrieval.py --run-id realism --realism
 """
 
 from __future__ import annotations
@@ -36,6 +33,7 @@ import torch
 
 from codemem.bank import CodeBank
 from codemem.config import Config
+from codemem.goal import GoalBuilder
 from codemem.model import load_model
 from codemem.prefetch import PrefetchBank
 from codemem.retrieve import Retriever
@@ -79,16 +77,16 @@ TASKS = [
     ("utils", "yield successive fixed-size chunks from a sequence", "utils.chunked"),
 ]
 
-# name -> (kind, centered, lambda, prefetch, route_by_need)
+# name -> (kind, centered, lambda, prefetch, route_mode)
 CONDITIONS = {
-    "flat_plain":            ("flat", False, 1.0, False, False),
-    "flat_diverse":          ("flat", False, 0.5, False, False),
-    "flat_centered":         ("flat", True, 1.0, False, False),
-    "flat_centered_diverse": ("flat", True, 0.5, False, False),
-    "goal_uncentered":       ("goal", False, 0.5, False, False),
-    "goal_centered":         ("goal", True, 0.5, False, False),
-    "goal_prefetch":         ("goal", True, 0.5, True, False),
-    "needroute":             ("goal", True, 0.5, False, True),
+    "flat_plain":            ("flat", False, 1.0, False, "goal"),
+    "flat_diverse":          ("flat", False, 0.5, False, "goal"),
+    "flat_centered":         ("flat", True, 1.0, False, "goal"),
+    "flat_centered_diverse": ("flat", True, 0.5, False, "goal"),
+    "goal_uncentered":       ("goal", False, 0.5, False, "goal"),
+    "goal_centered":         ("goal", True, 0.5, False, "goal"),
+    "goal_prefetch":         ("goal", True, 0.5, True, "goal"),
+    "needroute":             ("goal", True, 0.5, False, "need"),
 }
 
 
@@ -133,11 +131,7 @@ def build_goal(bank, chunks, goal_embs, centered):
 def bootstrap_ci(values, n_boot=2000, seed=0):
     rng = random.Random(seed)
     n = len(values)
-    means = []
-    for _ in range(n_boot):
-        sample = [values[rng.randrange(n)] for _ in range(n)]
-        means.append(sum(sample) / n)
-    means.sort()
+    means = sorted(sum(values[rng.randrange(n)] for _ in range(n)) / n for _ in range(n_boot))
     return round(means[int(0.025 * n_boot)], 3), round(means[int(0.975 * n_boot)], 3)
 
 
@@ -155,6 +149,7 @@ def main():
     ap.add_argument("--k", type=int, default=6)
     ap.add_argument("--layer", type=int, default=15)
     ap.add_argument("--paraphrases", type=int, default=2)
+    ap.add_argument("--realism", action="store_true", help="add goal_generated routing condition")
     args = ap.parse_args()
 
     if torch.cuda.is_available():
@@ -177,8 +172,7 @@ def main():
 
     goal_embs = {g: model.embed([desc])[0] for g, desc in GOALS.items()}
 
-    # build query set: original need + paraphrases
-    queries = []   # (goal, need_text, target_id, task_idx)
+    queries = []
     for ti, (g, need, target) in enumerate(TASKS):
         variants = [need]
         for _ in range(args.paraphrases):
@@ -190,52 +184,73 @@ def main():
     need_embs = model.embed([q[1] for q in queries])
     print(f"queries: {len(queries)} ({len(TASKS)} tasks x {args.paraphrases+1})", flush=True)
 
+    conditions = dict(CONDITIONS)
+    gen_goal_embs = {}
+    if args.realism:
+        conditions["goal_generated"] = ("goal", True, 0.5, False, "generated")
+        gb = GoalBuilder(model, cfg)
+        for ti, (g, need, target) in enumerate(TASKS):
+            gen_goal_embs[ti] = gb.build(f"I need to {need}").emb
+        print(f"generated goals for {len(gen_goal_embs)} tasks", flush=True)
+
     trees = {
         ("flat", False): build_flat(bank, ids, False),
         ("flat", True): build_flat(bank, ids, True),
         ("goal", False): build_goal(bank, chunks, goal_embs, False),
         ("goal", True): build_goal(bank, chunks, goal_embs, True),
     }
+    goal_node_id = {}
+    for nid, n in trees[("goal", True)].nodes.items():
+        for g, desc in GOALS.items():
+            if n.text == desc:
+                goal_node_id[g] = nid
 
     results, detail, rank_table = {}, {}, {}
-    for name, (kind, centered, lam, use_pf, by_need) in CONDITIONS.items():
+    for name, (kind, centered, lam, use_pf, route_mode) in conditions.items():
         tree = trees[(kind, centered)]
         pf = PrefetchBank(ttl_steps=1)
         retr = Retriever(tree, bank, pf, top_k=args.k, mmr_lambda=lam, centered=centered)
-        ranks = []
+        ranks, route_correct = [], 0
         for i, (g, need, tid, ti) in enumerate(queries):
-            route_emb = need_embs[i] if by_need else goal_embs[g]
+            if route_mode == "need":
+                route_emb = need_embs[i]
+            elif route_mode == "generated":
+                route_emb = gen_goal_embs[ti]
+            else:
+                route_emb = goal_embs[g]
+            if route_mode == "generated" and tree.route(route_emb) == goal_node_id[g]:
+                route_correct += 1
             if use_pf:
                 node = tree.route(route_emb)
                 pf.put(i, tree.search(node, need_embs[i], 8, lambda_=1.0))
             out = retr.retrieve(route_emb, need_embs[i], i, k=args.k)
             ranks.append(out.index(tid) + 1 if tid in out else None)
         rank_table[name] = ranks
-        h6 = metric_vec(ranks, args.k)
-        mrr = mrr_vec(ranks)
+        h6, mrr = metric_vec(ranks, args.k), mrr_vec(ranks)
         results[name] = {
             "hit@1": round(sum(metric_vec(ranks, 1)) / len(ranks), 3),
             "hit@3": round(sum(metric_vec(ranks, 3)) / len(ranks), 3),
-            "hit@6": round(sum(h6) / len(ranks), 3),
-            "hit@6_ci": bootstrap_ci(h6),
-            "mrr": round(sum(mrr) / len(ranks), 3),
-            "mrr_ci": bootstrap_ci(mrr),
+            "hit@6": round(sum(h6) / len(ranks), 3), "hit@6_ci": bootstrap_ci(h6),
+            "mrr": round(sum(mrr) / len(ranks), 3), "mrr_ci": bootstrap_ci(mrr),
         }
+        if route_mode == "generated":
+            results[name]["routing_accuracy"] = round(route_correct / len(queries), 3)
         detail[name] = [{"need": queries[i][1], "target": TASKS[queries[i][3]][2], "rank": ranks[i]} for i in range(len(queries))]
-        print(f"{name:22s} hit@6={results[name]['hit@6']} {results[name]['hit@6_ci']} mrr={results[name]['mrr']}", flush=True)
+        extra = f" route_acc={results[name].get('routing_accuracy')}" if route_mode == "generated" else ""
+        print(f"{name:22s} hit@6={results[name]['hit@6']} {results[name]['hit@6_ci']} mrr={results[name]['mrr']}{extra}", flush=True)
 
-    # paired never-worse contrasts (per query rank; lower=better, None=miss=worst)
     def score(r):
         return r if r is not None else 10**6
     contrasts = {
         "diversification_flat": ("flat_plain", "flat_diverse"),
         "centering_flat": ("flat_plain", "flat_centered"),
-        "centering_flat_diverse": ("flat_diverse", "flat_centered_diverse"),
         "routing": ("flat_centered_diverse", "goal_centered"),
         "centering_goal": ("goal_uncentered", "goal_centered"),
         "prefetch": ("goal_centered", "goal_prefetch"),
         "oracle_vs_needroute": ("goal_centered", "needroute"),
     }
+    if args.realism:
+        contrasts["oracle_vs_generated"] = ("goal_centered", "goal_generated")
     paired = {}
     for cname, (a, b) in contrasts.items():
         ra, rb = rank_table[a], rank_table[b]
@@ -251,9 +266,9 @@ def main():
          "metrics": results, "paired": paired, "detail": detail}, indent=2, ensure_ascii=False))
     lines = ["# Retrieval ablation (taskq, decomposed + bootstrap)", "",
              f"layer={args.layer} k={args.k} corpus={len(funcs)} queries={len(queries)}", "",
-             "| condition | hit@1 | hit@3 | hit@6 [95% CI] | MRR [95% CI] |", "|---|---|---|---|---|"]
+             "| condition | hit@1 | hit@3 | hit@6 [95% CI] | MRR [95% CI] | route_acc |", "|---|---|---|---|---|---|"]
     for name, m in results.items():
-        lines.append(f"| {name} | {m['hit@1']} | {m['hit@3']} | {m['hit@6']} {m['hit@6_ci']} | {m['mrr']} {m['mrr_ci']} |")
+        lines.append(f"| {name} | {m['hit@1']} | {m['hit@3']} | {m['hit@6']} {m['hit@6_ci']} | {m['mrr']} {m['mrr_ci']} | {m.get('routing_accuracy','-')} |")
     lines += ["", "## Paired contrasts (treatment vs baseline, per query)", "",
               "| contrast | better | worse | equal |", "|---|---|---|---|"]
     for cname, p in paired.items():
