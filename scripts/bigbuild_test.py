@@ -146,12 +146,12 @@ def run_condition(bundle, cond, base):
         if bank.texts:
             if living:
                 with memory_injected(bundle, corr):
-                    q = embed_utterance(bundle, req, layer="last")
-                g = corr.ttl_gist()
+                    q = embed_utterance(bundle, req, layer="mean")
+                g = corr.memory.ttl_gist()
                 if g is not None:
                     q = q + ALPHA * g.to(q.device)
             else:
-                q = embed_utterance(bundle, req, layer="last")
+                q = embed_utterance(bundle, req, layer="mean")
             notes = [t for t, _, _ in bank.retrieve(q, k=K, score="key")]
         nb = ("Your earlier code:\n" + "\n".join(notes) + "\n") if notes else ""
         recent = "\n".join(history[-WINDOW:]) if history else ""
