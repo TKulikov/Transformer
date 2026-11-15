@@ -1,0 +1,72 @@
+[
+  {
+    "task": "retry_backoff",
+    "valid_code": false,
+    "reuse": {
+      "retry": true,
+      "backoff_delay": false
+    },
+    "retrieval_hit": {
+      "retry": false,
+      "backoff_delay": false
+    },
+    "answer": "```python\nimport time\nfrom typing import List, Any, Dict\n\nfrom core.utils import get_logger, retry_with_backoff\nfrom models import FailedRecord\n\nlogger = get_logger(__name__)\n\ndef reprocess_failed(records: List[FailedRecord]) -> Dict[str, Any]:\n    \"\"\"\n    Reprocesses failed records using exponential backoff.\n    Reuses project's existing helpers from core.utils.\n    \n    Args:\n        records: List of FailedRecord instances.\n        \n    Returns:\n        Dictionary containing success_count, failure_count, and total_retries.\n    \"\"\"\n    success_count = 0\n    failure_count = 0\n    total_retries = 0\n    \n    for record in records:\n        retry_count = 0\n        last_error = None\n        \n        while retry_count < 5:  # Max retries per record\n            try:\n                # Attempt reprocessing via the",
+    "injected": []
+  },
+  {
+    "task": "parse_clamp",
+    "valid_code": false,
+    "reuse": {
+      "parse_duration": false,
+      "clamp": true
+    },
+    "retrieval_hit": {
+      "parse_duration": false,
+      "clamp": false
+    },
+    "answer": "```python\nfrom core.utils import parse_int, clamp\n\ndef safe_timeout(text: str) -> int:\n    \"\"\"\n    Parses a timeout string into milliseconds and clamps it to a safe range.\n    Reuses existing helpers from core.utils.\n    \n    Args:\n        text: String representation of the timeout (e.g., \"30s\", \"1000ms\", \"1m\").\n        \n    Returns:\n        Clamped timeout value in milliseconds.\n    \"\"\"\n    # Attempt to parse using existing helper\n    try:\n        ms = parse_int(text)\n    except (ValueError, TypeError):\n        raise ValueError(f\"Invalid timeout format: {text}\")\n    \n    # Define safe range (e.g., 1ms to 30 minutes)\n    MIN_MS = 1\n    MAX_MS = 30 * 60 * 1000",
+    "injected": []
+  },
+  {
+    "task": "batch_dedupe",
+    "valid_code": false,
+    "reuse": {
+      "dedupe": false,
+      "chunked": false
+    },
+    "retrieval_hit": {
+      "dedupe": false,
+      "chunked": false
+    },
+    "answer": "```python\nfrom typing import List, Any, Set\nfrom core.utils import deduplicate_keys, split_into_batches\n\ndef prepare_batches(keys: List[Any], size: int) -> List[List[Any]]:\n    \"\"\"\n    Deduplicates record keys and splits them into fixed-size batches.\n    Reuses existing helpers from core.utils.\n    \n    Args:\n        keys: List of record keys (potentially containing duplicates).\n        size: Maximum number of items per batch.\n        \n    Returns:\n        List of batches, where each batch is a list of unique keys.\n    \"\"\"\n    unique_keys = deduplicate_keys(keys)\n    return split_into_batches(unique_keys, size)\n```",
+    "injected": []
+  },
+  {
+    "task": "slug_total",
+    "valid_code": false,
+    "reuse": {
+      "slugify": true,
+      "compute_total": false
+    },
+    "retrieval_hit": {
+      "slugify": false,
+      "compute_total": false
+    },
+    "answer": "```python\nfrom core.utils import slugify\n\ndef name_and_total(records, field):\n    \"\"\"\n    Slugifies the name of the first record and computes the total of the specified numeric field.\n    \n    Args:\n        records (list): List of record dictionaries.\n        field (str): Name of the numeric field to sum.\n        \n    Returns:\n        tuple: (slugified_name, total_sum)\n    \"\"\"\n    if not records:\n        return slugify(\"\"), 0.0\n    \n    name = records[0].get(\"name\", \"\")\n    total = sum(record.get(field, 0) for record in records)\n    \n    return slugify(name), total\n```",
+    "injected": []
+  },
+  {
+    "task": "invoice_summary",
+    "valid_code": false,
+    "reuse": {
+      "summarize": false,
+      "domain_metric": true
+    },
+    "retrieval_hit": {
+      "summarize": false,
+      "domain_metric": false
+    },
+    "answer": "```python\nfrom typing import List, Dict, Any\nfrom core.utils import validate_response, format_error\nfrom models.invoice import Invoice\nfrom services.invoice_service import InvoiceService\n\nclass InvoiceHandler:\n    def __init__(self, service: InvoiceService):\n        self.service = service\n\n    def get_aggregate_summary(self) -> Dict[str, Any]:\n        \"\"\"\n        Returns an aggregate summary of all invoice records.\n        \"\"\"\n        try:\n            invoices = self.service.get_all()\n            \n            if not invoices:\n                return {\n                    \"status\": \"success\",\n                    \"message\": \"No invoices found\",\n                    \"data\": {\n                        \"total_count\": 0,\n                        \"total_amount\": 0.0,\n                        \"domain_metric\": \"invoice_count\",\n                        \"value\": 0\n                    }\n                }\n\n            total_amount = sum(inv.total_amount for",
+    "injected": []
+  }
+]

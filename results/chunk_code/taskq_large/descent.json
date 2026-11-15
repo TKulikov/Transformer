@@ -1,0 +1,102 @@
+[
+  {
+    "task": "retry_backoff",
+    "valid_code": true,
+    "reuse": {
+      "retry": true,
+      "backoff_delay": false
+    },
+    "retrieval_hit": {
+      "retry": false,
+      "backoff_delay": false
+    },
+    "answer": "from core.utils import exponential_backoff, retry_with_backoff\n\ndef reprocess_failed(records):\n    \"\"\"Reprocess failed records using exponential backoff.\"\"\"\n    for record in records:\n        retry_with_backoff(\n            record,\n            lambda r: r._service.process(r),\n            backoff_fn=exponential_backoff\n        )",
+    "injected": [
+      "def timeout_ms(self, payload):\n        \"\"\"Parse a request timeout into milliseconds.\"\"\"\n        return parse_duration(payload.get(\"timeout\", \"5s\"))",
+      "def list(self, payload):\n        \"\"\"List document records, optionally filtered.\"\"\"\n        field = payload.get(\"filter_field\")\n        if field:\n            rows = self._service._repo.filter_by(field, payload.get(\"filter_value\"))\n        else:\n            rows = self._service._repo.list()\n        return {\"items\": [r.__dict__ for r in rows]}",
+      "def summary(self, payload):\n        \"\"\"Return an aggregate summary of document records.\"\"\"\n        return self._service.summarize(self._service._repo.list())",
+      "def create(self, payload):\n        \"\"\"Create a document and return its key.\"\"\"\n        record = self._service.create(payload)\n        return {\"created\": record.__dict__}",
+      "def __init__(self, service=None):\n        self._service = service or DocumentService()"
+    ]
+  },
+  {
+    "task": "parse_clamp",
+    "valid_code": false,
+    "reuse": {
+      "parse_duration": true,
+      "clamp": true
+    },
+    "retrieval_hit": {
+      "parse_duration": true,
+      "clamp": false
+    },
+    "answer": "```python\nfrom core.utils import parse_duration\n\ndef safe_timeout(text: str) -> int:\n    \"\"\"Parse a timeout string into milliseconds and clamp to a safe range.\"\"\"\n    ms = parse_duration(text)\n    return max(100, min(ms, 300000))\n```",
+    "injected": [
+      "def timeout_ms(self, payload):\n        \"\"\"Parse a request timeout into milliseconds.\"\"\"\n        return parse_duration(payload.get(\"timeout\", \"5s\"))",
+      "def list(self, payload):\n        \"\"\"List document records, optionally filtered.\"\"\"\n        field = payload.get(\"filter_field\")\n        if field:\n            rows = self._service._repo.filter_by(field, payload.get(\"filter_value\"))\n        else:\n            rows = self._service._repo.list()\n        return {\"items\": [r.__dict__ for r in rows]}",
+      "def create(self, payload):\n        \"\"\"Create a document and return its key.\"\"\"\n        record = self._service.create(payload)\n        return {\"created\": record.__dict__}",
+      "def summary(self, payload):\n        \"\"\"Return an aggregate summary of document records.\"\"\"\n        return self._service.summarize(self._service._repo.list())",
+      "def timeout_ms(self, payload):\n        \"\"\"Parse a request timeout into milliseconds.\"\"\"\n        return parse_duration(payload.get(\"timeout\", \"5s\"))"
+    ]
+  },
+  {
+    "task": "batch_dedupe",
+    "valid_code": true,
+    "reuse": {
+      "dedupe": false,
+      "chunked": false
+    },
+    "retrieval_hit": {
+      "dedupe": false,
+      "chunked": false
+    },
+    "answer": "from core.utils import deduplicate_keys\n\ndef prepare_batches(keys, size):\n    \"\"\"Deduplicate record keys and split them into fixed-size batches.\"\"\"\n    unique_keys = deduplicate_keys(keys)\n    return [unique_keys[i:i + size] for i in range(0, len(unique_keys), size)]",
+    "injected": [
+      "def timeout_ms(self, payload):\n        \"\"\"Parse a request timeout into milliseconds.\"\"\"\n        return parse_duration(payload.get(\"timeout\", \"5s\"))",
+      "def list(self, payload):\n        \"\"\"List document records, optionally filtered.\"\"\"\n        field = payload.get(\"filter_field\")\n        if field:\n            rows = self._service._repo.filter_by(field, payload.get(\"filter_value\"))\n        else:\n            rows = self._service._repo.list()\n        return {\"items\": [r.__dict__ for r in rows]}",
+      "def create(self, payload):\n        \"\"\"Create a document and return its key.\"\"\"\n        record = self._service.create(payload)\n        return {\"created\": record.__dict__}",
+      "def summary(self, payload):\n        \"\"\"Return an aggregate summary of document records.\"\"\"\n        return self._service.summarize(self._service._repo.list())",
+      "def timeout_ms(self, payload):\n        \"\"\"Parse a request timeout into milliseconds.\"\"\"\n        return parse_duration(payload.get(\"timeout\", \"5s\"))"
+    ]
+  },
+  {
+    "task": "slug_total",
+    "valid_code": true,
+    "reuse": {
+      "slugify": true,
+      "compute_total": false
+    },
+    "retrieval_hit": {
+      "slugify": false,
+      "compute_total": false
+    },
+    "answer": "from core.utils import slugify\n\ndef name_and_total(records, field):\n    \"\"\"Compute slugified name and total of a numeric field over records.\"\"\"\n    return {\n        \"name\": slugify(records[0].get(\"name\", \"\")),\n        \"total\": sum(r.get(field, 0) for r in records)\n    }",
+    "injected": [
+      "def timeout_ms(self, payload):\n        \"\"\"Parse a request timeout into milliseconds.\"\"\"\n        return parse_duration(payload.get(\"timeout\", \"5s\"))",
+      "def list(self, payload):\n        \"\"\"List document records, optionally filtered.\"\"\"\n        field = payload.get(\"filter_field\")\n        if field:\n            rows = self._service._repo.filter_by(field, payload.get(\"filter_value\"))\n        else:\n            rows = self._service._repo.list()\n        return {\"items\": [r.__dict__ for r in rows]}",
+      "def summary(self, payload):\n        \"\"\"Return an aggregate summary of document records.\"\"\"\n        return self._service.summarize(self._service._repo.list())",
+      "def create(self, payload):\n        \"\"\"Create a document and return its key.\"\"\"\n        record = self._service.create(payload)\n        return {\"created\": record.__dict__}",
+      "def __init__(self, service=None):\n        self._service = service or DocumentService()"
+    ]
+  },
+  {
+    "task": "invoice_summary",
+    "valid_code": true,
+    "reuse": {
+      "summarize": true,
+      "domain_metric": false
+    },
+    "retrieval_hit": {
+      "summarize": true,
+      "domain_metric": false
+    },
+    "answer": "def summary(self, payload):\n    \"\"\"Return an aggregate summary of invoice records.\"\"\"\n    return self._service.summarize(self._service._repo.list())",
+    "injected": [
+      "def timeout_ms(self, payload):\n        \"\"\"Parse a request timeout into milliseconds.\"\"\"\n        return parse_duration(payload.get(\"timeout\", \"5s\"))",
+      "def list(self, payload):\n        \"\"\"List document records, optionally filtered.\"\"\"\n        field = payload.get(\"filter_field\")\n        if field:\n            rows = self._service._repo.filter_by(field, payload.get(\"filter_value\"))\n        else:\n            rows = self._service._repo.list()\n        return {\"items\": [r.__dict__ for r in rows]}",
+      "def summary(self, payload):\n        \"\"\"Return an aggregate summary of document records.\"\"\"\n        return self._service.summarize(self._service._repo.list())",
+      "def create(self, payload):\n        \"\"\"Create a document and return its key.\"\"\"\n        record = self._service.create(payload)\n        return {\"created\": record.__dict__}",
+      "def __init__(self, service=None):\n        self._service = service or DocumentService()"
+    ]
+  }
+]

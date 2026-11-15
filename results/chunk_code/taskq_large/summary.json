@@ -1,0 +1,500 @@
+{
+  "model": "qwen35-4b",
+  "device": "cuda",
+  "project": "taskq_large",
+  "tree": {
+    "file": 83,
+    "class": 75,
+    "function": 392,
+    "usage": 110
+  },
+  "ingest_s": 56.2,
+  "modes": {
+    "no_memory": [
+      {
+        "task": "retry_backoff",
+        "valid_code": false,
+        "reuse": {
+          "retry": true,
+          "backoff_delay": false
+        },
+        "retrieval_hit": {
+          "retry": false,
+          "backoff_delay": false
+        },
+        "answer": "```python\nimport time\nfrom typing import List, Any, Dict\n\nfrom core.utils import get_logger, retry_with_backoff\nfrom models import FailedRecord\n\nlogger = get_logger(__name__)\n\ndef reprocess_failed(records: List[FailedRecord]) -> Dict[str, Any]:\n    \"\"\"\n    Reprocesses failed records using exponential backoff.\n    Reuses project's existing helpers from core.utils.\n    \n    Args:\n        records: List of FailedRecord instances.\n        \n    Returns:\n        Dictionary containing success_count, failure_count, and total_retries.\n    \"\"\"\n    success_count = 0\n    failure_count = 0\n    total_retries = 0\n    \n    for record in records:\n        retry_count = 0\n        last_error = None\n        \n        while retry_count < 5:  # Max retries per record\n            try:\n                # Attempt reprocessing via the",
+        "injected": []
+      },
+      {
+        "task": "parse_clamp",
+        "valid_code": false,
+        "reuse": {
+          "parse_duration": false,
+          "clamp": true
+        },
+        "retrieval_hit": {
+          "parse_duration": false,
+          "clamp": false
+        },
+        "answer": "```python\nfrom core.utils import parse_int, clamp\n\ndef safe_timeout(text: str) -> int:\n    \"\"\"\n    Parses a timeout string into milliseconds and clamps it to a safe range.\n    Reuses existing helpers from core.utils.\n    \n    Args:\n        text: String representation of the timeout (e.g., \"30s\", \"1000ms\", \"1m\").\n        \n    Returns:\n        Clamped timeout value in milliseconds.\n    \"\"\"\n    # Attempt to parse using existing helper\n    try:\n        ms = parse_int(text)\n    except (ValueError, TypeError):\n        raise ValueError(f\"Invalid timeout format: {text}\")\n    \n    # Define safe range (e.g., 1ms to 30 minutes)\n    MIN_MS = 1\n    MAX_MS = 30 * 60 * 1000",
+        "injected": []
+      },
+      {
+        "task": "batch_dedupe",
+        "valid_code": false,
+        "reuse": {
+          "dedupe": false,
+          "chunked": false
+        },
+        "retrieval_hit": {
+          "dedupe": false,
+          "chunked": false
+        },
+        "answer": "```python\nfrom typing import List, Any, Set\nfrom core.utils import deduplicate_keys, split_into_batches\n\ndef prepare_batches(keys: List[Any], size: int) -> List[List[Any]]:\n    \"\"\"\n    Deduplicates record keys and splits them into fixed-size batches.\n    Reuses existing helpers from core.utils.\n    \n    Args:\n        keys: List of record keys (potentially containing duplicates).\n        size: Maximum number of items per batch.\n        \n    Returns:\n        List of batches, where each batch is a list of unique keys.\n    \"\"\"\n    unique_keys = deduplicate_keys(keys)\n    return split_into_batches(unique_keys, size)\n```",
+        "injected": []
+      },
+      {
+        "task": "slug_total",
+        "valid_code": false,
+        "reuse": {
+          "slugify": true,
+          "compute_total": false
+        },
+        "retrieval_hit": {
+          "slugify": false,
+          "compute_total": false
+        },
+        "answer": "```python\nfrom core.utils import slugify\n\ndef name_and_total(records, field):\n    \"\"\"\n    Slugifies the name of the first record and computes the total of the specified numeric field.\n    \n    Args:\n        records (list): List of record dictionaries.\n        field (str): Name of the numeric field to sum.\n        \n    Returns:\n        tuple: (slugified_name, total_sum)\n    \"\"\"\n    if not records:\n        return slugify(\"\"), 0.0\n    \n    name = records[0].get(\"name\", \"\")\n    total = sum(record.get(field, 0) for record in records)\n    \n    return slugify(name), total\n```",
+        "injected": []
+      },
+      {
+        "task": "invoice_summary",
+        "valid_code": false,
+        "reuse": {
+          "summarize": false,
+          "domain_metric": true
+        },
+        "retrieval_hit": {
+          "summarize": false,
+          "domain_metric": false
+        },
+        "answer": "```python\nfrom typing import List, Dict, Any\nfrom core.utils import validate_response, format_error\nfrom models.invoice import Invoice\nfrom services.invoice_service import InvoiceService\n\nclass InvoiceHandler:\n    def __init__(self, service: InvoiceService):\n        self.service = service\n\n    def get_aggregate_summary(self) -> Dict[str, Any]:\n        \"\"\"\n        Returns an aggregate summary of all invoice records.\n        \"\"\"\n        try:\n            invoices = self.service.get_all()\n            \n            if not invoices:\n                return {\n                    \"status\": \"success\",\n                    \"message\": \"No invoices found\",\n                    \"data\": {\n                        \"total_count\": 0,\n                        \"total_amount\": 0.0,\n                        \"domain_metric\": \"invoice_count\",\n                        \"value\": 0\n                    }\n                }\n\n            total_amount = sum(inv.total_amount for",
+        "injected": []
+      }
+    ],
+    "flat": [
+      {
+        "task": "retry_backoff",
+        "valid_code": false,
+        "reuse": {
+          "retry": false,
+          "backoff_delay": true
+        },
+        "retrieval_hit": {
+          "retry": false,
+          "backoff_delay": true
+        },
+        "answer": "```python\nfrom core.utils import backoff_delay\n\ndef reprocess_failed(self, records):\n    \"\"\"Retry processing with explicit exponential backoff.\"\"\"\n    for attempt in range(3):\n        try:\n            return self._repo.bulk_put(records)\n        except Exception:  # noqa: BLE001\n            _ = backoff_delay(attempt)\n    return 0\n```",
+        "injected": [
+          "def reprocess_failed(self, records):\n        \"\"\"Retry processing with explicit exponential backoff.\"\"\"\n        for attempt in range(3):\n            try:\n                return self._repo.bulk_put(records)\n            except Exception:  # noqa: BLE001\n                _ = backoff_delay(attempt)\n        return 0",
+          "def reprocess_failed(self, records):\n        \"\"\"Retry processing with explicit exponential backoff.\"\"\"\n        for attempt in range(3):\n            try:\n                return self._repo.bulk_put(records)\n            except Exception:  # noqa: BLE001\n                _ = backoff_delay(attempt)\n        return 0",
+          "def reprocess_failed(self, records):\n        \"\"\"Retry processing with explicit exponential backoff.\"\"\"\n        for attempt in range(3):\n            try:\n                return self._repo.bulk_put(records)\n            except Exception:  # noqa: BLE001\n                _ = backoff_delay(attempt)\n        return 0",
+          "def reprocess_failed(self, records):\n        \"\"\"Retry processing with explicit exponential backoff.\"\"\"\n        for attempt in range(3):\n            try:\n                return self._repo.bulk_put(records)\n            except Exception:  # noqa: BLE001\n                _ = backoff_delay(attempt)\n        return 0",
+          "def reprocess_failed(self, records):\n        \"\"\"Retry processing with explicit exponential backoff.\"\"\"\n        for attempt in range(3):\n            try:\n                return self._repo.bulk_put(records)\n            except Exception:  # noqa: BLE001\n                _ = backoff_delay(attempt)\n        return 0"
+        ]
+      },
+      {
+        "task": "parse_clamp",
+        "valid_code": false,
+        "reuse": {
+          "parse_duration": true,
+          "clamp": true
+        },
+        "retrieval_hit": {
+          "parse_duration": true,
+          "clamp": true
+        },
+        "answer": "```python\ndef safe_timeout(text):\n    \"\"\"Parse a timeout string into milliseconds and clamp to a safe range.\"\"\"\n    ms = parse_duration(text)\n    return clamp(ms, 0, 1_000_000)\n```",
+        "injected": [
+          "def parse_duration(text, default=0):\n    \"\"\"Parse '500ms' / '2s' / '1m' into milliseconds.\"\"\"\n    if isinstance(text, (int, float)):\n        return int(text)\n    text = str(text).strip().lower()\n    for suffix, factor in {\"ms\": 1, \"s\": 1000, \"m\": 60_000}.items():\n        if text.endswith(suffix):\n            try:\n                return int(float(text[: -len(suffix)]) * factor)\n            except ValueError:\n                return default\n    try:\n        return int(text)\n    except ValueError:\n        return default",
+          "def validate(self, payload):\n        \"\"\"Return True when the numeric field is within a safe range.\"\"\"\n        value = parse_int(payload.get(\"duration\"), -1)\n        return value == clamp(value, 0, 1_000_000)",
+          "def validate(self, payload):\n        \"\"\"Return True when the numeric field is within a safe range.\"\"\"\n        value = parse_int(payload.get(\"priority\"), -1)\n        return value == clamp(value, 0, 1_000_000)",
+          "def validate(self, payload):\n        \"\"\"Return True when the numeric field is within a safe range.\"\"\"\n        value = parse_int(payload.get(\"price\"), -1)\n        return value == clamp(value, 0, 1_000_000)",
+          "def validate(self, payload):\n        \"\"\"Return True when the numeric field is within a safe range.\"\"\"\n        value = parse_int(payload.get(\"duration\"), -1)\n        return value == clamp(value, 0, 1_000_000)",
+          "def timeout_ms(self, payload):\n        \"\"\"Parse a request timeout into milliseconds.\"\"\"\n        return parse_duration(payload.get(\"timeout\", \"5s\"))",
+          "def timeout_ms(self, payload):\n        \"\"\"Parse a request timeout into milliseconds.\"\"\"\n        return parse_duration(payload.get(\"timeout\", \"5s\"))"
+        ]
+      },
+      {
+        "task": "batch_dedupe",
+        "valid_code": false,
+        "reuse": {
+          "dedupe": false,
+          "chunked": false
+        },
+        "retrieval_hit": {
+          "dedupe": false,
+          "chunked": false
+        },
+        "answer": "```python\nfrom collections import OrderedDict\n\ndef prepare_batches(keys, size):\n    \"\"\"Deduplicate record keys and split them into fixed-size batches.\"\"\"\n    # Use OrderedDict to preserve insertion order while deduplicating\n    unique_keys = OrderedDict.fromkeys(keys)\n    \n    batches = []\n    for i in range(0, len(unique_keys), size):\n        batch = list(unique_keys)[i:i + size]\n        batches.append(batch)\n    \n    return batches\n```",
+        "injected": [
+          "def summarize(self, records):\n        \"\"\"Aggregate the numeric field and the domain metric over records.\"\"\"\n        rows = [r.__dict__ for r in records]\n        total = compute_total(rows, \"price\")\n        metric = sum(self.domain_metric(r) for r in records)\n        return {\"n\": len(records), \"total\": round(total, 3), \"metric\": round(metric, 3)}",
+          "def summarize(self, records):\n        \"\"\"Aggregate the numeric field and the domain metric over records.\"\"\"\n        rows = [r.__dict__ for r in records]\n        total = compute_total(rows, \"duration\")\n        metric = sum(self.domain_metric(r) for r in records)\n        return {\"n\": len(records), \"total\": round(total, 3), \"metric\": round(metric, 3)}",
+          "def summarize(self, records):\n        \"\"\"Aggregate the numeric field and the domain metric over records.\"\"\"\n        rows = [r.__dict__ for r in records]\n        total = compute_total(rows, \"payload_size\")\n        metric = sum(self.domain_metric(r) for r in records)\n        return {\"n\": len(records), \"total\": round(total, 3), \"metric\": round(metric, 3)}",
+          "def summarize(self, records):\n        \"\"\"Aggregate the numeric field and the domain metric over records.\"\"\"\n        rows = [r.__dict__ for r in records]\n        total = compute_total(rows, \"priority\")\n        metric = sum(self.domain_metric(r) for r in records)\n        return {\"n\": len(records), \"total\": round(total, 3), \"metric\": round(metric, 3)}",
+          "def summarize(self, records):\n        \"\"\"Aggregate the numeric field and the domain metric over records.\"\"\"\n        rows = [r.__dict__ for r in records]\n        total = compute_total(rows, \"duration\")\n        metric = sum(self.domain_metric(r) for r in records)\n        return {\"n\": len(records), \"total\": round(total, 3), \"metric\": round(metric, 3)}"
+        ]
+      },
+      {
+        "task": "slug_total",
+        "valid_code": false,
+        "reuse": {
+          "slugify": true,
+          "compute_total": true
+        },
+        "retrieval_hit": {
+          "slugify": false,
+          "compute_total": true
+        },
+        "answer": "```python\ndef name_and_total(records, field):\n    \"\"\"Slugify record names and compute total of a numeric field.\"\"\"\n    from core.utils import slugify, compute_total\n    \n    names = [slugify(r.get(\"name\", \"\")) for r in records]\n    total = compute_total(records, field)\n    \n    return {\n        \"names\": names,\n        \"total\": round(total, 3)\n    }\n```",
+        "injected": [
+          "def summarize(self, records):\n        \"\"\"Aggregate the numeric field and the domain metric over records.\"\"\"\n        rows = [r.__dict__ for r in records]\n        total = compute_total(rows, \"price\")\n        metric = sum(self.domain_metric(r) for r in records)\n        return {\"n\": len(records), \"total\": round(total, 3), \"metric\": round(metric, 3)}",
+          "def summarize(self, records):\n        \"\"\"Aggregate the numeric field and the domain metric over records.\"\"\"\n        rows = [r.__dict__ for r in records]\n        total = compute_total(rows, \"amount\")\n        metric = sum(self.domain_metric(r) for r in records)\n        return {\"n\": len(records), \"total\": round(total, 3), \"metric\": round(metric, 3)}",
+          "def summarize(self, records):\n        \"\"\"Aggregate the numeric field and the domain metric over records.\"\"\"\n        rows = [r.__dict__ for r in records]\n        total = compute_total(rows, \"amount\")\n        metric = sum(self.domain_metric(r) for r in records)\n        return {\"n\": len(records), \"total\": round(total, 3), \"metric\": round(metric, 3)}",
+          "def summarize(self, records):\n        \"\"\"Aggregate the numeric field and the domain metric over records.\"\"\"\n        rows = [r.__dict__ for r in records]\n        total = compute_total(rows, \"weight\")\n        metric = sum(self.domain_metric(r) for r in records)\n        return {\"n\": len(records), \"total\": round(total, 3), \"metric\": round(metric, 3)}",
+          "def summarize(self, records):\n        \"\"\"Aggregate the numeric field and the domain metric over records.\"\"\"\n        rows = [r.__dict__ for r in records]\n        total = compute_total(rows, \"price\")\n        metric = sum(self.domain_metric(r) for r in records)\n        return {\"n\": len(records), \"total\": round(total, 3), \"metric\": round(metric, 3)}"
+        ]
+      },
+      {
+        "task": "invoice_summary",
+        "valid_code": false,
+        "reuse": {
+          "summarize": true,
+          "domain_metric": true
+        },
+        "retrieval_hit": {
+          "summarize": true,
+          "domain_metric": true
+        },
+        "answer": "```python\ndef summarize(self, records):\n    \"\"\"Aggregate the numeric field and the domain metric over records.\"\"\"\n    rows = [r.__dict__ for r in records]\n    total = compute_total(rows, \"price\")\n    metric = sum(self.domain_metric(r) for r in records)\n    return {\"n\": len(records), \"total\": round(total, 3), \"metric\": round(metric, 3)}\n```",
+        "injected": [
+          "def summarize(self, records):\n        \"\"\"Aggregate the numeric field and the domain metric over records.\"\"\"\n        rows = [r.__dict__ for r in records]\n        total = compute_total(rows, \"price\")\n        metric = sum(self.domain_metric(r) for r in records)\n        return {\"n\": len(records), \"total\": round(total, 3), \"metric\": round(metric, 3)}",
+          "def summarize(self, records):\n        \"\"\"Aggregate the numeric field and the domain metric over records.\"\"\"\n        rows = [r.__dict__ for r in records]\n        total = compute_total(rows, \"payload_size\")\n        metric = sum(self.domain_metric(r) for r in records)\n        return {\"n\": len(records), \"total\": round(total, 3), \"metric\": round(metric, 3)}",
+          "def summarize(self, records):\n        \"\"\"Aggregate the numeric field and the domain metric over records.\"\"\"\n        rows = [r.__dict__ for r in records]\n        total = compute_total(rows, \"duration\")\n        metric = sum(self.domain_metric(r) for r in records)\n        return {\"n\": len(records), \"total\": round(total, 3), \"metric\": round(metric, 3)}",
+          "def summarize(self, records):\n        \"\"\"Aggregate the numeric field and the domain metric over records.\"\"\"\n        rows = [r.__dict__ for r in records]\n        total = compute_total(rows, \"priority\")\n        metric = sum(self.domain_metric(r) for r in records)\n        return {\"n\": len(records), \"total\": round(total, 3), \"metric\": round(metric, 3)}",
+          "def summarize(self, records):\n        \"\"\"Aggregate the numeric field and the domain metric over records.\"\"\"\n        rows = [r.__dict__ for r in records]\n        total = compute_total(rows, \"weight\")\n        metric = sum(self.domain_metric(r) for r in records)\n        return {\"n\": len(records), \"total\": round(total, 3), \"metric\": round(metric, 3)}"
+        ]
+      }
+    ],
+    "descent": [
+      {
+        "task": "retry_backoff",
+        "valid_code": true,
+        "reuse": {
+          "retry": true,
+          "backoff_delay": false
+        },
+        "retrieval_hit": {
+          "retry": false,
+          "backoff_delay": false
+        },
+        "answer": "from core.utils import exponential_backoff, retry_with_backoff\n\ndef reprocess_failed(records):\n    \"\"\"Reprocess failed records using exponential backoff.\"\"\"\n    for record in records:\n        retry_with_backoff(\n            record,\n            lambda r: r._service.process(r),\n            backoff_fn=exponential_backoff\n        )",
+        "injected": [
+          "def timeout_ms(self, payload):\n        \"\"\"Parse a request timeout into milliseconds.\"\"\"\n        return parse_duration(payload.get(\"timeout\", \"5s\"))",
+          "def list(self, payload):\n        \"\"\"List document records, optionally filtered.\"\"\"\n        field = payload.get(\"filter_field\")\n        if field:\n            rows = self._service._repo.filter_by(field, payload.get(\"filter_value\"))\n        else:\n            rows = self._service._repo.list()\n        return {\"items\": [r.__dict__ for r in rows]}",
+          "def summary(self, payload):\n        \"\"\"Return an aggregate summary of document records.\"\"\"\n        return self._service.summarize(self._service._repo.list())",
+          "def create(self, payload):\n        \"\"\"Create a document and return its key.\"\"\"\n        record = self._service.create(payload)\n        return {\"created\": record.__dict__}",
+          "def __init__(self, service=None):\n        self._service = service or DocumentService()"
+        ]
+      },
+      {
+        "task": "parse_clamp",
+        "valid_code": false,
+        "reuse": {
+          "parse_duration": true,
+          "clamp": true
+        },
+        "retrieval_hit": {
+          "parse_duration": true,
+          "clamp": false
+        },
+        "answer": "```python\nfrom core.utils import parse_duration\n\ndef safe_timeout(text: str) -> int:\n    \"\"\"Parse a timeout string into milliseconds and clamp to a safe range.\"\"\"\n    ms = parse_duration(text)\n    return max(100, min(ms, 300000))\n```",
+        "injected": [
+          "def timeout_ms(self, payload):\n        \"\"\"Parse a request timeout into milliseconds.\"\"\"\n        return parse_duration(payload.get(\"timeout\", \"5s\"))",
+          "def list(self, payload):\n        \"\"\"List document records, optionally filtered.\"\"\"\n        field = payload.get(\"filter_field\")\n        if field:\n            rows = self._service._repo.filter_by(field, payload.get(\"filter_value\"))\n        else:\n            rows = self._service._repo.list()\n        return {\"items\": [r.__dict__ for r in rows]}",
+          "def create(self, payload):\n        \"\"\"Create a document and return its key.\"\"\"\n        record = self._service.create(payload)\n        return {\"created\": record.__dict__}",
+          "def summary(self, payload):\n        \"\"\"Return an aggregate summary of document records.\"\"\"\n        return self._service.summarize(self._service._repo.list())",
+          "def timeout_ms(self, payload):\n        \"\"\"Parse a request timeout into milliseconds.\"\"\"\n        return parse_duration(payload.get(\"timeout\", \"5s\"))"
+        ]
+      },
+      {
+        "task": "batch_dedupe",
+        "valid_code": true,
+        "reuse": {
+          "dedupe": false,
+          "chunked": false
+        },
+        "retrieval_hit": {
+          "dedupe": false,
+          "chunked": false
+        },
+        "answer": "from core.utils import deduplicate_keys\n\ndef prepare_batches(keys, size):\n    \"\"\"Deduplicate record keys and split them into fixed-size batches.\"\"\"\n    unique_keys = deduplicate_keys(keys)\n    return [unique_keys[i:i + size] for i in range(0, len(unique_keys), size)]",
+        "injected": [
+          "def timeout_ms(self, payload):\n        \"\"\"Parse a request timeout into milliseconds.\"\"\"\n        return parse_duration(payload.get(\"timeout\", \"5s\"))",
+          "def list(self, payload):\n        \"\"\"List document records, optionally filtered.\"\"\"\n        field = payload.get(\"filter_field\")\n        if field:\n            rows = self._service._repo.filter_by(field, payload.get(\"filter_value\"))\n        else:\n            rows = self._service._repo.list()\n        return {\"items\": [r.__dict__ for r in rows]}",
+          "def create(self, payload):\n        \"\"\"Create a document and return its key.\"\"\"\n        record = self._service.create(payload)\n        return {\"created\": record.__dict__}",
+          "def summary(self, payload):\n        \"\"\"Return an aggregate summary of document records.\"\"\"\n        return self._service.summarize(self._service._repo.list())",
+          "def timeout_ms(self, payload):\n        \"\"\"Parse a request timeout into milliseconds.\"\"\"\n        return parse_duration(payload.get(\"timeout\", \"5s\"))"
+        ]
+      },
+      {
+        "task": "slug_total",
+        "valid_code": true,
+        "reuse": {
+          "slugify": true,
+          "compute_total": false
+        },
+        "retrieval_hit": {
+          "slugify": false,
+          "compute_total": false
+        },
+        "answer": "from core.utils import slugify\n\ndef name_and_total(records, field):\n    \"\"\"Compute slugified name and total of a numeric field over records.\"\"\"\n    return {\n        \"name\": slugify(records[0].get(\"name\", \"\")),\n        \"total\": sum(r.get(field, 0) for r in records)\n    }",
+        "injected": [
+          "def timeout_ms(self, payload):\n        \"\"\"Parse a request timeout into milliseconds.\"\"\"\n        return parse_duration(payload.get(\"timeout\", \"5s\"))",
+          "def list(self, payload):\n        \"\"\"List document records, optionally filtered.\"\"\"\n        field = payload.get(\"filter_field\")\n        if field:\n            rows = self._service._repo.filter_by(field, payload.get(\"filter_value\"))\n        else:\n            rows = self._service._repo.list()\n        return {\"items\": [r.__dict__ for r in rows]}",
+          "def summary(self, payload):\n        \"\"\"Return an aggregate summary of document records.\"\"\"\n        return self._service.summarize(self._service._repo.list())",
+          "def create(self, payload):\n        \"\"\"Create a document and return its key.\"\"\"\n        record = self._service.create(payload)\n        return {\"created\": record.__dict__}",
+          "def __init__(self, service=None):\n        self._service = service or DocumentService()"
+        ]
+      },
+      {
+        "task": "invoice_summary",
+        "valid_code": true,
+        "reuse": {
+          "summarize": true,
+          "domain_metric": false
+        },
+        "retrieval_hit": {
+          "summarize": true,
+          "domain_metric": false
+        },
+        "answer": "def summary(self, payload):\n    \"\"\"Return an aggregate summary of invoice records.\"\"\"\n    return self._service.summarize(self._service._repo.list())",
+        "injected": [
+          "def timeout_ms(self, payload):\n        \"\"\"Parse a request timeout into milliseconds.\"\"\"\n        return parse_duration(payload.get(\"timeout\", \"5s\"))",
+          "def list(self, payload):\n        \"\"\"List document records, optionally filtered.\"\"\"\n        field = payload.get(\"filter_field\")\n        if field:\n            rows = self._service._repo.filter_by(field, payload.get(\"filter_value\"))\n        else:\n            rows = self._service._repo.list()\n        return {\"items\": [r.__dict__ for r in rows]}",
+          "def summary(self, payload):\n        \"\"\"Return an aggregate summary of document records.\"\"\"\n        return self._service.summarize(self._service._repo.list())",
+          "def create(self, payload):\n        \"\"\"Create a document and return its key.\"\"\"\n        record = self._service.create(payload)\n        return {\"created\": record.__dict__}",
+          "def __init__(self, service=None):\n        self._service = service or DocumentService()"
+        ]
+      }
+    ],
+    "union": [
+      {
+        "task": "retry_backoff",
+        "valid_code": false,
+        "reuse": {
+          "retry": false,
+          "backoff_delay": true
+        },
+        "retrieval_hit": {
+          "retry": false,
+          "backoff_delay": true
+        },
+        "answer": "```python\ndef reprocess_failed(self, records):\n    \"\"\"Retry processing with explicit exponential backoff.\"\"\"\n    for attempt in range(3):\n        try:\n            return self._repo.bulk_put(records)\n        except Exception:  # noqa: BLE001\n            _ = backoff_delay(attempt)\n    return 0\n```",
+        "injected": [
+          "def timeout_ms(self, payload):\n        \"\"\"Parse a request timeout into milliseconds.\"\"\"\n        return parse_duration(payload.get(\"timeout\", \"5s\"))",
+          "def reprocess_failed(self, records):\n        \"\"\"Retry processing with explicit exponential backoff.\"\"\"\n        for attempt in range(3):\n            try:\n                return self._repo.bulk_put(records)\n            except Exception:  # noqa: BLE001\n                _ = backoff_delay(attempt)\n        return 0",
+          "def reprocess_failed(self, records):\n        \"\"\"Retry processing with explicit exponential backoff.\"\"\"\n        for attempt in range(3):\n            try:\n                return self._repo.bulk_put(records)\n            except Exception:  # noqa: BLE001\n                _ = backoff_delay(attempt)\n        return 0",
+          "def reprocess_failed(self, records):\n        \"\"\"Retry processing with explicit exponential backoff.\"\"\"\n        for attempt in range(3):\n            try:\n                return self._repo.bulk_put(records)\n            except Exception:  # noqa: BLE001\n                _ = backoff_delay(attempt)\n        return 0",
+          "def reprocess_failed(self, records):\n        \"\"\"Retry processing with explicit exponential backoff.\"\"\"\n        for attempt in range(3):\n            try:\n                return self._repo.bulk_put(records)\n            except Exception:  # noqa: BLE001\n                _ = backoff_delay(attempt)\n        return 0"
+        ]
+      },
+      {
+        "task": "parse_clamp",
+        "valid_code": false,
+        "reuse": {
+          "parse_duration": true,
+          "clamp": true
+        },
+        "retrieval_hit": {
+          "parse_duration": true,
+          "clamp": true
+        },
+        "answer": "```python\ndef safe_timeout(text):\n    \"\"\"Parse a timeout string into milliseconds and clamp to a safe range.\"\"\"\n    ms = parse_duration(text)\n    return clamp(ms, 0, 1_000_000)\n```",
+        "injected": [
+          "def timeout_ms(self, payload):\n        \"\"\"Parse a request timeout into milliseconds.\"\"\"\n        return parse_duration(payload.get(\"timeout\", \"5s\"))",
+          "def validate(self, payload):\n        \"\"\"Return True when the numeric field is within a safe range.\"\"\"\n        value = parse_int(payload.get(\"duration\"), -1)\n        return value == clamp(value, 0, 1_000_000)",
+          "def parse_duration(text, default=0):\n    \"\"\"Parse '500ms' / '2s' / '1m' into milliseconds.\"\"\"\n    if isinstance(text, (int, float)):\n        return int(text)\n    text = str(text).strip().lower()\n    for suffix, factor in {\"ms\": 1, \"s\": 1000, \"m\": 60_000}.items():\n        if text.endswith(suffix):\n            try:\n                return int(float(text[: -len(suffix)]) * factor)\n            except ValueError:\n                return default\n    try:\n        return int(text)\n    except ValueError:\n        return default",
+          "def validate(self, payload):\n        \"\"\"Return True when the numeric field is within a safe range.\"\"\"\n        value = parse_int(payload.get(\"priority\"), -1)\n        return value == clamp(value, 0, 1_000_000)",
+          "def validate(self, payload):\n        \"\"\"Return True when the numeric field is within a safe range.\"\"\"\n        value = parse_int(payload.get(\"price\"), -1)\n        return value == clamp(value, 0, 1_000_000)",
+          "def timeout_ms(self, payload):\n        \"\"\"Parse a request timeout into milliseconds.\"\"\"\n        return parse_duration(payload.get(\"timeout\", \"5s\"))",
+          "def timeout_ms(self, payload):\n        \"\"\"Parse a request timeout into milliseconds.\"\"\"\n        return parse_duration(payload.get(\"timeout\", \"5s\"))"
+        ]
+      },
+      {
+        "task": "batch_dedupe",
+        "valid_code": false,
+        "reuse": {
+          "dedupe": false,
+          "chunked": false
+        },
+        "retrieval_hit": {
+          "dedupe": false,
+          "chunked": false
+        },
+        "answer": "```python\nfrom collections import OrderedDict\n\ndef prepare_batches(keys, size):\n    \"\"\"Deduplicate record keys and split them into fixed-size batches.\"\"\"\n    # Use OrderedDict to preserve insertion order while deduplicating\n    unique_keys = OrderedDict.fromkeys(keys)\n    \n    batches = []\n    for i in range(0, len(unique_keys), size):\n        batch = list(unique_keys)[i:i + size]\n        batches.append(batch)\n    \n    return batches\n```",
+        "injected": [
+          "def timeout_ms(self, payload):\n        \"\"\"Parse a request timeout into milliseconds.\"\"\"\n        return parse_duration(payload.get(\"timeout\", \"5s\"))",
+          "def summarize(self, records):\n        \"\"\"Aggregate the numeric field and the domain metric over records.\"\"\"\n        rows = [r.__dict__ for r in records]\n        total = compute_total(rows, \"price\")\n        metric = sum(self.domain_metric(r) for r in records)\n        return {\"n\": len(records), \"total\": round(total, 3), \"metric\": round(metric, 3)}",
+          "def summarize(self, records):\n        \"\"\"Aggregate the numeric field and the domain metric over records.\"\"\"\n        rows = [r.__dict__ for r in records]\n        total = compute_total(rows, \"duration\")\n        metric = sum(self.domain_metric(r) for r in records)\n        return {\"n\": len(records), \"total\": round(total, 3), \"metric\": round(metric, 3)}",
+          "def summarize(self, records):\n        \"\"\"Aggregate the numeric field and the domain metric over records.\"\"\"\n        rows = [r.__dict__ for r in records]\n        total = compute_total(rows, \"payload_size\")\n        metric = sum(self.domain_metric(r) for r in records)\n        return {\"n\": len(records), \"total\": round(total, 3), \"metric\": round(metric, 3)}",
+          "def summarize(self, records):\n        \"\"\"Aggregate the numeric field and the domain metric over records.\"\"\"\n        rows = [r.__dict__ for r in records]\n        total = compute_total(rows, \"priority\")\n        metric = sum(self.domain_metric(r) for r in records)\n        return {\"n\": len(records), \"total\": round(total, 3), \"metric\": round(metric, 3)}"
+        ]
+      },
+      {
+        "task": "slug_total",
+        "valid_code": false,
+        "reuse": {
+          "slugify": true,
+          "compute_total": true
+        },
+        "retrieval_hit": {
+          "slugify": false,
+          "compute_total": true
+        },
+        "answer": "```python\ndef name_and_total(records, field):\n    \"\"\"Slugify a record name and compute the total of a numeric field over records.\"\"\"\n    from core.utils import slugify, compute_total\n    \n    names = [slugify(r.get(\"name\", \"\")) for r in records]\n    total = compute_total(records, field)\n    \n    return {\"names\": names, \"total\": round(total, 3)}\n```",
+        "injected": [
+          "def timeout_ms(self, payload):\n        \"\"\"Parse a request timeout into milliseconds.\"\"\"\n        return parse_duration(payload.get(\"timeout\", \"5s\"))",
+          "def summarize(self, records):\n        \"\"\"Aggregate the numeric field and the domain metric over records.\"\"\"\n        rows = [r.__dict__ for r in records]\n        total = compute_total(rows, \"price\")\n        metric = sum(self.domain_metric(r) for r in records)\n        return {\"n\": len(records), \"total\": round(total, 3), \"metric\": round(metric, 3)}",
+          "def summarize(self, records):\n        \"\"\"Aggregate the numeric field and the domain metric over records.\"\"\"\n        rows = [r.__dict__ for r in records]\n        total = compute_total(rows, \"amount\")\n        metric = sum(self.domain_metric(r) for r in records)\n        return {\"n\": len(records), \"total\": round(total, 3), \"metric\": round(metric, 3)}",
+          "def summarize(self, records):\n        \"\"\"Aggregate the numeric field and the domain metric over records.\"\"\"\n        rows = [r.__dict__ for r in records]\n        total = compute_total(rows, \"amount\")\n        metric = sum(self.domain_metric(r) for r in records)\n        return {\"n\": len(records), \"total\": round(total, 3), \"metric\": round(metric, 3)}",
+          "def summarize(self, records):\n        \"\"\"Aggregate the numeric field and the domain metric over records.\"\"\"\n        rows = [r.__dict__ for r in records]\n        total = compute_total(rows, \"weight\")\n        metric = sum(self.domain_metric(r) for r in records)\n        return {\"n\": len(records), \"total\": round(total, 3), \"metric\": round(metric, 3)}"
+        ]
+      },
+      {
+        "task": "invoice_summary",
+        "valid_code": false,
+        "reuse": {
+          "summarize": true,
+          "domain_metric": false
+        },
+        "retrieval_hit": {
+          "summarize": true,
+          "domain_metric": true
+        },
+        "answer": "```python\nfrom .services import InvoiceService\n\nclass InvoiceHandler:\n    def __init__(self, service: InvoiceService):\n        self.service = service\n\n    def get_summary(self) -> dict:\n        \"\"\"Return an aggregate summary of all invoice records.\"\"\"\n        records = self.service.get_all_records()\n        return self.service.summarize(records)\n```",
+        "injected": [
+          "def timeout_ms(self, payload):\n        \"\"\"Parse a request timeout into milliseconds.\"\"\"\n        return parse_duration(payload.get(\"timeout\", \"5s\"))",
+          "def summarize(self, records):\n        \"\"\"Aggregate the numeric field and the domain metric over records.\"\"\"\n        rows = [r.__dict__ for r in records]\n        total = compute_total(rows, \"price\")\n        metric = sum(self.domain_metric(r) for r in records)\n        return {\"n\": len(records), \"total\": round(total, 3), \"metric\": round(metric, 3)}",
+          "def summarize(self, records):\n        \"\"\"Aggregate the numeric field and the domain metric over records.\"\"\"\n        rows = [r.__dict__ for r in records]\n        total = compute_total(rows, \"payload_size\")\n        metric = sum(self.domain_metric(r) for r in records)\n        return {\"n\": len(records), \"total\": round(total, 3), \"metric\": round(metric, 3)}",
+          "def summarize(self, records):\n        \"\"\"Aggregate the numeric field and the domain metric over records.\"\"\"\n        rows = [r.__dict__ for r in records]\n        total = compute_total(rows, \"duration\")\n        metric = sum(self.domain_metric(r) for r in records)\n        return {\"n\": len(records), \"total\": round(total, 3), \"metric\": round(metric, 3)}",
+          "def summarize(self, records):\n        \"\"\"Aggregate the numeric field and the domain metric over records.\"\"\"\n        rows = [r.__dict__ for r in records]\n        total = compute_total(rows, \"priority\")\n        metric = sum(self.domain_metric(r) for r in records)\n        return {\"n\": len(records), \"total\": round(total, 3), \"metric\": round(metric, 3)}"
+        ]
+      }
+    ],
+    "shallow": [
+      {
+        "task": "retry_backoff",
+        "valid_code": false,
+        "reuse": {
+          "retry": false,
+          "backoff_delay": true
+        },
+        "retrieval_hit": {
+          "retry": false,
+          "backoff_delay": true
+        },
+        "answer": "```python\nfrom core.utils import backoff_delay\n\ndef reprocess_failed(self, records):\n    \"\"\"Retry processing with explicit exponential backoff.\"\"\"\n    for attempt in range(3):\n        try:\n            return self._repo.bulk_put(records)\n        except Exception:  # noqa: BLE001\n            _ = backoff_delay(attempt)\n    return 0\n```",
+        "injected": [
+          "def reprocess_failed(self, records):\n        \"\"\"Retry processing with explicit exponential backoff.\"\"\"\n        for attempt in range(3):\n            try:\n                return self._repo.bulk_put(records)\n            except Exception:  # noqa: BLE001\n                _ = backoff_delay(attempt)\n        return 0",
+          "def reprocess_failed(self, records):\n        \"\"\"Retry processing with explicit exponential backoff.\"\"\"\n        for attempt in range(3):\n            try:\n                return self._repo.bulk_put(records)\n            except Exception:  # noqa: BLE001\n                _ = backoff_delay(attempt)\n        return 0",
+          "def reprocess_failed(self, records):\n        \"\"\"Retry processing with explicit exponential backoff.\"\"\"\n        for attempt in range(3):\n            try:\n                return self._repo.bulk_put(records)\n            except Exception:  # noqa: BLE001\n                _ = backoff_delay(attempt)\n        return 0",
+          "def reprocess_failed(self, records):\n        \"\"\"Retry processing with explicit exponential backoff.\"\"\"\n        for attempt in range(3):\n            try:\n                return self._repo.bulk_put(records)\n            except Exception:  # noqa: BLE001\n                _ = backoff_delay(attempt)\n        return 0",
+          "def reprocess_failed(self, records):\n        \"\"\"Retry processing with explicit exponential backoff.\"\"\"\n        for attempt in range(3):\n            try:\n                return self._repo.bulk_put(records)\n            except Exception:  # noqa: BLE001\n                _ = backoff_delay(attempt)\n        return 0"
+        ]
+      },
+      {
+        "task": "parse_clamp",
+        "valid_code": false,
+        "reuse": {
+          "parse_duration": true,
+          "clamp": true
+        },
+        "retrieval_hit": {
+          "parse_duration": true,
+          "clamp": true
+        },
+        "answer": "```python\ndef safe_timeout(text: str) -> int:\n    \"\"\"Parse a timeout string into milliseconds and clamp to a safe range.\"\"\"\n    value = parse_duration(text, default=0)\n    return clamp(value, 0, 1_000_000)\n```",
+        "injected": [
+          "def validate(self, payload):\n        \"\"\"Return True when the numeric field is within a safe range.\"\"\"\n        value = parse_int(payload.get(\"duration\"), -1)\n        return value == clamp(value, 0, 1_000_000)",
+          "def parse_duration(text, default=0):\n    \"\"\"Parse '500ms' / '2s' / '1m' into milliseconds.\"\"\"\n    if isinstance(text, (int, float)):\n        return int(text)\n    text = str(text).strip().lower()\n    for suffix, factor in {\"ms\": 1, \"s\": 1000, \"m\": 60_000}.items():\n        if text.endswith(suffix):\n            try:\n                return int(float(text[: -len(suffix)]) * factor)\n            except ValueError:\n                return default\n    try:\n        return int(text)\n    except ValueError:\n        return default",
+          "def validate(self, payload):\n        \"\"\"Return True when the numeric field is within a safe range.\"\"\"\n        value = parse_int(payload.get(\"priority\"), -1)\n        return value == clamp(value, 0, 1_000_000)",
+          "def validate(self, payload):\n        \"\"\"Return True when the numeric field is within a safe range.\"\"\"\n        value = parse_int(payload.get(\"price\"), -1)\n        return value == clamp(value, 0, 1_000_000)",
+          "def validate(self, payload):\n        \"\"\"Return True when the numeric field is within a safe range.\"\"\"\n        value = parse_int(payload.get(\"duration\"), -1)\n        return value == clamp(value, 0, 1_000_000)",
+          "def timeout_ms(self, payload):\n        \"\"\"Parse a request timeout into milliseconds.\"\"\"\n        return parse_duration(payload.get(\"timeout\", \"5s\"))",
+          "def timeout_ms(self, payload):\n        \"\"\"Parse a request timeout into milliseconds.\"\"\"\n        return parse_duration(payload.get(\"timeout\", \"5s\"))"
+        ]
+      },
+      {
+        "task": "batch_dedupe",
+        "valid_code": false,
+        "reuse": {
+          "dedupe": false,
+          "chunked": false
+        },
+        "retrieval_hit": {
+          "dedupe": false,
+          "chunked": false
+        },
+        "answer": "```python\nfrom collections import OrderedDict\n\ndef prepare_batches(keys, size):\n    \"\"\"Deduplicate record keys and split them into fixed-size batches.\"\"\"\n    # Use OrderedDict to preserve insertion order while deduplicating\n    unique_keys = OrderedDict.fromkeys(keys)\n    \n    batches = []\n    for i in range(0, len(unique_keys), size):\n        batch = list(unique_keys)[i:i + size]\n        batches.append(batch)\n    \n    return batches\n```",
+        "injected": [
+          "def summarize(self, records):\n        \"\"\"Aggregate the numeric field and the domain metric over records.\"\"\"\n        rows = [r.__dict__ for r in records]\n        total = compute_total(rows, \"price\")\n        metric = sum(self.domain_metric(r) for r in records)\n        return {\"n\": len(records), \"total\": round(total, 3), \"metric\": round(metric, 3)}",
+          "def summarize(self, records):\n        \"\"\"Aggregate the numeric field and the domain metric over records.\"\"\"\n        rows = [r.__dict__ for r in records]\n        total = compute_total(rows, \"duration\")\n        metric = sum(self.domain_metric(r) for r in records)\n        return {\"n\": len(records), \"total\": round(total, 3), \"metric\": round(metric, 3)}",
+          "def summarize(self, records):\n        \"\"\"Aggregate the numeric field and the domain metric over records.\"\"\"\n        rows = [r.__dict__ for r in records]\n        total = compute_total(rows, \"payload_size\")\n        metric = sum(self.domain_metric(r) for r in records)\n        return {\"n\": len(records), \"total\": round(total, 3), \"metric\": round(metric, 3)}",
+          "def summarize(self, records):\n        \"\"\"Aggregate the numeric field and the domain metric over records.\"\"\"\n        rows = [r.__dict__ for r in records]\n        total = compute_total(rows, \"priority\")\n        metric = sum(self.domain_metric(r) for r in records)\n        return {\"n\": len(records), \"total\": round(total, 3), \"metric\": round(metric, 3)}",
+          "def summarize(self, records):\n        \"\"\"Aggregate the numeric field and the domain metric over records.\"\"\"\n        rows = [r.__dict__ for r in records]\n        total = compute_total(rows, \"duration\")\n        metric = sum(self.domain_metric(r) for r in records)\n        return {\"n\": len(records), \"total\": round(total, 3), \"metric\": round(metric, 3)}"
+        ]
+      },
+      {
+        "task": "slug_total",
+        "valid_code": false,
+        "reuse": {
+          "slugify": true,
+          "compute_total": true
+        },
+        "retrieval_hit": {
+          "slugify": false,
+          "compute_total": true
+        },
+        "answer": "```python\ndef name_and_total(records, field):\n    \"\"\"Slugify record names and compute total of a numeric field.\"\"\"\n    from core.utils import slugify, compute_total\n    \n    names = [slugify(r.get(\"name\", \"\")) for r in records]\n    total = compute_total(records, field)\n    \n    return {\n        \"names\": names,\n        \"total\": round(total, 3)\n    }\n```",
+        "injected": [
+          "def summarize(self, records):\n        \"\"\"Aggregate the numeric field and the domain metric over records.\"\"\"\n        rows = [r.__dict__ for r in records]\n        total = compute_total(rows, \"price\")\n        metric = sum(self.domain_metric(r) for r in records)\n        return {\"n\": len(records), \"total\": round(total, 3), \"metric\": round(metric, 3)}",
+          "def summarize(self, records):\n        \"\"\"Aggregate the numeric field and the domain metric over records.\"\"\"\n        rows = [r.__dict__ for r in records]\n        total = compute_total(rows, \"amount\")\n        metric = sum(self.domain_metric(r) for r in records)\n        return {\"n\": len(records), \"total\": round(total, 3), \"metric\": round(metric, 3)}",
+          "def summarize(self, records):\n        \"\"\"Aggregate the numeric field and the domain metric over records.\"\"\"\n        rows = [r.__dict__ for r in records]\n        total = compute_total(rows, \"amount\")\n        metric = sum(self.domain_metric(r) for r in records)\n        return {\"n\": len(records), \"total\": round(total, 3), \"metric\": round(metric, 3)}",
+          "def summarize(self, records):\n        \"\"\"Aggregate the numeric field and the domain metric over records.\"\"\"\n        rows = [r.__dict__ for r in records]\n        total = compute_total(rows, \"weight\")\n        metric = sum(self.domain_metric(r) for r in records)\n        return {\"n\": len(records), \"total\": round(total, 3), \"metric\": round(metric, 3)}",
+          "def summarize(self, records):\n        \"\"\"Aggregate the numeric field and the domain metric over records.\"\"\"\n        rows = [r.__dict__ for r in records]\n        total = compute_total(rows, \"price\")\n        metric = sum(self.domain_metric(r) for r in records)\n        return {\"n\": len(records), \"total\": round(total, 3), \"metric\": round(metric, 3)}"
+        ]
+      },
+      {
+        "task": "invoice_summary",
+        "valid_code": false,
+        "reuse": {
+          "summarize": true,
+          "domain_metric": true
+        },
+        "retrieval_hit": {
+          "summarize": true,
+          "domain_metric": true
+        },
+        "answer": "```python\ndef summarize(self, records):\n    \"\"\"Aggregate the numeric field and the domain metric over records.\"\"\"\n    rows = [r.__dict__ for r in records]\n    total = compute_total(rows, \"price\")\n    metric = sum(self.domain_metric(r) for r in records)\n    return {\"n\": len(records), \"total\": round(total, 3), \"metric\": round(metric, 3)}\n```",
+        "injected": [
+          "def summarize(self, records):\n        \"\"\"Aggregate the numeric field and the domain metric over records.\"\"\"\n        rows = [r.__dict__ for r in records]\n        total = compute_total(rows, \"price\")\n        metric = sum(self.domain_metric(r) for r in records)\n        return {\"n\": len(records), \"total\": round(total, 3), \"metric\": round(metric, 3)}",
+          "def summarize(self, records):\n        \"\"\"Aggregate the numeric field and the domain metric over records.\"\"\"\n        rows = [r.__dict__ for r in records]\n        total = compute_total(rows, \"payload_size\")\n        metric = sum(self.domain_metric(r) for r in records)\n        return {\"n\": len(records), \"total\": round(total, 3), \"metric\": round(metric, 3)}",
+          "def summarize(self, records):\n        \"\"\"Aggregate the numeric field and the domain metric over records.\"\"\"\n        rows = [r.__dict__ for r in records]\n        total = compute_total(rows, \"duration\")\n        metric = sum(self.domain_metric(r) for r in records)\n        return {\"n\": len(records), \"total\": round(total, 3), \"metric\": round(metric, 3)}",
+          "def summarize(self, records):\n        \"\"\"Aggregate the numeric field and the domain metric over records.\"\"\"\n        rows = [r.__dict__ for r in records]\n        total = compute_total(rows, \"priority\")\n        metric = sum(self.domain_metric(r) for r in records)\n        return {\"n\": len(records), \"total\": round(total, 3), \"metric\": round(metric, 3)}",
+          "def summarize(self, records):\n        \"\"\"Aggregate the numeric field and the domain metric over records.\"\"\"\n        rows = [r.__dict__ for r in records]\n        total = compute_total(rows, \"weight\")\n        metric = sum(self.domain_metric(r) for r in records)\n        return {\"n\": len(records), \"total\": round(total, 3), \"metric\": round(metric, 3)}"
+        ]
+      }
+    ]
+  }
+}
