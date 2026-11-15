@@ -42,6 +42,7 @@ class Strategy:
     rag_k: int = 4                        # facts injected per turn
     rag_lambda: float = 0.5               # gist-conditioned retrieval strength
     rag_centered: bool = False            # v3: deviation-from-topic scoring
+    rag_layer: str = "last"               # слой RAG-эмбеддинга: last | mid (латентный) | mean
     memory_kv: bool = False               # v4: activated facts enter mid-layer attention as K/V
     kv_slots: int = 32                    # max memory keys/values per attention layer
     gen_chunks: bool = False              # chunk-memory: store generation chunks instead of user facts
@@ -73,6 +74,7 @@ class Strategy:
             "rag_k": self.rag_k,
                 "rag_lambda": self.rag_lambda,
             "rag_centered": self.rag_centered,
+            "rag_layer": self.rag_layer,
             "memory_kv": self.memory_kv,
             "kv_slots": self.kv_slots,
             "gen_chunks": self.gen_chunks,
@@ -299,7 +301,7 @@ def run_session(
             notes: list[str] | None = None
             user_emb = None
             if bank is not None:
-                user_emb, n_tok = embed_utterance(bundle, user_text), _n_tokens(bundle, user_text)
+                user_emb, n_tok = embed_utterance(bundle, user_text, layer=strategy.rag_layer), _n_tokens(bundle, user_text)
                 run.embed_tokens += n_tok
                 if strategy.rag:
                     notes = [t for t, _, _ in bank.retrieve(user_emb, k=strategy.rag_k, gist=gist_of(corr), lam=strategy.rag_lambda)]
@@ -320,7 +322,7 @@ def run_session(
 
             tone = None
             if bank is not None and answer:
-                ans_emb = embed_utterance(bundle, answer)
+                ans_emb = embed_utterance(bundle, answer, layer=strategy.rag_layer)
                 run.embed_tokens += _n_tokens(bundle, answer)
                 tone = tone_alignment(bundle, ans_emb, bank)
                 bank.add(user_text, user_emb, turn_idx)

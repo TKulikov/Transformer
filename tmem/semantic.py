@@ -25,13 +25,23 @@ from .memory import CorrectionLayer  # re-export for convenience
 
 
 @torch.no_grad()
-def embed_utterance(bundle, text: str, max_tokens: int = 128) -> torch.Tensor:
-    """Mean-pooled final-hidden state of ``text`` under the model itself."""
+def embed_utterance(bundle, text: str, max_tokens: int = 128, layer: str = "last") -> torch.Tensor:
+    """Mean-pooled hidden state of ``text`` at the chosen layer.
+
+    layer: ``last`` — финальный слой (базовый RAG); ``mid`` — латентный слой
+    смыслов (как ключ латентной памяти); ``mean`` — среднее по всем слоям.
+    """
     ids = bundle.tokenizer(text, return_tensors="pt", truncation=True, max_length=max_tokens)["input_ids"].to(bundle.device)
-    if bundle.kind == "encdec":
-        hidden = model_last(bundle.model.get_encoder(), ids)
+    model = bundle.model.get_encoder() if bundle.kind == "encdec" else bundle.model
+    hs = model(input_ids=ids, output_hidden_states=True).hidden_states
+    if layer == "last":
+        hidden = hs[-1]
+    elif layer == "mid":
+        hidden = hs[len(hs) // 2]
+    elif layer == "mean":
+        hidden = torch.stack(hs[1:]).mean(dim=0)
     else:
-        hidden = model_last(bundle.model, ids)
+        raise ValueError(f"unknown embed layer: {layer}")
     return hidden.float().mean(dim=1).squeeze(0)  # (d,)
 
 

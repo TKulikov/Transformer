@@ -14,6 +14,7 @@ from pathlib import Path
 import torch
 
 from .dialogue import default_strategies, run_session
+from dataclasses import replace as dc_replace
 from .models import load_model
 from .plotting import plot_cache_growth, plot_context_growth, plot_efficiency_quality
 from .qa import GENERAL_QA, SESSIONS, score_qa_answer
@@ -101,6 +102,8 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--recent", type=int, default=64)
     parser.add_argument("--max-new-tokens", type=int, default=24)
     parser.add_argument("--seed", type=int, default=0)
+    parser.add_argument("--rag-layer", default="last", choices=["last", "mid", "mean"],
+                        help="слой RAG-эмбеддинга: last=базовый, mid=латентная память, mean=все слои")
     parser.add_argument("--strategies", nargs="*", default=None, help="subset of strategy names")
     parser.add_argument("--out", default="results", help="output directory")
     parser.add_argument("--sessions", nargs="*", default=None, help="subset of session names")
@@ -121,6 +124,7 @@ def main(argv: list[str] | None = None) -> int:
             b = load_model(mname, device=args.device, dtype=dtype, eager=not args.battery100)
             if args.battery100:
                 strats = battery_strategies(budget=args.budget)
+                strats = [dc_replace(s, rag_layer=args.rag_layer) for s in strats]
                 if args.strategies:
                     strats = [s for s in strats if s.name in args.strategies]
                 rep = run_stress(b, args, sessions=[build_battery_100()], strategies=strats, tag=tag)
@@ -136,6 +140,7 @@ def main(argv: list[str] | None = None) -> int:
     bundle = load_model(args.model, device=args.device, dtype=dtype, eager=True)
 
     strategies = default_strategies(budget=args.budget, sink=args.sink, recent=args.recent)
+    strategies = [dc_replace(s, rag_layer=args.rag_layer) for s in strategies]
     if args.strategies:
         strategies = [s for s in strategies if s.name in args.strategies]
 
