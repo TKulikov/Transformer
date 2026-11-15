@@ -1,0 +1,53 @@
+{
+  "model": "qwen35-4b",
+  "device": "cuda",
+  "window": 2,
+  "n_dialogues": 3,
+  "conditions": {
+    "no_memory": {
+      "topic_continuation_mean": 0.7541,
+      "per_dialogue": {
+        "trip": 0.7564,
+        "guitar": 0.7479,
+        "garden": 0.758
+      },
+      "tone_mean": 0.8352
+    },
+    "rag_plain": {
+      "topic_continuation_mean": 0.7604,
+      "per_dialogue": {
+        "trip": 0.7691,
+        "guitar": 0.7491,
+        "garden": 0.7629
+      },
+      "tone_mean": 0.8479
+    },
+    "rag_gist": {
+      "topic_continuation_mean": 0.7563,
+      "per_dialogue": {
+        "trip": 0.7639,
+        "guitar": 0.7523,
+        "garden": 0.7526
+      },
+      "tone_mean": 0.8436
+    },
+    "centered_rag": {
+      "topic_continuation_mean": 0.7594,
+      "per_dialogue": {
+        "trip": 0.7642,
+        "guitar": 0.7481,
+        "garden": 0.7659
+      },
+      "tone_mean": 0.8429
+    },
+    "full_context": {
+      "topic_continuation_mean": 0.7496,
+      "per_dialogue": {
+        "trip": 0.7509,
+        "guitar": 0.7434,
+        "garden": 0.7544
+      },
+      "tone_mean": 0.8371
+    }
+  }
+}
