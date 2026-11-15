@@ -1,0 +1,315 @@
+{
+  "seed": 4,
+  "reuse": 30,
+  "rewrite": 0,
+  "miss": 30,
+  "total": 60,
+  "phase": {
+    "core": "0/0",
+    "service": "16/24",
+    "pipeline": "14/36"
+  },
+  "steps": [
+    {
+      "i": 0,
+      "phase": "core",
+      "step": "validate_record",
+      "score": {}
+    },
+    {
+      "i": 1,
+      "phase": "core",
+      "step": "normalize_amount",
+      "score": {}
+    },
+    {
+      "i": 2,
+      "phase": "core",
+      "step": "dedupe_by_id",
+      "score": {}
+    },
+    {
+      "i": 3,
+      "phase": "core",
+      "step": "parse_timestamp",
+      "score": {}
+    },
+    {
+      "i": 4,
+      "phase": "core",
+      "step": "format_currency",
+      "score": {}
+    },
+    {
+      "i": 5,
+      "phase": "core",
+      "step": "clamp_value",
+      "score": {}
+    },
+    {
+      "i": 6,
+      "phase": "core",
+      "step": "retry_operation",
+      "score": {}
+    },
+    {
+      "i": 7,
+      "phase": "core",
+      "step": "cache_lookup",
+      "score": {}
+    },
+    {
+      "i": 8,
+      "phase": "core",
+      "step": "log_event",
+      "score": {}
+    },
+    {
+      "i": 9,
+      "phase": "core",
+      "step": "compute_metric",
+      "score": {}
+    },
+    {
+      "i": 10,
+      "phase": "core",
+      "step": "slugify_name",
+      "score": {}
+    },
+    {
+      "i": 11,
+      "phase": "core",
+      "step": "chunk_list",
+      "score": {}
+    },
+    {
+      "i": 12,
+      "phase": "service",
+      "step": "ingest_records",
+      "score": {
+        "validate_record": "reuse",
+        "normalize_amount": "miss"
+      }
+    },
+    {
+      "i": 13,
+      "phase": "service",
+      "step": "clean_records",
+      "score": {
+        "dedupe_by_id": "miss",
+        "clamp_value": "reuse"
+      }
+    },
+    {
+      "i": 14,
+      "phase": "service",
+      "step": "enrich_records",
+      "score": {
+        "parse_timestamp": "reuse",
+        "format_currency": "reuse"
+      }
+    },
+    {
+      "i": 15,
+      "phase": "service",
+      "step": "resilient_call",
+      "score": {
+        "retry_operation": "reuse",
+        "cache_lookup": "reuse"
+      }
+    },
+    {
+      "i": 16,
+      "phase": "service",
+      "step": "audit_trail",
+      "score": {
+        "log_event": "reuse",
+        "compute_metric": "miss"
+      }
+    },
+    {
+      "i": 17,
+      "phase": "service",
+      "step": "name_records",
+      "score": {
+        "slugify_name": "reuse",
+        "validate_record": "reuse"
+      }
+    },
+    {
+      "i": 18,
+      "phase": "service",
+      "step": "batch_records",
+      "score": {
+        "chunk_list": "reuse",
+        "dedupe_by_id": "miss"
+      }
+    },
+    {
+      "i": 19,
+      "phase": "service",
+      "step": "time_series",
+      "score": {
+        "parse_timestamp": "reuse",
+        "compute_metric": "miss"
+      }
+    },
+    {
+      "i": 20,
+      "phase": "service",
+      "step": "money_report",
+      "score": {
+        "format_currency": "reuse",
+        "compute_metric": "reuse"
+      }
+    },
+    {
+      "i": 21,
+      "phase": "service",
+      "step": "safe_transform",
+      "score": {
+        "clamp_value": "reuse",
+        "normalize_amount": "miss"
+      }
+    },
+    {
+      "i": 22,
+      "phase": "service",
+      "step": "cached_ingest",
+      "score": {
+        "cache_lookup": "reuse",
+        "validate_record": "miss"
+      }
+    },
+    {
+      "i": 23,
+      "phase": "service",
+      "step": "logged_batch",
+      "score": {
+        "log_event": "reuse",
+        "chunk_list": "miss"
+      }
+    },
+    {
+      "i": 24,
+      "phase": "pipeline",
+      "step": "etl_pipeline",
+      "score": {
+        "ingest_records": "reuse",
+        "clean_records": "miss",
+        "compute_metric": "miss"
+      }
+    },
+    {
+      "i": 25,
+      "phase": "pipeline",
+      "step": "report_pipeline",
+      "score": {
+        "enrich_records": "reuse",
+        "money_report": "miss",
+        "format_currency": "miss"
+      }
+    },
+    {
+      "i": 26,
+      "phase": "pipeline",
+      "step": "resilient_etl",
+      "score": {
+        "resilient_call": "miss",
+        "ingest_records": "reuse",
+        "retry_operation": "reuse"
+      }
+    },
+    {
+      "i": 27,
+      "phase": "pipeline",
+      "step": "audit_pipeline",
+      "score": {
+        "audit_trail": "reuse",
+        "clean_records": "miss",
+        "log_event": "reuse"
+      }
+    },
+    {
+      "i": 28,
+      "phase": "pipeline",
+      "step": "naming_pipeline",
+      "score": {
+        "name_records": "reuse",
+        "batch_records": "reuse",
+        "slugify_name": "miss"
+      }
+    },
+    {
+      "i": 29,
+      "phase": "pipeline",
+      "step": "timeseries_pipeline",
+      "score": {
+        "time_series": "miss",
+        "enrich_records": "reuse",
+        "parse_timestamp": "miss"
+      }
+    },
+    {
+      "i": 30,
+      "phase": "pipeline",
+      "step": "safe_etl",
+      "score": {
+        "safe_transform": "reuse",
+        "ingest_records": "reuse",
+        "clamp_value": "miss"
+      }
+    },
+    {
+      "i": 31,
+      "phase": "pipeline",
+      "step": "cached_pipeline",
+      "score": {
+        "cached_ingest": "miss",
+        "clean_records": "miss",
+        "cache_lookup": "reuse"
+      }
+    },
+    {
+      "i": 32,
+      "phase": "pipeline",
+      "step": "logged_pipeline",
+      "score": {
+        "logged_batch": "reuse",
+        "audit_trail": "reuse",
+        "log_event": "miss"
+      }
+    },
+    {
+      "i": 33,
+      "phase": "pipeline",
+      "step": "money_pipeline",
+      "score": {
+        "money_report": "miss",
+        "clean_records": "miss",
+        "compute_metric": "miss"
+      }
+    },
+    {
+      "i": 34,
+      "phase": "pipeline",
+      "step": "full_pipeline",
+      "score": {
+        "etl_pipeline": "miss",
+        "report_pipeline": "miss",
+        "compute_metric": "miss"
+      }
+    },
+    {
+      "i": 35,
+      "phase": "pipeline",
+      "step": "resilient_full",
+      "score": {
+        "resilient_etl": "miss",
+        "audit_pipeline": "miss",
+        "retry_operation": "miss"
+      }
+    }
+  ],
+  "wall_s": 81.4
+}

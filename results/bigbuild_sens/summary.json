@@ -1,0 +1,58 @@
+{
+  "model": "qwen35-4b",
+  "device": "cuda",
+  "n_steps": 36,
+  "seeds": [
+    0,
+    1,
+    2,
+    3,
+    4
+  ],
+  "temp": 0.6,
+  "conditions": {
+    "static": {
+      "reuse_mean": 29.8,
+      "reuse_std": 2.17,
+      "total": 60,
+      "per_seed": [
+        30,
+        33,
+        29,
+        27,
+        30
+      ],
+      "phase_mean": {
+        "core": 0.0,
+        "service": 14.4,
+        "pipeline": 15.4
+      }
+    },
+    "living_memctx": {
+      "reuse_mean": 18.2,
+      "reuse_std": 7.56,
+      "total": 60,
+      "per_seed": [
+        11,
+        15,
+        29,
+        13,
+        23
+      ],
+      "phase_mean": {
+        "core": 0.0,
+        "service": 8.8,
+        "pipeline": 9.4
+      }
+    }
+  },
+  "paired_living_minus_static": {
+    "mean": -11.6,
+    "std": 8.02,
+    "t": -3.235,
+    "df": 4,
+    "pos": 0,
+    "neg": 4,
+    "zero": 1
+  }
+}
