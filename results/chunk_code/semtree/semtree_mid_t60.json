@@ -1,0 +1,263 @@
+[
+  {
+    "task": "retry_backoff",
+    "valid_code": false,
+    "reuse": {
+      "retry": false,
+      "backoff_delay": true
+    },
+    "retrieval_hit": {
+      "retry": true,
+      "backoff_delay": true
+    },
+    "answer": "```python\ndef reprocess_failed(self, records):\n    \"\"\"Retry processing with explicit exponential backoff.\"\"\"\n    for attempt in range(3):\n        try:\n            return self._repo.bulk_put(records)\n        except Exception:  # noqa: BLE001\n            _ = backoff_delay(attempt)\n    return 0\n```",
+    "injected": [
+      "def backoff_delay(attempt, base=100, cap=30_000):\n    \"\"\"Exponential backoff delay in ms for a zero-based attempt.\"\"\"\n    return clamp(base * (2 ** attempt), base, cap)",
+      "def reprocess_failed(self, records):\n        \"\"\"Retry processing with explicit exponential backoff.\"\"\"\n        for attempt in range(3):\n            try:\n                return self._repo.bulk_put(records)\n            except Exception:  # noqa: BLE001\n                _ = backoff_delay(attempt)\n        return 0",
+      "def process(self, records):\n        \"\"\"Deduplicate and store records with retry on transient failure.\"\"\"\n        unique = dedupe(records)\n        return retry(lambda: self._repo.bulk_put(unique))",
+      "def process(self, records):\n        \"\"\"Deduplicate and store records with retry on transient failure.\"\"\"\n        unique = dedupe(records)\n        return retry(lambda: self._repo.bulk_put(unique))",
+      "def process(self, records):\n        \"\"\"Deduplicate and store records with retry on transient failure.\"\"\"\n        unique = dedupe(records)\n        return retry(lambda: self._repo.bulk_put(unique))",
+      "def process(self, records):\n        \"\"\"Deduplicate and store records with retry on transient failure.\"\"\"\n        unique = dedupe(records)\n        return retry(lambda: self._repo.bulk_put(unique))"
+    ],
+    "clusters_picked": [
+      {
+        "cluster": 29,
+        "size": 18,
+        "members": [
+          "reprocess_failed",
+          "reprocess_failed",
+          "reprocess_failed"
+        ]
+      },
+      {
+        "cluster": 28,
+        "size": 18,
+        "members": [
+          "process",
+          "process",
+          "process"
+        ]
+      },
+      {
+        "cluster": 4,
+        "size": 2,
+        "members": [
+          "backoff_delay",
+          "retry"
+        ]
+      }
+    ],
+    "def_hits": {
+      "retry": false,
+      "backoff_delay": true
+    }
+  },
+  {
+    "task": "parse_clamp",
+    "valid_code": false,
+    "reuse": {
+      "parse_duration": true,
+      "clamp": true
+    },
+    "retrieval_hit": {
+      "parse_duration": true,
+      "clamp": true
+    },
+    "answer": "```python\ndef safe_timeout(text: str) -> int:\n    \"\"\"Parse a timeout string into milliseconds and clamp to a safe range.\"\"\"\n    ms = parse_duration(text)\n    return clamp(ms, 0, 1_000_000)\n```",
+    "injected": [
+      "def backoff_delay(attempt, base=100, cap=30_000):\n    \"\"\"Exponential backoff delay in ms for a zero-based attempt.\"\"\"\n    return clamp(base * (2 ** attempt), base, cap)",
+      "def timeout_ms(self, payload):\n        \"\"\"Parse a request timeout into milliseconds.\"\"\"\n        return parse_duration(payload.get(\"timeout\", \"5s\"))",
+      "def timeout_ms(self, payload):\n        \"\"\"Parse a request timeout into milliseconds.\"\"\"\n        return parse_duration(payload.get(\"timeout\", \"5s\"))",
+      "def validate(self, payload):\n        \"\"\"Return True when the numeric field is within a safe range.\"\"\"\n        value = parse_int(payload.get(\"duration\"), -1)\n        return value == clamp(value, 0, 1_000_000)",
+      "def timeout_ms(self, payload):\n        \"\"\"Parse a request timeout into milliseconds.\"\"\"\n        return parse_duration(payload.get(\"timeout\", \"5s\"))",
+      "def validate(self, payload):\n        \"\"\"Return True when the numeric field is within a safe range.\"\"\"\n        value = parse_int(payload.get(\"duration\"), -1)\n        return value == clamp(value, 0, 1_000_000)"
+    ],
+    "clusters_picked": [
+      {
+        "cluster": 25,
+        "size": 18,
+        "members": [
+          "validate",
+          "validate",
+          "validate"
+        ]
+      },
+      {
+        "cluster": 13,
+        "size": 18,
+        "members": [
+          "timeout_ms",
+          "timeout_ms",
+          "timeout_ms"
+        ]
+      },
+      {
+        "cluster": 4,
+        "size": 2,
+        "members": [
+          "backoff_delay",
+          "retry"
+        ]
+      }
+    ],
+    "def_hits": {
+      "parse_duration": false,
+      "clamp": false
+    }
+  },
+  {
+    "task": "batch_dedupe",
+    "valid_code": false,
+    "reuse": {
+      "dedupe": true,
+      "chunked": false
+    },
+    "retrieval_hit": {
+      "dedupe": true,
+      "chunked": true
+    },
+    "answer": "```python\nfrom core.utils import dedupe\n\ndef prepare_batches(keys, size):\n    \"\"\"Deduplicate record keys and split them into fixed-size batches.\"\"\"\n    unique_keys = dedupe(keys)\n    for i in range(0, len(unique_keys), size):\n        yield unique_keys[i : i + size]\n```",
+    "injected": [
+      "def chunked(items, size):\n    \"\"\"Yield successive fixed-size chunks from a sequence.\"\"\"\n    for i in range(0, len(items), size):\n        yield items[i : i + size]",
+      "def backoff_delay(attempt, base=100, cap=30_000):\n    \"\"\"Exponential backoff delay in ms for a zero-based attempt.\"\"\"\n    return clamp(base * (2 ** attempt), base, cap)",
+      "def process(self, records):\n        \"\"\"Deduplicate and store records with retry on transient failure.\"\"\"\n        unique = dedupe(records)\n        return retry(lambda: self._repo.bulk_put(unique))",
+      "def process(self, records):\n        \"\"\"Deduplicate and store records with retry on transient failure.\"\"\"\n        unique = dedupe(records)\n        return retry(lambda: self._repo.bulk_put(unique))",
+      "def process(self, records):\n        \"\"\"Deduplicate and store records with retry on transient failure.\"\"\"\n        unique = dedupe(records)\n        return retry(lambda: self._repo.bulk_put(unique))",
+      "def process(self, records):\n        \"\"\"Deduplicate and store records with retry on transient failure.\"\"\"\n        unique = dedupe(records)\n        return retry(lambda: self._repo.bulk_put(unique))"
+    ],
+    "clusters_picked": [
+      {
+        "cluster": 5,
+        "size": 1,
+        "members": [
+          "chunked"
+        ]
+      },
+      {
+        "cluster": 28,
+        "size": 18,
+        "members": [
+          "process",
+          "process",
+          "process"
+        ]
+      },
+      {
+        "cluster": 4,
+        "size": 2,
+        "members": [
+          "backoff_delay",
+          "retry"
+        ]
+      }
+    ],
+    "def_hits": {
+      "dedupe": false,
+      "chunked": true
+    }
+  },
+  {
+    "task": "slug_total",
+    "valid_code": true,
+    "reuse": {
+      "slugify": true,
+      "compute_total": true
+    },
+    "retrieval_hit": {
+      "slugify": true,
+      "compute_total": true
+    },
+    "answer": "def name_and_total(records, field):\n    \"\"\"Slugify a record name and compute the total of a numeric field over records.\"\"\"\n    from core.utils import compute_total, slugify\n    \n    names = [slugify(r.get(\"name\", \"\")) for r in records]\n    total = compute_total(records, field)\n    return {\"names\": names, \"total\": round(total, 3)}",
+    "injected": [
+      "def compute_total(rows, field):\n    \"\"\"Sum a numeric field over dict rows.\"\"\"\n    return sum(float(r.get(field, 0) or 0) for r in rows)",
+      "def slugify(text):\n    \"\"\"Lowercase dash-separated slug.\"\"\"\n    import re\n    return re.sub(r\"[^a-z0-9]+\", \"-\", str(text).lower()).strip(\"-\")",
+      "def summarize(self, records):\n        \"\"\"Aggregate the numeric field and the domain metric over records.\"\"\"\n        rows = [r.__dict__ for r in records]\n        total = compute_total(rows, \"priority\")\n        metric = sum(self.domain_metric(r) for r in records)\n        return {\"n\": len(records), \"total\": round(total, 3), \"metric\": round(metric, 3)}",
+      "def summarize(self, records):\n        \"\"\"Aggregate the numeric field and the domain metric over records.\"\"\"\n        rows = [r.__dict__ for r in records]\n        total = compute_total(rows, \"price\")\n        metric = sum(self.domain_metric(r) for r in records)\n        return {\"n\": len(records), \"total\": round(total, 3), \"metric\": round(metric, 3)}",
+      "def summarize(self, records):\n        \"\"\"Aggregate the numeric field and the domain metric over records.\"\"\"\n        rows = [r.__dict__ for r in records]\n        total = compute_total(rows, \"amount\")\n        metric = sum(self.domain_metric(r) for r in records)\n        return {\"n\": len(records), \"total\": round(total, 3), \"metric\": round(metric, 3)}",
+      "def summarize(self, records):\n        \"\"\"Aggregate the numeric field and the domain metric over records.\"\"\"\n        rows = [r.__dict__ for r in records]\n        total = compute_total(rows, \"amount\")\n        metric = sum(self.domain_metric(r) for r in records)\n        return {\"n\": len(records), \"total\": round(total, 3), \"metric\": round(metric, 3)}"
+    ],
+    "clusters_picked": [
+      {
+        "cluster": 8,
+        "size": 1,
+        "members": [
+          "compute_total"
+        ]
+      },
+      {
+        "cluster": 7,
+        "size": 1,
+        "members": [
+          "slugify"
+        ]
+      },
+      {
+        "cluster": 27,
+        "size": 18,
+        "members": [
+          "summarize",
+          "summarize",
+          "summarize"
+        ]
+      }
+    ],
+    "def_hits": {
+      "slugify": true,
+      "compute_total": true
+    }
+  },
+  {
+    "task": "invoice_summary",
+    "valid_code": false,
+    "reuse": {
+      "summarize": true,
+      "domain_metric": false
+    },
+    "retrieval_hit": {
+      "summarize": true,
+      "domain_metric": false
+    },
+    "answer": "```python\ndef summary(self, payload):\n    \"\"\"Return an aggregate summary of invoice records using the existing invoice service.\"\"\"\n    return self._service.summarize(self._service._repo.list())\n```",
+    "injected": [
+      "def new_shipment(**kwargs):\n    \"\"\"Construct a shipment from keyword fields.\"\"\"\n    return Shipment(**kwargs)",
+      "def process(self, records):\n        \"\"\"Deduplicate and store records with retry on transient failure.\"\"\"\n        unique = dedupe(records)\n        return retry(lambda: self._repo.bulk_put(unique))",
+      "def process(self, records):\n        \"\"\"Deduplicate and store records with retry on transient failure.\"\"\"\n        unique = dedupe(records)\n        return retry(lambda: self._repo.bulk_put(unique))",
+      "def summary(self, payload):\n        \"\"\"Return an aggregate summary of visit records.\"\"\"\n        return self._service.summarize(self._service._repo.list())",
+      "def process(self, records):\n        \"\"\"Deduplicate and store records with retry on transient failure.\"\"\"\n        unique = dedupe(records)\n        return retry(lambda: self._repo.bulk_put(unique))",
+      "def process(self, records):\n        \"\"\"Deduplicate and store records with retry on transient failure.\"\"\"\n        unique = dedupe(records)\n        return retry(lambda: self._repo.bulk_put(unique))"
+    ],
+    "clusters_picked": [
+      {
+        "cluster": 12,
+        "size": 18,
+        "members": [
+          "summary",
+          "summary",
+          "summary"
+        ]
+      },
+      {
+        "cluster": 28,
+        "size": 18,
+        "members": [
+          "process",
+          "process",
+          "process"
+        ]
+      },
+      {
+        "cluster": 14,
+        "size": 18,
+        "members": [
+          "new_account",
+          "new_batch",
+          "new_contract"
+        ]
+      }
+    ],
+    "def_hits": {
+      "summarize": false,
+      "domain_metric": false
+    }
+  }
+]
