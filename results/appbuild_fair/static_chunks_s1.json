@@ -1,0 +1,97 @@
+{
+  "seed": 1,
+  "reuse": 9,
+  "rewrite": 0,
+  "miss": 0,
+  "total": 9,
+  "wall_s": 20.6,
+  "kv_injected": 0,
+  "steps": [
+    {
+      "step": "validate_record",
+      "should_reuse": [],
+      "score": {},
+      "answer": "def validate_record(record):\n    return 'id' in record and 'amount' in record"
+    },
+    {
+      "step": "normalize_amount",
+      "should_reuse": [],
+      "score": {},
+      "answer": "def normalize_amount(records):\n    normalized = []\n    for record in records:\n        amount = record.get('amount', 0)\n        if isinstance(amount, (int, float)):\n            amount = max(0, min(1000000, amount))\n        else:\n            amount = 0\n        normalized.append({'id': record.get('id'), 'amount': amount})\n    return normalized"
+    },
+    {
+      "step": "dedupe_records",
+      "should_reuse": [],
+      "score": {},
+      "answer": "def dedupe_records(records):\n    seen = set()\n    unique_records = []\n    for record in records:\n        record_id = record.get('id')\n        if record_id not in seen:\n            seen.add(record_id)\n            unique_records.append(record)\n    return unique_records"
+    },
+    {
+      "step": "process_batch",
+      "should_reuse": [
+        "validate_record",
+        "normalize_amount",
+        "dedupe_records"
+      ],
+      "score": {
+        "validate_record": "reuse",
+        "normalize_amount": "reuse",
+        "dedupe_records": "reuse"
+      },
+      "answer": "def process_batch(records):\n    validated = [record for record in records if validate_record(record)]\n    normalized = normalize_amount(validated)\n    deduped = dedupe_records(normalized)\n    return deduped"
+    },
+    {
+      "step": "retry_failed",
+      "should_reuse": [],
+      "score": {},
+      "answer": "def retry_failed(fn, attempts):\n    for attempt in range(attempts):\n        try:\n            return fn()\n        except Exception:\n            if attempt == attempts - 1:\n                raise\n    return None"
+    },
+    {
+      "step": "process_with_retry",
+      "should_reuse": [
+        "process_batch",
+        "retry_failed"
+      ],
+      "score": {
+        "process_batch": "reuse",
+        "retry_failed": "reuse"
+      },
+      "answer": "def process_with_retry(records, attempts=3):\n    def inner_process():\n        return process_batch(records)\n    return retry_failed(inner_process, attempts)"
+    },
+    {
+      "step": "summarize_results",
+      "should_reuse": [],
+      "score": {},
+      "answer": "def summarize_results(results):\n    total_processed = 0\n    total_amount = 0\n    for record in results:\n        total_processed += 1\n        if 'amount' in record:\n            total_amount += record['amount']\n    return {\n        'count': total_processed,\n        'total_amount': total_amount\n    }"
+    },
+    {
+      "step": "run_pipeline",
+      "should_reuse": [
+        "process_with_retry",
+        "summarize_results"
+      ],
+      "score": {
+        "process_with_retry": "reuse",
+        "summarize_results": "reuse"
+      },
+      "answer": "def run_pipeline(records, attempts=3):\n    results = process_with_retry(records, attempts)\n    summary = summarize_results(results)\n    return summary"
+    },
+    {
+      "step": "filter_active",
+      "should_reuse": [],
+      "score": {},
+      "answer": "def filter_active(records):\n    return [record for record in records if record.get('active', False)]"
+    },
+    {
+      "step": "full_pipeline",
+      "should_reuse": [
+        "filter_active",
+        "run_pipeline"
+      ],
+      "score": {
+        "filter_active": "reuse",
+        "run_pipeline": "reuse"
+      },
+      "answer": "def full_pipeline(records):\n    active_records = filter_active(records)\n    summary = run_pipeline(active_records)\n    return summary"
+    }
+  ]
+}
