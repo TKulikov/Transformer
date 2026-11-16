@@ -15,7 +15,7 @@ import torch
 from .bank import CodeBank
 from .prefetch import PrefetchBank
 from .tree import GoalTree
-from .vector import cosine_sim, mmr
+from .vector import cosine_sim, mmr, normalize
 
 
 class Retriever:
@@ -73,4 +73,54 @@ class Retriever:
             keys = node.centroid.center(keys)
         rel = cosine_sim(q, keys) + torch.tensor([self.bank.bonus(i) for i in cand])
         sel = mmr(q, keys, k, self.mmr_lambda, relevance=rel)
+        return [cand[i] for i in sel]
+
+    def retrieve_soft(
+        self,
+        goal_emb: torch.Tensor,
+        need_emb: torch.Tensor,
+        step: int,
+        k: int | None = None,
+        m: int = 3,
+        need_weight: float = 0.5,
+        temperature: float = 0.1,
+    ) -> list[int]:
+        """Soft, goal+need retrieval (attacks the goal-identification bottleneck).
+
+        Routing signal is a blend ``normalize(normalize(goal) + need_weight *
+        normalize(need))`` — the goal gives coarse context, the need points at
+        which solved subgoals/functions are required now (pure need collapses,
+        pure generated goal misroutes; the blend disambiguates). Soft routing
+        keeps the top-m goal nodes weighted by softmax cosine; candidates are
+        pooled across them and ranked by
+        ``node_weight * cosine(need, chunk) + maturity_bonus`` with MMR diversity.
+
+        Uncentered (centering is not load-bearing for code). ``need_weight=0``
+        gives goal-only soft routing; larger values lean on the need. ``m`` larger
+        than the goal count approaches goal-weighted flat retrieval. Returns up to
+        k chunk ids; empty pool gives []. ``k`` defaults to top_k.
+        """
+        k = self.top_k if k is None else k
+        g = normalize(goal_emb.detach().float().cpu())
+        n = normalize(need_emb.detach().float().cpu())
+        route_emb = normalize(g + need_weight * n)
+        nodes = self.tree.route_soft(route_emb, m=m, temperature=temperature)
+        weights: dict[int, float] = {}
+        cand: list[int] = []
+        for nid, w in nodes:
+            for cid in self.tree.nodes[nid].chunk_ids:
+                if cid not in weights:
+                    weights[cid] = w
+                    cand.append(cid)
+                else:
+                    weights[cid] = max(weights[cid], w)
+        if not cand:
+            return []
+        keys = torch.stack([self.bank.get(i).emb for i in cand])
+        need = need_emb.detach().float().cpu()
+        rel = torch.tensor([
+            weights[i] * float(cosine_sim(need, self.bank.get(i).emb[None])[0]) + self.bank.bonus(i)
+            for i in cand
+        ])
+        sel = mmr(need, keys, k, self.mmr_lambda, relevance=rel)
         return [cand[i] for i in sel]

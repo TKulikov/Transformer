@@ -10,6 +10,7 @@ creates a new solved sub-goal node (EverMemOS-style assimilate-or-create).
 
 from __future__ import annotations
 
+import math
 from dataclasses import dataclass, field
 
 import torch
@@ -115,6 +116,39 @@ class GoalTree:
                 node = best
             else:
                 return node
+
+    def route_soft(self, query_emb: torch.Tensor, m: int = 3, temperature: float = 0.1) -> list[tuple[int, float]]:
+        """Soft routing: top-m goal nodes weighted by softmax cosine to query.
+
+        Unlike :meth:`route` (greedy argmax into one node), this returns several
+        candidate goal nodes (the root's depth-1 children) with weights summing
+        to 1, so a misestimated goal still lets the correct node contribute.
+        Weights are softmax(cosine / temperature) over the top-m nodes.
+
+        Args:
+            query_emb: routing signal [H] (goal, or a goal+need blend).
+            m: number of nodes to keep (clamped to the number of goal nodes, >= 1).
+            temperature: softmax temperature (> 0); smaller = sharper weights.
+
+        Returns:
+            [(node_id, weight)] descending by weight. If the root has no children,
+            returns [(root, 1.0)]. Raises RuntimeError if there is no root.
+        """
+        if self.root is None:
+            raise RuntimeError("goal tree has no root")
+        if temperature <= 0:
+            raise ValueError("temperature must be > 0")
+        children = self.nodes[self.root].children
+        if not children:
+            return [(self.root, 1.0)]
+        q = query_emb.detach().float().cpu()
+        sims = [(c, float(cosine_sim(q, self.nodes[c].emb[None])[0])) for c in children]
+        sims.sort(key=lambda x: -x[1])
+        top = sims[: max(1, m)]
+        mx = max(s for _, s in top)
+        exps = [(c, math.exp((s - mx) / temperature)) for c, s in top]
+        z = sum(e for _, e in exps)
+        return [(c, e / z) for c, e in exps]
 
     def search(self, node_id: int, need_emb: torch.Tensor, k: int, lambda_: float | None = None) -> list[int]:
         """Centered MMR search within a node's chunks; return chunk ids.
