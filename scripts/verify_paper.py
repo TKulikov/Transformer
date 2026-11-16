@@ -172,11 +172,17 @@ def f5():
     from tmem.kvinject import _extend_mask
     mask = torch.full((1, 2, 3, 5), float("-inf"))
     mask[..., :3] = 0.0
-    ext = _extend_mask(mask, real_keys=5, mem=4, dtype=torch.float32)
+    ext = _extend_mask(mask, real_keys=5, mem=4, dtype=torch.float32, s_q=3, device=mask.device)
     assert ext.shape == (1, 2, 3, 9), "добавлены 4 столбца памяти"
     assert bool((ext[..., -4:] == 0).all()), "столбцы памяти нулевые = видимы всем"
     assert torch.equal(ext[..., :5], mask), "исходная маска не изменена"
-    assert _extend_mask(None, 5, 4, torch.float32) is None, "None-маска (быстрый путь) сохраняется"
+    assert _extend_mask(None, 5, 4, torch.float32, s_q=1, device=mask.device) is None, \
+        "None-маска при декоде (s_q=1, быстрый путь) сохраняется"
+    built = _extend_mask(None, 5, 4, torch.float32, s_q=3, device=mask.device)
+    assert built.shape == (1, 1, 3, 9), "при prefill (s_q>1) строится явная 4-D маска"
+    assert bool((built[..., -4:] == 0).all()), "слоты памяти видны всем позициям запроса"
+    neg = torch.finfo(torch.float32).min
+    assert bool((built[0, 0, 0, 3:5] == neg).all()), "причинность реальных ключей сохранена (позиция 0 видит 0..2)"
     model = _tiny_qwen35()
     a = model.model.layers[2].self_attn
     assert abs(a.scaling - a.head_dim ** -0.5) < 1e-9, "scaling=1/sqrt(d_k)"
