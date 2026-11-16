@@ -101,6 +101,25 @@ class ModelBundle:
             raise ValueError("no transformer block list found in model")
         return best
 
+    def bank_layer_indices(self) -> list[int]:
+        """Indices of the layer band whose activations feed the latent bank.
+
+        Same rule as :func:`tmem.kvinject.install_kv_memory`: the middle band
+        of full-attention layers (semantic zone); fallback — the model middle.
+        ``embed_utterance(layer="bank")`` keys RAG by these activations, so the
+        retrieval space coincides with the injected CorrectionLayer space.
+        """
+        blocks = self._find_block_list()
+        cfg = self.model.config
+        layer_types = getattr(cfg, "layer_types", None) or getattr(
+            getattr(cfg, "text_config", None), "layer_types", None
+        )
+        if layer_types:
+            att = [i for i, t in enumerate(layer_types) if "full" in str(t)]
+            n = len(att)
+            return att[max(n // 4, 0): max(3 * n // 4, n // 4 + 1)] or att[1:2]
+        return [len(blocks) // 2]
+
     def make_memory_hook(
         self,
         d_model: int | None = None,

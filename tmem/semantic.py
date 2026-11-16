@@ -25,12 +25,32 @@ from .memory import CorrectionLayer  # re-export for convenience
 
 
 @torch.no_grad()
+def band_hidden(bundle, text: str, max_tokens: int = 128) -> torch.Tensor:
+    """Token-level activations at the latent-bank layer band (block inputs).
+
+    Mean over the band indices from :func:`ModelBundle.bank_layer_indices` —
+    the same layer inputs that feed the injected CorrectionLayer. Returns
+    ``(1, L, d)`` float tensor, ready to pour into the bank.
+    """
+    ids = bundle.tokenizer(text, return_tensors="pt", truncation=True, max_length=max_tokens)["input_ids"].to(bundle.device)
+    model = bundle.model.get_encoder() if bundle.kind == "encdec" else bundle.model
+    hs = model(input_ids=ids, output_hidden_states=True).hidden_states
+    idxs = bundle.bank_layer_indices()
+    return torch.stack([hs[i] for i in idxs]).mean(dim=0).float()  # (1, L, d)
+
+
+@torch.no_grad()
 def embed_utterance(bundle, text: str, max_tokens: int = 128, layer: str = "last") -> torch.Tensor:
     """Mean-pooled hidden state of ``text`` at the chosen layer.
 
     layer: ``last`` — финальный слой (базовый RAG); ``mid`` — латентный слой
-    смыслов (как ключ латентной памяти); ``mean`` — среднее по всем слоям.
+    смыслов (как ключ латентной памяти); ``mean`` — среднее по всем слоям;
+    ``bank`` — входы диапазона слоёв латентного банка
+    (:func:`ModelBundle.bank_layer_indices`), то есть те активации, которыми
+    питается инжектируемый CorrectionLayer.
     """
+    if layer == "bank":
+        return band_hidden(bundle, text, max_tokens).mean(dim=1).squeeze(0)  # (d,)
     ids = bundle.tokenizer(text, return_tensors="pt", truncation=True, max_length=max_tokens)["input_ids"].to(bundle.device)
     model = bundle.model.get_encoder() if bundle.kind == "encdec" else bundle.model
     hs = model(input_ids=ids, output_hidden_states=True).hidden_states
@@ -68,39 +88,60 @@ class RagBank:
     """
 
     def __init__(self, d_model: int, crit: float = 0.95, capacity: int = 256,
-                 device: torch.device | str = "cpu", centered: bool = True) -> None:
+                 device: torch.device | str = "cpu", centered: bool = True,
+                 anchored: bool = False, anchor_gate: float = 0.85) -> None:
         self.d_model = d_model
         self.crit = crit
         self.capacity = capacity
         self.device = torch.device(device)
         self.centered = centered
+        # anchored: entries are (anchor, deviation) pairs — the anchor is the
+        # dominant latent-bank slot at ingest time (the cluster centre), the
+        # deviation is what remains after subtracting it. Retrieval gates by
+        # anchor similarity (same cluster) and ranks by deviation (the fact
+        # within the cluster). Per-cluster centreing replaces the global one.
+        self.anchored = anchored
+        self.anchor_gate = anchor_gate
         self.reset()
 
     def reset(self) -> None:
         self.embeds = torch.zeros(0, self.d_model, device=self.device)
         self.raw_embeds = torch.zeros(0, self.d_model, device=self.device)
+        self.anchors = torch.zeros(0, self.d_model, device=self.device)
+        self.has_anchor: list[bool] = []
         self.texts: list[str] = []
         self.turns: list[int] = []
         self.mean = torch.zeros(self.d_model, device=self.device)
         self._n = 0
         self.stats = {"adds": 0, "upserts": 0, "evictions": 0}
 
-    def _vec(self, emb: torch.Tensor) -> torch.Tensor:
-        """Centre by the running topic and L2-normalise (raw if not centered)."""
-        v = emb - self.mean if self.centered else emb
+    def _vec(self, emb: torch.Tensor, anchor: torch.Tensor | None = None) -> torch.Tensor:
+        """Normalise for storage/retrieval.
+
+        anchored: subtract the entry's own cluster anchor (dominant bank
+        slot) — deviation-from-cluster coding; otherwise centre by the running
+        topic and L2-normalise (raw if not centered).
+        """
+        if self.anchored:
+            v = emb - anchor if anchor is not None else emb
+        else:
+            v = emb - self.mean if self.centered else emb
         return v / max(float(v.norm()), 1e-8)
 
     @torch.no_grad()
-    def add(self, text: str, emb: torch.Tensor, turn: int = 0) -> None:
+    def add(self, text: str, emb: torch.Tensor, turn: int = 0,
+            anchor: torch.Tensor | None = None) -> None:
         # Questions are *lookup keys*, not content: storing them would let a
         # probe's embedding upsert-overwrite the very fact it asks about.
         if text.strip().endswith("?"):
             return
         emb = emb.float().to(self.device)
+        if anchor is not None:
+            anchor = anchor.float().to(self.device)
         # Centre by the topic centroid *of previously seen utterances* (the
         # first utterance has no mean to subtract), then grow the centroid.
-        probe = self._vec(emb)
-        if self.centered:
+        probe = self._vec(emb, anchor)
+        if self.centered and not self.anchored:
             self._n += 1
             self.mean = (self.mean * (self._n - 1) + emb) / self._n
         if self.embeds.numel():
@@ -111,23 +152,30 @@ class RagBank:
                 self.embeds[best] = probe
                 self.turns[best] = turn
                 self.raw_embeds[best] = torch.nn.functional.normalize(emb, dim=0)
+                if anchor is not None:
+                    self.anchors[best] = torch.nn.functional.normalize(anchor, dim=0)
+                    self.has_anchor[best] = True
                 self.stats["upserts"] += 1
                 return
         if len(self.texts) >= self.capacity:
             self.embeds = self.embeds[1:]
             self.raw_embeds = self.raw_embeds[1:]
+            self.anchors = self.anchors[1:]
+            self.has_anchor = self.has_anchor[1:]
             self.texts = self.texts[1:]
             self.turns = self.turns[1:]
             self.stats["evictions"] += 1
         self.embeds = torch.cat([self.embeds, probe.view(1, -1)])
         self.raw_embeds = torch.cat([self.raw_embeds, torch.nn.functional.normalize(emb, dim=0).view(1, -1)])
+        self.anchors = torch.cat([self.anchors, torch.nn.functional.normalize(anchor, dim=0).view(1, -1) if anchor is not None else torch.zeros(1, self.d_model, device=self.device)])
+        self.has_anchor.append(anchor is not None)
         self.texts.append(text)
         self.turns.append(turn)
         self.stats["adds"] += 1
 
     @torch.no_grad()
     def retrieve(self, query: torch.Tensor, k: int = 4, gist: torch.Tensor | None = None,
-                 lam: float = 0.0) -> list[tuple[str, int, float]]:
+                 lam: float = 0.0, anchor: torch.Tensor | None = None) -> list[tuple[str, int, float]]:
         """``[(text, turn, score)]`` ranked by cos(q', stored span).
 
         With ``centered`` the ranking is *deviation-vs-deviation* — the topic
@@ -140,8 +188,22 @@ class RagBank:
         q = query.float().to(self.device)
         if gist is not None and lam > 0:
             q = q + lam * gist.float().to(self.device)
-        q = self._vec(q)
+        if anchor is not None:
+            anchor = anchor.float().to(self.device)
+        q = self._vec(q, anchor)
         sims = self.embeds @ q
+        if self.anchored and anchor is not None and any(self.has_anchor):
+            # Stage 1 — cluster gate: entries whose stored anchor matches the
+            # query's dominant slot (plus anchor-free globals) are eligible.
+            qa = torch.nn.functional.normalize(anchor, dim=0)
+            a_cos = self.anchors @ qa
+            eligible = torch.tensor(
+                [ha or float(a_cos[i]) >= self.anchor_gate for i, ha in enumerate(self.has_anchor)],
+                device=self.device, dtype=torch.bool,
+            )
+            if bool(eligible.any()):
+                sims = sims.where(eligible, torch.tensor(float("-inf"), device=self.device))
+            # no eligible cluster → fall through: rank by deviation globally
         top = torch.topk(sims, k=min(k, sims.numel()))
         return [(self.texts[i], self.turns[i], float(s)) for i, s in zip(top.indices.tolist(), top.values.tolist())]
 

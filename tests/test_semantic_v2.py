@@ -178,3 +178,98 @@ class TestStrategyV2Plumbing:
         assert s["embed_tokens"] > 0
         assert any(t.injected is not None and t.injected for t in run.turns)  # bank actually filled prompts
         assert isinstance(s["attention_flops_proxy"], int)
+
+
+class TestBankLayerEmbedding:
+    def test_bank_layer_indices_fallback(self, causal_bundle):
+        # GPT-2 has no layer_types → model middle, matching kvinject fallback
+        idxs = causal_bundle.bank_layer_indices()
+        assert idxs == [1]  # 2-layer tiny GPT-2
+
+    def test_embed_bank_layer(self, causal_bundle):
+        from tmem.semantic import embed_utterance
+
+        v_bank = embed_utterance(causal_bundle, "sprint ends thursday", layer="bank")
+        v_last = embed_utterance(causal_bundle, "sprint ends thursday", layer="last")
+        assert v_bank.shape == v_last.shape == (causal_bundle.hidden_size,)
+        assert not torch.allclose(v_bank, v_last)
+        cos = torch.nn.functional.cosine_similarity(v_bank, v_last, dim=0)
+        assert -1.0 <= float(cos) <= 1.0
+
+    def test_embed_bank_layer_unknown_raises(self, causal_bundle):
+        from tmem.semantic import embed_utterance
+
+        with pytest.raises(ValueError, match="unknown embed layer"):
+            embed_utterance(causal_bundle, "x", layer="nope")
+
+
+class TestBankSlotKeys:
+    def test_rag_bank_key_run(self, causal_bundle):
+        """rag_key_source='bank': keys are latent-bank slot vectors."""
+        from tmem.dialogue import Strategy, run_session
+        from tmem.qa import SESSIONS
+
+        run = run_session(
+            causal_bundle, SESSIONS[0],
+            Strategy("bk", context="window", window=2, rag=True, rag_key_source="bank"),
+            max_new_tokens=3, seed=0,
+        )
+        assert run.corr is not None                    # bank created even without injection
+        assert run.corr.stats["update_calls"] > 0      # utterances were poured into it
+        s = run.summary()
+        assert run.bank.stats["adds"] + run.bank.stats["upserts"] > 0
+        assert any(t.injected for t in run.turns)      # slot-keyed notes reached prompts
+
+    def test_bank_slot_key_differs_from_raw(self, causal_bundle):
+        """The slot key is a bank vector, not the raw mean activation."""
+        from tmem.dialogue import _bank_slot_key
+        from tmem.memory import CorrectionLayer
+        from tmem.semantic import embed_utterance
+
+        corr = CorrectionLayer(causal_bundle.hidden_size, size=32, window_crit=0.0)
+        key, top1, n = _bank_slot_key(causal_bundle, corr, "remember Barsik the cat")
+        raw = embed_utterance(causal_bundle, "remember Barsik the cat", layer="bank")
+        assert key.shape == raw.shape == (causal_bundle.hidden_size,)
+        assert top1 is not None and top1.shape == raw.shape
+        assert n > 0
+        assert corr.stats["update_calls"] == 1         # pour happened exactly once
+
+
+class TestAnchoredBank:
+    def test_cluster_gate_ranks_within_cluster(self):
+        """Facts anchored to the query's cluster win; cross-cluster loses."""
+        d = 8
+        bank = RagBank(d, crit=0.99, anchored=True, anchor_gate=0.9)
+        a1 = torch.tensor([1.0, 0, 0, 0, 0, 0, 0, 0])       # cluster A anchor
+        a2 = torch.tensor([0.0, 1.0, 0, 0, 0, 0, 0, 0])     # cluster B anchor
+        # same anchor, distinct deviations (facts inside one cluster)
+        bank.add("fact A1", torch.tensor([1.0, 0, 0.5, 0, 0, 0, 0, 0]), anchor=a1)
+        bank.add("fact A2", torch.tensor([1.0, 0, 0, 0.5, 0, 0, 0, 0]), anchor=a1)
+        bank.add("fact B1", torch.tensor([0.0, 1.0, 0, 0, 0.9, 0, 0, 0]), anchor=a2)
+
+        # query in cluster A with deviation toward A1's direction
+        q = torch.tensor([1.0, 0, 0.5, 0.01, 0, 0, 0, 0])
+        out = bank.retrieve(q, k=2, anchor=a1)
+        texts = [t for t, _, _ in out]
+        assert "fact B1" not in texts, "cluster B must be gated out"
+        assert texts[0] == "fact A1"
+
+    def test_no_eligible_cluster_falls_back(self):
+        d = 8
+        bank = RagBank(d, crit=0.99, anchored=True, anchor_gate=0.9)
+        a1 = torch.tensor([1.0, 0, 0, 0, 0, 0, 0, 0])
+        bank.add("fact A1", torch.tensor([1.0, 0, 0.5, 0, 0, 0, 0, 0]), anchor=a1)
+        # query from an unrelated cluster: gate excludes, fallback returns something
+        q = torch.tensor([0.0, 1.0, 0, 0, 1.0, 0, 0, 0])
+        out = bank.retrieve(q, k=1, anchor=torch.tensor([0.0, 1.0, 0, 0, 0, 0, 0, 0.001]))
+        assert len(out) == 1  # fallback: globally ranked, not an empty result
+
+    def test_anchored_ignores_running_mean(self):
+        """Anchored mode centres by the anchor, not by the running centroid."""
+        d = 4
+        bank = RagBank(d, crit=0.99, centered=True, anchored=True)
+        a = torch.tensor([1.0, 0, 0, 0])
+        v = torch.tensor([1.0, 0.3, 0, 0])
+        bank.add("t", v, anchor=a)
+        stored = bank.embeds[0]
+        assert torch.allclose(stored, (v - a) / (v - a).norm(), atol=1e-5)

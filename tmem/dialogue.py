@@ -22,7 +22,7 @@ from .generate import DecodeResult, decode_causal, decode_encdec
 from .kvcache import KVConfig
 from .metrics import keyword_score
 from .qa import DialogSession, Probe, score_probe_answer
-from .semantic import RagBank, embed_utterance, gist_of, repetition_rate, tone_alignment
+from .semantic import RagBank, band_hidden, embed_utterance, gist_of, repetition_rate, tone_alignment
 
 
 @dataclass(frozen=True)
@@ -44,6 +44,9 @@ class Strategy:
     rag_lambda: float = 0.5               # gist-conditioned retrieval strength
     rag_centered: bool = False            # v3: deviation-from-topic scoring
     rag_layer: str = "last"               # слой RAG-эмбеддинга: last | mid (латентный) | mean
+    rag_key_source: str = "utterance"     # "utterance" (embed at rag_layer) | "bank" | "bank_dev" (слоты CorrectionLayer)
+    rag_key_tau: float = 0.05             # темп весов ключа "bank": меньше → жёстче к top-1
+    rag_anchor_gate: float = 0.85         # "bank_dev": порог сходства anchor'ей кластера
     memory_kv: bool = False               # v4: activated facts enter mid-layer attention as K/V
     kv_slots: int = 32                    # max memory keys/values per attention layer
     gen_chunks: bool = False              # chunk-memory: store generation chunks instead of user facts
@@ -77,6 +80,9 @@ class Strategy:
                 "rag_lambda": self.rag_lambda,
             "rag_centered": self.rag_centered,
             "rag_layer": self.rag_layer,
+            "rag_key_source": self.rag_key_source,
+            "rag_key_tau": self.rag_key_tau,
+            "rag_anchor_gate": self.rag_anchor_gate,
             "memory_kv": self.memory_kv,
             "kv_slots": self.kv_slots,
             "gen_chunks": self.gen_chunks,
@@ -232,6 +238,32 @@ def _prompt(bundle, context: str, user_text: str, notes: list[str] | None = None
 
 
 @torch.no_grad()
+def _bank_slot_key(bundle, corr, text: str, tau: float = 0.05) -> tuple[torch.Tensor, torch.Tensor | None, int]:
+    """Key an utterance by a similarity-weighted blend of the bank's top slots.
+
+    The utterance's band activations are poured into the CorrectionLayer
+    (merge into an existing slot or a new one); the key is the weighted mean
+    of the top-32 slots after the pour — the same vectors that K/V-injection
+    projects into attention, so RAG retrieval lives in the injected bank's
+    space. Weights follow softmax(cosine/tau): top-1 dominates, further slots
+    contribute with decaying influence — a merged slot that has absorbed
+    several meanings no longer monopolises the keys of all its facts
+    (anti-collision). Also returns the top-1 slot itself — the cluster
+    anchor for deviation coding (rag_key_source="bank_dev"). On an empty bank
+    (first turn) the raw mean activation is the fallback key, anchor None.
+    """
+    x = band_hidden(bundle, text)                       # (1, L, d)
+    corr(x)                                             # pour: retrieve + update
+    rel, n = corr.memory.get_relevant(x, 32)            # (1, n, d) bank's response
+    if n > 0:
+        q = x.mean(dim=1)                               # (1, d)
+        cos = torch.nn.functional.cosine_similarity(rel[0], q, dim=-1)
+        w = torch.softmax(cos / tau, dim=0)
+        return (w[:, None] * rel[0]).sum(dim=0), rel[0, -1], int(x.shape[1])
+    return x.mean(dim=1).squeeze(0), None, int(x.shape[1])
+
+
+@torch.no_grad()
 def run_session(
     bundle,
     session: DialogSession,
@@ -280,7 +312,8 @@ def run_session(
         kv_wrappers = install_kv_memory(bundle.model, corr, max_slots=strategy.kv_slots)
     # The bank exists in every strategy for tone *measurement*; it feeds the
     # prompt (RAG mode) only when strategy.rag is set.
-    bank = RagBank(bundle.hidden_size, crit=strategy.rag_crit, device=bundle.device, centered=strategy.rag_centered)
+    bank = RagBank(bundle.hidden_size, crit=strategy.rag_crit, device=bundle.device, centered=strategy.rag_centered,
+                   anchored=strategy.rag_key_source == "bank_dev", anchor_gate=strategy.rag_anchor_gate)
     run.bank = bank
     # Generation-chunk memory: stores the assistant's own output chunks,
     # keyed by the request that produced them (task → solution retrieval).
@@ -305,10 +338,26 @@ def run_session(
             notes: list[str] | None = None
             user_emb = None
             if bank is not None:
-                user_emb, n_tok = embed_utterance(bundle, user_text, layer=strategy.rag_layer), _n_tokens(bundle, user_text)
+                top1 = None
+                if strategy.rag_key_source in ("bank", "bank_dev"):
+                    if corr is None:
+                        from .memory import CorrectionLayer
+
+                        corr = CorrectionLayer(
+                            bundle.hidden_size, size=strategy.memory_size,
+                            window_crit=strategy.memory_window_crit,
+                            retrieve_count=strategy.memory_retrieve,
+                            crit=strategy.memory_crit, merge_k=strategy.memory_merge_k,
+                            decay=strategy.memory_decay,
+                        )
+                        run.corr = corr
+                    user_emb, top1, n_tok = _bank_slot_key(bundle, corr, user_text, tau=strategy.rag_key_tau)
+                else:
+                    user_emb, n_tok = embed_utterance(bundle, user_text, layer=strategy.rag_layer), _n_tokens(bundle, user_text)
                 run.embed_tokens += n_tok
                 if strategy.rag:
-                    notes = [t for t, _, _ in bank.retrieve(user_emb, k=strategy.rag_k, gist=gist_of(corr), lam=strategy.rag_lambda)]
+                    notes = [t for t, _, _ in bank.retrieve(user_emb, k=strategy.rag_k, gist=gist_of(corr), lam=strategy.rag_lambda,
+                                                            anchor=top1 if strategy.rag_key_source == "bank_dev" else None)]
                 if chunk_bank is not None and chunk_bank.texts:
                     q_tokens = None
                     if strategy.chunk_score == "maxsim":
@@ -326,10 +375,14 @@ def run_session(
 
             tone = None
             if bank is not None and answer:
-                ans_emb = embed_utterance(bundle, answer, layer=strategy.rag_layer)
-                run.embed_tokens += _n_tokens(bundle, answer)
+                if strategy.rag_key_source in ("bank", "bank_dev"):
+                    ans_emb, _, n_ans = _bank_slot_key(bundle, corr, answer, tau=strategy.rag_key_tau)
+                    run.embed_tokens += n_ans
+                else:
+                    ans_emb = embed_utterance(bundle, answer, layer=strategy.rag_layer)
+                    run.embed_tokens += _n_tokens(bundle, answer)
                 tone = tone_alignment(bundle, ans_emb, bank)
-                bank.add(user_text, user_emb, turn_idx)
+                bank.add(user_text, user_emb, turn_idx, anchor=top1 if strategy.rag_key_source == "bank_dev" else None)
             elif bank is not None:
                 bank.add(user_text, user_emb, turn_idx)
 
