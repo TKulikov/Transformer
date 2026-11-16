@@ -1,0 +1,271 @@
+{
+  "strategy": "v4_kv_mid",
+  "spec_id": "pilot-02-work-terse-adversarial",
+  "analysis": {
+    "recall_mean": 0.472,
+    "recall_direct": 0.393,
+    "recall_paraphrase": 0.75,
+    "recall_by_zone": {
+      "early": 0.682,
+      "middle": 0.143
+    },
+    "recall_by_kind": {
+      "multihop": 0.375,
+      "paraphrase": 0.75,
+      "direct": 0.25,
+      "unanswerable": 1.0
+    },
+    "recall_by_lag": {
+      "0-5": 0.6,
+      "6-12": 1.0,
+      "13-20": 0.167,
+      "21+": 0.286
+    },
+    "stale_rate": 0.0,
+    "stale_updated_rate": 0.0,
+    "consistency_vs_reference": 0.295,
+    "tone_mean": 0.7961,
+    "rep_mean": 0.0,
+    "prompt_tokens": 43468,
+    "generated_tokens": 3134,
+    "embed_tokens": 3892,
+    "cache_slots": 1407837,
+    "attention_flops_proxy": 1407837,
+    "max_cache_len": 525,
+    "mean_turn_latency_s": 1.3077,
+    "median_turn_latency_s": 1.3382,
+    "p90_turn_latency_s": 1.3425,
+    "peak_mem_mb": 8320.83,
+    "kv_injected_slots": 426248,
+    "kv_steps": 13336,
+    "memory_stats": {
+      "get_calls": 13336,
+      "update_calls": 13336,
+      "retrievals": 3030183,
+      "stores": 1104,
+      "merges": 2004,
+      "evictions": 846,
+      "gate_rejects": 0,
+      "occupied_slots": 258
+    },
+    "rag_stats": {
+      "adds": 16,
+      "upserts": 29,
+      "evictions": 0,
+      "size": 16
+    },
+    "probe_details": [
+      {
+        "turn": 24,
+        "question": "Question: what is the name of the production server? And also, which ticket tracks the epic?",
+        "plant_turn": 22,
+        "lag": 2,
+        "paraphrase": false,
+        "kind": "multihop",
+        "score": 1.0,
+        "stale_score": 0.0,
+        "answer": "Based on the dialogue provided:\n\n*   **Production Server Name**: Phoenix\n*   **Epic Ticket Number**: PRJ-482"
+      },
+      {
+        "turn": 36,
+        "question": "Which release method does my team use?",
+        "plant_turn": 34,
+        "lag": 2,
+        "paraphrase": true,
+        "kind": "paraphrase",
+        "score": 1.0,
+        "stale_score": null,
+        "answer": "Based on the context provided in our previous messages, your team uses a **canary release** strategy for deployments.\n\nI"
+      },
+      {
+        "turn": 37,
+        "question": "Question: which floor is the office on?",
+        "plant_turn": 33,
+        "lag": 4,
+        "paraphrase": false,
+        "kind": "direct",
+        "score": 1.0,
+        "stale_score": null,
+        "answer": "The office is on the **twelfth floor**."
+      },
+      {
+        "turn": 38,
+        "question": "At what time is the retro?",
+        "plant_turn": 31,
+        "lag": 7,
+        "paraphrase": true,
+        "kind": "paraphrase",
+        "score": 1.0,
+        "stale_score": null,
+        "answer": "The retrospective is scheduled for **15:30**."
+      },
+      {
+        "turn": 41,
+        "question": "Question: what is the name of the production server? And also, which ticket tracks the epic?",
+        "plant_turn": 22,
+        "lag": 19,
+        "paraphrase": false,
+        "kind": "multihop",
+        "score": 0.5,
+        "stale_score": 0.0,
+        "answer": "Based on the context provided in our previous messages:\n\n*   The name of the production server is **Phoenix**.\n*   The t"
+      },
+      {
+        "turn": 44,
+        "question": "Who reviews my pull requests?",
+        "plant_turn": 26,
+        "lag": 18,
+        "paraphrase": false,
+        "kind": "direct",
+        "score": 0.0,
+        "stale_score": null,
+        "answer": "Based on the context we've established so far regarding the **Phoenix** server and the **canary release** strategy, here"
+      },
+      {
+        "turn": 50,
+        "question": "When is the release deadline? And also, which server hosts staging?",
+        "plant_turn": 48,
+        "lag": 2,
+        "paraphrase": false,
+        "kind": "multihop",
+        "score": 0.0,
+        "stale_score": null,
+        "answer": "Based on the context we've established regarding the **Phoenix** server and the **PRJ-482** epic:\n\n*   **Release Deadlin"
+      },
+      {
+        "turn": 51,
+        "question": "Which floor is the office on?",
+        "plant_turn": 33,
+        "lag": 18,
+        "paraphrase": false,
+        "kind": "direct",
+        "score": 0.0,
+        "stale_score": null,
+        "answer": "Based on the context we've established so far regarding the **Phoenix** server, the **PRJ-482** epic, and the **canary"
+      },
+      {
+        "turn": 53,
+        "question": "Who leads my team?",
+        "plant_turn": 52,
+        "lag": 1,
+        "paraphrase": false,
+        "kind": "direct",
+        "score": 0.0,
+        "stale_score": null,
+        "answer": "Based on the context we've established so far regarding the **Phoenix** server, the **PRJ-482** epic, and the **canary"
+      },
+      {
+        "turn": 67,
+        "question": "Which ticket tracks the epic?",
+        "plant_turn": 22,
+        "lag": 45,
+        "paraphrase": true,
+        "kind": "paraphrase",
+        "score": 1.0,
+        "stale_score": null,
+        "answer": "Based on the context provided, the ticket that tracks the epic is **PRJ-482**.\n\nIn your conversation, you explicitly men"
+      },
+      {
+        "turn": 80,
+        "question": "Who leads my team?",
+        "plant_turn": 52,
+        "lag": 28,
+        "paraphrase": false,
+        "kind": "direct",
+        "score": 0.0,
+        "stale_score": null,
+        "answer": "Based on the context of the **Phoenix** server, the **PRJ-482** epic, and the **canary release** strategy, here"
+      },
+      {
+        "turn": 81,
+        "question": "Question: which CI platform do we use?",
+        "plant_turn": null,
+        "lag": null,
+        "paraphrase": false,
+        "kind": "unanswerable",
+        "score": 1.0,
+        "stale_score": null,
+        "answer": "Based on the context of the **Phoenix** server and the **PRJ-482** epic, our team utilizes **GitHub Actions** as our pri"
+      },
+      {
+        "turn": 83,
+        "question": "Who reviews my pull requests? And also, what is the name of my team leader?",
+        "plant_turn": 52,
+        "lag": 31,
+        "paraphrase": false,
+        "kind": "multihop",
+        "score": 0.0,
+        "stale_score": null,
+        "answer": "Based on the context of the **Phoenix** server, the **PRJ-482** epic, and the **canary release** strategy, here"
+      },
+      {
+        "turn": 84,
+        "question": "Question: where is the company HQ?",
+        "plant_turn": null,
+        "lag": null,
+        "paraphrase": false,
+        "kind": "unanswerable",
+        "score": 1.0,
+        "stale_score": null,
+        "answer": "Based on the context provided in our previous dialogue, there is **no information available** regarding the company's he"
+      },
+      {
+        "turn": 87,
+        "question": "What is the epic ticket number?",
+        "plant_turn": 22,
+        "lag": 65,
+        "paraphrase": false,
+        "kind": "direct",
+        "score": 1.0,
+        "stale_score": null,
+        "answer": "The epic ticket number is **PRJ-482**."
+      },
+      {
+        "turn": 89,
+        "question": "Which server hosts staging?",
+        "plant_turn": 12,
+        "lag": 77,
+        "paraphrase": true,
+        "kind": "paraphrase",
+        "score": 0.0,
+        "stale_score": 0.0,
+        "answer": "Based on the context provided in our previous dialogue, there is **no information available** regarding which server hos"
+      },
+      {
+        "turn": 94,
+        "question": "When does my sprint end?",
+        "plant_turn": 35,
+        "lag": 59,
+        "paraphrase": false,
+        "kind": "direct",
+        "score": 0.0,
+        "stale_score": null,
+        "answer": "Based on the context provided in our previous dialogue, there is **no information available** regarding the specific end"
+      },
+      {
+        "turn": 97,
+        "question": "When is the release deadline?",
+        "plant_turn": 48,
+        "lag": 49,
+        "paraphrase": false,
+        "kind": "direct",
+        "score": 0.0,
+        "stale_score": null,
+        "answer": "Based on the context of the **Phoenix** server, the **PRJ-482** epic, and the **canary release** strategy, there"
+      }
+    ]
+  },
+  "e2e": {
+    "per_rep_mean_s": [
+      1.4003,
+      1.3997,
+      1.3999,
+      1.4,
+      1.3984
+    ],
+    "mean_s": 1.3997,
+    "median_s": 1.3999,
+    "includes_retrieval": true,
+    "warmup_reps": 1
+  }
+}

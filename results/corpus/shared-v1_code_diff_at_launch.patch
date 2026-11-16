@@ -1,0 +1,546 @@
+diff --git a/scripts/verify_paper.py b/scripts/verify_paper.py
+index 5d26ad9..ac96a00 100644
+--- a/scripts/verify_paper.py
++++ b/scripts/verify_paper.py
+@@ -172,11 +172,17 @@ def f5():
+     from tmem.kvinject import _extend_mask
+     mask = torch.full((1, 2, 3, 5), float("-inf"))
+     mask[..., :3] = 0.0
+-    ext = _extend_mask(mask, real_keys=5, mem=4, dtype=torch.float32)
++    ext = _extend_mask(mask, real_keys=5, mem=4, dtype=torch.float32, s_q=3, device=mask.device)
+     assert ext.shape == (1, 2, 3, 9), "добавлены 4 столбца памяти"
+     assert bool((ext[..., -4:] == 0).all()), "столбцы памяти нулевые = видимы всем"
+     assert torch.equal(ext[..., :5], mask), "исходная маска не изменена"
+-    assert _extend_mask(None, 5, 4, torch.float32) is None, "None-маска (быстрый путь) сохраняется"
++    assert _extend_mask(None, 5, 4, torch.float32, s_q=1, device=mask.device) is None, \
++        "None-маска при декоде (s_q=1, быстрый путь) сохраняется"
++    built = _extend_mask(None, 5, 4, torch.float32, s_q=3, device=mask.device)
++    assert built.shape == (1, 1, 3, 9), "при prefill (s_q>1) строится явная 4-D маска"
++    assert bool((built[..., -4:] == 0).all()), "слоты памяти видны всем позициям запроса"
++    neg = torch.finfo(torch.float32).min
++    assert bool((built[0, 0, 0, 3:5] == neg).all()), "причинность реальных ключей сохранена (позиция 0 видит 0..2)"
+     model = _tiny_qwen35()
+     a = model.model.layers[2].self_attn
+     assert abs(a.scaling - a.head_dim ** -0.5) < 1e-9, "scaling=1/sqrt(d_k)"
+diff --git a/tests/test_semantic_v2.py b/tests/test_semantic_v2.py
+index 6096d08..fde1187 100644
+--- a/tests/test_semantic_v2.py
++++ b/tests/test_semantic_v2.py
+@@ -178,3 +178,98 @@ class TestStrategyV2Plumbing:
+         assert s["embed_tokens"] > 0
+         assert any(t.injected is not None and t.injected for t in run.turns)  # bank actually filled prompts
+         assert isinstance(s["attention_flops_proxy"], int)
++
++
++class TestBankLayerEmbedding:
++    def test_bank_layer_indices_fallback(self, causal_bundle):
++        # GPT-2 has no layer_types → model middle, matching kvinject fallback
++        idxs = causal_bundle.bank_layer_indices()
++        assert idxs == [1]  # 2-layer tiny GPT-2
++
++    def test_embed_bank_layer(self, causal_bundle):
++        from tmem.semantic import embed_utterance
++
++        v_bank = embed_utterance(causal_bundle, "sprint ends thursday", layer="bank")
++        v_last = embed_utterance(causal_bundle, "sprint ends thursday", layer="last")
++        assert v_bank.shape == v_last.shape == (causal_bundle.hidden_size,)
++        assert not torch.allclose(v_bank, v_last)
++        cos = torch.nn.functional.cosine_similarity(v_bank, v_last, dim=0)
++        assert -1.0 <= float(cos) <= 1.0
++
++    def test_embed_bank_layer_unknown_raises(self, causal_bundle):
++        from tmem.semantic import embed_utterance
++
++        with pytest.raises(ValueError, match="unknown embed layer"):
++            embed_utterance(causal_bundle, "x", layer="nope")
++
++
++class TestBankSlotKeys:
++    def test_rag_bank_key_run(self, causal_bundle):
++        """rag_key_source='bank': keys are latent-bank slot vectors."""
++        from tmem.dialogue import Strategy, run_session
++        from tmem.qa import SESSIONS
++
++        run = run_session(
++            causal_bundle, SESSIONS[0],
++            Strategy("bk", context="window", window=2, rag=True, rag_key_source="bank"),
++            max_new_tokens=3, seed=0,
++        )
++        assert run.corr is not None                    # bank created even without injection
++        assert run.corr.stats["update_calls"] > 0      # utterances were poured into it
++        s = run.summary()
++        assert run.bank.stats["adds"] + run.bank.stats["upserts"] > 0
++        assert any(t.injected for t in run.turns)      # slot-keyed notes reached prompts
++
++    def test_bank_slot_key_differs_from_raw(self, causal_bundle):
++        """The slot key is a bank vector, not the raw mean activation."""
++        from tmem.dialogue import _bank_slot_key
++        from tmem.memory import CorrectionLayer
++        from tmem.semantic import embed_utterance
++
++        corr = CorrectionLayer(causal_bundle.hidden_size, size=32, window_crit=0.0)
++        key, top1, n = _bank_slot_key(causal_bundle, corr, "remember Barsik the cat")
++        raw = embed_utterance(causal_bundle, "remember Barsik the cat", layer="bank")
++        assert key.shape == raw.shape == (causal_bundle.hidden_size,)
++        assert top1 is not None and top1.shape == raw.shape
++        assert n > 0
++        assert corr.stats["update_calls"] == 1         # pour happened exactly once
++
++
++class TestAnchoredBank:
++    def test_cluster_gate_ranks_within_cluster(self):
++        """Facts anchored to the query's cluster win; cross-cluster loses."""
++        d = 8
++        bank = RagBank(d, crit=0.99, anchored=True, anchor_gate=0.9)
++        a1 = torch.tensor([1.0, 0, 0, 0, 0, 0, 0, 0])       # cluster A anchor
++        a2 = torch.tensor([0.0, 1.0, 0, 0, 0, 0, 0, 0])     # cluster B anchor
++        # same anchor, distinct deviations (facts inside one cluster)
++        bank.add("fact A1", torch.tensor([1.0, 0, 0.5, 0, 0, 0, 0, 0]), anchor=a1)
++        bank.add("fact A2", torch.tensor([1.0, 0, 0, 0.5, 0, 0, 0, 0]), anchor=a1)
++        bank.add("fact B1", torch.tensor([0.0, 1.0, 0, 0, 0.9, 0, 0, 0]), anchor=a2)
++
++        # query in cluster A with deviation toward A1's direction
++        q = torch.tensor([1.0, 0, 0.5, 0.01, 0, 0, 0, 0])
++        out = bank.retrieve(q, k=2, anchor=a1)
++        texts = [t for t, _, _ in out]
++        assert "fact B1" not in texts, "cluster B must be gated out"
++        assert texts[0] == "fact A1"
++
++    def test_no_eligible_cluster_falls_back(self):
++        d = 8
++        bank = RagBank(d, crit=0.99, anchored=True, anchor_gate=0.9)
++        a1 = torch.tensor([1.0, 0, 0, 0, 0, 0, 0, 0])
++        bank.add("fact A1", torch.tensor([1.0, 0, 0.5, 0, 0, 0, 0, 0]), anchor=a1)
++        # query from an unrelated cluster: gate excludes, fallback returns something
++        q = torch.tensor([0.0, 1.0, 0, 0, 1.0, 0, 0, 0])
++        out = bank.retrieve(q, k=1, anchor=torch.tensor([0.0, 1.0, 0, 0, 0, 0, 0, 0.001]))
++        assert len(out) == 1  # fallback: globally ranked, not an empty result
++
++    def test_anchored_ignores_running_mean(self):
++        """Anchored mode centres by the anchor, not by the running centroid."""
++        d = 4
++        bank = RagBank(d, crit=0.99, centered=True, anchored=True)
++        a = torch.tensor([1.0, 0, 0, 0])
++        v = torch.tensor([1.0, 0.3, 0, 0])
++        bank.add("t", v, anchor=a)
++        stored = bank.embeds[0]
++        assert torch.allclose(stored, (v - a) / (v - a).norm(), atol=1e-5)
+diff --git a/tmem/corpus_run.py b/tmem/corpus_run.py
+index a6ba4e9..a3b4ef3 100644
+--- a/tmem/corpus_run.py
++++ b/tmem/corpus_run.py
+@@ -86,11 +86,66 @@ def sweep_strategies(budget: int = 128) -> list[Strategy]:
+     return out
+ 
+ 
+-PRESET_STRATEGIES = {
++def latent_strategies(budget: int = 128) -> list[Strategy]:
++    """New-version campaign: the latent (mid-layer) bank both feeds the K/V
++    injection and keys the RAG retrieval. Old v4 (last-layer RAG keys) and the
++    KV/RAG analogues run alongside on the fixed kvinject for direct comparison;
++    rag_latent_mid and v4_kv_mid isolate the two halves of the new system."""
++    mem = dict(memory_window_crit=0.5, memory_crit=0.95, memory_merge_k=0.25)
++    return [
++        Strategy("classic_kv_full", context="full"),
++        Strategy(f"sparse_sliding_{budget}", context="full", kv=KVConfig.sparse(budget, "sliding", 4, 64)),
++        Strategy(f"sparse_topk_{budget}", context="full", kv=KVConfig.sparse(budget, "topk", 4, 64)),
++        Strategy(f"snapkv_{budget}", context="full", kv=KVConfig.sparse(budget, "snapkv", observation=64, kernel_size=7)),
++        Strategy(f"pyramidkv_{budget}", context="full", kv=KVConfig.sparse(budget, "pyramidkv", observation=8, pyramid_beta=20)),
++        Strategy("rag_text_only", context="window", window=5, rag=True, rag_lambda=0.0, rag_centered=False),
++        Strategy("rag_latent_mid", context="window", window=5, rag=True, rag_lambda=0.0,
++                 rag_centered=False, rag_layer="mid"),
++        Strategy("v4_rag_kv", context="window", window=5, memory_kv=True, rag=True, rag_lambda=0.0,
++                 rag_centered=True, kv_slots=32, **mem),
++        Strategy("v4_rag_kv_mid", context="window", window=5, memory_kv=True, rag=True, rag_lambda=0.0,
++                 rag_centered=True, rag_layer="mid", kv_slots=32, **mem),
++        Strategy("v4_kv_mid", context="window", window=5, memory_kv=True, kv_slots=32, **mem),
++    ]
++
++
++def shared_strategies(budget: int = 128) -> list[Strategy]:
++    """The shared-bank hypothesis: RAG keyed by the latent bank's own slot
++    vectors — the same CorrectionLayer activations that are poured into the
++    bank and injected into attention (rag_key_source="bank"). classic_kv_full
++    is the per-run gold reference for cross-run drift checks."""
++    mem = dict(memory_window_crit=0.5, memory_crit=0.95, memory_merge_k=0.25)
++    return [
++        Strategy("classic_kv_full", context="full"),
++        Strategy("rag_bank_key", context="window", window=5, rag=True, rag_lambda=0.0,
++                 rag_centered=False, rag_key_source="bank", **mem),
++        Strategy("v4_rag_kv_bank", context="window", window=5, memory_kv=True, rag=True,
++                 rag_lambda=0.0, rag_centered=True, rag_key_source="bank", kv_slots=32, **mem),
++    ]
++
++
++def shared_dev_strategies(budget: int = 128) -> list[Strategy]:
++    """Anchored bank-dev variant: facts clustered by the dominant bank slot,
++    keys coded as deviation from the cluster anchor (rag_key_source="bank_dev").
++    Mirrors shared_strategies for a direct comparison."""
++    mem = dict(memory_window_crit=0.5, memory_crit=0.95, memory_merge_k=0.25)
++    return [
++        Strategy("classic_kv_full", context="full"),
++        Strategy("rag_bank_dev", context="window", window=5, rag=True, rag_lambda=0.0,
++                 rag_centered=False, rag_key_source="bank_dev", **mem),
++        Strategy("v4_rag_kv_bank_dev", context="window", window=5, memory_kv=True, rag=True,
++                 rag_lambda=0.0, rag_centered=True, rag_key_source="bank_dev", kv_slots=32, **mem),
++    ]
++
++
++STRATEGY_SETS = {
+     "pilot": main_strategies,
+     "main": main_strategies,
+     "ablation": ablation_strategies,
+     "sweep": sweep_strategies,
++    "latent": latent_strategies,
++    "shared": shared_strategies,
++    "shared_dev": shared_dev_strategies,
+ }
+ 
+ 
+@@ -305,6 +360,8 @@ def main(argv: list[str] | None = None) -> int:
+     parser.add_argument("--seed", type=int, default=0)
+     parser.add_argument("--latency-repeats", type=int, default=5, help="measured reps after the warmup rep")
+     parser.add_argument("--strategies", nargs="*", default=None, help="subset of preset strategy names")
++    parser.add_argument("--strategy-set", default=None, choices=sorted(STRATEGY_SETS),
++                        help="strategy set override (default: by --preset)")
+     parser.add_argument("--batches", type=int, default=None, help="run at most N pending batches, then stop")
+     parser.add_argument("--only", nargs="*", default=None, help="(re)run exactly these batch ids")
+     parser.add_argument("--dry-run", action="store_true", help="print queue/progress/ETA without GPU")
+@@ -314,7 +371,7 @@ def main(argv: list[str] | None = None) -> int:
+         parser.error("нужен --preset или --specs")
+     preset = args.preset or "custom"
+     specs = specs_from_json(args.specs) if args.specs else PRESETS[args.preset]()
+-    strategies = PRESET_STRATEGIES.get(args.preset, main_strategies)(budget=args.budget)
++    strategies = STRATEGY_SETS.get(args.strategy_set or args.preset, main_strategies)(budget=args.budget)
+     if args.strategies:
+         strategies = [s for s in strategies if s.name in args.strategies]
+     run_id = args.run_id or f"{preset}-v1"
+diff --git a/tmem/dialogue.py b/tmem/dialogue.py
+index feb0e8b..520b252 100644
+--- a/tmem/dialogue.py
++++ b/tmem/dialogue.py
+@@ -22,7 +22,7 @@ from .generate import DecodeResult, decode_causal, decode_encdec
+ from .kvcache import KVConfig
+ from .metrics import keyword_score
+ from .qa import DialogSession, Probe, score_probe_answer
+-from .semantic import RagBank, embed_utterance, gist_of, repetition_rate, tone_alignment
++from .semantic import RagBank, band_hidden, embed_utterance, gist_of, repetition_rate, tone_alignment
+ 
+ 
+ @dataclass(frozen=True)
+@@ -44,6 +44,9 @@ class Strategy:
+     rag_lambda: float = 0.5               # gist-conditioned retrieval strength
+     rag_centered: bool = False            # v3: deviation-from-topic scoring
+     rag_layer: str = "last"               # слой RAG-эмбеддинга: last | mid (латентный) | mean
++    rag_key_source: str = "utterance"     # "utterance" (embed at rag_layer) | "bank" | "bank_dev" (слоты CorrectionLayer)
++    rag_key_tau: float = 0.05             # темп весов ключа "bank": меньше → жёстче к top-1
++    rag_anchor_gate: float = 0.85         # "bank_dev": порог сходства anchor'ей кластера
+     memory_kv: bool = False               # v4: activated facts enter mid-layer attention as K/V
+     kv_slots: int = 32                    # max memory keys/values per attention layer
+     gen_chunks: bool = False              # chunk-memory: store generation chunks instead of user facts
+@@ -77,6 +80,9 @@ class Strategy:
+                 "rag_lambda": self.rag_lambda,
+             "rag_centered": self.rag_centered,
+             "rag_layer": self.rag_layer,
++            "rag_key_source": self.rag_key_source,
++            "rag_key_tau": self.rag_key_tau,
++            "rag_anchor_gate": self.rag_anchor_gate,
+             "memory_kv": self.memory_kv,
+             "kv_slots": self.kv_slots,
+             "gen_chunks": self.gen_chunks,
+@@ -231,6 +237,32 @@ def _prompt(bundle, context: str, user_text: str, notes: list[str] | None = None
+     return f"{note_block}{context} User: {user_text}".strip()
+ 
+ 
++@torch.no_grad()
++def _bank_slot_key(bundle, corr, text: str, tau: float = 0.05) -> tuple[torch.Tensor, torch.Tensor | None, int]:
++    """Key an utterance by a similarity-weighted blend of the bank's top slots.
++
++    The utterance's band activations are poured into the CorrectionLayer
++    (merge into an existing slot or a new one); the key is the weighted mean
++    of the top-32 slots after the pour — the same vectors that K/V-injection
++    projects into attention, so RAG retrieval lives in the injected bank's
++    space. Weights follow softmax(cosine/tau): top-1 dominates, further slots
++    contribute with decaying influence — a merged slot that has absorbed
++    several meanings no longer monopolises the keys of all its facts
++    (anti-collision). Also returns the top-1 slot itself — the cluster
++    anchor for deviation coding (rag_key_source="bank_dev"). On an empty bank
++    (first turn) the raw mean activation is the fallback key, anchor None.
++    """
++    x = band_hidden(bundle, text)                       # (1, L, d)
++    corr(x)                                             # pour: retrieve + update
++    rel, n = corr.memory.get_relevant(x, 32)            # (1, n, d) bank's response
++    if n > 0:
++        q = x.mean(dim=1)                               # (1, d)
++        cos = torch.nn.functional.cosine_similarity(rel[0], q, dim=-1)
++        w = torch.softmax(cos / tau, dim=0)
++        return (w[:, None] * rel[0]).sum(dim=0), rel[0, -1], int(x.shape[1])
++    return x.mean(dim=1).squeeze(0), None, int(x.shape[1])
++
++
+ @torch.no_grad()
+ def run_session(
+     bundle,
+@@ -280,7 +312,8 @@ def run_session(
+         kv_wrappers = install_kv_memory(bundle.model, corr, max_slots=strategy.kv_slots)
+     # The bank exists in every strategy for tone *measurement*; it feeds the
+     # prompt (RAG mode) only when strategy.rag is set.
+-    bank = RagBank(bundle.hidden_size, crit=strategy.rag_crit, device=bundle.device, centered=strategy.rag_centered)
++    bank = RagBank(bundle.hidden_size, crit=strategy.rag_crit, device=bundle.device, centered=strategy.rag_centered,
++                   anchored=strategy.rag_key_source == "bank_dev", anchor_gate=strategy.rag_anchor_gate)
+     run.bank = bank
+     # Generation-chunk memory: stores the assistant's own output chunks,
+     # keyed by the request that produced them (task → solution retrieval).
+@@ -305,10 +338,26 @@ def run_session(
+             notes: list[str] | None = None
+             user_emb = None
+             if bank is not None:
+-                user_emb, n_tok = embed_utterance(bundle, user_text, layer=strategy.rag_layer), _n_tokens(bundle, user_text)
++                top1 = None
++                if strategy.rag_key_source in ("bank", "bank_dev"):
++                    if corr is None:
++                        from .memory import CorrectionLayer
++
++                        corr = CorrectionLayer(
++                            bundle.hidden_size, size=strategy.memory_size,
++                            window_crit=strategy.memory_window_crit,
++                            retrieve_count=strategy.memory_retrieve,
++                            crit=strategy.memory_crit, merge_k=strategy.memory_merge_k,
++                            decay=strategy.memory_decay,
++                        )
++                        run.corr = corr
++                    user_emb, top1, n_tok = _bank_slot_key(bundle, corr, user_text, tau=strategy.rag_key_tau)
++                else:
++                    user_emb, n_tok = embed_utterance(bundle, user_text, layer=strategy.rag_layer), _n_tokens(bundle, user_text)
+                 run.embed_tokens += n_tok
+                 if strategy.rag:
+-                    notes = [t for t, _, _ in bank.retrieve(user_emb, k=strategy.rag_k, gist=gist_of(corr), lam=strategy.rag_lambda)]
++                    notes = [t for t, _, _ in bank.retrieve(user_emb, k=strategy.rag_k, gist=gist_of(corr), lam=strategy.rag_lambda,
++                                                            anchor=top1 if strategy.rag_key_source == "bank_dev" else None)]
+                 if chunk_bank is not None and chunk_bank.texts:
+                     q_tokens = None
+                     if strategy.chunk_score == "maxsim":
+@@ -326,10 +375,14 @@ def run_session(
+ 
+             tone = None
+             if bank is not None and answer:
+-                ans_emb = embed_utterance(bundle, answer, layer=strategy.rag_layer)
+-                run.embed_tokens += _n_tokens(bundle, answer)
++                if strategy.rag_key_source in ("bank", "bank_dev"):
++                    ans_emb, _, n_ans = _bank_slot_key(bundle, corr, answer, tau=strategy.rag_key_tau)
++                    run.embed_tokens += n_ans
++                else:
++                    ans_emb = embed_utterance(bundle, answer, layer=strategy.rag_layer)
++                    run.embed_tokens += _n_tokens(bundle, answer)
+                 tone = tone_alignment(bundle, ans_emb, bank)
+-                bank.add(user_text, user_emb, turn_idx)
++                bank.add(user_text, user_emb, turn_idx, anchor=top1 if strategy.rag_key_source == "bank_dev" else None)
+             elif bank is not None:
+                 bank.add(user_text, user_emb, turn_idx)
+ 
+diff --git a/tmem/models.py b/tmem/models.py
+index 8eb163d..c3829f8 100644
+--- a/tmem/models.py
++++ b/tmem/models.py
+@@ -101,6 +101,25 @@ class ModelBundle:
+             raise ValueError("no transformer block list found in model")
+         return best
+ 
++    def bank_layer_indices(self) -> list[int]:
++        """Indices of the layer band whose activations feed the latent bank.
++
++        Same rule as :func:`tmem.kvinject.install_kv_memory`: the middle band
++        of full-attention layers (semantic zone); fallback — the model middle.
++        ``embed_utterance(layer="bank")`` keys RAG by these activations, so the
++        retrieval space coincides with the injected CorrectionLayer space.
++        """
++        blocks = self._find_block_list()
++        cfg = self.model.config
++        layer_types = getattr(cfg, "layer_types", None) or getattr(
++            getattr(cfg, "text_config", None), "layer_types", None
++        )
++        if layer_types:
++            att = [i for i, t in enumerate(layer_types) if "full" in str(t)]
++            n = len(att)
++            return att[max(n // 4, 0): max(3 * n // 4, n // 4 + 1)] or att[1:2]
++        return [len(blocks) // 2]
++
+     def make_memory_hook(
+         self,
+         d_model: int | None = None,
+diff --git a/tmem/semantic.py b/tmem/semantic.py
+index ff48d1b..5a884e0 100644
+--- a/tmem/semantic.py
++++ b/tmem/semantic.py
+@@ -24,13 +24,33 @@ import torch
+ from .memory import CorrectionLayer  # re-export for convenience
+ 
+ 
++@torch.no_grad()
++def band_hidden(bundle, text: str, max_tokens: int = 128) -> torch.Tensor:
++    """Token-level activations at the latent-bank layer band (block inputs).
++
++    Mean over the band indices from :func:`ModelBundle.bank_layer_indices` —
++    the same layer inputs that feed the injected CorrectionLayer. Returns
++    ``(1, L, d)`` float tensor, ready to pour into the bank.
++    """
++    ids = bundle.tokenizer(text, return_tensors="pt", truncation=True, max_length=max_tokens)["input_ids"].to(bundle.device)
++    model = bundle.model.get_encoder() if bundle.kind == "encdec" else bundle.model
++    hs = model(input_ids=ids, output_hidden_states=True).hidden_states
++    idxs = bundle.bank_layer_indices()
++    return torch.stack([hs[i] for i in idxs]).mean(dim=0).float()  # (1, L, d)
++
++
+ @torch.no_grad()
+ def embed_utterance(bundle, text: str, max_tokens: int = 128, layer: str = "last") -> torch.Tensor:
+     """Mean-pooled hidden state of ``text`` at the chosen layer.
+ 
+     layer: ``last`` — финальный слой (базовый RAG); ``mid`` — латентный слой
+-    смыслов (как ключ латентной памяти); ``mean`` — среднее по всем слоям.
++    смыслов (как ключ латентной памяти); ``mean`` — среднее по всем слоям;
++    ``bank`` — входы диапазона слоёв латентного банка
++    (:func:`ModelBundle.bank_layer_indices`), то есть те активации, которыми
++    питается инжектируемый CorrectionLayer.
+     """
++    if layer == "bank":
++        return band_hidden(bundle, text, max_tokens).mean(dim=1).squeeze(0)  # (d,)
+     ids = bundle.tokenizer(text, return_tensors="pt", truncation=True, max_length=max_tokens)["input_ids"].to(bundle.device)
+     model = bundle.model.get_encoder() if bundle.kind == "encdec" else bundle.model
+     hs = model(input_ids=ids, output_hidden_states=True).hidden_states
+@@ -68,39 +88,60 @@ class RagBank:
+     """
+ 
+     def __init__(self, d_model: int, crit: float = 0.95, capacity: int = 256,
+-                 device: torch.device | str = "cpu", centered: bool = True) -> None:
++                 device: torch.device | str = "cpu", centered: bool = True,
++                 anchored: bool = False, anchor_gate: float = 0.85) -> None:
+         self.d_model = d_model
+         self.crit = crit
+         self.capacity = capacity
+         self.device = torch.device(device)
+         self.centered = centered
++        # anchored: entries are (anchor, deviation) pairs — the anchor is the
++        # dominant latent-bank slot at ingest time (the cluster centre), the
++        # deviation is what remains after subtracting it. Retrieval gates by
++        # anchor similarity (same cluster) and ranks by deviation (the fact
++        # within the cluster). Per-cluster centreing replaces the global one.
++        self.anchored = anchored
++        self.anchor_gate = anchor_gate
+         self.reset()
+ 
+     def reset(self) -> None:
+         self.embeds = torch.zeros(0, self.d_model, device=self.device)
+         self.raw_embeds = torch.zeros(0, self.d_model, device=self.device)
++        self.anchors = torch.zeros(0, self.d_model, device=self.device)
++        self.has_anchor: list[bool] = []
+         self.texts: list[str] = []
+         self.turns: list[int] = []
+         self.mean = torch.zeros(self.d_model, device=self.device)
+         self._n = 0
+         self.stats = {"adds": 0, "upserts": 0, "evictions": 0}
+ 
+-    def _vec(self, emb: torch.Tensor) -> torch.Tensor:
+-        """Centre by the running topic and L2-normalise (raw if not centered)."""
+-        v = emb - self.mean if self.centered else emb
++    def _vec(self, emb: torch.Tensor, anchor: torch.Tensor | None = None) -> torch.Tensor:
++        """Normalise for storage/retrieval.
++
++        anchored: subtract the entry's own cluster anchor (dominant bank
++        slot) — deviation-from-cluster coding; otherwise centre by the running
++        topic and L2-normalise (raw if not centered).
++        """
++        if self.anchored:
++            v = emb - anchor if anchor is not None else emb
++        else:
++            v = emb - self.mean if self.centered else emb
+         return v / max(float(v.norm()), 1e-8)
+ 
+     @torch.no_grad()
+-    def add(self, text: str, emb: torch.Tensor, turn: int = 0) -> None:
++    def add(self, text: str, emb: torch.Tensor, turn: int = 0,
++            anchor: torch.Tensor | None = None) -> None:
+         # Questions are *lookup keys*, not content: storing them would let a
+         # probe's embedding upsert-overwrite the very fact it asks about.
+         if text.strip().endswith("?"):
+             return
+         emb = emb.float().to(self.device)
++        if anchor is not None:
++            anchor = anchor.float().to(self.device)
+         # Centre by the topic centroid *of previously seen utterances* (the
+         # first utterance has no mean to subtract), then grow the centroid.
+-        probe = self._vec(emb)
+-        if self.centered:
++        probe = self._vec(emb, anchor)
++        if self.centered and not self.anchored:
+             self._n += 1
+             self.mean = (self.mean * (self._n - 1) + emb) / self._n
+         if self.embeds.numel():
+@@ -111,23 +152,30 @@ class RagBank:
+                 self.embeds[best] = probe
+                 self.turns[best] = turn
+                 self.raw_embeds[best] = torch.nn.functional.normalize(emb, dim=0)
++                if anchor is not None:
++                    self.anchors[best] = torch.nn.functional.normalize(anchor, dim=0)
++                    self.has_anchor[best] = True
+                 self.stats["upserts"] += 1
+                 return
+         if len(self.texts) >= self.capacity:
+             self.embeds = self.embeds[1:]
+             self.raw_embeds = self.raw_embeds[1:]
++            self.anchors = self.anchors[1:]
++            self.has_anchor = self.has_anchor[1:]
+             self.texts = self.texts[1:]
+             self.turns = self.turns[1:]
+             self.stats["evictions"] += 1
+         self.embeds = torch.cat([self.embeds, probe.view(1, -1)])
+         self.raw_embeds = torch.cat([self.raw_embeds, torch.nn.functional.normalize(emb, dim=0).view(1, -1)])
++        self.anchors = torch.cat([self.anchors, torch.nn.functional.normalize(anchor, dim=0).view(1, -1) if anchor is not None else torch.zeros(1, self.d_model, device=self.device)])
++        self.has_anchor.append(anchor is not None)
+         self.texts.append(text)
+         self.turns.append(turn)
+         self.stats["adds"] += 1
+ 
+     @torch.no_grad()
+     def retrieve(self, query: torch.Tensor, k: int = 4, gist: torch.Tensor | None = None,
+-                 lam: float = 0.0) -> list[tuple[str, int, float]]:
++                 lam: float = 0.0, anchor: torch.Tensor | None = None) -> list[tuple[str, int, float]]:
+         """``[(text, turn, score)]`` ranked by cos(q', stored span).
+ 
+         With ``centered`` the ranking is *deviation-vs-deviation* — the topic
+@@ -140,8 +188,22 @@ class RagBank:
+         q = query.float().to(self.device)
+         if gist is not None and lam > 0:
+             q = q + lam * gist.float().to(self.device)
+-        q = self._vec(q)
++        if anchor is not None:
++            anchor = anchor.float().to(self.device)
++        q = self._vec(q, anchor)
+         sims = self.embeds @ q
++        if self.anchored and anchor is not None and any(self.has_anchor):
++            # Stage 1 — cluster gate: entries whose stored anchor matches the
++            # query's dominant slot (plus anchor-free globals) are eligible.
++            qa = torch.nn.functional.normalize(anchor, dim=0)
++            a_cos = self.anchors @ qa
++            eligible = torch.tensor(
++                [ha or float(a_cos[i]) >= self.anchor_gate for i, ha in enumerate(self.has_anchor)],
++                device=self.device, dtype=torch.bool,
++            )
++            if bool(eligible.any()):
++                sims = sims.where(eligible, torch.tensor(float("-inf"), device=self.device))
++            # no eligible cluster → fall through: rank by deviation globally
+         top = torch.topk(sims, k=min(k, sims.numel()))
+         return [(self.texts[i], self.turns[i], float(s)) for i, s in zip(top.indices.tolist(), top.values.tolist())]
+ 
+diff --git a/tmem/stress.py b/tmem/stress.py
+index 331a269..37ad49c 100644
+--- a/tmem/stress.py
++++ b/tmem/stress.py
+@@ -307,6 +307,8 @@ def analyze_session(runs: dict[str, DialogueRun], reference: str = "classic_kv_f
+             "median_turn_latency_s": round(median, 4),
+             "p90_turn_latency_s": round(p90, 4),
+             "peak_mem_mb": round(max((t.decode.peak_mem_mb or 0.0 for t in run.turns), default=0.0), 2) or None,
++            "kv_injected_slots": s.get("kv_injected_slots"),
++            "kv_steps": s.get("kv_steps"),
+             "memory_stats": s.get("memory_stats"),
+             "rag_stats": s.get("rag_stats"),
+             "probe_details": details,

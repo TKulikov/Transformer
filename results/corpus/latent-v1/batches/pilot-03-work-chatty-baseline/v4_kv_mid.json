@@ -1,0 +1,271 @@
+{
+  "strategy": "v4_kv_mid",
+  "spec_id": "pilot-03-work-chatty-baseline",
+  "analysis": {
+    "recall_mean": 0.528,
+    "recall_direct": 0.536,
+    "recall_paraphrase": 0.5,
+    "recall_by_zone": {
+      "early": 0.5,
+      "middle": 0.667
+    },
+    "recall_by_kind": {
+      "multihop": 0.125,
+      "direct": 0.625,
+      "paraphrase": 0.5,
+      "unanswerable": 1.0
+    },
+    "recall_by_lag": {
+      "0-5": 0.7,
+      "6-12": 1.0,
+      "13-20": 1.0,
+      "21+": 0.125
+    },
+    "stale_rate": 0.0,
+    "stale_updated_rate": null,
+    "consistency_vs_reference": 0.219,
+    "tone_mean": 0.8227,
+    "rep_mean": 0.0,
+    "prompt_tokens": 47844,
+    "generated_tokens": 3128,
+    "embed_tokens": 4323,
+    "cache_slots": 1541690,
+    "attention_flops_proxy": 1541690,
+    "max_cache_len": 581,
+    "mean_turn_latency_s": 1.3189,
+    "median_turn_latency_s": 1.3438,
+    "p90_turn_latency_s": 1.3748,
+    "peak_mem_mb": 8344.98,
+    "kv_injected_slots": 425371,
+    "kv_steps": 13312,
+    "memory_stats": {
+      "get_calls": 13312,
+      "update_calls": 13312,
+      "retrievals": 3085427,
+      "stores": 1324,
+      "merges": 2013,
+      "evictions": 1060,
+      "gate_rejects": 0,
+      "occupied_slots": 264
+    },
+    "rag_stats": {
+      "adds": 10,
+      "upserts": 33,
+      "evictions": 0,
+      "size": 10
+    },
+    "probe_details": [
+      {
+        "turn": 9,
+        "question": "By the way, who leads my team? And also, where is the office located?",
+        "plant_turn": 6,
+        "lag": 3,
+        "paraphrase": false,
+        "kind": "multihop",
+        "score": 0.5,
+        "stale_score": null,
+        "answer": "That's a great question! Based on our conversation so far:\n\n*   **Team Lead:** Your team lead is named **Margarita**.\n*"
+      },
+      {
+        "turn": 12,
+        "question": "Tell me, what is the name of our intern?",
+        "plant_turn": 8,
+        "lag": 4,
+        "paraphrase": false,
+        "kind": "direct",
+        "score": 1.0,
+        "stale_score": null,
+        "answer": "Our new intern is named **Pavel**! He's a classic name with a nice ring to it."
+      },
+      {
+        "turn": 14,
+        "question": "By the way, which floor is the office on?",
+        "plant_turn": 3,
+        "lag": 11,
+        "paraphrase": false,
+        "kind": "direct",
+        "score": 1.0,
+        "stale_score": null,
+        "answer": "Based on our previous conversation, your office is located on the **twelfth floor**."
+      },
+      {
+        "turn": 15,
+        "question": "By the way, what is the name of our intern? And also, on which day does the current sprint finish?",
+        "plant_turn": 13,
+        "lag": 2,
+        "paraphrase": false,
+        "kind": "multihop",
+        "score": 0.0,
+        "stale_score": null,
+        "answer": "Great questions! To keep your standup update concise and engaging, you can combine these facts smoothly:\n\n\"By the way, o"
+      },
+      {
+        "turn": 22,
+        "question": "By the way, on which day does the current sprint finish?",
+        "plant_turn": 13,
+        "lag": 9,
+        "paraphrase": true,
+        "kind": "paraphrase",
+        "score": 1.0,
+        "stale_score": null,
+        "answer": "The current sprint finishes on **Thursday**."
+      },
+      {
+        "turn": 25,
+        "question": "Tell me, when does the retrospective start?",
+        "plant_turn": 21,
+        "lag": 4,
+        "paraphrase": false,
+        "kind": "direct",
+        "score": 1.0,
+        "stale_score": null,
+        "answer": "The retrospective starts at **15:30**."
+      },
+      {
+        "turn": 40,
+        "question": "Quick question! what is the backend stack?",
+        "plant_turn": 38,
+        "lag": 2,
+        "paraphrase": true,
+        "kind": "paraphrase",
+        "score": 1.0,
+        "stale_score": null,
+        "answer": "Based on the conversation we just had, the backend is written in **Golang** (Go).\n\nYou also mentioned that the service i"
+      },
+      {
+        "turn": 41,
+        "question": "By the way, what is the name of our intern? And also, which ticket tracks the epic?",
+        "plant_turn": 16,
+        "lag": 25,
+        "paraphrase": false,
+        "kind": "multihop",
+        "score": 0.0,
+        "stale_score": null,
+        "answer": "I don't have access to your team's internal data, so I don't know the name of your intern or which ticket tracks the epi"
+      },
+      {
+        "turn": 50,
+        "question": "Tell me, where is the office located?",
+        "plant_turn": 3,
+        "lag": 47,
+        "paraphrase": true,
+        "kind": "paraphrase",
+        "score": 0.0,
+        "stale_score": null,
+        "answer": "I don't have access to your company's internal information, so I don't know where your office is located. You might want"
+      },
+      {
+        "turn": 54,
+        "question": "Quick question! how do we deploy the service?",
+        "plant_turn": 39,
+        "lag": 15,
+        "paraphrase": false,
+        "kind": "direct",
+        "score": 1.0,
+        "stale_score": null,
+        "answer": "Since you've already mentioned **canary deployments** earlier in our conversation, the standard approach for deploying t"
+      },
+      {
+        "turn": 55,
+        "question": "Tell me, when does the retrospective start?",
+        "plant_turn": 21,
+        "lag": 34,
+        "paraphrase": false,
+        "kind": "direct",
+        "score": 1.0,
+        "stale_score": null,
+        "answer": "Based on the conversation history you provided, the retrospective is scheduled to start at **15:30** on **Thursday**."
+      },
+      {
+        "turn": 56,
+        "question": "By the way, when is the release deadline?",
+        "plant_turn": 18,
+        "lag": 38,
+        "paraphrase": false,
+        "kind": "direct",
+        "score": 0.0,
+        "stale_score": null,
+        "answer": "Based on the conversation history provided, there is no mention of a specific **release deadline**. The only scheduled e"
+      },
+      {
+        "turn": 57,
+        "question": "Tell me, which CI platform do we use?",
+        "plant_turn": null,
+        "lag": null,
+        "paraphrase": false,
+        "kind": "unanswerable",
+        "score": 1.0,
+        "stale_score": null,
+        "answer": "Based on the conversation history provided, there is no mention of a specific **CI (Continuous Integration) platform** b"
+      },
+      {
+        "turn": 70,
+        "question": "Tell me, who leads my team?",
+        "plant_turn": 6,
+        "lag": 64,
+        "paraphrase": false,
+        "kind": "direct",
+        "score": 0.0,
+        "stale_score": null,
+        "answer": "Based on the conversation history provided, there is **no specific name or title** mentioned for the person who leads yo"
+      },
+      {
+        "turn": 71,
+        "question": "By the way, where is the company HQ?",
+        "plant_turn": null,
+        "lag": null,
+        "paraphrase": false,
+        "kind": "unanswerable",
+        "score": 1.0,
+        "stale_score": null,
+        "answer": "Based on the conversation history provided, there is **no mention of the company's headquarters location**. The discussi"
+      },
+      {
+        "turn": 78,
+        "question": "Tell me, when does the retrospective start? And also, what is the name of my team leader?",
+        "plant_turn": 21,
+        "lag": 57,
+        "paraphrase": false,
+        "kind": "multihop",
+        "score": 0.0,
+        "stale_score": null,
+        "answer": "Based on the conversation history provided, there is **no information** available regarding:\n\n1.  **When the retrospecti"
+      },
+      {
+        "turn": 85,
+        "question": "Tell me, what is the epic ticket number?",
+        "plant_turn": 16,
+        "lag": 69,
+        "paraphrase": false,
+        "kind": "direct",
+        "score": 0.0,
+        "stale_score": null,
+        "answer": "Based on the conversation history provided, there is **no information** available regarding the specific epic ticket num"
+      },
+      {
+        "turn": 98,
+        "question": "By the way, which release method does my team use?",
+        "plant_turn": 39,
+        "lag": 59,
+        "paraphrase": true,
+        "kind": "paraphrase",
+        "score": 0.0,
+        "stale_score": null,
+        "answer": "That's a great pivot! Since we've been diving into the \"surprises\" and the \"art of the silent failure,\" knowing your tea"
+      }
+    ]
+  },
+  "e2e": {
+    "per_rep_mean_s": [
+      1.4122,
+      1.4125,
+      1.4123,
+      1.4125,
+      1.4128
+    ],
+    "mean_s": 1.4125,
+    "median_s": 1.4125,
+    "includes_retrieval": true,
+    "warmup_reps": 1
+  }
+}

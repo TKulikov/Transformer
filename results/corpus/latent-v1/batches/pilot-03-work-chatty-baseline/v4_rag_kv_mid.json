@@ -1,0 +1,271 @@
+{
+  "strategy": "v4_rag_kv_mid",
+  "spec_id": "pilot-03-work-chatty-baseline",
+  "analysis": {
+    "recall_mean": 0.722,
+    "recall_direct": 0.714,
+    "recall_paraphrase": 0.75,
+    "recall_by_zone": {
+      "early": 0.667,
+      "middle": 1.0
+    },
+    "recall_by_kind": {
+      "multihop": 0.5,
+      "direct": 0.75,
+      "paraphrase": 0.75,
+      "unanswerable": 1.0
+    },
+    "recall_by_lag": {
+      "0-5": 0.8,
+      "6-12": 0.5,
+      "13-20": 1.0,
+      "21+": 0.625
+    },
+    "stale_rate": 0.0,
+    "stale_updated_rate": null,
+    "consistency_vs_reference": 0.306,
+    "tone_mean": 0.8238,
+    "rep_mean": 0.0009,
+    "prompt_tokens": 54117,
+    "generated_tokens": 3096,
+    "embed_tokens": 4285,
+    "cache_slots": 1717004,
+    "attention_flops_proxy": 1717004,
+    "max_cache_len": 655,
+    "mean_turn_latency_s": 1.3349,
+    "median_turn_latency_s": 1.3824,
+    "p90_turn_latency_s": 1.3912,
+    "peak_mem_mb": 8357.53,
+    "kv_injected_slots": 421275,
+    "kv_steps": 13184,
+    "memory_stats": {
+      "get_calls": 13184,
+      "update_calls": 13184,
+      "retrievals": 3082334,
+      "stores": 1798,
+      "merges": 2296,
+      "evictions": 1534,
+      "gate_rejects": 0,
+      "occupied_slots": 264
+    },
+    "rag_stats": {
+      "adds": 13,
+      "upserts": 30,
+      "evictions": 0,
+      "size": 13
+    },
+    "probe_details": [
+      {
+        "turn": 9,
+        "question": "By the way, who leads my team? And also, where is the office located?",
+        "plant_turn": 6,
+        "lag": 3,
+        "paraphrase": false,
+        "kind": "multihop",
+        "score": 0.5,
+        "stale_score": null,
+        "answer": "Based on the notes you provided, here is the information:\n\n*   **Team Lead:** Your team lead is named **Margarita**.\n*"
+      },
+      {
+        "turn": 12,
+        "question": "Tell me, what is the name of our intern?",
+        "plant_turn": 8,
+        "lag": 4,
+        "paraphrase": false,
+        "kind": "direct",
+        "score": 1.0,
+        "stale_score": null,
+        "answer": "Our new intern is named **Pavel**!"
+      },
+      {
+        "turn": 14,
+        "question": "By the way, which floor is the office on?",
+        "plant_turn": 3,
+        "lag": 11,
+        "paraphrase": false,
+        "kind": "direct",
+        "score": 0.0,
+        "stale_score": null,
+        "answer": "Based on the notes provided, there is no mention of the specific floor number where the office is located. The only loca"
+      },
+      {
+        "turn": 15,
+        "question": "By the way, what is the name of our intern? And also, on which day does the current sprint finish?",
+        "plant_turn": 13,
+        "lag": 2,
+        "paraphrase": false,
+        "kind": "multihop",
+        "score": 0.5,
+        "stale_score": null,
+        "answer": "Based on the notes provided, here is the information you requested:\n\n*   **Intern's Name:** Our new intern is named **Pa"
+      },
+      {
+        "turn": 22,
+        "question": "By the way, on which day does the current sprint finish?",
+        "plant_turn": 13,
+        "lag": 9,
+        "paraphrase": true,
+        "kind": "paraphrase",
+        "score": 1.0,
+        "stale_score": null,
+        "answer": "Based on the notes provided, the current sprint ends on **Thursday**."
+      },
+      {
+        "turn": 25,
+        "question": "Tell me, when does the retrospective start?",
+        "plant_turn": 21,
+        "lag": 4,
+        "paraphrase": false,
+        "kind": "direct",
+        "score": 1.0,
+        "stale_score": null,
+        "answer": "Based on the notes provided, the retrospective starts at **15:30**."
+      },
+      {
+        "turn": 40,
+        "question": "Quick question! what is the backend stack?",
+        "plant_turn": 38,
+        "lag": 2,
+        "paraphrase": true,
+        "kind": "paraphrase",
+        "score": 1.0,
+        "stale_score": null,
+        "answer": "Based on the dialogue notes you provided, the backend is written in **Golang** (Go).\n\nThe conversation explicitly mentio"
+      },
+      {
+        "turn": 41,
+        "question": "By the way, what is the name of our intern? And also, which ticket tracks the epic?",
+        "plant_turn": 16,
+        "lag": 25,
+        "paraphrase": false,
+        "kind": "multihop",
+        "score": 0.5,
+        "stale_score": null,
+        "answer": "Based on the dialogue notes you provided:\n\n*   **Intern's Name:** The intern is called **Pavel**.\n*   **Epic Ticket Numb"
+      },
+      {
+        "turn": 50,
+        "question": "Tell me, where is the office located?",
+        "plant_turn": 3,
+        "lag": 47,
+        "paraphrase": true,
+        "kind": "paraphrase",
+        "score": 0.0,
+        "stale_score": null,
+        "answer": "Based on the dialogue notes you provided, there is **no mention of the office location**.\n\nThe notes contain details abo"
+      },
+      {
+        "turn": 54,
+        "question": "Quick question! how do we deploy the service?",
+        "plant_turn": 39,
+        "lag": 15,
+        "paraphrase": false,
+        "kind": "direct",
+        "score": 1.0,
+        "stale_score": null,
+        "answer": "Based on the notes you provided, the service is deployed via a **canary release**.\n\nThe notes specifically mention: *\"Gu"
+      },
+      {
+        "turn": 55,
+        "question": "Tell me, when does the retrospective start?",
+        "plant_turn": 21,
+        "lag": 34,
+        "paraphrase": false,
+        "kind": "direct",
+        "score": 0.0,
+        "stale_score": null,
+        "answer": "Based on the dialogue notes you provided, there is **no mention of when the retrospective starts**.\n\nThe notes contain d"
+      },
+      {
+        "turn": 56,
+        "question": "By the way, when is the release deadline?",
+        "plant_turn": 18,
+        "lag": 38,
+        "paraphrase": false,
+        "kind": "direct",
+        "score": 1.0,
+        "stale_score": null,
+        "answer": "Based on the dialogue notes you provided, the release deadline is **June 3**.\n\nThe notes specifically mention: *\"Guess w"
+      },
+      {
+        "turn": 57,
+        "question": "Tell me, which CI platform do we use?",
+        "plant_turn": null,
+        "lag": null,
+        "paraphrase": false,
+        "kind": "unanswerable",
+        "score": 1.0,
+        "stale_score": null,
+        "answer": "Based on the dialogue notes you provided, there is **no mention of the specific CI (Continuous Integration) platform** b"
+      },
+      {
+        "turn": 70,
+        "question": "Tell me, who leads my team?",
+        "plant_turn": 6,
+        "lag": 64,
+        "paraphrase": false,
+        "kind": "direct",
+        "score": 1.0,
+        "stale_score": null,
+        "answer": "Guess what! My team lead is called **Margarita**. I was going to tell you all morning!"
+      },
+      {
+        "turn": 71,
+        "question": "By the way, where is the company HQ?",
+        "plant_turn": null,
+        "lag": null,
+        "paraphrase": false,
+        "kind": "unanswerable",
+        "score": 1.0,
+        "stale_score": null,
+        "answer": "Based on the dialogue notes you provided, there is **no specific information** regarding the location of the company hea"
+      },
+      {
+        "turn": 78,
+        "question": "Tell me, when does the retrospective start? And also, what is the name of my team leader?",
+        "plant_turn": 21,
+        "lag": 57,
+        "paraphrase": false,
+        "kind": "multihop",
+        "score": 0.5,
+        "stale_score": null,
+        "answer": "Guess what! My team lead is called **Margarita**. I was going to tell you all morning!\n\nAs for the retrospective, the no"
+      },
+      {
+        "turn": 85,
+        "question": "Tell me, what is the epic ticket number?",
+        "plant_turn": 16,
+        "lag": 69,
+        "paraphrase": false,
+        "kind": "direct",
+        "score": 1.0,
+        "stale_score": null,
+        "answer": "Guess what! The epic ticket number is **PRJ-482**. I was going to tell you all morning!"
+      },
+      {
+        "turn": 98,
+        "question": "By the way, which release method does my team use?",
+        "plant_turn": 39,
+        "lag": 59,
+        "paraphrase": true,
+        "kind": "paraphrase",
+        "score": 1.0,
+        "stale_score": null,
+        "answer": "Based on the notes you provided, your team uses a **canary release** method.\n\nThe dialogue explicitly states: *\"Guess wh"
+      }
+    ]
+  },
+  "e2e": {
+    "per_rep_mean_s": [
+      1.429,
+      1.4297,
+      1.4291,
+      1.4298,
+      1.4304
+    ],
+    "mean_s": 1.4296,
+    "median_s": 1.4297,
+    "includes_retrieval": true,
+    "warmup_reps": 1
+  }
+}

@@ -1,0 +1,271 @@
+{
+  "strategy": "rag_bank_key",
+  "spec_id": "pilot-00-work-terse-baseline",
+  "analysis": {
+    "recall_mean": 0.722,
+    "recall_direct": 0.643,
+    "recall_paraphrase": 1.0,
+    "recall_by_zone": {
+      "early": 0.75,
+      "middle": 0.7
+    },
+    "recall_by_kind": {
+      "direct": 0.75,
+      "multihop": 0.25,
+      "paraphrase": 1.0,
+      "unanswerable": 1.0
+    },
+    "recall_by_lag": {
+      "0-5": 0.875,
+      "6-12": 0.667,
+      "13-20": 1.0,
+      "21+": 0.562
+    },
+    "stale_rate": 0.0,
+    "stale_updated_rate": null,
+    "consistency_vs_reference": 0.265,
+    "tone_mean": 0.9722,
+    "rep_mean": 0.0009,
+    "prompt_tokens": 46294,
+    "generated_tokens": 3056,
+    "embed_tokens": 3799,
+    "cache_slots": 1456915,
+    "attention_flops_proxy": 1456915,
+    "max_cache_len": 555,
+    "mean_turn_latency_s": 1.1555,
+    "median_turn_latency_s": 1.2052,
+    "p90_turn_latency_s": 1.2347,
+    "peak_mem_mb": 8329.01,
+    "kv_injected_slots": null,
+    "kv_steps": null,
+    "memory_stats": {
+      "get_calls": 400,
+      "update_calls": 200,
+      "retrievals": 10797,
+      "stores": 31,
+      "merges": 166,
+      "evictions": 0,
+      "gate_rejects": 0,
+      "occupied_slots": 31
+    },
+    "rag_stats": {
+      "adds": 4,
+      "upserts": 43,
+      "evictions": 0,
+      "size": 4
+    },
+    "probe_details": [
+      {
+        "turn": 23,
+        "question": "Question: when does the retrospective start?",
+        "plant_turn": 14,
+        "lag": 9,
+        "paraphrase": false,
+        "kind": "direct",
+        "score": 1.0,
+        "stale_score": null,
+        "answer": "The retrospective starts at **15:30**."
+      },
+      {
+        "turn": 36,
+        "question": "Question: when does my sprint end?",
+        "plant_turn": 31,
+        "lag": 5,
+        "paraphrase": false,
+        "kind": "direct",
+        "score": 1.0,
+        "stale_score": null,
+        "answer": "Based on the notes we've discussed, your current sprint ends on **Thursday**."
+      },
+      {
+        "turn": 38,
+        "question": "Question: when does my sprint end?",
+        "plant_turn": 31,
+        "lag": 7,
+        "paraphrase": false,
+        "kind": "direct",
+        "score": 1.0,
+        "stale_score": null,
+        "answer": "Based on the notes we've discussed, your current sprint ends on **Thursday**."
+      },
+      {
+        "turn": 42,
+        "question": "What is the name of our intern? And also, what is the name of my team leader?",
+        "plant_turn": 37,
+        "lag": 5,
+        "paraphrase": false,
+        "kind": "multihop",
+        "score": 0.5,
+        "stale_score": null,
+        "answer": "Based on the notes we've discussed:\n\n*   The name of our new intern is **Pavel**.\n*   The name of your team lead is"
+      },
+      {
+        "turn": 48,
+        "question": "Question: where is the office located?",
+        "plant_turn": 43,
+        "lag": 5,
+        "paraphrase": true,
+        "kind": "paraphrase",
+        "score": 1.0,
+        "stale_score": null,
+        "answer": "Based on the notes we've discussed, the office is located on the **twelfth floor**."
+      },
+      {
+        "turn": 50,
+        "question": "Question: what is the name of my team leader?",
+        "plant_turn": 35,
+        "lag": 15,
+        "paraphrase": true,
+        "kind": "paraphrase",
+        "score": 1.0,
+        "stale_score": null,
+        "answer": "Based on the notes we've discussed, your team lead is named **Margarita**."
+      },
+      {
+        "turn": 57,
+        "question": "Question: which CI platform do we use?",
+        "plant_turn": null,
+        "lag": null,
+        "paraphrase": false,
+        "kind": "unanswerable",
+        "score": 1.0,
+        "stale_score": null,
+        "answer": "Based on the notes we've discussed so far, there is no information recorded regarding the **CI platform** you use.\n\nHere"
+      },
+      {
+        "turn": 58,
+        "question": "Question: what is the name of my team leader?",
+        "plant_turn": 35,
+        "lag": 23,
+        "paraphrase": true,
+        "kind": "paraphrase",
+        "score": 1.0,
+        "stale_score": null,
+        "answer": "Based on the notes we've discussed, your team lead is named **Margarita**."
+      },
+      {
+        "turn": 59,
+        "question": "What is the epic ticket number?",
+        "plant_turn": 54,
+        "lag": 5,
+        "paraphrase": false,
+        "kind": "direct",
+        "score": 1.0,
+        "stale_score": null,
+        "answer": "Based on the notes we've discussed, the epic ticket number is **PRJ-482**."
+      },
+      {
+        "turn": 60,
+        "question": "When does the retrospective start?",
+        "plant_turn": 14,
+        "lag": 46,
+        "paraphrase": false,
+        "kind": "direct",
+        "score": 1.0,
+        "stale_score": null,
+        "answer": "Based on the notes we've discussed, the retrospective starts at **15:30**."
+      },
+      {
+        "turn": 64,
+        "question": "What is the epic ticket number? And also, who is the new intern?",
+        "plant_turn": 54,
+        "lag": 10,
+        "paraphrase": false,
+        "kind": "multihop",
+        "score": 0.0,
+        "stale_score": null,
+        "answer": "Based on the notes we've discussed so far, here is the information you requested:\n\n*   **Epic Ticket Number**: **PRJ-48"
+      },
+      {
+        "turn": 65,
+        "question": "Question: when does my sprint end? And also, what is the name of my team leader?",
+        "plant_turn": 35,
+        "lag": 30,
+        "paraphrase": false,
+        "kind": "multihop",
+        "score": 0.5,
+        "stale_score": null,
+        "answer": "Based on the notes we've discussed so far, here is the information you requested:\n\n*   **Team Leader**: **Margarita**\n*"
+      },
+      {
+        "turn": 81,
+        "question": "How do we deploy the service?",
+        "plant_turn": 28,
+        "lag": 53,
+        "paraphrase": false,
+        "kind": "direct",
+        "score": 0.0,
+        "stale_score": null,
+        "answer": "Based on the consolidated notes we have gathered so far, there is **no specific information recorded** regarding the dep"
+      },
+      {
+        "turn": 82,
+        "question": "Question: which floor is the office on?",
+        "plant_turn": 43,
+        "lag": 39,
+        "paraphrase": false,
+        "kind": "direct",
+        "score": 1.0,
+        "stale_score": null,
+        "answer": "The office is on the **twelfth floor**."
+      },
+      {
+        "turn": 83,
+        "question": "Question: when does the retrospective start?",
+        "plant_turn": 14,
+        "lag": 69,
+        "paraphrase": false,
+        "kind": "direct",
+        "score": 0.0,
+        "stale_score": null,
+        "answer": "Based on the consolidated notes we have gathered so far, there is **no specific information recorded** regarding the sta"
+      },
+      {
+        "turn": 89,
+        "question": "Question: what is the name of our intern? And also, at what time is the retro?",
+        "plant_turn": 37,
+        "lag": 52,
+        "paraphrase": false,
+        "kind": "multihop",
+        "score": 0.0,
+        "stale_score": null,
+        "answer": "Based on the consolidated notes we have gathered so far, there is **no specific information recorded** regarding the nam"
+      },
+      {
+        "turn": 90,
+        "question": "Question: where is the company HQ?",
+        "plant_turn": null,
+        "lag": null,
+        "paraphrase": false,
+        "kind": "unanswerable",
+        "score": 1.0,
+        "stale_score": null,
+        "answer": "Based on the consolidated notes we have gathered so far, there is **no specific information recorded** regarding the loc"
+      },
+      {
+        "turn": 97,
+        "question": "Question: where is the office located?",
+        "plant_turn": 43,
+        "lag": 54,
+        "paraphrase": true,
+        "kind": "paraphrase",
+        "score": 1.0,
+        "stale_score": null,
+        "answer": "Based on the consolidated notes we have gathered so far, the office is located on the **twelfth floor**."
+      }
+    ]
+  },
+  "e2e": {
+    "per_rep_mean_s": [
+      1.2332,
+      1.2376,
+      1.2464,
+      1.3038,
+      1.2918
+    ],
+    "mean_s": 1.2626,
+    "median_s": 1.2464,
+    "includes_retrieval": true,
+    "warmup_reps": 1
+  }
+}

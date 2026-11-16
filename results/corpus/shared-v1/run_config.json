@@ -1,0 +1,171 @@
+{
+  "created_at": "2026-11-16T19:19:18+00:00",
+  "specs": [
+    {
+      "spec_id": "pilot-00-work-terse-baseline",
+      "topic": "work",
+      "persona": "terse",
+      "scenario": "baseline",
+      "target_turns": 100,
+      "seed": 1000,
+      "n_facts": 10,
+      "probes_per_zone": 4,
+      "n_unanswerable": 2,
+      "n_temporal": 2
+    },
+    {
+      "spec_id": "pilot-01-work-terse-updates",
+      "topic": "work",
+      "persona": "terse",
+      "scenario": "updates",
+      "target_turns": 100,
+      "seed": 1001,
+      "n_facts": 10,
+      "probes_per_zone": 4,
+      "n_unanswerable": 2,
+      "n_temporal": 2
+    },
+    {
+      "spec_id": "pilot-02-work-terse-adversarial",
+      "topic": "work",
+      "persona": "terse",
+      "scenario": "adversarial",
+      "target_turns": 100,
+      "seed": 1002,
+      "n_facts": 10,
+      "probes_per_zone": 4,
+      "n_unanswerable": 2,
+      "n_temporal": 2
+    },
+    {
+      "spec_id": "pilot-03-work-chatty-baseline",
+      "topic": "work",
+      "persona": "chatty",
+      "scenario": "baseline",
+      "target_turns": 100,
+      "seed": 1003,
+      "n_facts": 10,
+      "probes_per_zone": 4,
+      "n_unanswerable": 2,
+      "n_temporal": 2
+    },
+    {
+      "spec_id": "pilot-04-work-chatty-updates",
+      "topic": "work",
+      "persona": "chatty",
+      "scenario": "updates",
+      "target_turns": 100,
+      "seed": 1004,
+      "n_facts": 10,
+      "probes_per_zone": 4,
+      "n_unanswerable": 2,
+      "n_temporal": 2
+    },
+    {
+      "spec_id": "pilot-05-work-chatty-adversarial",
+      "topic": "work",
+      "persona": "chatty",
+      "scenario": "adversarial",
+      "target_turns": 100,
+      "seed": 1005,
+      "n_facts": 10,
+      "probes_per_zone": 4,
+      "n_unanswerable": 2,
+      "n_temporal": 2
+    },
+    {
+      "spec_id": "pilot-06-travel-terse-baseline",
+      "topic": "travel",
+      "persona": "terse",
+      "scenario": "baseline",
+      "target_turns": 100,
+      "seed": 1006,
+      "n_facts": 10,
+      "probes_per_zone": 4,
+      "n_unanswerable": 2,
+      "n_temporal": 2
+    },
+    {
+      "spec_id": "pilot-07-travel-terse-updates",
+      "topic": "travel",
+      "persona": "terse",
+      "scenario": "updates",
+      "target_turns": 100,
+      "seed": 1007,
+      "n_facts": 10,
+      "probes_per_zone": 4,
+      "n_unanswerable": 2,
+      "n_temporal": 2
+    },
+    {
+      "spec_id": "pilot-08-travel-terse-adversarial",
+      "topic": "travel",
+      "persona": "terse",
+      "scenario": "adversarial",
+      "target_turns": 100,
+      "seed": 1008,
+      "n_facts": 10,
+      "probes_per_zone": 4,
+      "n_unanswerable": 2,
+      "n_temporal": 2
+    },
+    {
+      "spec_id": "pilot-09-travel-chatty-baseline",
+      "topic": "travel",
+      "persona": "chatty",
+      "scenario": "baseline",
+      "target_turns": 100,
+      "seed": 1009,
+      "n_facts": 10,
+      "probes_per_zone": 4,
+      "n_unanswerable": 2,
+      "n_temporal": 2
+    },
+    {
+      "spec_id": "pilot-10-travel-chatty-updates",
+      "topic": "travel",
+      "persona": "chatty",
+      "scenario": "updates",
+      "target_turns": 100,
+      "seed": 1010,
+      "n_facts": 10,
+      "probes_per_zone": 4,
+      "n_unanswerable": 2,
+      "n_temporal": 2
+    },
+    {
+      "spec_id": "pilot-11-travel-chatty-adversarial",
+      "topic": "travel",
+      "persona": "chatty",
+      "scenario": "adversarial",
+      "target_turns": 100,
+      "seed": 1011,
+      "n_facts": 10,
+      "probes_per_zone": 4,
+      "n_unanswerable": 2,
+      "n_temporal": 2
+    }
+  ],
+  "strategies": [
+    "classic_kv_full",
+    "rag_bank_key",
+    "v4_rag_kv_bank"
+  ],
+  "run_id": "shared-v1",
+  "preset": "pilot",
+  "model": "qwen35-4b",
+  "device": "cuda",
+  "gpu": "AMD Radeon Graphics",
+  "torch": "2.9.1+rocm6.3",
+  "dtype": "bfloat16",
+  "git_sha": "09c9ec1",
+  "protocol": {
+    "decoding": "greedy",
+    "seed": 0,
+    "max_new_tokens": 32,
+    "kv_budget": 128,
+    "latency_repeats": 5,
+    "warmup_reps": 1,
+    "latency": "end-to-end wall time of run_session incl. embedding/retrieval"
+  }
+}

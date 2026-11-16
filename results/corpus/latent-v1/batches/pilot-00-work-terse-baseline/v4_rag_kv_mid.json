@@ -1,0 +1,271 @@
+{
+  "strategy": "v4_rag_kv_mid",
+  "spec_id": "pilot-00-work-terse-baseline",
+  "analysis": {
+    "recall_mean": 0.861,
+    "recall_direct": 0.821,
+    "recall_paraphrase": 1.0,
+    "recall_by_zone": {
+      "early": 0.875,
+      "middle": 0.85
+    },
+    "recall_by_kind": {
+      "direct": 0.875,
+      "multihop": 0.625,
+      "paraphrase": 1.0,
+      "unanswerable": 1.0
+    },
+    "recall_by_lag": {
+      "0-5": 1.0,
+      "6-12": 0.833,
+      "13-20": 1.0,
+      "21+": 0.75
+    },
+    "stale_rate": 0.0,
+    "stale_updated_rate": null,
+    "consistency_vs_reference": 0.225,
+    "tone_mean": 0.8185,
+    "rep_mean": 0.0,
+    "prompt_tokens": 46460,
+    "generated_tokens": 2988,
+    "embed_tokens": 3738,
+    "cache_slots": 1426349,
+    "attention_flops_proxy": 1426349,
+    "max_cache_len": 577,
+    "mean_turn_latency_s": 1.2426,
+    "median_turn_latency_s": 1.3236,
+    "p90_turn_latency_s": 1.3539,
+    "peak_mem_mb": 8339.49,
+    "kv_injected_slots": 407560,
+    "kv_steps": 12752,
+    "memory_stats": {
+      "get_calls": 12752,
+      "update_calls": 12752,
+      "retrievals": 2930247,
+      "stores": 1163,
+      "merges": 2018,
+      "evictions": 901,
+      "gate_rejects": 0,
+      "occupied_slots": 262
+    },
+    "rag_stats": {
+      "adds": 22,
+      "upserts": 25,
+      "evictions": 0,
+      "size": 22
+    },
+    "probe_details": [
+      {
+        "turn": 23,
+        "question": "Question: when does the retrospective start?",
+        "plant_turn": 14,
+        "lag": 9,
+        "paraphrase": false,
+        "kind": "direct",
+        "score": 1.0,
+        "stale_score": null,
+        "answer": "The retrospective starts at **15:30**."
+      },
+      {
+        "turn": 36,
+        "question": "Question: when does my sprint end?",
+        "plant_turn": 31,
+        "lag": 5,
+        "paraphrase": false,
+        "kind": "direct",
+        "score": 1.0,
+        "stale_score": null,
+        "answer": "Your current sprint ends on **Thursday**."
+      },
+      {
+        "turn": 38,
+        "question": "Question: when does my sprint end?",
+        "plant_turn": 31,
+        "lag": 7,
+        "paraphrase": false,
+        "kind": "direct",
+        "score": 1.0,
+        "stale_score": null,
+        "answer": "Your current sprint ends on **Thursday**.\n\nSince the sprint concludes this week, Thursday's standup will likely be your "
+      },
+      {
+        "turn": 42,
+        "question": "What is the name of our intern? And also, what is the name of my team leader?",
+        "plant_turn": 37,
+        "lag": 5,
+        "paraphrase": false,
+        "kind": "multihop",
+        "score": 1.0,
+        "stale_score": null,
+        "answer": "Our new intern is named **Pavel**, and your team lead is **Margarita**."
+      },
+      {
+        "turn": 48,
+        "question": "Question: where is the office located?",
+        "plant_turn": 43,
+        "lag": 5,
+        "paraphrase": true,
+        "kind": "paraphrase",
+        "score": 1.0,
+        "stale_score": null,
+        "answer": "The office is located on the **twelfth floor**."
+      },
+      {
+        "turn": 50,
+        "question": "Question: what is the name of my team leader?",
+        "plant_turn": 35,
+        "lag": 15,
+        "paraphrase": true,
+        "kind": "paraphrase",
+        "score": 1.0,
+        "stale_score": null,
+        "answer": "Your team lead is **Margarita**."
+      },
+      {
+        "turn": 57,
+        "question": "Question: which CI platform do we use?",
+        "plant_turn": null,
+        "lag": null,
+        "paraphrase": false,
+        "kind": "unanswerable",
+        "score": 1.0,
+        "stale_score": null,
+        "answer": "Based on the context we've established, here is the updated summary to ensure everything is aligned for the upcoming spr"
+      },
+      {
+        "turn": 58,
+        "question": "Question: what is the name of my team leader?",
+        "plant_turn": 35,
+        "lag": 23,
+        "paraphrase": true,
+        "kind": "paraphrase",
+        "score": 1.0,
+        "stale_score": null,
+        "answer": "Your team lead is **Margarita**."
+      },
+      {
+        "turn": 59,
+        "question": "What is the epic ticket number?",
+        "plant_turn": 54,
+        "lag": 5,
+        "paraphrase": false,
+        "kind": "direct",
+        "score": 1.0,
+        "stale_score": null,
+        "answer": "The epic ticket number is **PRJ-482**."
+      },
+      {
+        "turn": 60,
+        "question": "When does the retrospective start?",
+        "plant_turn": 14,
+        "lag": 46,
+        "paraphrase": false,
+        "kind": "direct",
+        "score": 1.0,
+        "stale_score": null,
+        "answer": "The retrospective starts at **15:30**."
+      },
+      {
+        "turn": 64,
+        "question": "What is the epic ticket number? And also, who is the new intern?",
+        "plant_turn": 54,
+        "lag": 10,
+        "paraphrase": false,
+        "kind": "multihop",
+        "score": 0.5,
+        "stale_score": null,
+        "answer": "The epic ticket number is **PRJ-482**.\n\nRegarding the new intern, our records indicate that **Alex** has just joined the"
+      },
+      {
+        "turn": 65,
+        "question": "Question: when does my sprint end? And also, what is the name of my team leader?",
+        "plant_turn": 35,
+        "lag": 30,
+        "paraphrase": false,
+        "kind": "multihop",
+        "score": 1.0,
+        "stale_score": null,
+        "answer": "Your sprint ends on **Thursday**, and your team lead is **Margarita**.\n\nJust to recap the other key details we've establ"
+      },
+      {
+        "turn": 81,
+        "question": "How do we deploy the service?",
+        "plant_turn": 28,
+        "lag": 53,
+        "paraphrase": false,
+        "kind": "direct",
+        "score": 0.0,
+        "stale_score": null,
+        "answer": "Based on the notes provided, here is how you should phrase the deployment process for your standup update:\n\n**Deployment"
+      },
+      {
+        "turn": 82,
+        "question": "Question: which floor is the office on?",
+        "plant_turn": 43,
+        "lag": 39,
+        "paraphrase": false,
+        "kind": "direct",
+        "score": 1.0,
+        "stale_score": null,
+        "answer": "The office is on the **twelfth floor**."
+      },
+      {
+        "turn": 83,
+        "question": "Question: when does the retrospective start?",
+        "plant_turn": 14,
+        "lag": 69,
+        "paraphrase": false,
+        "kind": "direct",
+        "score": 1.0,
+        "stale_score": null,
+        "answer": "The retrospective starts at **15:30**."
+      },
+      {
+        "turn": 89,
+        "question": "Question: what is the name of our intern? And also, at what time is the retro?",
+        "plant_turn": 37,
+        "lag": 52,
+        "paraphrase": false,
+        "kind": "multihop",
+        "score": 0.0,
+        "stale_score": null,
+        "answer": "Based on the notes provided, here is the information you requested:\n\n*   **Intern's Name:** The available notes do not c"
+      },
+      {
+        "turn": 90,
+        "question": "Question: where is the company HQ?",
+        "plant_turn": null,
+        "lag": null,
+        "paraphrase": false,
+        "kind": "unanswerable",
+        "score": 1.0,
+        "stale_score": null,
+        "answer": "Based on the notes provided, there is no information regarding the location of the company's headquarters. The only loca"
+      },
+      {
+        "turn": 97,
+        "question": "Question: where is the office located?",
+        "plant_turn": 43,
+        "lag": 54,
+        "paraphrase": true,
+        "kind": "paraphrase",
+        "score": 1.0,
+        "stale_score": null,
+        "answer": "Based on the notes provided, the office is located on the **twelfth floor**."
+      }
+    ]
+  },
+  "e2e": {
+    "per_rep_mean_s": [
+      1.3511,
+      1.3509,
+      1.3514,
+      1.3513,
+      1.3512
+    ],
+    "mean_s": 1.3512,
+    "median_s": 1.3512,
+    "includes_retrieval": true,
+    "warmup_reps": 1
+  }
+}
