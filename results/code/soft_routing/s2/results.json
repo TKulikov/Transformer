@@ -1,0 +1,1746 @@
+{
+  "layer": 15,
+  "k": 6,
+  "n_queries": 45,
+  "metrics": {
+    "oracle_greedy": {
+      "hit@1": 0.689,
+      "hit@3": 0.8,
+      "hit@6": 0.867,
+      "hit@6_ci": [
+        0.756,
+        0.956
+      ],
+      "mrr": 0.754,
+      "route_acc_or_cov": 1.0
+    },
+    "gen_greedy": {
+      "hit@1": 0.267,
+      "hit@3": 0.267,
+      "hit@6": 0.267,
+      "hit@6_ci": [
+        0.133,
+        0.4
+      ],
+      "mrr": 0.267,
+      "route_acc_or_cov": 0.333
+    },
+    "gen_soft_blend": {
+      "hit@1": 0.267,
+      "hit@3": 0.267,
+      "hit@6": 0.267,
+      "hit@6_ci": [
+        0.133,
+        0.4
+      ],
+      "mrr": 0.267,
+      "route_acc_or_cov": 0.533
+    },
+    "gen_soft_blend_m6": {
+      "hit@1": 0.267,
+      "hit@3": 0.333,
+      "hit@6": 0.333,
+      "hit@6_ci": [
+        0.2,
+        0.467
+      ],
+      "mrr": 0.293,
+      "route_acc_or_cov": 1.0
+    },
+    "gen_greedy_centroid": {
+      "hit@1": 0.511,
+      "hit@3": 0.6,
+      "hit@6": 0.6,
+      "hit@6_ci": [
+        0.444,
+        0.733
+      ],
+      "mrr": 0.552,
+      "route_acc_or_cov": 0.667
+    },
+    "gen_soft_centroid": {
+      "hit@1": 0.578,
+      "hit@3": 0.667,
+      "hit@6": 0.667,
+      "hit@6_ci": [
+        0.511,
+        0.8
+      ],
+      "mrr": 0.607,
+      "route_acc_or_cov": 0.933
+    },
+    "gen_soft_centroid_m6": {
+      "hit@1": 0.578,
+      "hit@3": 0.6,
+      "hit@6": 0.667,
+      "hit@6_ci": [
+        0.511,
+        0.8
+      ],
+      "mrr": 0.596,
+      "route_acc_or_cov": 1.0
+    },
+    "gen_soft_centroid_goalonly": {
+      "hit@1": 0.578,
+      "hit@3": 0.667,
+      "hit@6": 0.667,
+      "hit@6_ci": [
+        0.511,
+        0.8
+      ],
+      "mrr": 0.607,
+      "route_acc_or_cov": 0.933
+    },
+    "oracle_soft_centroid": {
+      "hit@1": 0.2,
+      "hit@3": 0.378,
+      "hit@6": 0.489,
+      "hit@6_ci": [
+        0.333,
+        0.622
+      ],
+      "mrr": 0.305,
+      "route_acc_or_cov": 0.889
+    }
+  },
+  "detail": {
+    "oracle_greedy": [
+      {
+        "target": "auth.AuthMiddleware.before",
+        "rank": 1
+      },
+      {
+        "target": "auth.AuthMiddleware.before",
+        "rank": 1
+      },
+      {
+        "target": "auth.AuthMiddleware.before",
+        "rank": 1
+      },
+      {
+        "target": "storage.TaskStore.save_result",
+        "rank": 1
+      },
+      {
+        "target": "storage.TaskStore.save_result",
+        "rank": 1
+      },
+      {
+        "target": "storage.TaskStore.save_result",
+        "rank": 1
+      },
+      {
+        "target": "storage.TaskStore.pending",
+        "rank": 1
+      },
+      {
+        "target": "storage.TaskStore.pending",
+        "rank": 1
+      },
+      {
+        "target": "storage.TaskStore.pending",
+        "rank": 1
+      },
+      {
+        "target": "storage.TaskStore.set_status",
+        "rank": 1
+      },
+      {
+        "target": "storage.TaskStore.set_status",
+        "rank": 1
+      },
+      {
+        "target": "storage.TaskStore.set_status",
+        "rank": 1
+      },
+      {
+        "target": "scheduler.Scheduler.requeue_failed",
+        "rank": 1
+      },
+      {
+        "target": "scheduler.Scheduler.requeue_failed",
+        "rank": 1
+      },
+      {
+        "target": "scheduler.Scheduler.requeue_failed",
+        "rank": 1
+      },
+      {
+        "target": "scheduler.Scheduler.next_batch",
+        "rank": 1
+      },
+      {
+        "target": "scheduler.Scheduler.next_batch",
+        "rank": 1
+      },
+      {
+        "target": "scheduler.Scheduler.next_batch",
+        "rank": 1
+      },
+      {
+        "target": "protocol.encode_message",
+        "rank": 1
+      },
+      {
+        "target": "protocol.encode_message",
+        "rank": 1
+      },
+      {
+        "target": "protocol.encode_message",
+        "rank": 1
+      },
+      {
+        "target": "protocol.decode_message",
+        "rank": null
+      },
+      {
+        "target": "protocol.decode_message",
+        "rank": null
+      },
+      {
+        "target": "protocol.decode_message",
+        "rank": null
+      },
+      {
+        "target": "ratelimit.RateLimiter.allow",
+        "rank": 5
+      },
+      {
+        "target": "ratelimit.RateLimiter.allow",
+        "rank": 5
+      },
+      {
+        "target": "ratelimit.RateLimiter.allow",
+        "rank": 5
+      },
+      {
+        "target": "utils.backoff_delay",
+        "rank": 1
+      },
+      {
+        "target": "utils.backoff_delay",
+        "rank": 1
+      },
+      {
+        "target": "utils.backoff_delay",
+        "rank": 1
+      },
+      {
+        "target": "utils.retry",
+        "rank": null
+      },
+      {
+        "target": "utils.retry",
+        "rank": null
+      },
+      {
+        "target": "utils.retry",
+        "rank": null
+      },
+      {
+        "target": "utils.parse_duration",
+        "rank": 2
+      },
+      {
+        "target": "utils.parse_duration",
+        "rank": 2
+      },
+      {
+        "target": "utils.parse_duration",
+        "rank": 2
+      },
+      {
+        "target": "utils.dedupe",
+        "rank": 3
+      },
+      {
+        "target": "utils.dedupe",
+        "rank": 1
+      },
+      {
+        "target": "utils.dedupe",
+        "rank": 1
+      },
+      {
+        "target": "utils.clamp",
+        "rank": 1
+      },
+      {
+        "target": "utils.clamp",
+        "rank": 1
+      },
+      {
+        "target": "utils.clamp",
+        "rank": 1
+      },
+      {
+        "target": "utils.chunked",
+        "rank": 2
+      },
+      {
+        "target": "utils.chunked",
+        "rank": 1
+      },
+      {
+        "target": "utils.chunked",
+        "rank": 1
+      }
+    ],
+    "gen_greedy": [
+      {
+        "target": "auth.AuthMiddleware.before",
+        "rank": null
+      },
+      {
+        "target": "auth.AuthMiddleware.before",
+        "rank": null
+      },
+      {
+        "target": "auth.AuthMiddleware.before",
+        "rank": null
+      },
+      {
+        "target": "storage.TaskStore.save_result",
+        "rank": 1
+      },
+      {
+        "target": "storage.TaskStore.save_result",
+        "rank": 1
+      },
+      {
+        "target": "storage.TaskStore.save_result",
+        "rank": 1
+      },
+      {
+        "target": "storage.TaskStore.pending",
+        "rank": 1
+      },
+      {
+        "target": "storage.TaskStore.pending",
+        "rank": 1
+      },
+      {
+        "target": "storage.TaskStore.pending",
+        "rank": 1
+      },
+      {
+        "target": "storage.TaskStore.set_status",
+        "rank": 1
+      },
+      {
+        "target": "storage.TaskStore.set_status",
+        "rank": 1
+      },
+      {
+        "target": "storage.TaskStore.set_status",
+        "rank": 1
+      },
+      {
+        "target": "scheduler.Scheduler.requeue_failed",
+        "rank": null
+      },
+      {
+        "target": "scheduler.Scheduler.requeue_failed",
+        "rank": null
+      },
+      {
+        "target": "scheduler.Scheduler.requeue_failed",
+        "rank": null
+      },
+      {
+        "target": "scheduler.Scheduler.next_batch",
+        "rank": null
+      },
+      {
+        "target": "scheduler.Scheduler.next_batch",
+        "rank": null
+      },
+      {
+        "target": "scheduler.Scheduler.next_batch",
+        "rank": null
+      },
+      {
+        "target": "protocol.encode_message",
+        "rank": 1
+      },
+      {
+        "target": "protocol.encode_message",
+        "rank": 1
+      },
+      {
+        "target": "protocol.encode_message",
+        "rank": 1
+      },
+      {
+        "target": "protocol.decode_message",
+        "rank": null
+      },
+      {
+        "target": "protocol.decode_message",
+        "rank": null
+      },
+      {
+        "target": "protocol.decode_message",
+        "rank": null
+      },
+      {
+        "target": "ratelimit.RateLimiter.allow",
+        "rank": null
+      },
+      {
+        "target": "ratelimit.RateLimiter.allow",
+        "rank": null
+      },
+      {
+        "target": "ratelimit.RateLimiter.allow",
+        "rank": null
+      },
+      {
+        "target": "utils.backoff_delay",
+        "rank": null
+      },
+      {
+        "target": "utils.backoff_delay",
+        "rank": null
+      },
+      {
+        "target": "utils.backoff_delay",
+        "rank": null
+      },
+      {
+        "target": "utils.retry",
+        "rank": null
+      },
+      {
+        "target": "utils.retry",
+        "rank": null
+      },
+      {
+        "target": "utils.retry",
+        "rank": null
+      },
+      {
+        "target": "utils.parse_duration",
+        "rank": null
+      },
+      {
+        "target": "utils.parse_duration",
+        "rank": null
+      },
+      {
+        "target": "utils.parse_duration",
+        "rank": null
+      },
+      {
+        "target": "utils.dedupe",
+        "rank": null
+      },
+      {
+        "target": "utils.dedupe",
+        "rank": null
+      },
+      {
+        "target": "utils.dedupe",
+        "rank": null
+      },
+      {
+        "target": "utils.clamp",
+        "rank": null
+      },
+      {
+        "target": "utils.clamp",
+        "rank": null
+      },
+      {
+        "target": "utils.clamp",
+        "rank": null
+      },
+      {
+        "target": "utils.chunked",
+        "rank": null
+      },
+      {
+        "target": "utils.chunked",
+        "rank": null
+      },
+      {
+        "target": "utils.chunked",
+        "rank": null
+      }
+    ],
+    "gen_soft_blend": [
+      {
+        "target": "auth.AuthMiddleware.before",
+        "rank": null
+      },
+      {
+        "target": "auth.AuthMiddleware.before",
+        "rank": null
+      },
+      {
+        "target": "auth.AuthMiddleware.before",
+        "rank": null
+      },
+      {
+        "target": "storage.TaskStore.save_result",
+        "rank": 1
+      },
+      {
+        "target": "storage.TaskStore.save_result",
+        "rank": 1
+      },
+      {
+        "target": "storage.TaskStore.save_result",
+        "rank": 1
+      },
+      {
+        "target": "storage.TaskStore.pending",
+        "rank": 1
+      },
+      {
+        "target": "storage.TaskStore.pending",
+        "rank": 1
+      },
+      {
+        "target": "storage.TaskStore.pending",
+        "rank": 1
+      },
+      {
+        "target": "storage.TaskStore.set_status",
+        "rank": 1
+      },
+      {
+        "target": "storage.TaskStore.set_status",
+        "rank": 1
+      },
+      {
+        "target": "storage.TaskStore.set_status",
+        "rank": 1
+      },
+      {
+        "target": "scheduler.Scheduler.requeue_failed",
+        "rank": null
+      },
+      {
+        "target": "scheduler.Scheduler.requeue_failed",
+        "rank": null
+      },
+      {
+        "target": "scheduler.Scheduler.requeue_failed",
+        "rank": null
+      },
+      {
+        "target": "scheduler.Scheduler.next_batch",
+        "rank": null
+      },
+      {
+        "target": "scheduler.Scheduler.next_batch",
+        "rank": null
+      },
+      {
+        "target": "scheduler.Scheduler.next_batch",
+        "rank": null
+      },
+      {
+        "target": "protocol.encode_message",
+        "rank": 1
+      },
+      {
+        "target": "protocol.encode_message",
+        "rank": 1
+      },
+      {
+        "target": "protocol.encode_message",
+        "rank": 1
+      },
+      {
+        "target": "protocol.decode_message",
+        "rank": null
+      },
+      {
+        "target": "protocol.decode_message",
+        "rank": null
+      },
+      {
+        "target": "protocol.decode_message",
+        "rank": null
+      },
+      {
+        "target": "ratelimit.RateLimiter.allow",
+        "rank": null
+      },
+      {
+        "target": "ratelimit.RateLimiter.allow",
+        "rank": null
+      },
+      {
+        "target": "ratelimit.RateLimiter.allow",
+        "rank": null
+      },
+      {
+        "target": "utils.backoff_delay",
+        "rank": null
+      },
+      {
+        "target": "utils.backoff_delay",
+        "rank": null
+      },
+      {
+        "target": "utils.backoff_delay",
+        "rank": null
+      },
+      {
+        "target": "utils.retry",
+        "rank": null
+      },
+      {
+        "target": "utils.retry",
+        "rank": null
+      },
+      {
+        "target": "utils.retry",
+        "rank": null
+      },
+      {
+        "target": "utils.parse_duration",
+        "rank": null
+      },
+      {
+        "target": "utils.parse_duration",
+        "rank": null
+      },
+      {
+        "target": "utils.parse_duration",
+        "rank": null
+      },
+      {
+        "target": "utils.dedupe",
+        "rank": null
+      },
+      {
+        "target": "utils.dedupe",
+        "rank": null
+      },
+      {
+        "target": "utils.dedupe",
+        "rank": null
+      },
+      {
+        "target": "utils.clamp",
+        "rank": null
+      },
+      {
+        "target": "utils.clamp",
+        "rank": null
+      },
+      {
+        "target": "utils.clamp",
+        "rank": null
+      },
+      {
+        "target": "utils.chunked",
+        "rank": null
+      },
+      {
+        "target": "utils.chunked",
+        "rank": null
+      },
+      {
+        "target": "utils.chunked",
+        "rank": null
+      }
+    ],
+    "gen_soft_blend_m6": [
+      {
+        "target": "auth.AuthMiddleware.before",
+        "rank": null
+      },
+      {
+        "target": "auth.AuthMiddleware.before",
+        "rank": null
+      },
+      {
+        "target": "auth.AuthMiddleware.before",
+        "rank": null
+      },
+      {
+        "target": "storage.TaskStore.save_result",
+        "rank": 1
+      },
+      {
+        "target": "storage.TaskStore.save_result",
+        "rank": 1
+      },
+      {
+        "target": "storage.TaskStore.save_result",
+        "rank": 1
+      },
+      {
+        "target": "storage.TaskStore.pending",
+        "rank": 1
+      },
+      {
+        "target": "storage.TaskStore.pending",
+        "rank": 1
+      },
+      {
+        "target": "storage.TaskStore.pending",
+        "rank": 1
+      },
+      {
+        "target": "storage.TaskStore.set_status",
+        "rank": 1
+      },
+      {
+        "target": "storage.TaskStore.set_status",
+        "rank": 1
+      },
+      {
+        "target": "storage.TaskStore.set_status",
+        "rank": 1
+      },
+      {
+        "target": "scheduler.Scheduler.requeue_failed",
+        "rank": null
+      },
+      {
+        "target": "scheduler.Scheduler.requeue_failed",
+        "rank": null
+      },
+      {
+        "target": "scheduler.Scheduler.requeue_failed",
+        "rank": null
+      },
+      {
+        "target": "scheduler.Scheduler.next_batch",
+        "rank": null
+      },
+      {
+        "target": "scheduler.Scheduler.next_batch",
+        "rank": null
+      },
+      {
+        "target": "scheduler.Scheduler.next_batch",
+        "rank": null
+      },
+      {
+        "target": "protocol.encode_message",
+        "rank": 1
+      },
+      {
+        "target": "protocol.encode_message",
+        "rank": 1
+      },
+      {
+        "target": "protocol.encode_message",
+        "rank": 1
+      },
+      {
+        "target": "protocol.decode_message",
+        "rank": null
+      },
+      {
+        "target": "protocol.decode_message",
+        "rank": null
+      },
+      {
+        "target": "protocol.decode_message",
+        "rank": null
+      },
+      {
+        "target": "ratelimit.RateLimiter.allow",
+        "rank": null
+      },
+      {
+        "target": "ratelimit.RateLimiter.allow",
+        "rank": null
+      },
+      {
+        "target": "ratelimit.RateLimiter.allow",
+        "rank": null
+      },
+      {
+        "target": "utils.backoff_delay",
+        "rank": null
+      },
+      {
+        "target": "utils.backoff_delay",
+        "rank": null
+      },
+      {
+        "target": "utils.backoff_delay",
+        "rank": null
+      },
+      {
+        "target": "utils.retry",
+        "rank": null
+      },
+      {
+        "target": "utils.retry",
+        "rank": null
+      },
+      {
+        "target": "utils.retry",
+        "rank": null
+      },
+      {
+        "target": "utils.parse_duration",
+        "rank": null
+      },
+      {
+        "target": "utils.parse_duration",
+        "rank": null
+      },
+      {
+        "target": "utils.parse_duration",
+        "rank": null
+      },
+      {
+        "target": "utils.dedupe",
+        "rank": null
+      },
+      {
+        "target": "utils.dedupe",
+        "rank": null
+      },
+      {
+        "target": "utils.dedupe",
+        "rank": null
+      },
+      {
+        "target": "utils.clamp",
+        "rank": 2
+      },
+      {
+        "target": "utils.clamp",
+        "rank": 3
+      },
+      {
+        "target": "utils.clamp",
+        "rank": 3
+      },
+      {
+        "target": "utils.chunked",
+        "rank": null
+      },
+      {
+        "target": "utils.chunked",
+        "rank": null
+      },
+      {
+        "target": "utils.chunked",
+        "rank": null
+      }
+    ],
+    "gen_greedy_centroid": [
+      {
+        "target": "auth.AuthMiddleware.before",
+        "rank": 1
+      },
+      {
+        "target": "auth.AuthMiddleware.before",
+        "rank": 1
+      },
+      {
+        "target": "auth.AuthMiddleware.before",
+        "rank": 1
+      },
+      {
+        "target": "storage.TaskStore.save_result",
+        "rank": 1
+      },
+      {
+        "target": "storage.TaskStore.save_result",
+        "rank": 1
+      },
+      {
+        "target": "storage.TaskStore.save_result",
+        "rank": 1
+      },
+      {
+        "target": "storage.TaskStore.pending",
+        "rank": null
+      },
+      {
+        "target": "storage.TaskStore.pending",
+        "rank": null
+      },
+      {
+        "target": "storage.TaskStore.pending",
+        "rank": null
+      },
+      {
+        "target": "storage.TaskStore.set_status",
+        "rank": null
+      },
+      {
+        "target": "storage.TaskStore.set_status",
+        "rank": null
+      },
+      {
+        "target": "storage.TaskStore.set_status",
+        "rank": null
+      },
+      {
+        "target": "scheduler.Scheduler.requeue_failed",
+        "rank": 1
+      },
+      {
+        "target": "scheduler.Scheduler.requeue_failed",
+        "rank": 1
+      },
+      {
+        "target": "scheduler.Scheduler.requeue_failed",
+        "rank": 1
+      },
+      {
+        "target": "scheduler.Scheduler.next_batch",
+        "rank": 1
+      },
+      {
+        "target": "scheduler.Scheduler.next_batch",
+        "rank": 1
+      },
+      {
+        "target": "scheduler.Scheduler.next_batch",
+        "rank": 1
+      },
+      {
+        "target": "protocol.encode_message",
+        "rank": 1
+      },
+      {
+        "target": "protocol.encode_message",
+        "rank": 1
+      },
+      {
+        "target": "protocol.encode_message",
+        "rank": 1
+      },
+      {
+        "target": "protocol.decode_message",
+        "rank": null
+      },
+      {
+        "target": "protocol.decode_message",
+        "rank": null
+      },
+      {
+        "target": "protocol.decode_message",
+        "rank": null
+      },
+      {
+        "target": "ratelimit.RateLimiter.allow",
+        "rank": null
+      },
+      {
+        "target": "ratelimit.RateLimiter.allow",
+        "rank": null
+      },
+      {
+        "target": "ratelimit.RateLimiter.allow",
+        "rank": null
+      },
+      {
+        "target": "utils.backoff_delay",
+        "rank": 1
+      },
+      {
+        "target": "utils.backoff_delay",
+        "rank": 1
+      },
+      {
+        "target": "utils.backoff_delay",
+        "rank": 1
+      },
+      {
+        "target": "utils.retry",
+        "rank": null
+      },
+      {
+        "target": "utils.retry",
+        "rank": null
+      },
+      {
+        "target": "utils.retry",
+        "rank": null
+      },
+      {
+        "target": "utils.parse_duration",
+        "rank": 2
+      },
+      {
+        "target": "utils.parse_duration",
+        "rank": 2
+      },
+      {
+        "target": "utils.parse_duration",
+        "rank": 2
+      },
+      {
+        "target": "utils.dedupe",
+        "rank": 3
+      },
+      {
+        "target": "utils.dedupe",
+        "rank": 1
+      },
+      {
+        "target": "utils.dedupe",
+        "rank": 1
+      },
+      {
+        "target": "utils.clamp",
+        "rank": 1
+      },
+      {
+        "target": "utils.clamp",
+        "rank": 1
+      },
+      {
+        "target": "utils.clamp",
+        "rank": 1
+      },
+      {
+        "target": "utils.chunked",
+        "rank": null
+      },
+      {
+        "target": "utils.chunked",
+        "rank": null
+      },
+      {
+        "target": "utils.chunked",
+        "rank": null
+      }
+    ],
+    "gen_soft_centroid": [
+      {
+        "target": "auth.AuthMiddleware.before",
+        "rank": 1
+      },
+      {
+        "target": "auth.AuthMiddleware.before",
+        "rank": 1
+      },
+      {
+        "target": "auth.AuthMiddleware.before",
+        "rank": 1
+      },
+      {
+        "target": "storage.TaskStore.save_result",
+        "rank": 1
+      },
+      {
+        "target": "storage.TaskStore.save_result",
+        "rank": 1
+      },
+      {
+        "target": "storage.TaskStore.save_result",
+        "rank": 1
+      },
+      {
+        "target": "storage.TaskStore.pending",
+        "rank": null
+      },
+      {
+        "target": "storage.TaskStore.pending",
+        "rank": null
+      },
+      {
+        "target": "storage.TaskStore.pending",
+        "rank": null
+      },
+      {
+        "target": "storage.TaskStore.set_status",
+        "rank": 1
+      },
+      {
+        "target": "storage.TaskStore.set_status",
+        "rank": 1
+      },
+      {
+        "target": "storage.TaskStore.set_status",
+        "rank": 1
+      },
+      {
+        "target": "scheduler.Scheduler.requeue_failed",
+        "rank": 1
+      },
+      {
+        "target": "scheduler.Scheduler.requeue_failed",
+        "rank": 1
+      },
+      {
+        "target": "scheduler.Scheduler.requeue_failed",
+        "rank": 1
+      },
+      {
+        "target": "scheduler.Scheduler.next_batch",
+        "rank": 1
+      },
+      {
+        "target": "scheduler.Scheduler.next_batch",
+        "rank": 1
+      },
+      {
+        "target": "scheduler.Scheduler.next_batch",
+        "rank": 1
+      },
+      {
+        "target": "protocol.encode_message",
+        "rank": 1
+      },
+      {
+        "target": "protocol.encode_message",
+        "rank": 1
+      },
+      {
+        "target": "protocol.encode_message",
+        "rank": 1
+      },
+      {
+        "target": "protocol.decode_message",
+        "rank": null
+      },
+      {
+        "target": "protocol.decode_message",
+        "rank": null
+      },
+      {
+        "target": "protocol.decode_message",
+        "rank": null
+      },
+      {
+        "target": "ratelimit.RateLimiter.allow",
+        "rank": null
+      },
+      {
+        "target": "ratelimit.RateLimiter.allow",
+        "rank": null
+      },
+      {
+        "target": "ratelimit.RateLimiter.allow",
+        "rank": null
+      },
+      {
+        "target": "utils.backoff_delay",
+        "rank": 1
+      },
+      {
+        "target": "utils.backoff_delay",
+        "rank": 1
+      },
+      {
+        "target": "utils.backoff_delay",
+        "rank": 1
+      },
+      {
+        "target": "utils.retry",
+        "rank": null
+      },
+      {
+        "target": "utils.retry",
+        "rank": null
+      },
+      {
+        "target": "utils.retry",
+        "rank": null
+      },
+      {
+        "target": "utils.parse_duration",
+        "rank": 3
+      },
+      {
+        "target": "utils.parse_duration",
+        "rank": 3
+      },
+      {
+        "target": "utils.parse_duration",
+        "rank": 3
+      },
+      {
+        "target": "utils.dedupe",
+        "rank": 3
+      },
+      {
+        "target": "utils.dedupe",
+        "rank": 1
+      },
+      {
+        "target": "utils.dedupe",
+        "rank": 1
+      },
+      {
+        "target": "utils.clamp",
+        "rank": 1
+      },
+      {
+        "target": "utils.clamp",
+        "rank": 1
+      },
+      {
+        "target": "utils.clamp",
+        "rank": 1
+      },
+      {
+        "target": "utils.chunked",
+        "rank": null
+      },
+      {
+        "target": "utils.chunked",
+        "rank": null
+      },
+      {
+        "target": "utils.chunked",
+        "rank": null
+      }
+    ],
+    "gen_soft_centroid_m6": [
+      {
+        "target": "auth.AuthMiddleware.before",
+        "rank": 1
+      },
+      {
+        "target": "auth.AuthMiddleware.before",
+        "rank": 1
+      },
+      {
+        "target": "auth.AuthMiddleware.before",
+        "rank": 1
+      },
+      {
+        "target": "storage.TaskStore.save_result",
+        "rank": 1
+      },
+      {
+        "target": "storage.TaskStore.save_result",
+        "rank": 1
+      },
+      {
+        "target": "storage.TaskStore.save_result",
+        "rank": 1
+      },
+      {
+        "target": "storage.TaskStore.pending",
+        "rank": null
+      },
+      {
+        "target": "storage.TaskStore.pending",
+        "rank": null
+      },
+      {
+        "target": "storage.TaskStore.pending",
+        "rank": null
+      },
+      {
+        "target": "storage.TaskStore.set_status",
+        "rank": 1
+      },
+      {
+        "target": "storage.TaskStore.set_status",
+        "rank": 1
+      },
+      {
+        "target": "storage.TaskStore.set_status",
+        "rank": 1
+      },
+      {
+        "target": "scheduler.Scheduler.requeue_failed",
+        "rank": 1
+      },
+      {
+        "target": "scheduler.Scheduler.requeue_failed",
+        "rank": 1
+      },
+      {
+        "target": "scheduler.Scheduler.requeue_failed",
+        "rank": 1
+      },
+      {
+        "target": "scheduler.Scheduler.next_batch",
+        "rank": 1
+      },
+      {
+        "target": "scheduler.Scheduler.next_batch",
+        "rank": 1
+      },
+      {
+        "target": "scheduler.Scheduler.next_batch",
+        "rank": 1
+      },
+      {
+        "target": "protocol.encode_message",
+        "rank": 1
+      },
+      {
+        "target": "protocol.encode_message",
+        "rank": 1
+      },
+      {
+        "target": "protocol.encode_message",
+        "rank": 1
+      },
+      {
+        "target": "protocol.decode_message",
+        "rank": null
+      },
+      {
+        "target": "protocol.decode_message",
+        "rank": null
+      },
+      {
+        "target": "protocol.decode_message",
+        "rank": null
+      },
+      {
+        "target": "ratelimit.RateLimiter.allow",
+        "rank": null
+      },
+      {
+        "target": "ratelimit.RateLimiter.allow",
+        "rank": null
+      },
+      {
+        "target": "ratelimit.RateLimiter.allow",
+        "rank": null
+      },
+      {
+        "target": "utils.backoff_delay",
+        "rank": 1
+      },
+      {
+        "target": "utils.backoff_delay",
+        "rank": 1
+      },
+      {
+        "target": "utils.backoff_delay",
+        "rank": 1
+      },
+      {
+        "target": "utils.retry",
+        "rank": null
+      },
+      {
+        "target": "utils.retry",
+        "rank": null
+      },
+      {
+        "target": "utils.retry",
+        "rank": null
+      },
+      {
+        "target": "utils.parse_duration",
+        "rank": 6
+      },
+      {
+        "target": "utils.parse_duration",
+        "rank": 6
+      },
+      {
+        "target": "utils.parse_duration",
+        "rank": 6
+      },
+      {
+        "target": "utils.dedupe",
+        "rank": 3
+      },
+      {
+        "target": "utils.dedupe",
+        "rank": 1
+      },
+      {
+        "target": "utils.dedupe",
+        "rank": 1
+      },
+      {
+        "target": "utils.clamp",
+        "rank": 1
+      },
+      {
+        "target": "utils.clamp",
+        "rank": 1
+      },
+      {
+        "target": "utils.clamp",
+        "rank": 1
+      },
+      {
+        "target": "utils.chunked",
+        "rank": null
+      },
+      {
+        "target": "utils.chunked",
+        "rank": null
+      },
+      {
+        "target": "utils.chunked",
+        "rank": null
+      }
+    ],
+    "gen_soft_centroid_goalonly": [
+      {
+        "target": "auth.AuthMiddleware.before",
+        "rank": 1
+      },
+      {
+        "target": "auth.AuthMiddleware.before",
+        "rank": 1
+      },
+      {
+        "target": "auth.AuthMiddleware.before",
+        "rank": 1
+      },
+      {
+        "target": "storage.TaskStore.save_result",
+        "rank": 1
+      },
+      {
+        "target": "storage.TaskStore.save_result",
+        "rank": 1
+      },
+      {
+        "target": "storage.TaskStore.save_result",
+        "rank": 1
+      },
+      {
+        "target": "storage.TaskStore.pending",
+        "rank": null
+      },
+      {
+        "target": "storage.TaskStore.pending",
+        "rank": null
+      },
+      {
+        "target": "storage.TaskStore.pending",
+        "rank": null
+      },
+      {
+        "target": "storage.TaskStore.set_status",
+        "rank": 1
+      },
+      {
+        "target": "storage.TaskStore.set_status",
+        "rank": 1
+      },
+      {
+        "target": "storage.TaskStore.set_status",
+        "rank": 1
+      },
+      {
+        "target": "scheduler.Scheduler.requeue_failed",
+        "rank": 1
+      },
+      {
+        "target": "scheduler.Scheduler.requeue_failed",
+        "rank": 1
+      },
+      {
+        "target": "scheduler.Scheduler.requeue_failed",
+        "rank": 1
+      },
+      {
+        "target": "scheduler.Scheduler.next_batch",
+        "rank": 1
+      },
+      {
+        "target": "scheduler.Scheduler.next_batch",
+        "rank": 1
+      },
+      {
+        "target": "scheduler.Scheduler.next_batch",
+        "rank": 1
+      },
+      {
+        "target": "protocol.encode_message",
+        "rank": 1
+      },
+      {
+        "target": "protocol.encode_message",
+        "rank": 1
+      },
+      {
+        "target": "protocol.encode_message",
+        "rank": 1
+      },
+      {
+        "target": "protocol.decode_message",
+        "rank": null
+      },
+      {
+        "target": "protocol.decode_message",
+        "rank": null
+      },
+      {
+        "target": "protocol.decode_message",
+        "rank": null
+      },
+      {
+        "target": "ratelimit.RateLimiter.allow",
+        "rank": null
+      },
+      {
+        "target": "ratelimit.RateLimiter.allow",
+        "rank": null
+      },
+      {
+        "target": "ratelimit.RateLimiter.allow",
+        "rank": null
+      },
+      {
+        "target": "utils.backoff_delay",
+        "rank": 1
+      },
+      {
+        "target": "utils.backoff_delay",
+        "rank": 1
+      },
+      {
+        "target": "utils.backoff_delay",
+        "rank": 1
+      },
+      {
+        "target": "utils.retry",
+        "rank": null
+      },
+      {
+        "target": "utils.retry",
+        "rank": null
+      },
+      {
+        "target": "utils.retry",
+        "rank": null
+      },
+      {
+        "target": "utils.parse_duration",
+        "rank": 3
+      },
+      {
+        "target": "utils.parse_duration",
+        "rank": 3
+      },
+      {
+        "target": "utils.parse_duration",
+        "rank": 3
+      },
+      {
+        "target": "utils.dedupe",
+        "rank": 3
+      },
+      {
+        "target": "utils.dedupe",
+        "rank": 1
+      },
+      {
+        "target": "utils.dedupe",
+        "rank": 1
+      },
+      {
+        "target": "utils.clamp",
+        "rank": 1
+      },
+      {
+        "target": "utils.clamp",
+        "rank": 1
+      },
+      {
+        "target": "utils.clamp",
+        "rank": 1
+      },
+      {
+        "target": "utils.chunked",
+        "rank": null
+      },
+      {
+        "target": "utils.chunked",
+        "rank": null
+      },
+      {
+        "target": "utils.chunked",
+        "rank": null
+      }
+    ],
+    "oracle_soft_centroid": [
+      {
+        "target": "auth.AuthMiddleware.before",
+        "rank": null
+      },
+      {
+        "target": "auth.AuthMiddleware.before",
+        "rank": null
+      },
+      {
+        "target": "auth.AuthMiddleware.before",
+        "rank": null
+      },
+      {
+        "target": "storage.TaskStore.save_result",
+        "rank": null
+      },
+      {
+        "target": "storage.TaskStore.save_result",
+        "rank": null
+      },
+      {
+        "target": "storage.TaskStore.save_result",
+        "rank": null
+      },
+      {
+        "target": "storage.TaskStore.pending",
+        "rank": null
+      },
+      {
+        "target": "storage.TaskStore.pending",
+        "rank": null
+      },
+      {
+        "target": "storage.TaskStore.pending",
+        "rank": null
+      },
+      {
+        "target": "storage.TaskStore.set_status",
+        "rank": null
+      },
+      {
+        "target": "storage.TaskStore.set_status",
+        "rank": null
+      },
+      {
+        "target": "storage.TaskStore.set_status",
+        "rank": null
+      },
+      {
+        "target": "scheduler.Scheduler.requeue_failed",
+        "rank": 1
+      },
+      {
+        "target": "scheduler.Scheduler.requeue_failed",
+        "rank": 1
+      },
+      {
+        "target": "scheduler.Scheduler.requeue_failed",
+        "rank": 1
+      },
+      {
+        "target": "scheduler.Scheduler.next_batch",
+        "rank": 1
+      },
+      {
+        "target": "scheduler.Scheduler.next_batch",
+        "rank": 1
+      },
+      {
+        "target": "scheduler.Scheduler.next_batch",
+        "rank": 1
+      },
+      {
+        "target": "protocol.encode_message",
+        "rank": 1
+      },
+      {
+        "target": "protocol.encode_message",
+        "rank": 1
+      },
+      {
+        "target": "protocol.encode_message",
+        "rank": 1
+      },
+      {
+        "target": "protocol.decode_message",
+        "rank": null
+      },
+      {
+        "target": "protocol.decode_message",
+        "rank": null
+      },
+      {
+        "target": "protocol.decode_message",
+        "rank": null
+      },
+      {
+        "target": "ratelimit.RateLimiter.allow",
+        "rank": null
+      },
+      {
+        "target": "ratelimit.RateLimiter.allow",
+        "rank": null
+      },
+      {
+        "target": "ratelimit.RateLimiter.allow",
+        "rank": null
+      },
+      {
+        "target": "utils.backoff_delay",
+        "rank": 2
+      },
+      {
+        "target": "utils.backoff_delay",
+        "rank": 2
+      },
+      {
+        "target": "utils.backoff_delay",
+        "rank": 2
+      },
+      {
+        "target": "utils.retry",
+        "rank": null
+      },
+      {
+        "target": "utils.retry",
+        "rank": null
+      },
+      {
+        "target": "utils.retry",
+        "rank": null
+      },
+      {
+        "target": "utils.parse_duration",
+        "rank": 4
+      },
+      {
+        "target": "utils.parse_duration",
+        "rank": 5
+      },
+      {
+        "target": "utils.parse_duration",
+        "rank": 5
+      },
+      {
+        "target": "utils.dedupe",
+        "rank": null
+      },
+      {
+        "target": "utils.dedupe",
+        "rank": 5
+      },
+      {
+        "target": "utils.dedupe",
+        "rank": 5
+      },
+      {
+        "target": "utils.clamp",
+        "rank": 2
+      },
+      {
+        "target": "utils.clamp",
+        "rank": 2
+      },
+      {
+        "target": "utils.clamp",
+        "rank": 2
+      },
+      {
+        "target": "utils.chunked",
+        "rank": null
+      },
+      {
+        "target": "utils.chunked",
+        "rank": 3
+      },
+      {
+        "target": "utils.chunked",
+        "rank": 3
+      }
+    ]
+  }
+}

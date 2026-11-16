@@ -75,3 +75,18 @@ def test_route_soft_by_centroid_uses_function_mean():
     centroid_top = tree.route_soft(q, m=1, by_centroid=True)[0][0]
     assert label_top == b               # label routing picks B
     assert centroid_top == a            # centroid routing picks A (functions match query)
+
+
+def test_adaptive_high_threshold_falls_back_to_flat():
+    bank, tree, a, b, ca, cb = _setup()
+    r = Retriever(tree, bank, PrefetchBank(), top_k=2, mmr_lambda=0.5, centered=False)
+    # threshold 2.0 can never be met -> always flat over all chunks
+    out = r.retrieve_adaptive(torch.tensor([1.0, 0.0]), torch.tensor([0.95, 0.05]), 0, conf_threshold=2.0)
+    assert out[0] == ca                 # flat picks the most need-relevant chunk
+
+
+def test_adaptive_low_threshold_uses_goal_routing():
+    bank, tree, a, b, ca, cb = _setup()
+    r = Retriever(tree, bank, PrefetchBank(), top_k=2, mmr_lambda=0.5, centered=False)
+    out = r.retrieve_adaptive(torch.tensor([1.0, 0.0]), torch.tensor([0.95, 0.05]), 0, conf_threshold=-1.0)
+    assert out[0] == ca                 # confident goal routing also picks ca

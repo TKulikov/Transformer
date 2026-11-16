@@ -125,3 +125,49 @@ class Retriever:
         ])
         sel = mmr(need, keys, k, self.mmr_lambda, relevance=rel)
         return [cand[i] for i in sel]
+
+    def retrieve_adaptive(
+        self,
+        goal_emb: torch.Tensor,
+        need_emb: torch.Tensor,
+        step: int,
+        k: int | None = None,
+        m: int = 3,
+        need_weight: float = 0.5,
+        conf_threshold: float = 0.5,
+        temperature: float = 0.1,
+        by_centroid: bool = True,
+    ) -> list[int]:
+        """Confidence-adaptive routing: goal-routing when confident, else flat.
+
+        Computes the routing confidence as the top cosine of the goal+need blend
+        to the goal-node centroids (or labels). If confidence >= conf_threshold,
+        delegates to :meth:`retrieve_soft` (goal-weighted); otherwise falls back
+        to FLAT retrieval over all chunks (need query + maturity bonus + MMR).
+        This guarantees flat-level performance when the goal estimate is uncertain
+        (a bad goal must not hurt worse than flat) while capturing the goal-routing
+        gain when confident. Returns up to k chunk ids; ``k`` defaults to top_k.
+        """
+        k = self.top_k if k is None else k
+        g = normalize(goal_emb.detach().float().cpu())
+        n = normalize(need_emb.detach().float().cpu())
+        route_emb = normalize(g + need_weight * n)
+        children = self.tree.nodes[self.tree.root].children if self.tree.root is not None else []
+
+        def key_emb(nid: int) -> torch.Tensor:
+            node = self.tree.nodes[nid]
+            if by_centroid and node.centroid.value is not None:
+                return node.centroid.value
+            return node.emb
+
+        conf = max((float(cosine_sim(route_emb, key_emb(c)[None])[0]) for c in children), default=0.0)
+        if conf >= conf_threshold:
+            return self.retrieve_soft(goal_emb, need_emb, step, k, m, need_weight, temperature, by_centroid)
+        cand = list(dict.fromkeys(cid for nid in self.tree.nodes for cid in self.tree.nodes[nid].chunk_ids))
+        if not cand:
+            return []
+        keys = torch.stack([self.bank.get(i).emb for i in cand])
+        need = need_emb.detach().float().cpu()
+        rel = cosine_sim(need, keys) + torch.tensor([self.bank.bonus(i) for i in cand])
+        sel = mmr(need, keys, k, self.mmr_lambda, relevance=rel)
+        return [cand[i] for i in sel]

@@ -166,12 +166,51 @@ cross-cutting helpers»), а сгенерированная цель/потре�
 правильных функций, чем абстрактной категории. Это семантический routing (semtree/CLAG),
 а не label-routing. Плюс confidence-adaptive fallback к flat при неуверенной цели.
 
-## Следующие шаги (переприоритизировано после s1)
-- **ГЛАВНОЕ: centroid-routing** (по центроиду функций узла, не label) — прямо
-  атакует diagnosed mismatch. Тест: gen_soft_centroid vs gen_soft_blend (label).
-- Confidence-adaptive routing: weight goal-routing по уверенности оценки цели;
-  при неуверенности fallback к flat (чтобы плохая цель не вредила хуже flat).
+## ОБНОВЛЕНИЕ: centroid-routing (s2) — диагноз подтверждён, большой прирост
+
+layer 15, uncentered, 45 запросов:
+
+| условие | hit@6 | route_acc/coverage |
+|---|---|---|
+| oracle_greedy (label) | 0.867 | 1.0 |
+| gen_greedy (label) | 0.267 | 0.333 |
+| gen_soft_blend_m6 (label) | 0.333 | 1.0 |
+| **gen_greedy_centroid (m1)** | **0.600** | **0.667** |
+| **gen_soft_centroid (m3)** | **0.667** | **0.933** |
+| gen_soft_centroid_m6 | 0.667 | 1.0 |
+| gen_soft_centroid_goalonly (nw=0) | 0.667 | 0.933 |
+| oracle_soft_centroid | 0.489 | 0.889 |
+
+1. **Centroid-routing подтвердил диагноз и резко помог сгенерированным целям:**
+   gen_greedy 0.267→0.600 (acc 0.333→0.667), gen_soft_centroid 0.667 (cov 0.933).
+   Конкретная сгенерированная цель/потребность лучше соответствует центроиду
+   функций, чем абстрактному label. Диагностика label-mismatch была верна.
+2. **Асимметрия label vs centroid:** oracle LABEL routing 0.867 (идеал, т.к.
+   oracle goal emb == label emb узла), но oracle CENTROID routing 0.489 —
+   абстрактная oracle-цель не совпадает с центроидом функций. **Label-routing
+   подходит абстрактным (oracle) целям; centroid-routing — конкретным
+   сгенерированным целям/потребностям.** Разные ключи для разных типов запросов.
+3. **need_weight не важен для centroid** (goalonly == blend == 0.667): центроид
+   уже несёт семантику функций, добавление потребности к routing-сигналу ничего
+   не меняет.
+4. **НО practical всё ещё ≈ flat:** gen_soft_centroid 0.667 <= flat_plain 0.733,
+   < oracle 0.867. Goal-routing с сгенерированной целью пока НЕ превосходит flat;
+   остаточная ошибка оценки цели (acc 0.667 greedy) стоит ~0.2 hit@6.
+
+**Следующий decisive-тест: confidence-adaptive routing.** При уверенной цели
+(top cosine к центроиду >= threshold) — goal-routing; при неуверенной — fallback
+к flat. Гарантирует >= flat на неуверенных случаях и ловит goal-выгоду на
+уверенных. Прямо лечит «плохая цель хуже flat». Если и это не даст > flat —
+честный вывод: flat retrieval есть practical workhorse для кода, goal-tree —
+oracle-only верхняя граница (зеркально диалогу: там центрирование load-bearing,
+здесь routing силён только с идеальной целью).
+
+## Следующие шаги (переприоритизировано после s2)
+- **ГЛАВНОЕ: confidence-adaptive routing** (goal при уверенности, flat fallback) —
+  может ли practical goal-routing превзойти flat. Sweep threshold.
 - Второй корпус (taskq_large / RepoBench) для переноса.
+- Семантическая кластеризация функций (semtree) вместо module-based goal-узлов —
+  лучшие центроиды для routing.
 - Чистый encoder-decoder (staged: t5-base smoke → CodeT5+), confound масштаба.
 
 ## Статус
