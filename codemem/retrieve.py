@@ -84,6 +84,7 @@ class Retriever:
         m: int = 3,
         need_weight: float = 0.5,
         temperature: float = 0.1,
+        by_centroid: bool = False,
     ) -> list[int]:
         """Soft, goal+need retrieval (attacks the goal-identification bottleneck).
 
@@ -104,7 +105,7 @@ class Retriever:
         g = normalize(goal_emb.detach().float().cpu())
         n = normalize(need_emb.detach().float().cpu())
         route_emb = normalize(g + need_weight * n)
-        nodes = self.tree.route_soft(route_emb, m=m, temperature=temperature)
+        nodes = self.tree.route_soft(route_emb, m=m, temperature=temperature, by_centroid=by_centroid)
         weights: dict[int, float] = {}
         cand: list[int] = []
         for nid, w in nodes:

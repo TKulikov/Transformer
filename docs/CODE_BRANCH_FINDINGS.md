@@ -126,13 +126,52 @@ utils.retry, ранг при sweep λ (goal-routed uncentered, k=10):
   вредит; релевантность или крайняя диверсификация лучше. Выгода MMR задачно- и
   layer-зависима (робастна только на слое 19).
 
-## Следующие шаги (переприоритизировано после реализм-теста)
-- **ГЛАВНОЕ: оценка цели / robust routing.** routing_accuracy 0.333 — бутылочное
-  горлышко. Варианты: soft routing по нескольким goal-узлам (не greedy argmax),
-  routing по комбинации цель+потребность, лучшая генерация/калибровка цели,
-  learned goal classifier. Без этого practical выгода routing ≈ 0.
-- Второй корпус (taskq_large / RepoBench) для переноса routing-выгоды.
-- Layer 19 феномен: почему диверсификация робастна только там (clone structure).
+## ОБНОВЛЕНИЕ: soft routing + цель+потребность (s1) — НЕ спасли practical routing
+
+layer 15, uncentered goal tree, 45 запросов:
+
+| условие | hit@6 | route_acc/coverage |
+|---|---|---|
+| oracle_greedy | 0.867 | 1.0 |
+| gen_greedy | 0.267 | 0.333 |
+| gen_greedy_blend (цель+потребность) | 0.267 | 0.333 |
+| gen_soft_goalonly (m3) | 0.267 | 0.533 |
+| gen_soft_blend (m3) | 0.267 | 0.533 |
+| gen_soft_blend_m6 (все узлы) | 0.333 | **1.0** |
+| oracle_soft_blend | 0.844 | 1.0 |
+
+**Негативный результат с механикой:**
+1. **Soft routing НЕ лечит бутылочное горлышко.** coverage растёт (0.333→0.533→1.0
+   на m6), но hit@6 остаётся 0.267–0.333. Даже при ПОЛНОМ покрытии (m6, правильный
+   узел всегда включён) retrieval провален. Проблема не в покрытии, а в **весах**:
+   плохая оценка цели даёт большой вес неверному узлу → чанки правильного узла
+   подавляются relevance (weight·cos).
+2. **Плохая цель ХУЖЕ, чем flat.** gen_soft_blend_m6 0.333 << flat_plain 0.733.
+   Goal-routing с плохой оценкой actively вредит против отсутствия routing.
+   Oracle-выгода (0.867) достижима ТОЛЬКО при идеальной идентификации цели.
+3. **Цель+потребность blend не помог routing** (gen_greedy_blend acc 0.333 =
+   gen_greedy). На реальном корпусе потребность не разруливает сгенерированную цель
+   (синтетический offline-тест разруливал, реальный — нет).
+4. oracle_soft_blend ≈ oracle_greedy (0.844 vs 0.867) — сам soft routing исправен,
+   проблема в качестве оценки цели.
+
+**ДИАГНОЗ:** routing идёт по АБСТРАКТНЫМ label-эмбеддингам категорий («shared
+cross-cutting helpers»), а сгенерированная цель/потребность — конкретный текст;
+они не выравниваются в embedding space. В диалоговом semtree routing шёл по
+**центроиду функций** (mean_t60 9/10) — валидированный подход, от которого мы
+отступили, используя label-эмбеддинги goal-узлов.
+
+**ГИПОТЕЗА (следующий тест):** routing по **центроиду функций узла** (node.centroid),
+не по абстрактному label. Потребность/цель должна лучше соответствовать центроиду
+правильных функций, чем абстрактной категории. Это семантический routing (semtree/CLAG),
+а не label-routing. Плюс confidence-adaptive fallback к flat при неуверенной цели.
+
+## Следующие шаги (переприоритизировано после s1)
+- **ГЛАВНОЕ: centroid-routing** (по центроиду функций узла, не label) — прямо
+  атакует diagnosed mismatch. Тест: gen_soft_centroid vs gen_soft_blend (label).
+- Confidence-adaptive routing: weight goal-routing по уверенности оценки цели;
+  при неуверенности fallback к flat (чтобы плохая цель не вредила хуже flat).
+- Второй корпус (taskq_large / RepoBench) для переноса.
 - Чистый encoder-decoder (staged: t5-base smoke → CodeT5+), confound масштаба.
 
 ## Статус

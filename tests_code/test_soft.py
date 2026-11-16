@@ -56,3 +56,22 @@ def test_need_weight_zero_goal_dominates():
     r = Retriever(tree, bank, PrefetchBank(), top_k=2, mmr_lambda=1.0, centered=False)
     out = r.retrieve_soft(torch.tensor([1.0, 0.0]), torch.tensor([0.1, 0.9]), 0, m=2, need_weight=0.0)
     assert out[0] == ca                 # goal-only routing ignores the B-pointing need
+
+
+def test_route_soft_by_centroid_uses_function_mean():
+    # node A label points at [1,0] but its function centroid is [0.2,0.8] (near B);
+    # centroid routing of a B-ish query must prefer A (whose functions are B-like).
+    bank = CodeBank()
+    tree = GoalTree(bank, centered=False)
+    root = tree.add_goal("app", torch.tensor([0.5, 0.5]))
+    a = tree.add_goal("A", torch.tensor([1.0, 0.0]), parent=root)   # label says A
+    b = tree.add_goal("B", torch.tensor([0.0, 1.0]), parent=root)
+    ca = bank.add("a fn", torch.tensor([0.2, 0.8]))                 # but functions are B-like
+    cb = bank.add("b fn", torch.tensor([0.9, 0.1]))
+    tree.nodes[a].chunk_ids.append(ca); tree.nodes[a].centroid.update(bank.get(ca).emb)
+    tree.nodes[b].chunk_ids.append(cb); tree.nodes[b].centroid.update(bank.get(cb).emb)
+    q = torch.tensor([0.1, 0.9])
+    label_top = tree.route_soft(q, m=1, by_centroid=False)[0][0]
+    centroid_top = tree.route_soft(q, m=1, by_centroid=True)[0][0]
+    assert label_top == b               # label routing picks B
+    assert centroid_top == a            # centroid routing picks A (functions match query)

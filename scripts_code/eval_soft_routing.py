@@ -37,15 +37,17 @@ from codemem.vector import normalize
 from eval_retrieval import (GOALS, TASKS, bootstrap_ci, build_goal, extract_functions,
                             metric_vec, mrr_vec)
 
-# name, method, goal_source, need_weight, m
+# name, method, goal_source, need_weight, m, by_centroid
 CONDS = [
-    ("oracle_greedy",      "greedy", "oracle", 0.0, 1),
-    ("gen_greedy",         "greedy", "gen",    0.0, 1),
-    ("gen_greedy_blend",   "greedy", "gen",    0.5, 1),
-    ("gen_soft_goalonly",  "soft",   "gen",    0.0, 3),
-    ("gen_soft_blend",     "soft",   "gen",    0.5, 3),
-    ("gen_soft_blend_m6",  "soft",   "gen",    0.5, 6),
-    ("oracle_soft_blend",  "soft",   "oracle", 0.5, 3),
+    ("oracle_greedy",            "greedy", "oracle", 0.0, 1, False),
+    ("gen_greedy",               "greedy", "gen",    0.0, 1, False),
+    ("gen_soft_blend",           "soft",   "gen",    0.5, 3, False),
+    ("gen_soft_blend_m6",        "soft",   "gen",    0.5, 6, False),
+    ("gen_greedy_centroid",      "soft",   "gen",    0.5, 1, True),
+    ("gen_soft_centroid",        "soft",   "gen",    0.5, 3, True),
+    ("gen_soft_centroid_m6",     "soft",   "gen",    0.5, 6, True),
+    ("gen_soft_centroid_goalonly","soft",  "gen",    0.0, 3, True),
+    ("oracle_soft_centroid",     "soft",   "oracle", 0.5, 3, True),
 ]
 
 
@@ -100,7 +102,7 @@ def main():
 
     retr = Retriever(tree, bank, PrefetchBank(), top_k=args.k, mmr_lambda=0.5, centered=False)
     results, detail = {}, {}
-    for name, method, src, nw, m in CONDS:
+    for name, method, src, nw, m, bc in CONDS:
         ranks, route_ok = [], 0
         for i, (g, need, tid, ti) in enumerate(queries):
             goal_src = goal_embs[g] if src == "oracle" else gen_goal_embs[ti]
@@ -112,9 +114,9 @@ def main():
                 out = retr.retrieve(route_emb, ne, i, k=args.k)
             else:
                 cov = blend(goal_src, ne, nw)
-                if goal_node_id[g] in [nid for nid, _ in tree.route_soft(cov, m=m)]:
+                if goal_node_id[g] in [nid for nid, _ in tree.route_soft(cov, m=m, by_centroid=bc)]:
                     route_ok += 1
-                out = retr.retrieve_soft(goal_src, ne, i, k=args.k, m=m, need_weight=nw)
+                out = retr.retrieve_soft(goal_src, ne, i, k=args.k, m=m, need_weight=nw, by_centroid=bc)
             ranks.append(out.index(tid) + 1 if tid in out else None)
         h6, mrr = metric_vec(ranks, args.k), mrr_vec(ranks)
         results[name] = {

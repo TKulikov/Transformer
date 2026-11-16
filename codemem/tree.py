@@ -117,7 +117,7 @@ class GoalTree:
             else:
                 return node
 
-    def route_soft(self, query_emb: torch.Tensor, m: int = 3, temperature: float = 0.1) -> list[tuple[int, float]]:
+    def route_soft(self, query_emb: torch.Tensor, m: int = 3, temperature: float = 0.1, by_centroid: bool = False) -> list[tuple[int, float]]:
         """Soft routing: top-m goal nodes weighted by softmax cosine to query.
 
         Unlike :meth:`route` (greedy argmax into one node), this returns several
@@ -129,6 +129,9 @@ class GoalTree:
             query_emb: routing signal [H] (goal, or a goal+need blend).
             m: number of nodes to keep (clamped to the number of goal nodes, >= 1).
             temperature: softmax temperature (> 0); smaller = sharper weights.
+            by_centroid: route by the node's function-centroid (semantic routing,
+                as in semtree/CLAG) instead of its abstract goal-label embedding.
+                Falls back to the label embedding when a node has no chunks yet.
 
         Returns:
             [(node_id, weight)] descending by weight. If the root has no children,
@@ -142,7 +145,14 @@ class GoalTree:
         if not children:
             return [(self.root, 1.0)]
         q = query_emb.detach().float().cpu()
-        sims = [(c, float(cosine_sim(q, self.nodes[c].emb[None])[0])) for c in children]
+
+        def key_emb(nid: int) -> torch.Tensor:
+            node = self.nodes[nid]
+            if by_centroid and node.centroid.value is not None:
+                return node.centroid.value
+            return node.emb
+
+        sims = [(c, float(cosine_sim(q, key_emb(c)[None])[0])) for c in children]
         sims.sort(key=lambda x: -x[1])
         top = sims[: max(1, m)]
         mx = max(s for _, s in top)
