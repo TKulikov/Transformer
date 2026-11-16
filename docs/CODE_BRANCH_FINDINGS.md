@@ -205,13 +205,58 @@ layer 15, uncentered, 45 запросов:
 oracle-only верхняя граница (зеркально диалогу: там центрирование load-bearing,
 здесь routing силён только с идеальной целью).
 
-## Следующие шаги (переприоритизировано после s2)
-- **ГЛАВНОЕ: confidence-adaptive routing** (goal при уверенности, flat fallback) —
-  может ли practical goal-routing превзойти flat. Sweep threshold.
-- Второй корпус (taskq_large / RepoBench) для переноса.
-- Семантическая кластеризация функций (semtree) вместо module-based goal-узлов —
-  лучшие центроиды для routing.
+## ОБНОВЛЕНИЕ: confidence-adaptive (a1) — ФИНАЛЬНЫЙ вердикт по routing
+
+layer 15, centroid, uncentered, 45 запросов:
+
+| условие | hit@6 | MRR | goal_mode frac | goal_mode acc |
+|---|---|---|---|---|
+| flat_baseline | **0.733** | 0.649 | 0.0 | — |
+| gen_soft_centroid | 0.667 | 0.607 | — | — |
+| adaptive_t0.3 | 0.667 | 0.607 | 1.0 | 0.667 |
+| adaptive_t0.5 | 0.667 | 0.607 | 1.0 | 0.667 |
+| adaptive_t0.7 | 0.667 | 0.607 | 1.0 | 0.667 |
+| adaptive_t0.9 | 0.733 | 0.649 | 0.0 | — |
+| oracle_greedy | 0.867 | 0.754 | — | — |
+
+1. **Confidence (top cosine) НЕкалиброван:** goal_mode_frac=1.0 при thr 0.3–0.7,
+   хотя acc=0.667. Неверные цели «уверенно неверны» — анизотропия завышает все
+   косинусы, top-cosine высок даже при промахе. Gate не abstain'ит на разумных
+   порогах. (Ирония: та же анизотропия, что делает центрирование полезным в
+   диалоге, здесь ломает калибровку уверенности.)
+2. **adaptive НЕ превосходит flat:** интерполирует gen_soft_centroid (0.667) ↔
+   flat (0.733); лучшее = flat через полный abstain (t0.9). Практической выгоды
+   goal-routing над flat нет.
+3. **ФИНАЛ: flat retrieval (0.733) — practical workhorse для кода.** Goal-tree
+   routing — oracle-only верхняя граница (0.867). Разрыв оценки цели фундаментален:
+   сгенерированные цели промахиваются, centroid-routing улучшает (0.667), но ни
+   soft, ни blend, ни confidence-gate не закрывают разрыв до flat.
+
+## Итоговая картина код-ветки (что эмпирически выжило)
+- **Flat retrieval** (статический банк, uncentered, MMR) — workhorse, hit@6 0.733.
+- **Goal routing** — робастная oracle-выгода (+9/−0 по слоям), но practical gap
+  из-за оценки цели; flat не превосходит.
+- **Центрирование** — НЕ нужно для кода (контраст с диалогом, где load-bearing).
+- **MMR-диверсификация** — layer-зависима (робастна на 19), mixed; λ=0.5 вредит retry.
+- **Prefetch** — универсальный null (+0/−0 везде), never-worse.
+- **Living predictions / maturity tiers** — механически работают; выгода для
+  генерации (reuse) ещё не тестирована (тестирован только retrieval).
+
+Архитектура реализована и механически исправна (40 тестов, smoke端到end), но её
+практическое превосходство над flat retrieval НЕ продемонстрировано. Честный
+итог: для кода рабочая лошадка — flat; goal-conditioned routing силён только с
+идеальной целью. Зеркально диалогу (там центрирование load-bearing, здесь — нет).
+
+## Следующие шаги (routing-вопрос закрыт)
+- **Второй корпус (taskq_large / RepoBench):** подтвердить generality flat-workhorse
+  и oracle-routing выгоды на другом коде.
+- (опц., diminishing returns) margin-confidence (top1−top2) вместо top-cosine для
+  калибровки; семантическая кластеризация узлов (semtree) вместо module-based.
+- **Generation/reuse тест:**living predictions + maturity tiers для reuse кода
+  (не только retrieval) — исходная цель код-ветки, ещё не измерена.
 - Чистый encoder-decoder (staged: t5-base smoke → CodeT5+), confound масштаба.
+- **Paper framing:** эмпирическое разложение + контраст диалог/код + oracle-vs-
+  practical routing gap + честные nulls (центрирование/prefetch для кода).
 
 ## Статус
 Фазы 0–4 реализованы, 32 offline-теста + smoke + абляция зелёные. Коммиты по фазам.
