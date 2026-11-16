@@ -307,6 +307,8 @@ def analyze_session(runs: dict[str, DialogueRun], reference: str = "classic_kv_f
             "median_turn_latency_s": round(median, 4),
             "p90_turn_latency_s": round(p90, 4),
             "peak_mem_mb": round(max((t.decode.peak_mem_mb or 0.0 for t in run.turns), default=0.0), 2) or None,
+            "kv_injected_slots": s.get("kv_injected_slots"),
+            "kv_steps": s.get("kv_steps"),
             "memory_stats": s.get("memory_stats"),
             "rag_stats": s.get("rag_stats"),
             "probe_details": details,

@@ -86,11 +86,75 @@ def sweep_strategies(budget: int = 128) -> list[Strategy]:
     return out
 
 
-PRESET_STRATEGIES = {
+def latent_strategies(budget: int = 128) -> list[Strategy]:
+    """New-version campaign: the latent (mid-layer) bank both feeds the K/V
+    injection and keys the RAG retrieval. Old v4 (last-layer RAG keys) and the
+    KV/RAG analogues run alongside on the fixed kvinject for direct comparison;
+    rag_latent_mid and v4_kv_mid isolate the two halves of the new system."""
+    mem = dict(memory_window_crit=0.5, memory_crit=0.95, memory_merge_k=0.25)
+    return [
+        Strategy("classic_kv_full", context="full"),
+        Strategy(f"sparse_sliding_{budget}", context="full", kv=KVConfig.sparse(budget, "sliding", 4, 64)),
+        Strategy(f"sparse_topk_{budget}", context="full", kv=KVConfig.sparse(budget, "topk", 4, 64)),
+        Strategy(f"snapkv_{budget}", context="full", kv=KVConfig.sparse(budget, "snapkv", observation=64, kernel_size=7)),
+        Strategy(f"pyramidkv_{budget}", context="full", kv=KVConfig.sparse(budget, "pyramidkv", observation=8, pyramid_beta=20)),
+        Strategy("rag_text_only", context="window", window=5, rag=True, rag_lambda=0.0, rag_centered=False),
+        Strategy("rag_latent_mid", context="window", window=5, rag=True, rag_lambda=0.0,
+                 rag_centered=False, rag_layer="mid"),
+        Strategy("v4_rag_kv", context="window", window=5, memory_kv=True, rag=True, rag_lambda=0.0,
+                 rag_centered=True, kv_slots=32, **mem),
+        Strategy("v4_rag_kv_mid", context="window", window=5, memory_kv=True, rag=True, rag_lambda=0.0,
+                 rag_centered=True, rag_layer="mid", kv_slots=32, **mem),
+        Strategy("v4_kv_mid", context="window", window=5, memory_kv=True, kv_slots=32, **mem),
+    ]
+
+
+def shared_strategies(budget: int = 128) -> list[Strategy]:
+    """The shared-bank hypothesis: RAG keyed by the latent bank's own slot
+    vectors — the same CorrectionLayer activations that are poured into the
+    bank and injected into attention (rag_key_source="bank"). classic_kv_full
+    is the per-run gold reference for cross-run drift checks."""
+    mem = dict(memory_window_crit=0.5, memory_crit=0.95, memory_merge_k=0.25)
+    return [
+        Strategy("classic_kv_full", context="full"),
+        Strategy("rag_bank_key", context="window", window=5, rag=True, rag_lambda=0.0,
+                 rag_centered=False, rag_key_source="bank", **mem),
+        Strategy("v4_rag_kv_bank", context="window", window=5, memory_kv=True, rag=True,
+                 rag_lambda=0.0, rag_centered=True, rag_key_source="bank", kv_slots=32, **mem),
+    ]
+
+
+def shared_dev_strategies(budget: int = 128) -> list[Strategy]:
+    """Anchored bank-dev campaign. Two comparisons on the same dialogues:
+    RAG-vs-RAG (utterance keys vs clustered bank-slot keys, ± injection) and
+    living-memory-vs-PyramidKV without RAG — the latter with a bank-size
+    sweep (the CorrectionLayer size, injection width fixed at kv_slots=32)."""
+    mem = dict(memory_window_crit=0.5, memory_crit=0.95, memory_merge_k=0.25)
+    return [
+        Strategy("classic_kv_full", context="full"),
+        Strategy("rag_bank_dev", context="window", window=5, rag=True, rag_lambda=0.0,
+                 rag_centered=False, rag_key_source="bank_dev", **mem),
+        Strategy("v4_rag_kv_bank_dev", context="window", window=5, memory_kv=True, rag=True,
+                 rag_lambda=0.0, rag_centered=True, rag_key_source="bank_dev", kv_slots=32, **mem),
+        # living memory without RAG vs PyramidKV — bank-size sweep
+        Strategy("v4_kv_mid", context="window", window=5, memory_kv=True, kv_slots=32, **mem),
+        Strategy("v4_kv_mid_s128", context="window", window=5, memory_kv=True, kv_slots=32,
+                 memory_size=128, **mem),
+        Strategy("v4_kv_mid_s1024", context="window", window=5, memory_kv=True, kv_slots=32,
+                 memory_size=1024, **mem),
+        Strategy(f"pyramidkv_{budget}", context="full",
+                 kv=KVConfig.sparse(budget, "pyramidkv", observation=8, pyramid_beta=20)),
+    ]
+
+
+STRATEGY_SETS = {
     "pilot": main_strategies,
     "main": main_strategies,
     "ablation": ablation_strategies,
     "sweep": sweep_strategies,
+    "latent": latent_strategies,
+    "shared": shared_strategies,
+    "shared_dev": shared_dev_strategies,
 }
 
 
@@ -305,6 +369,8 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--seed", type=int, default=0)
     parser.add_argument("--latency-repeats", type=int, default=5, help="measured reps after the warmup rep")
     parser.add_argument("--strategies", nargs="*", default=None, help="subset of preset strategy names")
+    parser.add_argument("--strategy-set", default=None, choices=sorted(STRATEGY_SETS),
+                        help="strategy set override (default: by --preset)")
     parser.add_argument("--batches", type=int, default=None, help="run at most N pending batches, then stop")
     parser.add_argument("--only", nargs="*", default=None, help="(re)run exactly these batch ids")
     parser.add_argument("--dry-run", action="store_true", help="print queue/progress/ETA without GPU")
@@ -314,7 +380,7 @@ def main(argv: list[str] | None = None) -> int:
         parser.error("нужен --preset или --specs")
     preset = args.preset or "custom"
     specs = specs_from_json(args.specs) if args.specs else PRESETS[args.preset]()
-    strategies = PRESET_STRATEGIES.get(args.preset, main_strategies)(budget=args.budget)
+    strategies = STRATEGY_SETS.get(args.strategy_set or args.preset, main_strategies)(budget=args.budget)
     if args.strategies:
         strategies = [s for s in strategies if s.name in args.strategies]
     run_id = args.run_id or f"{preset}-v1"
