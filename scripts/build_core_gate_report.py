@@ -1,4 +1,4 @@
-"""Build a shareable PDF report from the first full-core-v1 corpus batch."""
+"""Build a scientific PDF report from the first full-core-v1 corpus batch."""
 
 from __future__ import annotations
 
@@ -34,7 +34,8 @@ def main() -> None:
     matplotlib.use("Agg")
     import matplotlib.pyplot as plt
     from reportlab.lib import colors
-    from reportlab.lib.pagesizes import A4, landscape
+    from reportlab.lib.enums import TA_CENTER, TA_JUSTIFY, TA_LEFT
+    from reportlab.lib.pagesizes import A4
     from reportlab.lib.styles import ParagraphStyle, getSampleStyleSheet
     from reportlab.lib.units import cm
     from reportlab.pdfbase import pdfmetrics
@@ -44,17 +45,19 @@ def main() -> None:
     results = {}
     for name in ORDER:
         payload = json.loads((BATCH_DIR / f"{name}.json").read_text())
-        details = payload["analysis"]["probe_details"]
+        analysis = payload["analysis"]
+        details = analysis["probe_details"]
         answerable = [p["score"] or 0.0 for p in details if p["kind"] != "unanswerable"]
         results[name] = {
-            "recall": payload["analysis"]["recall_mean"],
+            "recall": analysis["recall_mean"],
             "answerable": sum(answerable) / len(answerable),
             "e2e": median(payload["e2e"]["per_rep_mean_s"]),
-            "peak": payload["analysis"]["peak_mem_mb"],
-            "prompt": payload["analysis"]["prompt_tokens"],
-            "attention": payload["analysis"]["attention_flops_proxy"],
-            "kv_slots": payload["analysis"]["kv_injected_slots"],
-            "kv_steps": payload["analysis"]["kv_steps"],
+            "peak": analysis["peak_mem_mb"],
+            "prompt": analysis["prompt_tokens"],
+            "attention": analysis["attention_flops_proxy"],
+            "kv_slots": analysis["kv_injected_slots"],
+            "kv_steps": analysis["kv_steps"],
+            "lag": analysis["recall_by_lag"],
         }
 
     dynamic = results["v4_kv_mid_dyn"]
@@ -66,7 +69,9 @@ def main() -> None:
     vram_gain = (1 - dynamic["peak"] / pyramid["peak"]) * 100
     prompt_factor = pyramid["prompt"] / dynamic["prompt"]
     attention_factor = dynamic["attention"] / pyramid["attention"]
-    gate_ratio = fixed["kv_slots"] / fixed["kv_steps"] / (dynamic["kv_slots"] / dynamic["kv_steps"])
+    fixed_slots = fixed["kv_slots"] / fixed["kv_steps"]
+    dynamic_slots = dynamic["kv_slots"] / dynamic["kv_steps"]
+    gate_ratio = fixed_slots / dynamic_slots
 
     palette = {
         "classic_kv_full": "#334155", "sparse_sliding_128": "#94a3b8",
@@ -83,10 +88,10 @@ def main() -> None:
         ("e2e", "E2E латентность, с/ход", "{:.2f}", 2.35),
         ("peak", "Peak VRAM, MiB", "{:.0f}", 12500),
     ]
-    for ax, (key, title, fmt, upper) in zip(axes, panels):
+    for ax, (key, panel_title, fmt, upper) in zip(axes, panels):
         series = [row[key] for row in values]
         bars = ax.bar(x, series, color=[palette[name] for name in ORDER], width=0.75)
-        ax.set_title(title, fontsize=12, fontweight="bold")
+        ax.set_title(panel_title, fontsize=12, fontweight="bold")
         ax.set_xticks(list(x), labels, rotation=32, ha="right", fontsize=8)
         ax.set_ylim(0, upper)
         ax.grid(axis="y", alpha=0.2)
@@ -94,119 +99,234 @@ def main() -> None:
         for bar, value in zip(bars, series):
             ax.text(bar.get_x() + bar.get_width() / 2, bar.get_height() + upper * 0.015,
                     fmt.format(value), ha="center", va="bottom", fontsize=8)
-    fig.suptitle("full-core-v1 · первый main-диалог · n=1", fontsize=13, y=1.01)
+    fig.suptitle("Контрольный диалог main-L100-00 · n=1", fontsize=13, y=1.01)
     fig.tight_layout()
     fig.savefig(FIGURE_PATH, dpi=190, bbox_inches="tight")
     plt.close(fig)
 
-    fonts = Path(matplotlib.get_data_path()) / "fonts/ttf"
-    pdfmetrics.registerFont(TTFont("DejaVu", str(fonts / "DejaVuSans.ttf")))
-    pdfmetrics.registerFont(TTFont("DejaVu-Bold", str(fonts / "DejaVuSans-Bold.ttf")))
-    pdfmetrics.registerFontFamily("DejaVu", normal="DejaVu", bold="DejaVu-Bold")
+    font_dir = Path("/usr/share/fonts/truetype/liberation")
+    pdfmetrics.registerFont(TTFont("Serif", str(font_dir / "LiberationSerif-Regular.ttf")))
+    pdfmetrics.registerFont(TTFont("Serif-Bold", str(font_dir / "LiberationSerif-Bold.ttf")))
+    pdfmetrics.registerFont(TTFont("Serif-Italic", str(font_dir / "LiberationSerif-Italic.ttf")))
+    pdfmetrics.registerFontFamily("Serif", normal="Serif", bold="Serif-Bold", italic="Serif-Italic")
     styles = getSampleStyleSheet()
-    title = ParagraphStyle("ReportTitle", parent=styles["Title"], fontName="DejaVu-Bold",
-                           fontSize=18, leading=22, textColor=colors.HexColor("#0f172a"))
-    subtitle = ParagraphStyle("Subtitle", parent=styles["Normal"], fontName="DejaVu",
-                              fontSize=9, leading=12, textColor=colors.HexColor("#475569"),
-                              spaceAfter=10)
-    body = ParagraphStyle("ReportBody", parent=styles["Normal"], fontName="DejaVu",
-                          fontSize=9.2, leading=13, spaceAfter=6)
-    heading = ParagraphStyle("ReportHeading", parent=styles["Heading2"], fontName="DejaVu-Bold",
-                             fontSize=12, leading=15, spaceBefore=7, spaceAfter=6,
-                             textColor=colors.HexColor("#0f172a"), keepWithNext=True)
-    small = ParagraphStyle("TableCell", parent=body, fontSize=7.5, leading=9, spaceAfter=0)
-    small_head = ParagraphStyle("TableHead", parent=small, fontName="DejaVu-Bold")
+    title = ParagraphStyle("ScientificTitle", parent=styles["Title"], fontName="Serif-Bold",
+                           fontSize=17, leading=21, alignment=TA_CENTER, spaceAfter=10)
+    subtitle = ParagraphStyle("Metadata", parent=styles["Normal"], fontName="Serif-Italic",
+                              fontSize=10, leading=13, alignment=TA_CENTER,
+                              textColor=colors.HexColor("#475569"), spaceAfter=12)
+    body = ParagraphStyle("ScientificBody", parent=styles["Normal"], fontName="Serif",
+                          fontSize=10.5, leading=14.5, alignment=TA_JUSTIFY,
+                          firstLineIndent=0.7 * cm, spaceAfter=5, splitLongWords=True)
+    no_indent = ParagraphStyle("NoIndent", parent=body, firstLineIndent=0)
+    heading = ParagraphStyle("ScientificHeading", parent=body, fontName="Serif-Bold",
+                             fontSize=13, leading=16, alignment=TA_LEFT, firstLineIndent=0,
+                             spaceBefore=9, spaceAfter=6, keepWithNext=True)
+    subheading = ParagraphStyle("ScientificSubheading", parent=heading, fontSize=11,
+                                leading=14, spaceBefore=6, spaceAfter=4)
+    caption = ParagraphStyle("Caption", parent=no_indent, fontSize=9.5, leading=12,
+                             alignment=TA_CENTER, spaceBefore=4, spaceAfter=7)
+    table_text = ParagraphStyle("TableText", parent=no_indent, fontSize=7.5, leading=9,
+                                alignment=TA_CENTER)
+    table_head = ParagraphStyle("TableHead", parent=table_text, fontName="Serif-Bold")
+    reference = ParagraphStyle("Reference", parent=no_indent, fontSize=9, leading=12,
+                               leftIndent=0.6 * cm, firstLineIndent=-0.6 * cm, spaceAfter=4)
+    code = ParagraphStyle("Code", parent=no_indent, fontName="Courier", fontSize=8.5,
+                          leading=11, leftIndent=0.5 * cm, spaceAfter=3)
 
-    doc = SimpleDocTemplate(str(PDF_PATH), pagesize=landscape(A4),
-                            leftMargin=1.15 * cm, rightMargin=1.15 * cm,
-                            topMargin=1.0 * cm, bottomMargin=1.0 * cm,
-                            title="Живая память на диалогах: full-core-v1",
+    doc = SimpleDocTemplate(str(PDF_PATH), pagesize=A4,
+                            leftMargin=2.0 * cm, rightMargin=2.0 * cm,
+                            topMargin=1.7 * cm, bottomMargin=1.7 * cm,
+                            title="Латентная K/V-память для удержания диалогового контекста",
                             author="Transformer experiments",
-                            subject="Первый контрольный батч full-core-v1")
+                            subject="Научный отчёт о контрольном эксперименте full-core-v1")
+
+    def para(text, style=body):
+        return Paragraph(text, style)
+
+    def bullet(text):
+        return Paragraph(f"• {text}", no_indent)
+
+    def add_table(story, table_caption, headers, rows, widths, font_size=7.5):
+        story.append(Paragraph(html.escape(table_caption), caption))
+        cell_style = ParagraphStyle("SizedCell", parent=table_text, fontSize=font_size,
+                                    leading=font_size * 1.2)
+        head_style = ParagraphStyle("SizedHead", parent=table_head, fontSize=font_size,
+                                    leading=font_size * 1.2)
+        data = [[Paragraph(html.escape(str(cell)), head_style) for cell in headers]]
+        data += [[Paragraph(html.escape(str(cell)), cell_style) for cell in row] for row in rows]
+        table = Table(data, colWidths=[w * cm for w in widths], repeatRows=1, hAlign="CENTER")
+        table.setStyle(TableStyle([
+            ("GRID", (0, 0), (-1, -1), 0.4, colors.HexColor("#64748b")),
+            ("BACKGROUND", (0, 0), (-1, 0), colors.HexColor("#e2e8f0")),
+            ("VALIGN", (0, 0), (-1, -1), "MIDDLE"),
+            ("ALIGN", (1, 1), (-1, -1), "CENTER"),
+            ("LEFTPADDING", (0, 0), (-1, -1), 3), ("RIGHTPADDING", (0, 0), (-1, -1), 3),
+            ("TOPPADDING", (0, 0), (-1, -1), 3), ("BOTTOMPADDING", (0, 0), (-1, -1), 3),
+        ]))
+        story += [table, Spacer(1, 0.2 * cm)]
+
     story = [
-        Paragraph("Живая память на диалогах: сравнение с KV-кэшем", title),
-        Paragraph("full-core-v1 · main-L100-00-work-terse-baseline · Qwen3.5-4B bf16 · 17.11.2026", subtitle),
-        Paragraph("Основной результат", heading),
-        Paragraph(
-            f"Динамическая живая память получила recall <b>{dynamic['recall']:.3f}</b> против "
-            f"{pyramid['recall']:.3f} у PyramidKV: на {speed_gain:.1f}% ниже end-to-end латентность, "
-            f"на {vram_gain:.1f}% меньше peak VRAM и в {prompt_factor:.2f} раза меньше prompt-токенов. "
-            f"SnapKV сохранил небольшое преимущество по качеству ({snap['recall']:.3f}), а полный контекст "
-            f"остался лучшим ({full['recall']:.3f}). Это направленческий результат одного диалога, "
-            "а не статистически подтверждённое преимущество.", body,
+        Paragraph("Латентная K/V-память для удержания диалогового контекста: "
+                  "сравнение с методами сжатия KV-кэша", title),
+        Paragraph("Экспериментальный отчёт · full-core-v1 · 17 ноября 2026", subtitle),
+        Paragraph("АННОТАЦИЯ", heading),
+        para(
+            f"Исследуется латентная память, подключающая активации средних слоёв как дополнительные "
+            f"ключи и значения внимания без возврата исходного текста в промпт. В контрольном диалоге "
+            f"динамический вариант получил recall {dynamic['recall']:.3f} против {pyramid['recall']:.3f} "
+            f"у PyramidKV и {snap['recall']:.3f} у SnapKV. Относительно PyramidKV латентность ниже на "
+            f"{speed_gain:.1f}%, peak VRAM — на {vram_gain:.1f}%, объём prompt-токенов — в "
+            f"{prompt_factor:.2f} раза меньше. Полный контекст сохранил наилучший recall "
+            f"({full['recall']:.3f}). Результат является предварительным и требует подтверждения на "
+            "остальных диалогах корпуса."
         ),
-        Paragraph("Качество и стоимость", heading),
+        para("<b>Ключевые слова:</b> диалоговая память; латентные активации; K/V-инъекция; "
+             "сжатие KV-кэша; PyramidKV; SnapKV; Qwen3.5.", no_indent),
+        Paragraph("1. ВВЕДЕНИЕ", heading),
+        para(
+            "При длительном диалоге полный KV-кэш сохраняет максимум информации, но увеличивает объём "
+            "состояния и работу механизма внимания. Методы Sliding, TopK, SnapKV и PyramidKV сокращают "
+            "кэш за счёт отбора токенов. Альтернативный подход — сохранить не исходные токены, а "
+            "латентные представления реплик и подключать их к attention только при сходстве с текущим состоянием."
+        ),
+        para(
+            "<b>Исследовательский вопрос:</b> может ли динамическая латентная K/V-память обеспечить "
+            "конкурентоспособный recall при меньших затратах латентности и памяти по сравнению с "
+            "методами сжатия KV-кэша? Дополнительно проверяется, сохраняет ли динамический отбор "
+            "качество фиксированной инъекции при меньшем числе подключаемых слотов."
+        ),
+        Paragraph("Задачи контрольного эксперимента", subheading),
+        bullet("сравнить качество с полным контекстом и четырьмя политиками сжатия KV-кэша;"),
+        bullet("оценить end-to-end латентность, peak VRAM, prompt-объём и attention-прокси;"),
+        bullet("локализовать зависимость recall от расстояния между фактом и контрольным вопросом."),
+        PageBreak(),
+        Paragraph("2. МЕТОД", heading),
+        Paragraph("2.1. Модель и экспериментальные данные", subheading),
+        para(
+            "Использованы Qwen3.5-4B в bf16 и AMD RX 7900 XT. Контрольный диалог "
+            "main-L100-00-work-terse-baseline относится к теме работы/IT, использует лаконичную персону "
+            "и baseline-сценарий. Он содержит 100 ходов и 22 контрольные пробы: прямые, "
+            "переформулированные, multi-hop и unanswerable. Генерация детерминирована (greedy, seed=0), "
+            "максимальная длина ответа — 32 новых токена."
+        ),
+        Paragraph("2.2. Сравниваемые системы", subheading),
+        bullet("Full KV сохраняет всю историю и служит верхним контролем качества."),
+        bullet("Sliding, TopK, SnapKV и PyramidKV используют бюджет 128 слотов на слой; "
+               "SnapKV и PyramidKV реализованы по опубликованным методам [1, 2]."),
+        bullet("Живая память k32 подключает до 32 латентных K/V-слотов из банка ёмкостью 512. "
+               "Dynamic применяет косинусный гейт 0,5 и подключает от 1 до 32 слотов. "
+               "Текстовый RAG в обеих живых конфигурациях отключён."),
+        Paragraph("2.3. Протокол измерений", subheading),
+        para(
+            "После warmup выполнены пять чередующихся повторов каждой стратегии с ротацией порядка. "
+            "End-to-end латентность включает prefill, decoding и операции retrieval/embedding. "
+            "Пиковая память измерена через torch.max_memory_allocated внутри генерации. "
+            "Attention-прокси равен суммарному числу кэшируемых и инжектируемых слотов и не является "
+            "прямым замером FLOPs."
+        ),
+        Paragraph("2.4. Метрики качества", subheading),
+        para(
+            "Recall основан на присутствии ожидаемых ключевых строк. Для multi-hop частичный ответ даёт "
+            "0,5. Дополнительно рассчитан recall только по 20 answerable-пробам: две unanswerable-пробы "
+            "исключены, поскольку их исходная метрика грубо аппроксимирует корректный отказ. "
+            "Разбиение по lag-зонам показывает удержание факта на расстоянии 0–5, 6–12, 13–20 и 21+ ходов."
+        ),
+        PageBreak(),
+        Paragraph("3. РЕЗУЛЬТАТЫ", heading),
+        Paragraph("3.1. Качество и стоимость", subheading),
     ]
-    headers = ["Стратегия", "Recall", "Без\nunanswerable", "E2E, с/ход", "Peak VRAM,\nMiB", "Prompt\nтокены", "Attention\nслоты"]
+    headers = ["Стратегия", "Recall", "Answerable\nrecall", "E2E,\nс/ход", "Peak VRAM,\nMiB", "Prompt\nтокены", "Attention\nслоты"]
     table_rows = []
     for name in ORDER:
         row = results[name]
         table_rows.append([
             LABELS[name], f"{row['recall']:.3f}", f"{row['answerable']:.3f}",
-            f"{row['e2e']:.3f}", f"{row['peak']:.0f}", f"{row['prompt']:,}".replace(",", " "),
-            f"{row['attention']:,}".replace(",", " "),
+            f"{row['e2e']:.3f}", f"{row['peak']:.0f}",
+            f"{row['prompt']:,}".replace(",", " "), f"{row['attention']:,}".replace(",", " "),
         ])
-    data = [[Paragraph(html.escape(cell), small_head) for cell in headers]]
-    data += [[Paragraph(html.escape(cell), small) for cell in row] for row in table_rows]
-    table = Table(data, colWidths=[5.0 * cm, 1.8 * cm, 2.3 * cm, 2.2 * cm, 2.5 * cm, 3.0 * cm, 3.2 * cm],
-                  repeatRows=1, hAlign="LEFT")
-    table.setStyle(TableStyle([
-        ("GRID", (0, 0), (-1, -1), 0.35, colors.HexColor("#94a3b8")),
-        ("BACKGROUND", (0, 0), (-1, 0), colors.HexColor("#e2e8f0")),
-        ("BACKGROUND", (0, 6), (-1, 6), colors.HexColor("#ccfbf1")),
-        ("BACKGROUND", (0, 7), (-1, 7), colors.HexColor("#d1fae5")),
-        ("VALIGN", (0, 0), (-1, -1), "MIDDLE"),
-        ("ALIGN", (1, 1), (-1, -1), "CENTER"),
-        ("LEFTPADDING", (0, 0), (-1, -1), 4), ("RIGHTPADDING", (0, 0), (-1, -1), 4),
-        ("TOPPADDING", (0, 0), (-1, -1), 4), ("BOTTOMPADDING", (0, 0), (-1, -1), 4),
-    ]))
-    story += [table, Spacer(1, 0.2 * cm),
-              Image(str(FIGURE_PATH), width=23.7 * cm, height=7.8 * cm), PageBreak()]
-
-    interpretation = [
-        f"<b>Dynamic против PyramidKV:</b> +0.136 recall, −{speed_gain:.1f}% e2e, −{vram_gain:.1f}% peak VRAM. "
-        "Диапазоны пяти замеров латентности не пересекаются.",
-        f"<b>SnapKV всё ещё выше по качеству:</b> {snap['recall']:.3f} против {dynamic['recall']:.3f}. "
-        "Поэтому результат не означает лидерства среди всех компактных стратегий.",
-        f"<b>Динамический гейт эффективнее фиксированного k32:</b> +0.045 recall; в среднем "
-        f"{dynamic['kv_slots'] / dynamic['kv_steps']:.2f} слота/шаг против "
-        f"{fixed['kv_slots'] / fixed['kv_steps']:.2f} — в {gate_ratio:.1f} раза меньше.",
-        f"<b>Компромисс:</b> attention-прокси dynamic в {attention_factor:.2f} раза выше, чем у PyramidKV "
-        f"({dynamic['attention']:,} против {pyramid['attention']:,} слотов). Экономия prompt-токенов не означает "
-        "такую же экономию работы attention.",
-        "<b>Слабое место:</b> обе живые конфигурации получили 0.000 в lag-зоне 13–20. "
-        "У dynamic recall зоны 21+ равен 0.278; преимущество получено в основном на коротких дистанциях и paraphrase-пробах.",
-        "<b>Full KV остаётся эталоном качества:</b> 0.955 overall и 0.950 после исключения unanswerable-проб.",
-    ]
-    story.append(Paragraph("Интерпретация", heading))
-    story += [Paragraph(f"• {item}", body) for item in interpretation]
-    story.append(Paragraph("Протокол", heading))
-    protocol = [
-        "Один диалог main: работа/IT, лаконичная персона, baseline; 100 ходов, 22 пробы, seed=5000.",
-        "Qwen3.5-4B bf16 на AMD RX 7900 XT; greedy; до 32 новых токенов; KV-бюджет контролей 128.",
-        "Один warmup и пять чередующихся повторов каждой стратегии. E2E включает prefill, decoding и retrieval/embedding.",
-        "Recall — keyword-скоринг. Колонка «Без unanswerable» исключает две грубые unanswerable-пробы.",
-        "Peak VRAM — torch.max_memory_allocated внутри генерации; attention-слоты — прокси, не прямой замер FLOPs.",
-    ]
-    story += [Paragraph(f"• {html.escape(item)}", body) for item in protocol]
-    story.append(Paragraph("Ограничения и следующий шаг", heading))
-    story.append(Paragraph(
-        "n=1: доверительный интервал по диалогам и парная значимость пока недоступны. В baseline нет temporal-проб. "
-        "Для подтверждения нужны остальные темы, персоны и сценарии main. Следующие независимые контрольные батчи — "
-        "self (настройки живой памяти) и rag (текстовые каналы).", body,
-    ))
-    story.append(Paragraph("Воспроизведение", heading))
+    add_table(story, "Таблица 1 — Результаты контрольного диалога", headers, table_rows,
+              [3.6, 1.4, 1.9, 1.6, 2.1, 2.8, 3.0], 7.2)
     story += [
-        Paragraph("scripts/run_dialogue_fullscale.sh core gate", body),
-        Paragraph(".venv/bin/python scripts/build_core_gate_report.py", body),
-        Paragraph("Данные: results/corpus/full-core-v1/batches/main-L100-00-work-terse-baseline/", subtitle),
+        Image(str(FIGURE_PATH), width=16.6 * cm, height=5.6 * cm),
+        Paragraph("Рисунок 1 — Recall, end-to-end латентность и peak VRAM", caption),
+        para(
+            f"Dynamic превосходит PyramidKV на 0,136 recall и уступает SnapKV на 0,023. "
+            f"После исключения unanswerable-проб recall составляет {dynamic['answerable']:.3f} у dynamic, "
+            f"{pyramid['answerable']:.3f} у PyramidKV, {snap['answerable']:.3f} у SnapKV и "
+            f"{full['answerable']:.3f} у Full KV. Порядок методов по качеству сохраняется."
+        ),
+        Paragraph("3.2. Влияние динамического гейта", subheading),
+        para(
+            f"Dynamic улучшил recall относительно k32 с {fixed['recall']:.3f} до {dynamic['recall']:.3f}. "
+            f"Среднее число инжектируемых слотов снизилось с {fixed_slots:.2f} до {dynamic_slots:.2f} "
+            f"на шаг, то есть в {gate_ratio:.1f} раза. Медианная e2e-латентность возросла с "
+            f"{fixed['e2e']:.3f} до {dynamic['e2e']:.3f} с/ход (3,5%)."
+        ),
+        Paragraph("3.3. Зависимость от дистанции", subheading),
+    ]
+    lag_rows = [[LABELS[name]] + [f"{results[name]['lag'][zone]:.3f}" for zone in ("0-5", "6-12", "13-20", "21+")]
+                for name in ORDER]
+    add_table(story, "Таблица 2 — Recall по lag-зонам", ["Стратегия", "0–5", "6–12", "13–20", "21+"],
+              lag_rows, [5.2, 2.1, 2.1, 2.1, 2.1], 8)
+    story += [
+        para(
+            "Обе живые конфигурации не ответили верно на пробы зоны 13–20. В зоне 21+ dynamic получил "
+            "0,278, k32 — 0,111. Таким образом, агрегированное преимущество dynamic над PyramidKV "
+            "сформировано преимущественно короткими дистанциями и paraphrase-пробами, а не равномерным "
+            "улучшением долгосрочного удержания."
+        ),
+        PageBreak(),
+        Paragraph("4. ОБСУЖДЕНИЕ", heading),
+        bullet(
+            f"<b>Относительно PyramidKV</b> dynamic показал более высокий recall при снижении e2e на "
+            f"{speed_gain:.1f}% и peak VRAM на {vram_gain:.1f}%. Диапазоны пяти повторов латентности "
+            "у этих стратегий не пересекаются, что поддерживает воспроизводимость различия внутри батча."
+        ),
+        bullet(
+            f"<b>SnapKV задаёт границу результата.</b> Его recall {snap['recall']:.3f} выше, чем у dynamic, "
+            "поэтому данные не поддерживают утверждение о лучшем качестве среди всех компактных методов."
+        ),
+        bullet(
+            f"<b>Экономия входа не эквивалентна экономии attention.</b> Dynamic использует в "
+            f"{prompt_factor:.2f} раза меньше prompt-токенов, чем PyramidKV, но его attention-прокси "
+            f"в {attention_factor:.2f} раза выше. Следовательно, преимущество относится к измеренным "
+            "латентности, VRAM и prompt-объёму, а не ко всем вычислительным осям."
+        ),
+        bullet(
+            "<b>Full KV остаётся эталоном.</b> Разрыв с полным контекстом показывает, что латентная "
+            "инъекция в текущем виде не заменяет исходную историю для точного долгосрочного recall."
+        ),
+        Paragraph("5. ОГРАНИЧЕНИЯ", heading),
+        bullet("Один диалог: доверительные интервалы по диалогам и парная статистическая значимость не рассчитываются."),
+        bullet("Синтетический keyword-скоринг измеряет восстановление заданных фактов, но не всестороннее качество диалога."),
+        bullet("Baseline-сценарий не содержит temporal-проб; обновления и противоречия фактов здесь не проверяются."),
+        bullet("Результат получен для одной модели и одной GPU-конфигурации; перенос на другие условия требует проверки."),
+        Paragraph("6. ЗАКЛЮЧЕНИЕ", heading),
+        para(
+            "Контрольный эксперимент показал практическую работоспособность динамической латентной "
+            "K/V-памяти и преимущество над PyramidKV по совокупности recall, e2e-латентности и peak VRAM. "
+            "Динамический гейт также сократил число инъекций более чем на порядок без потери качества "
+            "относительно k32. Одновременно выявлены провал в средней lag-зоне и преимущество SnapKV "
+            "по recall. Полученные данные обосновывают расширение эксперимента на полный main-корпус, "
+            "но не являются статистическим доказательством общего превосходства метода."
+        ),
+        Paragraph("СПИСОК ЛИТЕРАТУРЫ", heading),
+        Paragraph("1. Li Y. SnapKV: LLM Knows What You are Looking for Before Generation / Y. Li et al. "
+                  "// NeurIPS. — 2024. — https://arxiv.org/abs/2404.14469", reference),
+        Paragraph("2. Cai Z. PyramidKV: Dynamic KV Cache Compression based on Pyramidal Information "
+                  "Funneling / Z. Cai et al. — 2024. — https://arxiv.org/abs/2406.02069", reference),
+        Paragraph("ВОСПРОИЗВЕДЕНИЕ", heading),
+        Paragraph("scripts/run_dialogue_fullscale.sh core gate", code),
+        Paragraph(".venv/bin/python scripts/build_core_gate_report.py", code),
+        Paragraph("Исходные данные: results/corpus/full-core-v1/batches/main-L100-00-work-terse-baseline/", reference),
     ]
 
     def page_number(canvas, document):
         canvas.saveState()
-        canvas.setFont("DejaVu", 8)
-        canvas.setFillColor(colors.HexColor("#64748b"))
-        canvas.drawRightString(landscape(A4)[0] - 1.15 * cm, 0.45 * cm, f"стр. {document.page}")
+        canvas.setFont("Serif", 9)
+        canvas.setFillColor(colors.HexColor("#475569"))
+        canvas.drawCentredString(A4[0] / 2, 0.8 * cm, str(document.page))
         canvas.restoreState()
 
     doc.build(story, onFirstPage=page_number, onLaterPages=page_number)
