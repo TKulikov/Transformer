@@ -1,0 +1,196 @@
+diff --git a/scripts/verify_paper.py b/scripts/verify_paper.py
+index ac96a00..24725df 100644
+--- a/scripts/verify_paper.py
++++ b/scripts/verify_paper.py
+@@ -142,7 +142,7 @@ def f4():
+     corr.memory.ttl[0] = 6
+     wrappers = install_kv_memory(model, corr, layers=[2], max_slots=4)
+     cap = {}
+-    orig = KVMemoryAttention._attention
++    orig = KVMemoryAttention.__dict__["_attention"]  # the staticmethod object, not the plain function
+ 
+     def capture(a, q, k, v, mask, kwargs):
+         cap.update(a=a, k=k, v=v)
+diff --git a/tests/test_semantic_v2.py b/tests/test_semantic_v2.py
+index fde1187..681a8f5 100644
+--- a/tests/test_semantic_v2.py
++++ b/tests/test_semantic_v2.py
+@@ -273,3 +273,38 @@ class TestAnchoredBank:
+         bank.add("t", v, anchor=a)
+         stored = bank.embeds[0]
+         assert torch.allclose(stored, (v - a) / (v - a).norm(), atol=1e-5)
++
++
++class TestDynamicKVInjection:
++    def test_dynamic_injects_only_above_threshold(self):
++        """kv_dynamic caps injection at slots with cos >= kv_thresh."""
++        import torch
++        from tmem.dialogue import Strategy, run_session
++        from tmem.kvinject import install_kv_memory, uninstall_kv_memory
++        from tmem.memory import CorrectionLayer
++        from tmem.qa import SESSIONS
++        from tmem.semantic import band_hidden
++
++        import scripts_code.smoke_latent_campaign as smoke
++        torch.manual_seed(0)  # deterministic: full-suite order changes the global seed
++        bundle = smoke.tiny_qwen35_bundle()
++        corr = CorrectionLayer(bundle.hidden_size, size=64, window_crit=-1e9, crit=0.95)
++        # slots: some close to real utterance activations, some deliberately not
++        base = band_hidden(bundle, "my cat Barsik and the rust parser Oxidum")
++        for w in (1.0, 0.99, 0.98, 0.2, -0.6):
++            corr(base * w)
++
++        def run_with(thresh):
++            wrappers = install_kv_memory(bundle.model, corr, layers=[1], max_slots=32,
++                                         dynamic=True, thresh=thresh)
++            try:
++                run_session(bundle, SESSIONS[0], Strategy("d", context="window", window=2),
++                            max_new_tokens=2, seed=0)
++            finally:
++                uninstall_kv_memory(bundle.model)
++            return wrappers[0].stats
++
++        assert run_with(2.0)["injected_slots"] == 0      # unreachable thresh -> silent
++        st = run_with(0.5)
++        assert st["injected_slots"] > 0                  # close slots do fire
++        assert st["injected_slots"] < st["steps"] * 32   # fewer than the fixed-32 ceiling
+diff --git a/tmem/corpus_run.py b/tmem/corpus_run.py
+index 8ba33c9..9de36c2 100644
+--- a/tmem/corpus_run.py
++++ b/tmem/corpus_run.py
+@@ -147,6 +147,25 @@ def shared_dev_strategies(budget: int = 128) -> list[Strategy]:
+     ]
+ 
+ 
++def kv_sweep_strategies(budget: int = 128) -> list[Strategy]:
++    """Injection-width campaign for the living-memory thesis: fixed kv_slots
++    {8,16,32,64} around the reference, plus dynamic activation-gated injection
++    (1..32 slots with cosine >= kv_thresh against the current hidden state).
++    Bank size fixed at the sufficient 512; pyramidkv is the no-RAG analogue."""
++    mem = dict(memory_window_crit=0.5, memory_crit=0.95, memory_merge_k=0.25)
++    return [
++        Strategy("classic_kv_full", context="full"),
++        Strategy(f"pyramidkv_{budget}", context="full",
++                 kv=KVConfig.sparse(budget, "pyramidkv", observation=8, pyramid_beta=20)),
++        Strategy("v4_kv_mid_k8", context="window", window=5, memory_kv=True, kv_slots=8, **mem),
++        Strategy("v4_kv_mid_k16", context="window", window=5, memory_kv=True, kv_slots=16, **mem),
++        Strategy("v4_kv_mid", context="window", window=5, memory_kv=True, kv_slots=32, **mem),
++        Strategy("v4_kv_mid_k64", context="window", window=5, memory_kv=True, kv_slots=64, **mem),
++        Strategy("v4_kv_mid_dyn", context="window", window=5, memory_kv=True, kv_slots=32,
++                 kv_dynamic=True, kv_thresh=0.5, **mem),
++    ]
++
++
+ STRATEGY_SETS = {
+     "pilot": main_strategies,
+     "main": main_strategies,
+@@ -155,6 +174,7 @@ STRATEGY_SETS = {
+     "latent": latent_strategies,
+     "shared": shared_strategies,
+     "shared_dev": shared_dev_strategies,
++    "kv_sweep": kv_sweep_strategies,
+ }
+ 
+ 
+diff --git a/tmem/dialogue.py b/tmem/dialogue.py
+index 520b252..2accd41 100644
+--- a/tmem/dialogue.py
++++ b/tmem/dialogue.py
+@@ -49,6 +49,8 @@ class Strategy:
+     rag_anchor_gate: float = 0.85         # "bank_dev": порог сходства anchor'ей кластера
+     memory_kv: bool = False               # v4: activated facts enter mid-layer attention as K/V
+     kv_slots: int = 32                    # max memory keys/values per attention layer
++    kv_dynamic: bool = False              # динамическая инъекция: только слоты с cos >= kv_thresh
++    kv_thresh: float = 0.5                # порог активации для kv_dynamic (1..kv_slots векторов)
+     gen_chunks: bool = False              # chunk-memory: store generation chunks instead of user facts
+     chunk_embed: str = "span"             # mean | span | attn | late (contextualised chunk embedding)
+     chunk_key: str = "content"            # content (block layer activations) | request (legacy)
+@@ -85,6 +87,8 @@ class Strategy:
+             "rag_anchor_gate": self.rag_anchor_gate,
+             "memory_kv": self.memory_kv,
+             "kv_slots": self.kv_slots,
++            "kv_dynamic": self.kv_dynamic,
++            "kv_thresh": self.kv_thresh,
+             "gen_chunks": self.gen_chunks,
+             "chunk_embed": self.chunk_embed,
+             "chunk_key": self.chunk_key,
+@@ -254,12 +258,12 @@ def _bank_slot_key(bundle, corr, text: str, tau: float = 0.05) -> tuple[torch.Te
+     """
+     x = band_hidden(bundle, text)                       # (1, L, d)
+     corr(x)                                             # pour: retrieve + update
+-    rel, n = corr.memory.get_relevant(x, 32)            # (1, n, d) bank's response
++    rel, n = corr.memory.get_relevant(x, 32)            # (1, n, d), по убыванию cos
+     if n > 0:
+         q = x.mean(dim=1)                               # (1, d)
+         cos = torch.nn.functional.cosine_similarity(rel[0], q, dim=-1)
+         w = torch.softmax(cos / tau, dim=0)
+-        return (w[:, None] * rel[0]).sum(dim=0), rel[0, -1], int(x.shape[1])
++        return (w[:, None] * rel[0]).sum(dim=0), rel[0, 0], int(x.shape[1])  # anchor = top-1
+     return x.mean(dim=1).squeeze(0), None, int(x.shape[1])
+ 
+ 
+@@ -309,7 +313,8 @@ def run_session(
+                 decay=strategy.memory_decay,
+             )
+             run.corr = corr
+-        kv_wrappers = install_kv_memory(bundle.model, corr, max_slots=strategy.kv_slots)
++        kv_wrappers = install_kv_memory(bundle.model, corr, max_slots=strategy.kv_slots,
++                                        dynamic=strategy.kv_dynamic, thresh=strategy.kv_thresh)
+     # The bank exists in every strategy for tone *measurement*; it feeds the
+     # prompt (RAG mode) only when strategy.rag is set.
+     bank = RagBank(bundle.hidden_size, crit=strategy.rag_crit, device=bundle.device, centered=strategy.rag_centered,
+diff --git a/tmem/kvinject.py b/tmem/kvinject.py
+index c516870..677979d 100644
+--- a/tmem/kvinject.py
++++ b/tmem/kvinject.py
+@@ -32,11 +32,14 @@ _NEG_INF = torch.finfo(torch.float32).min
+ class KVMemoryAttention:
+     """Per-instance replacement for an attention module's forward."""
+ 
+-    def __init__(self, attn, corr: CorrectionLayer, max_slots: int = 32) -> None:
++    def __init__(self, attn, corr: CorrectionLayer, max_slots: int = 32,
++                 dynamic: bool = False, thresh: float = 0.5) -> None:
+         self.attn = attn
+         self.corr = corr
+         self.max_slots = max_slots
+-        self.stats = {"steps": 0, "injected_slots": 0}
++        self.dynamic = dynamic      # inject only slots with cos >= thresh (1..max_slots)
++        self.thresh = thresh
++        self.stats = {"steps": 0, "injected_slots": 0, "active_steps": 0}
+ 
+     def __call__(self, hidden_states, position_embeddings, attention_mask, past_key_values=None, **kwargs):
+         from transformers.models.qwen3_5.modeling_qwen3_5 import apply_rotary_pos_emb
+@@ -65,7 +68,13 @@ class KVMemoryAttention:
+         with torch.no_grad():
+             relevant, n = self.corr(hidden_states.detach().to(torch.float32))
+         if n > 0:
+-            n = min(n, self.max_slots)
++            if self.dynamic:
++                q = hidden_states.detach().to(torch.float32).mean(dim=1)      # (1, d)
++                cos = torch.nn.functional.cosine_similarity(relevant[0], q, dim=-1)
++                n = int((cos >= self.thresh).sum().clamp(max=self.max_slots))
++            else:
++                n = min(n, self.max_slots)
++        if n > 0:
+             mem = relevant[:, :n].to(hidden_states.dtype)
+             mem_k = a.k_norm(a.k_proj(mem).view(1, n, -1, a.head_dim)).transpose(1, 2)
+             mem_v = a.v_proj(mem).view(1, n, -1, a.head_dim).transpose(1, 2)
+@@ -118,7 +127,8 @@ def _extend_mask(mask, real_keys: int, mem: int, dtype: torch.dtype, s_q: int, d
+     return torch.cat([m_real, m_mem], dim=-1)[None, None, :, :]
+ 
+ 
+-def install_kv_memory(model, corr: CorrectionLayer, layers: list[int] | None = None, max_slots: int = 32):
++def install_kv_memory(model, corr: CorrectionLayer, layers: list[int] | None = None, max_slots: int = 32,
++                      dynamic: bool = False, thresh: float = 0.5):
+     """Wrap attention of the chosen layers with KV-memory injection.
+ 
+     Args:
+@@ -147,7 +157,7 @@ def install_kv_memory(model, corr: CorrectionLayer, layers: list[int] | None = N
+         attn = blocks[li].self_attn
+         if not hasattr(attn, "_orig_forward"):
+             attn._orig_forward = attn.forward
+-        wrap = KVMemoryAttention(attn, corr, max_slots)
++        wrap = KVMemoryAttention(attn, corr, max_slots, dynamic=dynamic, thresh=thresh)
+         attn.forward = wrap
+         wrappers.append(wrap)
+     return wrappers

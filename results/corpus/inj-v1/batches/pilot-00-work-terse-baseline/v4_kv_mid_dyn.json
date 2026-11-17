@@ -1,0 +1,271 @@
+{
+  "strategy": "v4_kv_mid_dyn",
+  "spec_id": "pilot-00-work-terse-baseline",
+  "analysis": {
+    "recall_mean": 0.639,
+    "recall_direct": 0.607,
+    "recall_paraphrase": 0.75,
+    "recall_by_zone": {
+      "early": 0.625,
+      "middle": 0.65
+    },
+    "recall_by_kind": {
+      "direct": 0.5,
+      "multihop": 0.625,
+      "paraphrase": 0.75,
+      "unanswerable": 1.0
+    },
+    "recall_by_lag": {
+      "0-5": 1.0,
+      "6-12": 0.833,
+      "13-20": 1.0,
+      "21+": 0.25
+    },
+    "stale_rate": 0.0,
+    "stale_updated_rate": null,
+    "consistency_vs_reference": 0.162,
+    "tone_mean": 0.8282,
+    "rep_mean": 0.0,
+    "prompt_tokens": 42599,
+    "generated_tokens": 3059,
+    "embed_tokens": 3813,
+    "cache_slots": 1347435,
+    "attention_flops_proxy": 1347435,
+    "max_cache_len": 519,
+    "mean_turn_latency_s": 1.3507,
+    "median_turn_latency_s": 1.3847,
+    "p90_turn_latency_s": 1.4661,
+    "peak_mem_mb": 8330.49,
+    "kv_injected_slots": 34279,
+    "kv_steps": 13036,
+    "memory_stats": {
+      "get_calls": 13036,
+      "update_calls": 13036,
+      "retrievals": 2988483,
+      "stores": 1206,
+      "merges": 1852,
+      "evictions": 947,
+      "gate_rejects": 0,
+      "occupied_slots": 259
+    },
+    "rag_stats": {
+      "adds": 18,
+      "upserts": 29,
+      "evictions": 0,
+      "size": 18
+    },
+    "probe_details": [
+      {
+        "turn": 23,
+        "question": "Question: when does the retrospective start?",
+        "plant_turn": 14,
+        "lag": 9,
+        "paraphrase": false,
+        "kind": "direct",
+        "score": 1.0,
+        "stale_score": null,
+        "answer": "The retrospective starts at **15:30**."
+      },
+      {
+        "turn": 36,
+        "question": "Question: when does my sprint end?",
+        "plant_turn": 31,
+        "lag": 5,
+        "paraphrase": false,
+        "kind": "direct",
+        "score": 1.0,
+        "stale_score": null,
+        "answer": "Your sprint ends on **Thursday**."
+      },
+      {
+        "turn": 38,
+        "question": "Question: when does my sprint end?",
+        "plant_turn": 31,
+        "lag": 7,
+        "paraphrase": false,
+        "kind": "direct",
+        "score": 1.0,
+        "stale_score": null,
+        "answer": "Your sprint ends on **Thursday**.\n\nThis timing is important for planning your retrospective, as it's the perfect moment "
+      },
+      {
+        "turn": 42,
+        "question": "What is the name of our intern? And also, what is the name of my team leader?",
+        "plant_turn": 37,
+        "lag": 5,
+        "paraphrase": false,
+        "kind": "multihop",
+        "score": 1.0,
+        "stale_score": null,
+        "answer": "Your new intern is named **Pavel**, and your team lead is **Margarita**."
+      },
+      {
+        "turn": 48,
+        "question": "Question: where is the office located?",
+        "plant_turn": 43,
+        "lag": 5,
+        "paraphrase": true,
+        "kind": "paraphrase",
+        "score": 1.0,
+        "stale_score": null,
+        "answer": "The office is located on the **twelfth floor**."
+      },
+      {
+        "turn": 50,
+        "question": "Question: what is the name of my team leader?",
+        "plant_turn": 35,
+        "lag": 15,
+        "paraphrase": true,
+        "kind": "paraphrase",
+        "score": 1.0,
+        "stale_score": null,
+        "answer": "Your team lead is **Margarita**."
+      },
+      {
+        "turn": 57,
+        "question": "Question: which CI platform do we use?",
+        "plant_turn": null,
+        "lag": null,
+        "paraphrase": false,
+        "kind": "unanswerable",
+        "score": 1.0,
+        "stale_score": null,
+        "answer": "Based on the context provided so far, the conversation has established that the backend is written in **Golang** and the"
+      },
+      {
+        "turn": 58,
+        "question": "Question: what is the name of my team leader?",
+        "plant_turn": 35,
+        "lag": 23,
+        "paraphrase": true,
+        "kind": "paraphrase",
+        "score": 1.0,
+        "stale_score": null,
+        "answer": "Your team lead is **Margarita**."
+      },
+      {
+        "turn": 59,
+        "question": "What is the epic ticket number?",
+        "plant_turn": 54,
+        "lag": 5,
+        "paraphrase": false,
+        "kind": "direct",
+        "score": 1.0,
+        "stale_score": null,
+        "answer": "The epic ticket number is **PRJ-482**."
+      },
+      {
+        "turn": 60,
+        "question": "When does the retrospective start?",
+        "plant_turn": 14,
+        "lag": 46,
+        "paraphrase": false,
+        "kind": "direct",
+        "score": 0.0,
+        "stale_score": null,
+        "answer": "Based on the context provided, the retrospective is scheduled to happen **before the sprint review meeting**, which occu"
+      },
+      {
+        "turn": 64,
+        "question": "What is the epic ticket number? And also, who is the new intern?",
+        "plant_turn": 54,
+        "lag": 10,
+        "paraphrase": false,
+        "kind": "multihop",
+        "score": 0.5,
+        "stale_score": null,
+        "answer": "The epic ticket number is **PRJ-482**.\n\nRegarding the new intern, the provided context does not contain information abou"
+      },
+      {
+        "turn": 65,
+        "question": "Question: when does my sprint end? And also, what is the name of my team leader?",
+        "plant_turn": 35,
+        "lag": 30,
+        "paraphrase": false,
+        "kind": "multihop",
+        "score": 1.0,
+        "stale_score": null,
+        "answer": "Based on the context provided:\n\n*   Your sprint ends on **Thursday**.\n*   Your team leader is **Margarita**."
+      },
+      {
+        "turn": 81,
+        "question": "How do we deploy the service?",
+        "plant_turn": 28,
+        "lag": 53,
+        "paraphrase": false,
+        "kind": "direct",
+        "score": 0.0,
+        "stale_score": null,
+        "answer": "Since the previous context focused on **PRJ-482**, sprint conclusions, and Agile practices, here is how you should phras"
+      },
+      {
+        "turn": 82,
+        "question": "Question: which floor is the office on?",
+        "plant_turn": 43,
+        "lag": 39,
+        "paraphrase": false,
+        "kind": "direct",
+        "score": 0.0,
+        "stale_score": null,
+        "answer": "I don't have access to your physical location, building layout, or specific office details. To find out which floor the "
+      },
+      {
+        "turn": 83,
+        "question": "Question: when does the retrospective start?",
+        "plant_turn": 14,
+        "lag": 69,
+        "paraphrase": false,
+        "kind": "direct",
+        "score": 0.0,
+        "stale_score": null,
+        "answer": "In a standard Agile framework like Scrum, the **Retrospective** is typically scheduled at the very end of the Sprint, im"
+      },
+      {
+        "turn": 89,
+        "question": "Question: what is the name of our intern? And also, at what time is the retro?",
+        "plant_turn": 37,
+        "lag": 52,
+        "paraphrase": false,
+        "kind": "multihop",
+        "score": 0.0,
+        "stale_score": null,
+        "answer": "I don't have access to your internal team roster, specific personnel records, or the exact schedule for your upcoming re"
+      },
+      {
+        "turn": 90,
+        "question": "Question: where is the company HQ?",
+        "plant_turn": null,
+        "lag": null,
+        "paraphrase": false,
+        "kind": "unanswerable",
+        "score": 1.0,
+        "stale_score": null,
+        "answer": "I don't have access to your company's internal directory, physical building locations, or specific headquarters details."
+      },
+      {
+        "turn": 97,
+        "question": "Question: where is the office located?",
+        "plant_turn": 43,
+        "lag": 54,
+        "paraphrase": true,
+        "kind": "paraphrase",
+        "score": 0.0,
+        "stale_score": null,
+        "answer": "I don't have access to your company's internal directory, physical building locations, or specific office details. To fi"
+      }
+    ]
+  },
+  "e2e": {
+    "per_rep_mean_s": [
+      1.4594,
+      1.4562,
+      1.4677,
+      1.4753,
+      1.4664
+    ],
+    "mean_s": 1.465,
+    "median_s": 1.4664,
+    "includes_retrieval": true,
+    "warmup_reps": 1
+  }
+}
