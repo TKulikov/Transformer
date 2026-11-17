@@ -214,26 +214,34 @@ def full_self_strategies(budget: int = 128) -> list[Strategy]:
 
 
 def full_rag_strategies(budget: int = 128) -> list[Strategy]:
-    """Return textual-RAG representations with K/V injection isolated.
+    """Return paired textual-RAG and living-memory architecture combinations.
 
-    ``rag_mid_centered`` is pure mid-layer RAG with running-centroid centring.
-    Bank-keyed variants pour activations into the living bank but do not inject
-    them into attention; only ``v4_rag_kv_mid`` enables the second K/V channel.
-    ``budget`` is accepted for a uniform strategy-set interface and is unused.
+    Last-, mid- and mean-layer keys form a complete raw/centered by RAG-only/K/V
+    matrix. ``rag_mid_centered`` is therefore directly comparable with the dual
+    ``v4_rag_kv_mid``. Bank-keyed variants pour activations into the living bank
+    but never inject them into attention. ``budget`` is accepted for a uniform
+    strategy-set interface and is unused.
     """
     del budget
     mem = dict(memory_window_crit=0.5, memory_crit=0.95, memory_merge_k=0.25)
     base = dict(context="window", window=5, rag=True, rag_lambda=0.0)
+    dual = dict(memory_kv=True, kv_slots=32, **mem)
     return [
         Strategy("classic_kv_full", context="full"),
         Strategy("rag_text_only", **base, rag_centered=False),
         Strategy("rag_last_centered", **base, rag_centered=True),
         Strategy("rag_latent_mid", **base, rag_centered=False, rag_layer="mid"),
         Strategy("rag_mid_centered", **base, rag_centered=True, rag_layer="mid"),
+        Strategy("rag_mean", **base, rag_centered=False, rag_layer="mean"),
+        Strategy("rag_mean_centered", **base, rag_centered=True, rag_layer="mean"),
         Strategy("rag_bank_key", **base, rag_centered=False, rag_key_source="bank", **mem),
         Strategy("rag_bank_dev", **base, rag_centered=False, rag_key_source="bank_dev", **mem),
-        Strategy("v4_rag_kv_mid", **base, rag_centered=True, rag_layer="mid",
-                 memory_kv=True, kv_slots=32, **mem),
+        Strategy("v4_rag_kv_plain", **base, rag_centered=False, **dual),
+        Strategy("v4_rag_kv", **base, rag_centered=True, **dual),
+        Strategy("v4_rag_kv_mid_plain", **base, rag_centered=False, rag_layer="mid", **dual),
+        Strategy("v4_rag_kv_mid", **base, rag_centered=True, rag_layer="mid", **dual),
+        Strategy("v4_rag_kv_mean", **base, rag_centered=False, rag_layer="mean", **dual),
+        Strategy("v4_rag_kv_mean_centered", **base, rag_centered=True, rag_layer="mean", **dual),
     ]
 
 

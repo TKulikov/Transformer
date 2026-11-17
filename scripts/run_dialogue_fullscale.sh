@@ -27,7 +27,7 @@ case "$TRACK" in
   rag)
     STRATEGY_SET=full_rag
     RUN_ID=full-rag-v1
-    NIGHT_BATCHES=3
+    NIGHT_BATCHES=2
     ;;
   *)
     echo "unknown track: $TRACK (expected core, self or rag)" >&2

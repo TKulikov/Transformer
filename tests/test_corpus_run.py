@@ -190,7 +190,7 @@ class TestFullscaleStrategySets:
         from tmem.corpus_run import full_rag_strategies
 
         strategies = {s.name: s for s in full_rag_strategies()}
-        assert len(strategies) == 8
+        assert len(strategies) == 15
         plain = strategies["rag_text_only"]
         assert plain.rag_layer == "last" and not plain.rag_centered
         assert strategies["rag_last_centered"].rag_centered
@@ -203,5 +203,27 @@ class TestFullscaleStrategySets:
         dual = strategies["v4_rag_kv_mid"]
         assert dual.rag and dual.memory_kv and dual.rag_layer == "mid" and dual.rag_centered
         for name, strategy in strategies.items():
-            if name not in {"classic_kv_full", "v4_rag_kv_mid"}:
+            if name.startswith("rag_"):
                 assert strategy.rag and not strategy.memory_kv, name
+            if name.startswith("v4_"):
+                assert strategy.rag and strategy.memory_kv, name
+
+    def test_rag_and_living_memory_form_a_complete_paired_matrix(self):
+        from tmem.corpus_run import full_rag_strategies
+
+        strategies = {s.name: s for s in full_rag_strategies()}
+        names = {
+            "last": ("rag_text_only", "rag_last_centered", "v4_rag_kv_plain", "v4_rag_kv"),
+            "mid": ("rag_latent_mid", "rag_mid_centered", "v4_rag_kv_mid_plain", "v4_rag_kv_mid"),
+            "mean": ("rag_mean", "rag_mean_centered", "v4_rag_kv_mean", "v4_rag_kv_mean_centered"),
+        }
+        for layer, (raw_rag, centered_rag, raw_dual, centered_dual) in names.items():
+            for name, centered, memory_kv in (
+                (raw_rag, False, False), (centered_rag, True, False),
+                (raw_dual, False, True), (centered_dual, True, True),
+            ):
+                strategy = strategies[name]
+                assert strategy.rag_layer == layer, name
+                assert strategy.rag_centered is centered, name
+                assert strategy.memory_kv is memory_kv, name
+                assert strategy.rag, name
