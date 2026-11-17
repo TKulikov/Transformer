@@ -49,3 +49,24 @@ def test_tiny_batch_end_to_end(causal_bundle, tmp_path):
 
     interim = (tmp_path / "smoke" / "INTERIM.md").read_text()
     assert "1/1" in interim and "classic_kv_full" in interim
+
+
+def test_rag_variants_end_to_end_keep_kv_isolated():
+    from scripts_code.smoke_latent_campaign import tiny_qwen35_bundle
+    from tmem.corpus_run import full_rag_strategies
+
+    bundle = tiny_qwen35_bundle()
+    selected = {"rag_mid_centered", "rag_bank_dev", "v4_rag_kv_mid"}
+    strategies = [s for s in full_rag_strategies() if s.name in selected]
+    runner = ModelBatchRunner(bundle, strategies, max_new_tokens=2,
+                              seed=0, latency_repeats=0)
+    out = runner(TINY_SPEC)
+
+    assert out["errors"] == []
+    for name in ("rag_mid_centered", "rag_bank_dev"):
+        analysis = out["results"][name]["analysis"]
+        assert analysis["kv_steps"] is None
+        assert analysis["rag_stats"]["size"] > 0
+    dual = out["results"]["v4_rag_kv_mid"]["analysis"]
+    assert dual["kv_steps"] > 0
+    assert dual["kv_injected_slots"] > 0

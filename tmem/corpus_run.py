@@ -166,6 +166,77 @@ def kv_sweep_strategies(budget: int = 128) -> list[Strategy]:
     ]
 
 
+def full_core_strategies(budget: int = 128) -> list[Strategy]:
+    """Return living-memory and KV-cache competitors for the full corpus.
+
+    The two living-memory variants inject latent K/V without textual RAG.
+    ``budget`` is the per-layer slot budget of every sparse-cache control.
+    """
+    mem = dict(memory_window_crit=0.5, memory_crit=0.95, memory_merge_k=0.25)
+    return [
+        Strategy("classic_kv_full", context="full"),
+        Strategy(f"sparse_sliding_{budget}", context="full", kv=KVConfig.sparse(budget, "sliding", 4, 64)),
+        Strategy(f"sparse_topk_{budget}", context="full", kv=KVConfig.sparse(budget, "topk", 4, 64)),
+        Strategy(f"snapkv_{budget}", context="full", kv=KVConfig.sparse(budget, "snapkv", observation=64, kernel_size=7)),
+        Strategy(f"pyramidkv_{budget}", context="full",
+                 kv=KVConfig.sparse(budget, "pyramidkv", observation=8, pyramid_beta=20)),
+        Strategy("v4_kv_mid", context="window", window=5, memory_kv=True, kv_slots=32, **mem),
+        Strategy("v4_kv_mid_dyn", context="window", window=5, memory_kv=True, kv_slots=32,
+                 kv_dynamic=True, kv_thresh=0.5, **mem),
+    ]
+
+
+def full_self_strategies(budget: int = 128) -> list[Strategy]:
+    """Return independent living-memory settings with full and PyramidKV controls.
+
+    Width, bank capacity, dynamic gating and TTL vary one at a time around
+    ``v4_kv_mid`` (32 injected slots, 512 bank slots, TTL enabled). No variant
+    retrieves textual notes. ``budget`` controls only the PyramidKV control.
+    """
+    mem = dict(memory_window_crit=0.5, memory_crit=0.95, memory_merge_k=0.25)
+    return [
+        Strategy("classic_kv_full", context="full"),
+        Strategy(f"pyramidkv_{budget}", context="full",
+                 kv=KVConfig.sparse(budget, "pyramidkv", observation=8, pyramid_beta=20)),
+        Strategy("v4_kv_mid_k8", context="window", window=5, memory_kv=True, kv_slots=8, **mem),
+        Strategy("v4_kv_mid_k16", context="window", window=5, memory_kv=True, kv_slots=16, **mem),
+        Strategy("v4_kv_mid", context="window", window=5, memory_kv=True, kv_slots=32, **mem),
+        Strategy("v4_kv_mid_k64", context="window", window=5, memory_kv=True, kv_slots=64, **mem),
+        Strategy("v4_kv_mid_dyn", context="window", window=5, memory_kv=True, kv_slots=32,
+                 kv_dynamic=True, kv_thresh=0.5, **mem),
+        Strategy("v4_kv_mid_s128", context="window", window=5, memory_kv=True, kv_slots=32,
+                 memory_size=128, **mem),
+        Strategy("v4_kv_mid_s1024", context="window", window=5, memory_kv=True, kv_slots=32,
+                 memory_size=1024, **mem),
+        Strategy("v4_kv_mid_no_ttl", context="window", window=5, memory_kv=True, kv_slots=32,
+                 memory_decay=False, **mem),
+    ]
+
+
+def full_rag_strategies(budget: int = 128) -> list[Strategy]:
+    """Return textual-RAG representations with K/V injection isolated.
+
+    ``rag_mid_centered`` is pure mid-layer RAG with running-centroid centring.
+    Bank-keyed variants pour activations into the living bank but do not inject
+    them into attention; only ``v4_rag_kv_mid`` enables the second K/V channel.
+    ``budget`` is accepted for a uniform strategy-set interface and is unused.
+    """
+    del budget
+    mem = dict(memory_window_crit=0.5, memory_crit=0.95, memory_merge_k=0.25)
+    base = dict(context="window", window=5, rag=True, rag_lambda=0.0)
+    return [
+        Strategy("classic_kv_full", context="full"),
+        Strategy("rag_text_only", **base, rag_centered=False),
+        Strategy("rag_last_centered", **base, rag_centered=True),
+        Strategy("rag_latent_mid", **base, rag_centered=False, rag_layer="mid"),
+        Strategy("rag_mid_centered", **base, rag_centered=True, rag_layer="mid"),
+        Strategy("rag_bank_key", **base, rag_centered=False, rag_key_source="bank", **mem),
+        Strategy("rag_bank_dev", **base, rag_centered=False, rag_key_source="bank_dev", **mem),
+        Strategy("v4_rag_kv_mid", **base, rag_centered=True, rag_layer="mid",
+                 memory_kv=True, kv_slots=32, **mem),
+    ]
+
+
 STRATEGY_SETS = {
     "pilot": main_strategies,
     "main": main_strategies,
@@ -175,6 +246,9 @@ STRATEGY_SETS = {
     "shared": shared_strategies,
     "shared_dev": shared_dev_strategies,
     "kv_sweep": kv_sweep_strategies,
+    "full_core": full_core_strategies,
+    "full_self": full_self_strategies,
+    "full_rag": full_rag_strategies,
 }
 
 
@@ -262,8 +336,15 @@ def load_manifest(run_dir: Path) -> dict[str, dict]:
 
 
 def open_run(run_dir: Path, *, specs: list[CorpusSpec], strategy_names: list[str],
-             meta: dict) -> dict:
-    """Create or resume a run directory; the first call freezes the queue."""
+             meta: dict, strategy_configs: list[dict] | None = None) -> dict:
+    """Create a frozen run config or validate it when resuming.
+
+    A resume may shrink the dialogue queue but cannot add new specs. Runs that
+    store ``strategy_configs`` also require identical ordered strategy settings
+    and measurement protocol; legacy configs without that field keep the old
+    resume behavior. The first call creates ``run_dir`` and writes its JSON
+    config. ``SystemExit`` explains when a new ``--run-id`` is required.
+    """
     run_dir.mkdir(parents=True, exist_ok=True)
     cfg_path = run_dir / "run_config.json"
     if cfg_path.exists():
@@ -275,6 +356,17 @@ def open_run(run_dir: Path, *, specs: list[CorpusSpec], strategy_names: list[str
                     f"run_config в {run_dir} не содержит spec {s.spec_id}; "
                     f"используйте другой --run-id или удалите run_config.json"
                 )
+        if "strategy_configs" in cfg:
+            if strategy_configs != cfg["strategy_configs"]:
+                raise SystemExit(
+                    f"конфигурация стратегий {strategy_names} не совпадает с замороженной "
+                    f"в {cfg_path}; используйте новый --run-id"
+                )
+            if meta.get("protocol") != cfg.get("protocol"):
+                raise SystemExit(
+                    f"протокол измерений {meta.get('protocol')} не совпадает с замороженным "
+                    f"{cfg.get('protocol')} в {cfg_path}; используйте новый --run-id"
+                )
         return cfg
     cfg = {
         "created_at": _now(),
@@ -282,6 +374,8 @@ def open_run(run_dir: Path, *, specs: list[CorpusSpec], strategy_names: list[str
         "strategies": strategy_names,
         **meta,
     }
+    if strategy_configs is not None:
+        cfg["strategy_configs"] = strategy_configs
     cfg_path.write_text(json.dumps(cfg, indent=2, ensure_ascii=False))
     return cfg
 
@@ -296,15 +390,18 @@ def run_corpus(run_dir, *, specs: list[CorpusSpec], strategies: list[Strategy],
     """
     run_dir = Path(run_dir)
     cfg_path = run_dir / "run_config.json"
+    strategy_configs = [s.describe() for s in strategies]
     if dry_run:
         if cfg_path.exists():
             cfg = json.loads(cfg_path.read_text())
         else:
             cfg = {"run_id": meta.get("run_id"), "preset": meta.get("preset"), "model": meta.get("model"),
                    "git_sha": meta.get("git_sha"), "protocol": meta.get("protocol"),
-                   "specs": [s.to_dict() for s in specs], "strategies": [s.name for s in strategies]}
+                   "specs": [s.to_dict() for s in specs], "strategies": [s.name for s in strategies],
+                   "strategy_configs": strategy_configs}
     else:
-        cfg = open_run(run_dir, specs=specs, strategy_names=[s.name for s in strategies], meta=meta)
+        cfg = open_run(run_dir, specs=specs, strategy_names=[s.name for s in strategies], meta=meta,
+                       strategy_configs=strategy_configs)
     queued = [CorpusSpec.from_dict(d) for d in cfg["specs"]]
     manifest = load_manifest(run_dir)
     if only:
@@ -316,6 +413,7 @@ def run_corpus(run_dir, *, specs: list[CorpusSpec], strategies: list[Strategy],
     done_count = sum(1 for m in manifest.values() if m["status"] == "done")
     if dry_run:
         print(f"run_id={cfg.get('run_id')} run_dir={run_dir}")
+        print(f"стратегии ({len(cfg['strategies'])}): {', '.join(cfg['strategies'])}")
         print(f"выполнено: {done_count}/{len(queued)}; в очереди: {len(pending)}; к запуску сейчас: {len(selected)}")
         walls = [m.get("wall_s") or 0 for m in manifest.values() if m["status"] == "done"]
         if walls:

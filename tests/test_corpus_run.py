@@ -137,3 +137,71 @@ class TestRunCorpus:
         interim = (run_dir / "INTERIM.md").read_text()
         assert "2/4" in interim
         assert json.loads((run_dir / "run_config.json").read_text())["run_id"] == "t-run"
+
+    def test_resume_rejects_changed_strategy_config(self, tmp_path):
+        run_dir = tmp_path / "run"
+        run_corpus(run_dir, specs=_specs(2), strategies=STRATEGIES,
+                   runner=_stub_runner(), meta=META, batches=1)
+        changed = [Strategy("fake_a", rag_k=8), Strategy("fake_b")]
+        with pytest.raises(SystemExit, match="конфигурац"):
+            run_corpus(run_dir, specs=_specs(2), strategies=changed,
+                       runner=_stub_runner(), meta=META)
+
+    def test_resume_rejects_changed_latency_protocol(self, tmp_path):
+        run_dir = tmp_path / "run"
+        run_corpus(run_dir, specs=_specs(2), strategies=STRATEGIES,
+                   runner=_stub_runner(), meta=META, batches=1)
+        changed_meta = {**META, "protocol": {"latency_repeats": 1}}
+        with pytest.raises(SystemExit, match="протокол"):
+            run_corpus(run_dir, specs=_specs(2), strategies=STRATEGIES,
+                       runner=_stub_runner(), meta=changed_meta)
+
+
+class TestFullscaleStrategySets:
+    def test_core_compares_living_memory_with_all_competitors(self):
+        from tmem.corpus_run import full_core_strategies
+
+        strategies = full_core_strategies()
+        assert [s.name for s in strategies] == [
+            "classic_kv_full", "sparse_sliding_128", "sparse_topk_128",
+            "snapkv_128", "pyramidkv_128", "v4_kv_mid", "v4_kv_mid_dyn",
+        ]
+        living = {s.name: s for s in strategies if s.name.startswith("v4_")}
+        assert living["v4_kv_mid"].kv_slots == 32
+        assert living["v4_kv_mid_dyn"].kv_dynamic
+        assert all(s.memory_kv and not s.rag for s in living.values())
+
+    def test_self_sweeps_width_bank_size_gate_and_ttl(self):
+        from tmem.corpus_run import full_self_strategies
+
+        strategies = {s.name: s for s in full_self_strategies()}
+        assert len(strategies) == 10
+        assert [strategies[f"v4_kv_mid_k{k}"].kv_slots for k in (8, 16, 64)] == [8, 16, 64]
+        assert strategies["v4_kv_mid"].kv_slots == 32
+        assert strategies["v4_kv_mid"].memory_size == 512
+        assert strategies["v4_kv_mid_s128"].memory_size == 128
+        assert strategies["v4_kv_mid_s1024"].memory_size == 1024
+        assert strategies["v4_kv_mid_dyn"].kv_dynamic
+        assert strategies["v4_kv_mid_dyn"].kv_thresh == 0.5
+        assert not strategies["v4_kv_mid_no_ttl"].memory_decay
+        assert all(s.memory_kv and not s.rag for name, s in strategies.items() if name.startswith("v4_"))
+
+    def test_rag_variants_are_separate_and_mid_centered_is_pure_rag(self):
+        from tmem.corpus_run import full_rag_strategies
+
+        strategies = {s.name: s for s in full_rag_strategies()}
+        assert len(strategies) == 8
+        plain = strategies["rag_text_only"]
+        assert plain.rag_layer == "last" and not plain.rag_centered
+        assert strategies["rag_last_centered"].rag_centered
+        mid = strategies["rag_mid_centered"]
+        assert mid.rag and mid.rag_layer == "mid" and mid.rag_centered
+        assert not mid.memory_kv
+        assert strategies["rag_bank_key"].rag_key_source == "bank"
+        assert strategies["rag_bank_dev"].rag_key_source == "bank_dev"
+        assert not strategies["rag_bank_dev"].memory_kv
+        dual = strategies["v4_rag_kv_mid"]
+        assert dual.rag and dual.memory_kv and dual.rag_layer == "mid" and dual.rag_centered
+        for name, strategy in strategies.items():
+            if name not in {"classic_kv_full", "v4_rag_kv_mid"}:
+                assert strategy.rag and not strategy.memory_kv, name
