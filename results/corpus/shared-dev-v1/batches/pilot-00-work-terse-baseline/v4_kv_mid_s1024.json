@@ -1,0 +1,271 @@
+{
+  "strategy": "v4_kv_mid_s1024",
+  "spec_id": "pilot-00-work-terse-baseline",
+  "analysis": {
+    "recall_mean": 0.556,
+    "recall_direct": 0.5,
+    "recall_paraphrase": 0.75,
+    "recall_by_zone": {
+      "early": 0.625,
+      "middle": 0.5
+    },
+    "recall_by_kind": {
+      "direct": 0.5,
+      "multihop": 0.25,
+      "paraphrase": 0.75,
+      "unanswerable": 1.0
+    },
+    "recall_by_lag": {
+      "0-5": 1.0,
+      "6-12": 0.667,
+      "13-20": 1.0,
+      "21+": 0.125
+    },
+    "stale_rate": 0.0,
+    "stale_updated_rate": null,
+    "consistency_vs_reference": 0.186,
+    "tone_mean": 0.8156,
+    "rep_mean": 0.0,
+    "prompt_tokens": 42499,
+    "generated_tokens": 3050,
+    "embed_tokens": 3802,
+    "cache_slots": 1341027,
+    "attention_flops_proxy": 1341027,
+    "max_cache_len": 520,
+    "mean_turn_latency_s": 1.3339,
+    "median_turn_latency_s": 1.3932,
+    "p90_turn_latency_s": 1.4297,
+    "peak_mem_mb": 8332.82,
+    "kv_injected_slots": 415496,
+    "kv_steps": 13000,
+    "memory_stats": {
+      "get_calls": 13000,
+      "update_calls": 13000,
+      "retrievals": 2981674,
+      "stores": 1348,
+      "merges": 1867,
+      "evictions": 1088,
+      "gate_rejects": 0,
+      "occupied_slots": 260
+    },
+    "rag_stats": {
+      "adds": 17,
+      "upserts": 30,
+      "evictions": 0,
+      "size": 17
+    },
+    "probe_details": [
+      {
+        "turn": 23,
+        "question": "Question: when does the retrospective start?",
+        "plant_turn": 14,
+        "lag": 9,
+        "paraphrase": false,
+        "kind": "direct",
+        "score": 1.0,
+        "stale_score": null,
+        "answer": "The retrospective starts at **15:30**."
+      },
+      {
+        "turn": 36,
+        "question": "Question: when does my sprint end?",
+        "plant_turn": 31,
+        "lag": 5,
+        "paraphrase": false,
+        "kind": "direct",
+        "score": 1.0,
+        "stale_score": null,
+        "answer": "Your current sprint ends on **Thursday**."
+      },
+      {
+        "turn": 38,
+        "question": "Question: when does my sprint end?",
+        "plant_turn": 31,
+        "lag": 7,
+        "paraphrase": false,
+        "kind": "direct",
+        "score": 1.0,
+        "stale_score": null,
+        "answer": "Your current sprint ends on **Thursday**."
+      },
+      {
+        "turn": 42,
+        "question": "What is the name of our intern? And also, what is the name of my team leader?",
+        "plant_turn": 37,
+        "lag": 5,
+        "paraphrase": false,
+        "kind": "multihop",
+        "score": 1.0,
+        "stale_score": null,
+        "answer": "Our new intern is named **Pavel**, and your team lead is **Margarita**."
+      },
+      {
+        "turn": 48,
+        "question": "Question: where is the office located?",
+        "plant_turn": 43,
+        "lag": 5,
+        "paraphrase": true,
+        "kind": "paraphrase",
+        "score": 1.0,
+        "stale_score": null,
+        "answer": "The office is located on the **twelfth floor**."
+      },
+      {
+        "turn": 50,
+        "question": "Question: what is the name of my team leader?",
+        "plant_turn": 35,
+        "lag": 15,
+        "paraphrase": true,
+        "kind": "paraphrase",
+        "score": 1.0,
+        "stale_score": null,
+        "answer": "Your team leader is named **Margarita**."
+      },
+      {
+        "turn": 57,
+        "question": "Question: which CI platform do we use?",
+        "plant_turn": null,
+        "lag": null,
+        "paraphrase": false,
+        "kind": "unanswerable",
+        "score": 1.0,
+        "stale_score": null,
+        "answer": "We use **GitHub Actions** for our CI pipeline.\n\nHere is how you might incorporate that into your standup:\n\n*   **Context"
+      },
+      {
+        "turn": 58,
+        "question": "Question: what is the name of my team leader?",
+        "plant_turn": 35,
+        "lag": 23,
+        "paraphrase": true,
+        "kind": "paraphrase",
+        "score": 1.0,
+        "stale_score": null,
+        "answer": "Your team leader is named **Margarita**."
+      },
+      {
+        "turn": 59,
+        "question": "What is the epic ticket number?",
+        "plant_turn": 54,
+        "lag": 5,
+        "paraphrase": false,
+        "kind": "direct",
+        "score": 1.0,
+        "stale_score": null,
+        "answer": "The epic ticket number is **PRJ-482**.\n\nHere is how you might mention it in your standup:\n\n*   **Context:**"
+      },
+      {
+        "turn": 60,
+        "question": "When does the retrospective start?",
+        "plant_turn": 14,
+        "lag": 46,
+        "paraphrase": false,
+        "kind": "direct",
+        "score": 0.0,
+        "stale_score": null,
+        "answer": "The retrospective is scheduled to start **tomorrow at 10:00 AM**.\n\nHere is how you might mention it in your standup:"
+      },
+      {
+        "turn": 64,
+        "question": "What is the epic ticket number? And also, who is the new intern?",
+        "plant_turn": 54,
+        "lag": 10,
+        "paraphrase": false,
+        "kind": "multihop",
+        "score": 0.0,
+        "stale_score": null,
+        "answer": "Here is how you might incorporate those details into your standup:\n\n*   **Context:** \"Hey team, quick updates: we're cur"
+      },
+      {
+        "turn": 65,
+        "question": "Question: when does my sprint end? And also, what is the name of my team leader?",
+        "plant_turn": 35,
+        "lag": 30,
+        "paraphrase": false,
+        "kind": "multihop",
+        "score": 0.0,
+        "stale_score": null,
+        "answer": "Here is how you might incorporate those details into your standup:\n\n*   **Context:** \"Hey team, quick updates: we're cur"
+      },
+      {
+        "turn": 81,
+        "question": "How do we deploy the service?",
+        "plant_turn": 28,
+        "lag": 53,
+        "paraphrase": false,
+        "kind": "direct",
+        "score": 0.0,
+        "stale_score": null,
+        "answer": "Deployment strategies depend heavily on your team's size, the complexity of your application, and your risk tolerance. H"
+      },
+      {
+        "turn": 82,
+        "question": "Question: which floor is the office on?",
+        "plant_turn": 43,
+        "lag": 39,
+        "paraphrase": false,
+        "kind": "direct",
+        "score": 0.0,
+        "stale_score": null,
+        "answer": "I don't have access to your physical office layout or building information. To find out which floor the office is on, pl"
+      },
+      {
+        "turn": 83,
+        "question": "Question: when does the retrospective start?",
+        "plant_turn": 14,
+        "lag": 69,
+        "paraphrase": false,
+        "kind": "direct",
+        "score": 0.0,
+        "stale_score": null,
+        "answer": "The start time for the retrospective depends entirely on your team's schedule and the specific agenda you've set. Typica"
+      },
+      {
+        "turn": 89,
+        "question": "Question: what is the name of our intern? And also, at what time is the retro?",
+        "plant_turn": 37,
+        "lag": 52,
+        "paraphrase": false,
+        "kind": "multihop",
+        "score": 0.0,
+        "stale_score": null,
+        "answer": "I don't have access to your internal team roster, employee records, or your specific meeting schedule.\n\n*   **For the in"
+      },
+      {
+        "turn": 90,
+        "question": "Question: where is the company HQ?",
+        "plant_turn": null,
+        "lag": null,
+        "paraphrase": false,
+        "kind": "unanswerable",
+        "score": 1.0,
+        "stale_score": null,
+        "answer": "I don't have access to your company's specific location or internal directory information. To find out where the company"
+      },
+      {
+        "turn": 97,
+        "question": "Question: where is the office located?",
+        "plant_turn": 43,
+        "lag": 54,
+        "paraphrase": true,
+        "kind": "paraphrase",
+        "score": 0.0,
+        "stale_score": null,
+        "answer": "I don't have access to your company's specific location or internal directory information. To find out where the office "
+      }
+    ]
+  },
+  "e2e": {
+    "per_rep_mean_s": [
+      1.4599,
+      1.4214,
+      1.4917,
+      1.4896,
+      1.4864
+    ],
+    "mean_s": 1.4698,
+    "median_s": 1.4864,
+    "includes_retrieval": true,
+    "warmup_reps": 1
+  }
+}

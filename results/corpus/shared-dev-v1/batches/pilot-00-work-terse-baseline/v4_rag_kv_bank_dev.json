@@ -1,0 +1,271 @@
+{
+  "strategy": "v4_rag_kv_bank_dev",
+  "spec_id": "pilot-00-work-terse-baseline",
+  "analysis": {
+    "recall_mean": 0.528,
+    "recall_direct": 0.607,
+    "recall_paraphrase": 0.25,
+    "recall_by_zone": {
+      "early": 0.75,
+      "middle": 0.35
+    },
+    "recall_by_kind": {
+      "direct": 0.625,
+      "multihop": 0.375,
+      "paraphrase": 0.25,
+      "unanswerable": 1.0
+    },
+    "recall_by_lag": {
+      "0-5": 0.875,
+      "6-12": 0.833,
+      "13-20": 0.0,
+      "21+": 0.188
+    },
+    "stale_rate": 0.0,
+    "stale_updated_rate": null,
+    "consistency_vs_reference": 0.199,
+    "tone_mean": 0.9641,
+    "rep_mean": 0.0,
+    "prompt_tokens": 46454,
+    "generated_tokens": 3056,
+    "embed_tokens": 3811,
+    "cache_slots": 1461563,
+    "attention_flops_proxy": 1461563,
+    "max_cache_len": 565,
+    "mean_turn_latency_s": 1.2781,
+    "median_turn_latency_s": 1.3363,
+    "p90_turn_latency_s": 1.3574,
+    "peak_mem_mb": 8334.01,
+    "kv_injected_slots": 416264,
+    "kv_steps": 13024,
+    "memory_stats": {
+      "get_calls": 13424,
+      "update_calls": 13224,
+      "retrievals": 2984332,
+      "stores": 863,
+      "merges": 2033,
+      "evictions": 605,
+      "gate_rejects": 0,
+      "occupied_slots": 258
+    },
+    "rag_stats": {
+      "adds": 39,
+      "upserts": 8,
+      "evictions": 0,
+      "size": 39
+    },
+    "probe_details": [
+      {
+        "turn": 23,
+        "question": "Question: when does the retrospective start?",
+        "plant_turn": 14,
+        "lag": 9,
+        "paraphrase": false,
+        "kind": "direct",
+        "score": 1.0,
+        "stale_score": null,
+        "answer": "The retrospective starts at **15:30**."
+      },
+      {
+        "turn": 36,
+        "question": "Question: when does my sprint end?",
+        "plant_turn": 31,
+        "lag": 5,
+        "paraphrase": false,
+        "kind": "direct",
+        "score": 1.0,
+        "stale_score": null,
+        "answer": "Your current sprint ends on **Thursday**."
+      },
+      {
+        "turn": 38,
+        "question": "Question: when does my sprint end?",
+        "plant_turn": 31,
+        "lag": 7,
+        "paraphrase": false,
+        "kind": "direct",
+        "score": 1.0,
+        "stale_score": null,
+        "answer": "Your current sprint ends on **Thursday**."
+      },
+      {
+        "turn": 42,
+        "question": "What is the name of our intern? And also, what is the name of my team leader?",
+        "plant_turn": 37,
+        "lag": 5,
+        "paraphrase": false,
+        "kind": "multihop",
+        "score": 0.5,
+        "stale_score": null,
+        "answer": "Based on the context we've established in our conversation:\n\n*   **Your new intern's name is Pavel.**\n*   **Your team le"
+      },
+      {
+        "turn": 48,
+        "question": "Question: where is the office located?",
+        "plant_turn": 43,
+        "lag": 5,
+        "paraphrase": true,
+        "kind": "paraphrase",
+        "score": 1.0,
+        "stale_score": null,
+        "answer": "The office is located on the **twelfth floor**."
+      },
+      {
+        "turn": 50,
+        "question": "Question: what is the name of my team leader?",
+        "plant_turn": 35,
+        "lag": 15,
+        "paraphrase": true,
+        "kind": "paraphrase",
+        "score": 0.0,
+        "stale_score": null,
+        "answer": "Based on the context we've established in our conversation:\n\n*   **Your team lead's name is** [Name].\n\n*(Note: In the pr"
+      },
+      {
+        "turn": 57,
+        "question": "Question: which CI platform do we use?",
+        "plant_turn": null,
+        "lag": null,
+        "paraphrase": false,
+        "kind": "unanswerable",
+        "score": 1.0,
+        "stale_score": null,
+        "answer": "Based on the context we've established so far (**Golang backend**, **June 3rd deadline**, **12th-floor office**, **Thurs"
+      },
+      {
+        "turn": 58,
+        "question": "Question: what is the name of my team leader?",
+        "plant_turn": 35,
+        "lag": 23,
+        "paraphrase": true,
+        "kind": "paraphrase",
+        "score": 0.0,
+        "stale_score": null,
+        "answer": "Based on the context we've established so far (Golang backend, June 3rd deadline, 12th-floor office, Thursday sprint end"
+      },
+      {
+        "turn": 59,
+        "question": "What is the epic ticket number?",
+        "plant_turn": 54,
+        "lag": 5,
+        "paraphrase": false,
+        "kind": "direct",
+        "score": 1.0,
+        "stale_score": null,
+        "answer": "The epic ticket number is **PRJ-482**."
+      },
+      {
+        "turn": 60,
+        "question": "When does the retrospective start?",
+        "plant_turn": 14,
+        "lag": 46,
+        "paraphrase": false,
+        "kind": "direct",
+        "score": 1.0,
+        "stale_score": null,
+        "answer": "The retrospective starts at **15:30**."
+      },
+      {
+        "turn": 64,
+        "question": "What is the epic ticket number? And also, who is the new intern?",
+        "plant_turn": 54,
+        "lag": 10,
+        "paraphrase": false,
+        "kind": "multihop",
+        "score": 0.5,
+        "stale_score": null,
+        "answer": "The epic ticket number is **PRJ-482**.\n\nRegarding the new intern, that information is not currently in our established c"
+      },
+      {
+        "turn": 65,
+        "question": "Question: when does my sprint end? And also, what is the name of my team leader?",
+        "plant_turn": 35,
+        "lag": 30,
+        "paraphrase": false,
+        "kind": "multihop",
+        "score": 0.5,
+        "stale_score": null,
+        "answer": "Based on the context we've established so far (**Golang backend**, **June 3rd deadline**, **12th-floor office**, **Thurs"
+      },
+      {
+        "turn": 81,
+        "question": "How do we deploy the service?",
+        "plant_turn": 28,
+        "lag": 53,
+        "paraphrase": false,
+        "kind": "direct",
+        "score": 0.0,
+        "stale_score": null,
+        "answer": "Given the context of a **Golang backend** with a tight **June 3rd deadline** and a **12th-floor office** setting, here"
+      },
+      {
+        "turn": 82,
+        "question": "Question: which floor is the office on?",
+        "plant_turn": 43,
+        "lag": 39,
+        "paraphrase": false,
+        "kind": "direct",
+        "score": 0.0,
+        "stale_score": null,
+        "answer": "The office is on the **12th floor**."
+      },
+      {
+        "turn": 83,
+        "question": "Question: when does the retrospective start?",
+        "plant_turn": 14,
+        "lag": 69,
+        "paraphrase": false,
+        "kind": "direct",
+        "score": 0.0,
+        "stale_score": null,
+        "answer": "Based on the context we've established, the retrospective typically starts **after the Thursday sprint end**. Since the "
+      },
+      {
+        "turn": 89,
+        "question": "Question: what is the name of our intern? And also, at what time is the retro?",
+        "plant_turn": 37,
+        "lag": 52,
+        "paraphrase": false,
+        "kind": "multihop",
+        "score": 0.0,
+        "stale_score": null,
+        "answer": "Based on the conversation history and the notes provided, I cannot answer your questions:\n\n1.  **Intern's Name:** There "
+      },
+      {
+        "turn": 90,
+        "question": "Question: where is the company HQ?",
+        "plant_turn": null,
+        "lag": null,
+        "paraphrase": false,
+        "kind": "unanswerable",
+        "score": 1.0,
+        "stale_score": null,
+        "answer": "Based on the conversation history and the notes provided, I cannot answer your question about the company HQ location. T"
+      },
+      {
+        "turn": 97,
+        "question": "Question: where is the office located?",
+        "plant_turn": 43,
+        "lag": 54,
+        "paraphrase": true,
+        "kind": "paraphrase",
+        "score": 0.0,
+        "stale_score": null,
+        "answer": "Based on the conversation history and notes provided, the office is located on the **12th floor**.\n\nThe context repeated"
+      }
+    ]
+  },
+  "e2e": {
+    "per_rep_mean_s": [
+      1.474,
+      1.4961,
+      1.4992,
+      1.5332,
+      1.4951
+    ],
+    "mean_s": 1.4995,
+    "median_s": 1.4961,
+    "includes_retrieval": true,
+    "warmup_reps": 1
+  }
+}
