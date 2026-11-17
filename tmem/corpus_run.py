@@ -147,6 +147,25 @@ def shared_dev_strategies(budget: int = 128) -> list[Strategy]:
     ]
 
 
+def kv_sweep_strategies(budget: int = 128) -> list[Strategy]:
+    """Injection-width campaign for the living-memory thesis: fixed kv_slots
+    {8,16,32,64} around the reference, plus dynamic activation-gated injection
+    (1..32 slots with cosine >= kv_thresh against the current hidden state).
+    Bank size fixed at the sufficient 512; pyramidkv is the no-RAG analogue."""
+    mem = dict(memory_window_crit=0.5, memory_crit=0.95, memory_merge_k=0.25)
+    return [
+        Strategy("classic_kv_full", context="full"),
+        Strategy(f"pyramidkv_{budget}", context="full",
+                 kv=KVConfig.sparse(budget, "pyramidkv", observation=8, pyramid_beta=20)),
+        Strategy("v4_kv_mid_k8", context="window", window=5, memory_kv=True, kv_slots=8, **mem),
+        Strategy("v4_kv_mid_k16", context="window", window=5, memory_kv=True, kv_slots=16, **mem),
+        Strategy("v4_kv_mid", context="window", window=5, memory_kv=True, kv_slots=32, **mem),
+        Strategy("v4_kv_mid_k64", context="window", window=5, memory_kv=True, kv_slots=64, **mem),
+        Strategy("v4_kv_mid_dyn", context="window", window=5, memory_kv=True, kv_slots=32,
+                 kv_dynamic=True, kv_thresh=0.5, **mem),
+    ]
+
+
 STRATEGY_SETS = {
     "pilot": main_strategies,
     "main": main_strategies,
@@ -155,6 +174,7 @@ STRATEGY_SETS = {
     "latent": latent_strategies,
     "shared": shared_strategies,
     "shared_dev": shared_dev_strategies,
+    "kv_sweep": kv_sweep_strategies,
 }
 
 

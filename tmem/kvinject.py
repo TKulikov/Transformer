@@ -32,11 +32,14 @@ _NEG_INF = torch.finfo(torch.float32).min
 class KVMemoryAttention:
     """Per-instance replacement for an attention module's forward."""
 
-    def __init__(self, attn, corr: CorrectionLayer, max_slots: int = 32) -> None:
+    def __init__(self, attn, corr: CorrectionLayer, max_slots: int = 32,
+                 dynamic: bool = False, thresh: float = 0.5) -> None:
         self.attn = attn
         self.corr = corr
         self.max_slots = max_slots
-        self.stats = {"steps": 0, "injected_slots": 0}
+        self.dynamic = dynamic      # inject only slots with cos >= thresh (1..max_slots)
+        self.thresh = thresh
+        self.stats = {"steps": 0, "injected_slots": 0, "active_steps": 0}
 
     def __call__(self, hidden_states, position_embeddings, attention_mask, past_key_values=None, **kwargs):
         from transformers.models.qwen3_5.modeling_qwen3_5 import apply_rotary_pos_emb
@@ -65,7 +68,13 @@ class KVMemoryAttention:
         with torch.no_grad():
             relevant, n = self.corr(hidden_states.detach().to(torch.float32))
         if n > 0:
-            n = min(n, self.max_slots)
+            if self.dynamic:
+                q = hidden_states.detach().to(torch.float32).mean(dim=1)      # (1, d)
+                cos = torch.nn.functional.cosine_similarity(relevant[0], q, dim=-1)
+                n = int((cos >= self.thresh).sum().clamp(max=self.max_slots))
+            else:
+                n = min(n, self.max_slots)
+        if n > 0:
             mem = relevant[:, :n].to(hidden_states.dtype)
             mem_k = a.k_norm(a.k_proj(mem).view(1, n, -1, a.head_dim)).transpose(1, 2)
             mem_v = a.v_proj(mem).view(1, n, -1, a.head_dim).transpose(1, 2)
@@ -118,7 +127,8 @@ def _extend_mask(mask, real_keys: int, mem: int, dtype: torch.dtype, s_q: int, d
     return torch.cat([m_real, m_mem], dim=-1)[None, None, :, :]
 
 
-def install_kv_memory(model, corr: CorrectionLayer, layers: list[int] | None = None, max_slots: int = 32):
+def install_kv_memory(model, corr: CorrectionLayer, layers: list[int] | None = None, max_slots: int = 32,
+                      dynamic: bool = False, thresh: float = 0.5):
     """Wrap attention of the chosen layers with KV-memory injection.
 
     Args:
@@ -147,7 +157,7 @@ def install_kv_memory(model, corr: CorrectionLayer, layers: list[int] | None = N
         attn = blocks[li].self_attn
         if not hasattr(attn, "_orig_forward"):
             attn._orig_forward = attn.forward
-        wrap = KVMemoryAttention(attn, corr, max_slots)
+        wrap = KVMemoryAttention(attn, corr, max_slots, dynamic=dynamic, thresh=thresh)
         attn.forward = wrap
         wrappers.append(wrap)
     return wrappers

@@ -273,3 +273,38 @@ class TestAnchoredBank:
         bank.add("t", v, anchor=a)
         stored = bank.embeds[0]
         assert torch.allclose(stored, (v - a) / (v - a).norm(), atol=1e-5)
+
+
+class TestDynamicKVInjection:
+    def test_dynamic_injects_only_above_threshold(self):
+        """kv_dynamic caps injection at slots with cos >= kv_thresh."""
+        import torch
+        from tmem.dialogue import Strategy, run_session
+        from tmem.kvinject import install_kv_memory, uninstall_kv_memory
+        from tmem.memory import CorrectionLayer
+        from tmem.qa import SESSIONS
+        from tmem.semantic import band_hidden
+
+        import scripts_code.smoke_latent_campaign as smoke
+        torch.manual_seed(0)  # deterministic: full-suite order changes the global seed
+        bundle = smoke.tiny_qwen35_bundle()
+        corr = CorrectionLayer(bundle.hidden_size, size=64, window_crit=-1e9, crit=0.95)
+        # slots: some close to real utterance activations, some deliberately not
+        base = band_hidden(bundle, "my cat Barsik and the rust parser Oxidum")
+        for w in (1.0, 0.99, 0.98, 0.2, -0.6):
+            corr(base * w)
+
+        def run_with(thresh):
+            wrappers = install_kv_memory(bundle.model, corr, layers=[1], max_slots=32,
+                                         dynamic=True, thresh=thresh)
+            try:
+                run_session(bundle, SESSIONS[0], Strategy("d", context="window", window=2),
+                            max_new_tokens=2, seed=0)
+            finally:
+                uninstall_kv_memory(bundle.model)
+            return wrappers[0].stats
+
+        assert run_with(2.0)["injected_slots"] == 0      # unreachable thresh -> silent
+        st = run_with(0.5)
+        assert st["injected_slots"] > 0                  # close slots do fire
+        assert st["injected_slots"] < st["steps"] * 32   # fewer than the fixed-32 ceiling

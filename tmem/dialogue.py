@@ -49,6 +49,8 @@ class Strategy:
     rag_anchor_gate: float = 0.85         # "bank_dev": порог сходства anchor'ей кластера
     memory_kv: bool = False               # v4: activated facts enter mid-layer attention as K/V
     kv_slots: int = 32                    # max memory keys/values per attention layer
+    kv_dynamic: bool = False              # динамическая инъекция: только слоты с cos >= kv_thresh
+    kv_thresh: float = 0.5                # порог активации для kv_dynamic (1..kv_slots векторов)
     gen_chunks: bool = False              # chunk-memory: store generation chunks instead of user facts
     chunk_embed: str = "span"             # mean | span | attn | late (contextualised chunk embedding)
     chunk_key: str = "content"            # content (block layer activations) | request (legacy)
@@ -85,6 +87,8 @@ class Strategy:
             "rag_anchor_gate": self.rag_anchor_gate,
             "memory_kv": self.memory_kv,
             "kv_slots": self.kv_slots,
+            "kv_dynamic": self.kv_dynamic,
+            "kv_thresh": self.kv_thresh,
             "gen_chunks": self.gen_chunks,
             "chunk_embed": self.chunk_embed,
             "chunk_key": self.chunk_key,
@@ -254,12 +258,12 @@ def _bank_slot_key(bundle, corr, text: str, tau: float = 0.05) -> tuple[torch.Te
     """
     x = band_hidden(bundle, text)                       # (1, L, d)
     corr(x)                                             # pour: retrieve + update
-    rel, n = corr.memory.get_relevant(x, 32)            # (1, n, d) bank's response
+    rel, n = corr.memory.get_relevant(x, 32)            # (1, n, d), по убыванию cos
     if n > 0:
         q = x.mean(dim=1)                               # (1, d)
         cos = torch.nn.functional.cosine_similarity(rel[0], q, dim=-1)
         w = torch.softmax(cos / tau, dim=0)
-        return (w[:, None] * rel[0]).sum(dim=0), rel[0, -1], int(x.shape[1])
+        return (w[:, None] * rel[0]).sum(dim=0), rel[0, 0], int(x.shape[1])  # anchor = top-1
     return x.mean(dim=1).squeeze(0), None, int(x.shape[1])
 
 
@@ -309,7 +313,8 @@ def run_session(
                 decay=strategy.memory_decay,
             )
             run.corr = corr
-        kv_wrappers = install_kv_memory(bundle.model, corr, max_slots=strategy.kv_slots)
+        kv_wrappers = install_kv_memory(bundle.model, corr, max_slots=strategy.kv_slots,
+                                        dynamic=strategy.kv_dynamic, thresh=strategy.kv_thresh)
     # The bank exists in every strategy for tone *measurement*; it feeds the
     # prompt (RAG mode) only when strategy.rag is set.
     bank = RagBank(bundle.hidden_size, crit=strategy.rag_crit, device=bundle.device, centered=strategy.rag_centered,

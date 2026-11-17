@@ -142,7 +142,7 @@ def f4():
     corr.memory.ttl[0] = 6
     wrappers = install_kv_memory(model, corr, layers=[2], max_slots=4)
     cap = {}
-    orig = KVMemoryAttention._attention
+    orig = KVMemoryAttention.__dict__["_attention"]  # the staticmethod object, not the plain function
 
     def capture(a, q, k, v, mask, kwargs):
         cap.update(a=a, k=k, v=v)
