@@ -13,7 +13,7 @@
 | 4 | corpus `shared-v1` | RAG на слотах инжектируемого банка (3 стратегии) | **в работе: 1-й диалог**, глобально — по решению | `results/corpus/shared-v1/` |
 | 5 | corpus `shared-dev-v1` | **основной**: живая память vs пирамида (свип банка 128/512/1024); побочно: кластерные RAG-ключи | в работе: 1-й диалог (разбор ~01:27) | `results/corpus/shared-dev-v1/` |
 | 6 | цепочка «живая память»: goal_dialogue, interlocutor, thread_coherence, blind_eval, living_memory | TTL/gist/K-V в диалоге | done | выводы §2.3, отчёты в `results/<exp>/REPORT.md` |
-| 7 | corpus `full-core-v1` / `full-self-v1` / `full-rag-v1` | main 48: конкуренты; свип живой памяти; last/mid/mean RAG ± K/V и bank RAG | **core: 1/48; rag: 2/48 (6.89 ч); self подготовлен** | `results/corpus/full-core-v1/CORE_GATE_REPORT.pdf`, `results/corpus/full-rag-v1/INTERIM.md`, `docs/PLAN-dialogue-live-fullscale.md` |
+| 7 | corpus `full-core-v1` / `full-self-v1` / `full-rag-v1` | main 48: конкуренты; свип живой памяти; last/mid/mean RAG ± K/V и bank RAG | **core: 1/48; rag: 2/48 (6.89 ч); self подготовлен** | `results/corpus/full-core-v1/CORE_GATE_REPORT.pdf`, `results/corpus/full-rag-v1/RAG_NIGHT_REPORT.pdf`, `INTERIM.md`, `docs/PLAN-dialogue-live-fullscale.md` |
 
 ⚠️ **pre-fix kvinject** = прогоны до коммита `68add5b` (15.11): латентный канал был инертен
 в prefill, цифры v4 из #1 и #2 условны (см. аудит `results/DIALOGUE_BRANCH_AUDIT.md`).
