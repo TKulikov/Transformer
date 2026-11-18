@@ -1,0 +1,315 @@
+{
+  "strategy": "v4_rag_kv_plain",
+  "spec_id": "main-L100-00-work-terse-baseline",
+  "analysis": {
+    "recall_mean": 0.773,
+    "recall_direct": 0.706,
+    "recall_paraphrase": 1.0,
+    "recall_by_zone": {
+      "early": 0.938,
+      "middle": 0.679
+    },
+    "recall_by_kind": {
+      "direct": 0.8,
+      "paraphrase": 1.0,
+      "multihop": 0.4,
+      "unanswerable": 1.0
+    },
+    "recall_by_lag": {
+      "0-5": 0.9,
+      "6-12": 1.0,
+      "13-20": 0.5,
+      "21+": 0.611
+    },
+    "stale_rate": 0.0,
+    "stale_updated_rate": null,
+    "consistency_vs_reference": 0.412,
+    "tone_mean": 0.8271,
+    "rep_mean": 0.0,
+    "prompt_tokens": 46493,
+    "generated_tokens": 3054,
+    "embed_tokens": 3766,
+    "cache_slots": 1461527,
+    "attention_flops_proxy": 1461527,
+    "max_cache_len": 554,
+    "mean_turn_latency_s": 1.3564,
+    "median_turn_latency_s": 1.423,
+    "p90_turn_latency_s": 1.453,
+    "peak_mem_mb": 8336.8,
+    "kv_injected_slots": 416008,
+    "kv_steps": 13016,
+    "memory_stats": {
+      "get_calls": 13016,
+      "update_calls": 13016,
+      "retrievals": 2962865,
+      "stores": 1245,
+      "merges": 1883,
+      "evictions": 985,
+      "gate_rejects": 0,
+      "occupied_slots": 260
+    },
+    "rag_stats": {
+      "adds": 16,
+      "upserts": 36,
+      "evictions": 0,
+      "size": 16
+    },
+    "probe_details": [
+      {
+        "turn": 13,
+        "question": "When does my sprint end?",
+        "plant_turn": 9,
+        "lag": 4,
+        "paraphrase": false,
+        "kind": "direct",
+        "score": 1.0,
+        "stale_score": null,
+        "answer": "Your sprint ends on **Thursday**.\n\nSince the retrospective is scheduled for **15:30** on that day, you'll want to ensure"
+      },
+      {
+        "turn": 27,
+        "question": "Question: when does my sprint end?",
+        "plant_turn": 9,
+        "lag": 18,
+        "paraphrase": false,
+        "kind": "direct",
+        "score": 1.0,
+        "stale_score": null,
+        "answer": "Your current sprint ends on **Thursday**.\n\nSince you mentioned this earlier, I have noted it in our context. Is there an"
+      },
+      {
+        "turn": 37,
+        "question": "Question: when is the release deadline?",
+        "plant_turn": 34,
+        "lag": 3,
+        "paraphrase": false,
+        "kind": "direct",
+        "score": 1.0,
+        "stale_score": null,
+        "answer": "Your release deadline is **June 3**.\n\nGiven that your current sprint ends on **Thursday**, we have a tight window to ens"
+      },
+      {
+        "turn": 38,
+        "question": "What is the name of my team leader?",
+        "plant_turn": 36,
+        "lag": 2,
+        "paraphrase": true,
+        "kind": "paraphrase",
+        "score": 1.0,
+        "stale_score": null,
+        "answer": "Your team lead is **Margarita**."
+      },
+      {
+        "turn": 40,
+        "question": "Who reviews my pull requests?",
+        "plant_turn": 33,
+        "lag": 7,
+        "paraphrase": false,
+        "kind": "direct",
+        "score": 1.0,
+        "stale_score": null,
+        "answer": "**Dana** reviews your pull requests.\n\nThis is a key part of your workflow and code quality assurance process."
+      },
+      {
+        "turn": 45,
+        "question": "By which date must we release?",
+        "plant_turn": 34,
+        "lag": 11,
+        "paraphrase": true,
+        "kind": "paraphrase",
+        "score": 1.0,
+        "stale_score": null,
+        "answer": "We must release by **June 3**.\n\nGiven that your sprint ends this **Thursday**, this date is critical for finalizing the "
+      },
+      {
+        "turn": 46,
+        "question": "Question: how do we deploy the service? And also, at what time is the retro?",
+        "plant_turn": 44,
+        "lag": 2,
+        "paraphrase": false,
+        "kind": "multihop",
+        "score": 0.5,
+        "stale_score": null,
+        "answer": "**Deployment Strategy:**\nWe deploy the service via a **canary release**. This approach allows us to roll out the new ver"
+      },
+      {
+        "turn": 48,
+        "question": "When does my sprint end? And also, what is the name of my team leader?",
+        "plant_turn": 36,
+        "lag": 12,
+        "paraphrase": false,
+        "kind": "multihop",
+        "score": 1.0,
+        "stale_score": null,
+        "answer": "Your sprint ends this **Thursday**.\n\nYour team lead is **Margarita**."
+      },
+      {
+        "turn": 54,
+        "question": "What is the epic ticket number?",
+        "plant_turn": 53,
+        "lag": 1,
+        "paraphrase": false,
+        "kind": "direct",
+        "score": 1.0,
+        "stale_score": null,
+        "answer": "The epic ticket number is **PRJ-482**."
+      },
+      {
+        "turn": 57,
+        "question": "When does the retrospective start?",
+        "plant_turn": 2,
+        "lag": 55,
+        "paraphrase": false,
+        "kind": "direct",
+        "score": 1.0,
+        "stale_score": null,
+        "answer": "The retrospective starts at **15:30**."
+      },
+      {
+        "turn": 59,
+        "question": "Question: what is the backend stack?",
+        "plant_turn": 49,
+        "lag": 10,
+        "paraphrase": true,
+        "kind": "paraphrase",
+        "score": 1.0,
+        "stale_score": null,
+        "answer": "The backend stack is **Golang**."
+      },
+      {
+        "turn": 71,
+        "question": "What is the epic ticket number? And also, at what time is the retro?",
+        "plant_turn": 53,
+        "lag": 18,
+        "paraphrase": false,
+        "kind": "multihop",
+        "score": 0.0,
+        "stale_score": null,
+        "answer": "Based on the conversation history provided, here are the answers to your questions:\n\n*   **Epic Ticket Number:** The tic"
+      },
+      {
+        "turn": 72,
+        "question": "Question: which CI platform do we use?",
+        "plant_turn": null,
+        "lag": null,
+        "paraphrase": false,
+        "kind": "unanswerable",
+        "score": 1.0,
+        "stale_score": null,
+        "answer": "Based on the conversation history provided, there is **no mention of a specific CI (Continuous Integration) platform** b"
+      },
+      {
+        "turn": 77,
+        "question": "What is the epic ticket number?",
+        "plant_turn": 53,
+        "lag": 24,
+        "paraphrase": false,
+        "kind": "direct",
+        "score": 0.0,
+        "stale_score": null,
+        "answer": "Based on the conversation history provided, the epic ticket number is **PRJ-48** (specifically referenced as **Epic PRJ-"
+      },
+      {
+        "turn": 83,
+        "question": "Question: what is the name of my team leader?",
+        "plant_turn": 36,
+        "lag": 47,
+        "paraphrase": true,
+        "kind": "paraphrase",
+        "score": 1.0,
+        "stale_score": null,
+        "answer": "Your team lead is named **Margarita**."
+      },
+      {
+        "turn": 84,
+        "question": "Question: which language is the backend written in? And also, which release method does my team use?",
+        "plant_turn": 49,
+        "lag": 35,
+        "paraphrase": false,
+        "kind": "multihop",
+        "score": 0.0,
+        "stale_score": null,
+        "answer": "Based on the conversation history and your specific notes, here are the answers to your questions:\n\n**1. What language i"
+      },
+      {
+        "turn": 85,
+        "question": "Question: how do we deploy the service?",
+        "plant_turn": 44,
+        "lag": 41,
+        "paraphrase": false,
+        "kind": "direct",
+        "score": 1.0,
+        "stale_score": null,
+        "answer": "Based on the notes provided, your team deploys the service via a **canary release**.\n\nThis approach allows you to roll o"
+      },
+      {
+        "turn": 91,
+        "question": "Question: what is the name of our intern? And also, at what time is the retro?",
+        "plant_turn": 17,
+        "lag": 74,
+        "paraphrase": false,
+        "kind": "multihop",
+        "score": 0.5,
+        "stale_score": null,
+        "answer": "Based on the notes provided:\n\n*   **Intern's Name:** Our new intern is named **Pavel**.\n*   **Retro Time:** The"
+      },
+      {
+        "turn": 92,
+        "question": "Question: what is the name of my team leader?",
+        "plant_turn": 36,
+        "lag": 56,
+        "paraphrase": true,
+        "kind": "paraphrase",
+        "score": 1.0,
+        "stale_score": null,
+        "answer": "Your team lead is named **Margarita**."
+      },
+      {
+        "turn": 93,
+        "question": "Question: who reviews my pull requests?",
+        "plant_turn": 33,
+        "lag": 60,
+        "paraphrase": false,
+        "kind": "direct",
+        "score": 1.0,
+        "stale_score": null,
+        "answer": "Based on the notes you provided, **Dana** reviews your pull requests.\n\nHere is a quick summary of the key details we've "
+      },
+      {
+        "turn": 94,
+        "question": "Question: when is the release deadline?",
+        "plant_turn": 34,
+        "lag": 60,
+        "paraphrase": false,
+        "kind": "direct",
+        "score": 0.0,
+        "stale_score": null,
+        "answer": "Based on the conversation history and your specific notes, here is the answer to your question:\n\n**Release Deadline:**\nT"
+      },
+      {
+        "turn": 96,
+        "question": "Where is the company HQ?",
+        "plant_turn": null,
+        "lag": null,
+        "paraphrase": false,
+        "kind": "unanswerable",
+        "score": 1.0,
+        "stale_score": null,
+        "answer": "Based on the notes provided, the office is located on the **twelfth floor**.\n\n*(Note: The specific city or street addres"
+      }
+    ]
+  },
+  "e2e": {
+    "per_rep_mean_s": [
+      1.4798,
+      1.482,
+      1.473,
+      1.469,
+      1.3804
+    ],
+    "mean_s": 1.4568,
+    "median_s": 1.473,
+    "includes_retrieval": true,
+    "warmup_reps": 1
+  }
+}
