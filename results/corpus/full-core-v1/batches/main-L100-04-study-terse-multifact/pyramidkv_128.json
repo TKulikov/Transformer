@@ -1,0 +1,306 @@
+{
+  "strategy": "pyramidkv_128",
+  "spec_id": "main-L100-04-study-terse-multifact",
+  "analysis": {
+    "recall_mean": 0.568,
+    "recall_direct": 0.676,
+    "recall_paraphrase": 0.2,
+    "recall_by_zone": {
+      "early": 0.658,
+      "middle": 0.0
+    },
+    "recall_by_kind": {
+      "direct": 0.8,
+      "multihop": 0.3,
+      "paraphrase": 0.2,
+      "unanswerable": 1.0
+    },
+    "recall_by_lag": {
+      "0-5": 0.7,
+      "6-12": 0.0,
+      "13-20": 0.5,
+      "21+": 0.5
+    },
+    "stale_rate": 0.0,
+    "stale_updated_rate": null,
+    "consistency_vs_reference": 0.386,
+    "tone_mean": 0.761,
+    "rep_mean": 0.0,
+    "prompt_tokens": 208663,
+    "generated_tokens": 3055,
+    "embed_tokens": 3749,
+    "cache_slots": 431224,
+    "attention_flops_proxy": 431224,
+    "max_cache_len": 279,
+    "mean_turn_latency_s": 1.6149,
+    "median_turn_latency_s": 1.646,
+    "p90_turn_latency_s": 2.1263,
+    "peak_mem_mb": 11156.44,
+    "kv_injected_slots": null,
+    "kv_steps": null,
+    "memory_stats": null,
+    "rag_stats": {
+      "adds": 11,
+      "upserts": 36,
+      "evictions": 0,
+      "size": 11
+    },
+    "probe_details": [
+      {
+        "turn": 7,
+        "question": "Where do I usually study?",
+        "plant_turn": 4,
+        "lag": 3,
+        "paraphrase": false,
+        "kind": "direct",
+        "score": 1.0,
+        "stale_score": null,
+        "answer": "You usually study on the **third floor of the library**."
+      },
+      {
+        "turn": 8,
+        "question": "Question: which course did I enroll in?",
+        "plant_turn": 6,
+        "lag": 2,
+        "paraphrase": false,
+        "kind": "direct",
+        "score": 1.0,
+        "stale_score": null,
+        "answer": "You are enrolled in the **Linear Algebra** course."
+      },
+      {
+        "turn": 9,
+        "question": "Which language do I practice? And also, which subject is the thesis about?",
+        "plant_turn": 6,
+        "lag": 3,
+        "paraphrase": false,
+        "kind": "multihop",
+        "score": 0.5,
+        "stale_score": null,
+        "answer": "Based on your notes:\n\n*   **Language:** You practice **German**.\n*   **Subject:** Your thesis is about **Computer Scienc"
+      },
+      {
+        "turn": 22,
+        "question": "Who is my advisor?",
+        "plant_turn": 21,
+        "lag": 1,
+        "paraphrase": false,
+        "kind": "direct",
+        "score": 0.0,
+        "stale_score": null,
+        "answer": "Based on your notes, your advisor is **Professor [Name]**.\n\n*Note: In your previous message, you mentioned \"My advisor i"
+      },
+      {
+        "turn": 23,
+        "question": "Which language do I practice?",
+        "plant_turn": 4,
+        "lag": 19,
+        "paraphrase": false,
+        "kind": "direct",
+        "score": 1.0,
+        "stale_score": null,
+        "answer": "Based on your notes, you practice **German**."
+      },
+      {
+        "turn": 24,
+        "question": "Question: which subject is the thesis about?",
+        "plant_turn": 6,
+        "lag": 18,
+        "paraphrase": true,
+        "kind": "paraphrase",
+        "score": 0.0,
+        "stale_score": null,
+        "answer": "Based on your notes, your thesis is about **Computer Science** (specifically focusing on **Machine Learning** and **Data"
+      },
+      {
+        "turn": 25,
+        "question": "Question: what do I post to the group?",
+        "plant_turn": 21,
+        "lag": 4,
+        "paraphrase": true,
+        "kind": "paraphrase",
+        "score": 1.0,
+        "stale_score": null,
+        "answer": "Based on your notes, you share your notes through the group chat. While the specific content isn't detailed in the summa"
+      },
+      {
+        "turn": 26,
+        "question": "Which course did I enroll in?",
+        "plant_turn": 6,
+        "lag": 20,
+        "paraphrase": false,
+        "kind": "direct",
+        "score": 1.0,
+        "stale_score": null,
+        "answer": "You are enrolled in the **Linear Algebra** course."
+      },
+      {
+        "turn": 30,
+        "question": "Question: who is my advisor? And also, which date is the exam on?",
+        "plant_turn": 21,
+        "lag": 9,
+        "paraphrase": false,
+        "kind": "multihop",
+        "score": 0.0,
+        "stale_score": null,
+        "answer": "Based on your notes:\n\n*   **Advisor:** Your advisor is **Professor [Name]** (the specific name was not explicitly record"
+      },
+      {
+        "turn": 39,
+        "question": "Question: which course did I enroll in?",
+        "plant_turn": 6,
+        "lag": 33,
+        "paraphrase": false,
+        "kind": "direct",
+        "score": 1.0,
+        "stale_score": null,
+        "answer": "You are enrolled in the **Linear Algebra** course."
+      },
+      {
+        "turn": 42,
+        "question": "Question: where do I usually study?",
+        "plant_turn": 4,
+        "lag": 38,
+        "paraphrase": false,
+        "kind": "direct",
+        "score": 1.0,
+        "stale_score": null,
+        "answer": "You usually study on the **third floor of the library**."
+      },
+      {
+        "turn": 48,
+        "question": "What covers the conference fee? And also, which subject is the thesis about?",
+        "plant_turn": 19,
+        "lag": 29,
+        "paraphrase": false,
+        "kind": "multihop",
+        "score": 0.5,
+        "stale_score": null,
+        "answer": "Based on your notes:\n\n*   **Funding:** The **small grant** covers the conference fee.\n*   **Thesis Topic:** Your thesis"
+      },
+      {
+        "turn": 60,
+        "question": "Which club did I join?",
+        "plant_turn": null,
+        "lag": null,
+        "paraphrase": false,
+        "kind": "unanswerable",
+        "score": 1.0,
+        "stale_score": null,
+        "answer": "Based on the notes provided in our dialogue, there is no mention of any club or organization you have joined. The record"
+      },
+      {
+        "turn": 61,
+        "question": "Question: where is the summer school?",
+        "plant_turn": null,
+        "lag": null,
+        "paraphrase": false,
+        "kind": "unanswerable",
+        "score": 1.0,
+        "stale_score": null,
+        "answer": "Based on the notes we have discussed so far, there is no mention of a summer school or its location. The records only co"
+      },
+      {
+        "turn": 62,
+        "question": "Question: on which day do we gather to study?",
+        "plant_turn": 44,
+        "lag": 18,
+        "paraphrase": true,
+        "kind": "paraphrase",
+        "score": 0.0,
+        "stale_score": null,
+        "answer": "Based on the dialogue, we can determine the study day by combining two separate pieces of information:\n\n1.  **Group Meet"
+      },
+      {
+        "turn": 63,
+        "question": "Who is my advisor? And also, what am I learning besides the major?",
+        "plant_turn": 21,
+        "lag": 42,
+        "paraphrase": false,
+        "kind": "multihop",
+        "score": 0.0,
+        "stale_score": null,
+        "answer": "Based on the dialogue provided:\n\n*   **Advisor:** Your advisor is not explicitly named in the text, but the system notes"
+      },
+      {
+        "turn": 80,
+        "question": "Question: who is my advisor?",
+        "plant_turn": 21,
+        "lag": 59,
+        "paraphrase": false,
+        "kind": "direct",
+        "score": 0.0,
+        "stale_score": null,
+        "answer": "Based on the dialogue provided, your advisor is listed as **Professor [Name]**.\n\n*Note: The specific name was not explic"
+      },
+      {
+        "turn": 86,
+        "question": "Question: which language do I practice? And also, which professor supervises me?",
+        "plant_turn": 21,
+        "lag": 65,
+        "paraphrase": false,
+        "kind": "multihop",
+        "score": 0.5,
+        "stale_score": null,
+        "answer": "Based on your notes:\n\n*   **Language:** You practice **German**.\n*   **Supervisor:** Your supervisor is **not specified*"
+      },
+      {
+        "turn": 87,
+        "question": "Question: how do I share my study materials?",
+        "plant_turn": 21,
+        "lag": 66,
+        "paraphrase": false,
+        "kind": "direct",
+        "score": 1.0,
+        "stale_score": null,
+        "answer": "Based on your notes, you share your study materials by **posting them in a group chat**."
+      },
+      {
+        "turn": 88,
+        "question": "Question: on which day do we gather to study?",
+        "plant_turn": 44,
+        "lag": 44,
+        "paraphrase": true,
+        "kind": "paraphrase",
+        "score": 0.0,
+        "stale_score": null,
+        "answer": "Based on the dialogue, we can determine the study day by combining two pieces of information:\n\n1.  **Group Meeting Day:*"
+      },
+      {
+        "turn": 93,
+        "question": "What covers the conference fee?",
+        "plant_turn": 19,
+        "lag": 74,
+        "paraphrase": false,
+        "kind": "direct",
+        "score": 1.0,
+        "stale_score": null,
+        "answer": "Based on the notes provided in the dialogue, the **small grant** covers the conference fee."
+      },
+      {
+        "turn": 97,
+        "question": "On which day do we gather to study?",
+        "plant_turn": 44,
+        "lag": 53,
+        "paraphrase": true,
+        "kind": "paraphrase",
+        "score": 0.0,
+        "stale_score": null,
+        "answer": "Based on the dialogue provided, the answer is **Tuesday**.\n\nThe assistant explicitly stated: \"Based on the dialogue, we "
+      }
+    ]
+  },
+  "e2e": {
+    "per_rep_mean_s": [
+      1.6852,
+      1.6838,
+      1.6838,
+      1.6835,
+      1.684
+    ],
+    "mean_s": 1.6841,
+    "median_s": 1.6838,
+    "includes_retrieval": true,
+    "warmup_reps": 1
+  }
+}

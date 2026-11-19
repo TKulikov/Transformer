@@ -1,0 +1,315 @@
+{
+  "strategy": "v4_kv_mid_dyn",
+  "spec_id": "main-L100-02-health-sloppy-adversarial",
+  "analysis": {
+    "recall_mean": 0.364,
+    "recall_direct": 0.412,
+    "recall_paraphrase": 0.2,
+    "recall_by_zone": {
+      "early": 0.545,
+      "middle": 0.182
+    },
+    "recall_by_kind": {
+      "multihop": 0.0,
+      "direct": 0.5,
+      "paraphrase": 0.2,
+      "unanswerable": 1.0
+    },
+    "recall_by_lag": {
+      "0-5": 0.6,
+      "6-12": null,
+      "13-20": 0.4,
+      "21+": 0.1
+    },
+    "stale_rate": 0.0,
+    "stale_updated_rate": 0.0,
+    "consistency_vs_reference": 0.194,
+    "tone_mean": 0.7527,
+    "rep_mean": 0.0,
+    "prompt_tokens": 44110,
+    "generated_tokens": 3200,
+    "embed_tokens": 3979,
+    "cache_slots": 1461120,
+    "attention_flops_proxy": 1461120,
+    "max_cache_len": 512,
+    "mean_turn_latency_s": 1.3322,
+    "median_turn_latency_s": 1.3372,
+    "p90_turn_latency_s": 1.34,
+    "peak_mem_mb": 8313.61,
+    "kv_injected_slots": 33018,
+    "kv_steps": 13600,
+    "memory_stats": {
+      "get_calls": 13600,
+      "update_calls": 13600,
+      "retrievals": 3084052,
+      "stores": 1187,
+      "merges": 1772,
+      "evictions": 927,
+      "gate_rejects": 0,
+      "occupied_slots": 260
+    },
+    "rag_stats": {
+      "adds": 21,
+      "upserts": 32,
+      "evictions": 0,
+      "size": 21
+    },
+    "probe_details": [
+      {
+        "turn": 18,
+        "question": "how much water do i drink daily? and also, which specialist do i talk to weekly???",
+        "plant_turn": 14,
+        "lag": 4,
+        "paraphrase": false,
+        "kind": "multihop",
+        "score": 0.0,
+        "stale_score": null,
+        "answer": "Based on the conversation we've had so far, here is a summary of your current routine and the specialists you mentioned:"
+      },
+      {
+        "turn": 24,
+        "question": "who is my therapist???",
+        "plant_turn": 11,
+        "lag": 13,
+        "paraphrase": false,
+        "kind": "direct",
+        "score": 1.0,
+        "stale_score": 0.0,
+        "answer": "Based on the conversation history you provided, your therapist is **Anna**.\n\nThe dialogue explicitly mentions her multip"
+      },
+      {
+        "turn": 29,
+        "question": "who is my cardiologist???",
+        "plant_turn": 25,
+        "lag": 4,
+        "paraphrase": false,
+        "kind": "direct",
+        "score": 1.0,
+        "stale_score": null,
+        "answer": "Based on the conversation history you provided, your cardiologist is **Dr. Ivanova**.\n\nThe dialogue explicitly mentions "
+      },
+      {
+        "turn": 32,
+        "question": "so what is my water intake?",
+        "plant_turn": 14,
+        "lag": 18,
+        "paraphrase": true,
+        "kind": "paraphrase",
+        "score": 1.0,
+        "stale_score": null,
+        "answer": "Based on the conversation history you provided, your water intake is **two liters daily**.\n\nThis was explicitly mentione"
+      },
+      {
+        "turn": 37,
+        "question": "so who is my therapist?",
+        "plant_turn": 11,
+        "lag": 26,
+        "paraphrase": false,
+        "kind": "direct",
+        "score": 1.0,
+        "stale_score": 0.0,
+        "answer": "Based on the conversation history you provided, your therapist is **Anna**.\n\nThe dialogue explicitly mentions her when y"
+      },
+      {
+        "turn": 47,
+        "question": "so how many steps do i aim for?",
+        "plant_turn": 45,
+        "lag": 2,
+        "paraphrase": true,
+        "kind": "paraphrase",
+        "score": 0.0,
+        "stale_score": null,
+        "answer": "Based on the conversation history you provided, you aim for **8,000 steps** daily.\n\nYou mentioned this explicitly when y"
+      },
+      {
+        "turn": 49,
+        "question": "when do i go to bed? btw",
+        "plant_turn": 46,
+        "lag": 3,
+        "paraphrase": false,
+        "kind": "direct",
+        "score": 1.0,
+        "stale_score": null,
+        "answer": "Based on the conversation history you provided, you go to bed at **23:00** on weekdays.\n\nYou mentioned this explicitly w"
+      },
+      {
+        "turn": 54,
+        "question": "so when is the checkup?",
+        "plant_turn": 51,
+        "lag": 3,
+        "paraphrase": false,
+        "kind": "direct",
+        "score": 1.0,
+        "stale_score": null,
+        "answer": "Based on the conversation history you provided, your checkup is on **Friday at 09:00**.\n\nYou mentioned this explicitly w"
+      },
+      {
+        "turn": 58,
+        "question": "which vitamin do i take in winter???",
+        "plant_turn": 38,
+        "lag": 20,
+        "paraphrase": false,
+        "kind": "direct",
+        "score": 0.0,
+        "stale_score": null,
+        "answer": "Based on the conversation history you provided, there is no specific record of which vitamin you should take in winter.\n"
+      },
+      {
+        "turn": 62,
+        "question": "so which scan was scheduled?",
+        "plant_turn": null,
+        "lag": null,
+        "paraphrase": false,
+        "kind": "unanswerable",
+        "score": 1.0,
+        "stale_score": null,
+        "answer": "Based on the conversation history you provided, there is no specific record of which scan was scheduled.\n\nThe dialogue d"
+      },
+      {
+        "turn": 64,
+        "question": "what is my daily step goal? and also, what is my weekday bedtime???",
+        "plant_turn": 46,
+        "lag": 18,
+        "paraphrase": false,
+        "kind": "multihop",
+        "score": 0.0,
+        "stale_score": null,
+        "answer": "Based on the conversation history you provided, there is no specific record of your **daily step goal** or your **weekda"
+      },
+      {
+        "turn": 65,
+        "question": "which vitamin do i take in winter???",
+        "plant_turn": 38,
+        "lag": 27,
+        "paraphrase": false,
+        "kind": "direct",
+        "score": 0.0,
+        "stale_score": null,
+        "answer": "Based on the conversation history you provided, there is **no specific record** of which vitamin you should take in wint"
+      },
+      {
+        "turn": 70,
+        "question": "on which day do i visit the clinic???",
+        "plant_turn": 51,
+        "lag": 19,
+        "paraphrase": true,
+        "kind": "paraphrase",
+        "score": 0.0,
+        "stale_score": null,
+        "answer": "Based on the conversation history you provided, there is no specific record of the exact day you visit the clinic.\n\nHowe"
+      },
+      {
+        "turn": 71,
+        "question": "so who is my dentist?",
+        "plant_turn": 13,
+        "lag": 58,
+        "paraphrase": false,
+        "kind": "direct",
+        "score": 0.0,
+        "stale_score": 0.0,
+        "answer": "Based on the conversation history you provided, there is no specific record of who your dentist is.\n\nThe dialogue mentio"
+      },
+      {
+        "turn": 74,
+        "question": "what do i avoid in my diet? and also, which doctor checks my heart? btw",
+        "plant_turn": 28,
+        "lag": 46,
+        "paraphrase": false,
+        "kind": "multihop",
+        "score": 0.0,
+        "stale_score": null,
+        "answer": "Based on the conversation history provided, there is **no specific record** of what you should avoid in your diet or whi"
+      },
+      {
+        "turn": 81,
+        "question": "so who is my physio trainer? and also, what is my water intake?",
+        "plant_turn": 34,
+        "lag": 47,
+        "paraphrase": false,
+        "kind": "multihop",
+        "score": 0.0,
+        "stale_score": null,
+        "answer": "Based on the conversation history provided, there is **no specific record** of who your physio trainer is or what your w"
+      },
+      {
+        "turn": 88,
+        "question": "so what is my blood type?",
+        "plant_turn": null,
+        "lag": null,
+        "paraphrase": false,
+        "kind": "unanswerable",
+        "score": 1.0,
+        "stale_score": null,
+        "answer": "Since the conversation history provided contains no specific details about your personal medical records, I cannot tell "
+      },
+      {
+        "turn": 92,
+        "question": "so how much water do i drink daily?",
+        "plant_turn": 14,
+        "lag": 78,
+        "paraphrase": false,
+        "kind": "direct",
+        "score": 0.0,
+        "stale_score": null,
+        "answer": "Since we don't have your specific medical records or personal schedule to answer questions about your diet restrictions,"
+      },
+      {
+        "turn": 93,
+        "question": "who is my cardiologist? btw",
+        "plant_turn": 25,
+        "lag": 68,
+        "paraphrase": false,
+        "kind": "direct",
+        "score": 0.0,
+        "stale_score": null,
+        "answer": "Since we don't have your specific medical records or personal schedule to answer questions about your diet restrictions,"
+      },
+      {
+        "turn": 94,
+        "question": "so how many steps do i aim for?",
+        "plant_turn": 45,
+        "lag": 49,
+        "paraphrase": true,
+        "kind": "paraphrase",
+        "score": 0.0,
+        "stale_score": null,
+        "answer": "Since I don't have your specific medical history, current fitness level, or any personalized goals from our conversation"
+      },
+      {
+        "turn": 95,
+        "question": "which trainer runs my exercises? btw",
+        "plant_turn": 34,
+        "lag": 61,
+        "paraphrase": true,
+        "kind": "paraphrase",
+        "score": 0.0,
+        "stale_score": null,
+        "answer": "Since I don't have access to your personal medical records, appointment logs, or the specific program you are following,"
+      },
+      {
+        "turn": 98,
+        "question": "so what is my daily step goal? and also, what is my water intake?",
+        "plant_turn": 45,
+        "lag": 53,
+        "paraphrase": false,
+        "kind": "multihop",
+        "score": 0.0,
+        "stale_score": null,
+        "answer": "Since I don't have access to your personal medical records, fitness tracker data, or specific health goals from our conv"
+      }
+    ]
+  },
+  "e2e": {
+    "per_rep_mean_s": [
+      1.4247,
+      1.425,
+      1.4252,
+      1.4249,
+      1.4249
+    ],
+    "mean_s": 1.425,
+    "median_s": 1.4249,
+    "includes_retrieval": true,
+    "warmup_reps": 1
+  }
+}

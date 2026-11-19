@@ -1,0 +1,329 @@
+{
+  "strategy": "classic_kv_full",
+  "spec_id": "main-L100-01-travel-chatty-updates",
+  "analysis": {
+    "recall_mean": 0.938,
+    "recall_direct": 0.921,
+    "recall_paraphrase": 1.0,
+    "recall_by_zone": {
+      "early": 0.972,
+      "middle": 0.833
+    },
+    "recall_by_kind": {
+      "direct": 1.0,
+      "paraphrase": 1.0,
+      "multihop": 0.7,
+      "unanswerable": 1.0,
+      "temporal": 1.0
+    },
+    "recall_by_lag": {
+      "0-5": 1.0,
+      "6-12": 0.75,
+      "13-20": 1.0,
+      "21+": 0.917
+    },
+    "stale_rate": 0.042,
+    "stale_updated_rate": 0.25,
+    "consistency_vs_reference": 0.973,
+    "tone_mean": 0.8238,
+    "rep_mean": 0.0008,
+    "prompt_tokens": 242365,
+    "generated_tokens": 3184,
+    "embed_tokens": 4404,
+    "cache_slots": 7761424,
+    "attention_flops_proxy": 7761424,
+    "max_cache_len": 4817,
+    "mean_turn_latency_s": 1.7964,
+    "median_turn_latency_s": 1.769,
+    "p90_turn_latency_s": 2.4127,
+    "peak_mem_mb": 12079.47,
+    "kv_injected_slots": null,
+    "kv_steps": null,
+    "memory_stats": null,
+    "rag_stats": {
+      "adds": 8,
+      "upserts": 28,
+      "evictions": 0,
+      "size": 8
+    },
+    "probe_details": [
+      {
+        "turn": 27,
+        "question": "Tell me, what is the name of the hotel?",
+        "plant_turn": 11,
+        "lag": 16,
+        "paraphrase": false,
+        "kind": "direct",
+        "score": 1.0,
+        "stale_score": null,
+        "answer": "The name of the hotel is **Miradouro**. You mentioned it earlier, and it's a beautiful name that literally means \"viewpo"
+      },
+      {
+        "turn": 32,
+        "question": "By the way, where does the night train go?",
+        "plant_turn": 29,
+        "lag": 3,
+        "paraphrase": false,
+        "kind": "direct",
+        "score": 1.0,
+        "stale_score": null,
+        "answer": "The night train goes to **Porto**! You mentioned earlier that you are taking the night train to Porto, which is a fantas"
+      },
+      {
+        "turn": 33,
+        "question": "By the way, what is the insurance policy number?",
+        "plant_turn": 28,
+        "lag": 5,
+        "paraphrase": false,
+        "kind": "direct",
+        "score": 1.0,
+        "stale_score": null,
+        "answer": "The insurance policy number is **TRV-993**! You mentioned it earlier, and having that ready ensures you're fully prepare"
+      },
+      {
+        "turn": 36,
+        "question": "Quick question! what is my flight number?",
+        "plant_turn": 24,
+        "lag": 12,
+        "paraphrase": false,
+        "kind": "direct",
+        "score": 1.0,
+        "stale_score": null,
+        "answer": "Your flight number is **TP-1264**! You mentioned it earlier, and having that ready is a great detail to keep in your tra"
+      },
+      {
+        "turn": 42,
+        "question": "By the way, how much money did we plan to spend?",
+        "plant_turn": 39,
+        "lag": 3,
+        "paraphrase": true,
+        "kind": "paraphrase",
+        "score": 1.0,
+        "stale_score": null,
+        "answer": "You planned to spend **1400 euros** on your trip! That's a fantastic budget to enjoy the best of **Miradouro** and all"
+      },
+      {
+        "turn": 43,
+        "question": "Quick question! who is our local guide?",
+        "plant_turn": 26,
+        "lag": 17,
+        "paraphrase": true,
+        "kind": "paraphrase",
+        "score": 1.0,
+        "stale_score": null,
+        "answer": "Our local guide is named **Tomas**! He's the one who knows all the hidden gems and the best spots to explore."
+      },
+      {
+        "turn": 45,
+        "question": "By the way, what is the name of the hotel?",
+        "plant_turn": 11,
+        "lag": 34,
+        "paraphrase": false,
+        "kind": "direct",
+        "score": 1.0,
+        "stale_score": null,
+        "answer": "The name of the hotel is **Miradouro**! It's a beautiful name that literally means \"viewpoint\" or \"outlook\" in Portugues"
+      },
+      {
+        "turn": 46,
+        "question": "Tell me, where are we flying? And also, how much money did we plan to spend?",
+        "plant_turn": 41,
+        "lag": 5,
+        "paraphrase": false,
+        "kind": "multihop",
+        "score": 1.0,
+        "stale_score": null,
+        "answer": "You are flying to **Lisbon** in the spring! 🌸\n\nAnd regarding your budget, you planned to spend **1400 euros"
+      },
+      {
+        "turn": 47,
+        "question": "Quick question! which policy covers the trip?",
+        "plant_turn": 28,
+        "lag": 19,
+        "paraphrase": true,
+        "kind": "paraphrase",
+        "score": 1.0,
+        "stale_score": null,
+        "answer": "The policy that covers your trip is **TRV-993**! You mentioned it earlier, and having that number ready ensures you're f"
+      },
+      {
+        "turn": 49,
+        "question": "By the way, what is the trip budget? And also, who is our local guide?",
+        "plant_turn": 39,
+        "lag": 10,
+        "paraphrase": false,
+        "kind": "multihop",
+        "score": 0.5,
+        "stale_score": null,
+        "answer": "That is a wonderful combination of details! To answer your questions:\n\n*   **Trip Budget:** You planned to spend **1400 "
+      },
+      {
+        "turn": 51,
+        "question": "Tell me, which camera am I taking?",
+        "plant_turn": 48,
+        "lag": 3,
+        "paraphrase": false,
+        "kind": "direct",
+        "score": 1.0,
+        "stale_score": null,
+        "answer": "You are taking the **old Zenit camera**! 📸 It's a fantastic choice for capturing those timeless moments in Lisbon."
+      },
+      {
+        "turn": 55,
+        "question": "By the way, what evening show did we book?",
+        "plant_turn": null,
+        "lag": null,
+        "paraphrase": false,
+        "kind": "unanswerable",
+        "score": 1.0,
+        "stale_score": null,
+        "answer": "That is a fantastic question! Since you're heading to **Alfama Suites** in Lisbon and taking the night train to **Porto*"
+      },
+      {
+        "turn": 57,
+        "question": "By the way, which hotel did we book before the rebooking?",
+        "plant_turn": 11,
+        "lag": 46,
+        "paraphrase": false,
+        "kind": "temporal",
+        "score": 1.0,
+        "stale_score": 0.0,
+        "answer": "The hotel you booked before the rebooking was **Miradouro**! It's a beautiful name that literally means \"viewpoint\" or \""
+      },
+      {
+        "turn": 61,
+        "question": "Tell me, what is my flight number? And also, who is our local guide?",
+        "plant_turn": 26,
+        "lag": 35,
+        "paraphrase": false,
+        "kind": "multihop",
+        "score": 1.0,
+        "stale_score": null,
+        "answer": "Your flight number is **TP-1264**, and your local guide is named **Tomas**! 🛫🗺️"
+      },
+      {
+        "turn": 68,
+        "question": "Quick question! what is the departure date?",
+        "plant_turn": 19,
+        "lag": 49,
+        "paraphrase": true,
+        "kind": "paraphrase",
+        "score": 1.0,
+        "stale_score": 0.0,
+        "answer": "Your departure date is **May 19th**! 🗓️\n\nJust a quick note: earlier in our conversation, you mentioned the flight was or"
+      },
+      {
+        "turn": 73,
+        "question": "Tell me, what is the name of the guide?",
+        "plant_turn": 26,
+        "lag": 47,
+        "paraphrase": false,
+        "kind": "direct",
+        "score": 1.0,
+        "stale_score": null,
+        "answer": "The name of the guide is **Tomas**! He's the one who knows all the hidden gems and the best spots to explore."
+      },
+      {
+        "turn": 74,
+        "question": "Tell me, what is the name of the hotel?",
+        "plant_turn": 11,
+        "lag": 63,
+        "paraphrase": false,
+        "kind": "direct",
+        "score": 1.0,
+        "stale_score": 1.0,
+        "answer": "The name of the hotel is **Alfama Suites**!\n\nAlthough you mentioned **Miradouro** earlier, you noted that you had actual"
+      },
+      {
+        "turn": 76,
+        "question": "Quick question! what is the return flight number?",
+        "plant_turn": null,
+        "lag": null,
+        "paraphrase": false,
+        "kind": "unanswerable",
+        "score": 1.0,
+        "stale_score": null,
+        "answer": "I don't have information about your return flight number in our conversation so far! We've discussed your departure flig"
+      },
+      {
+        "turn": 79,
+        "question": "Quick question! which flight am I booked on?",
+        "plant_turn": 24,
+        "lag": 55,
+        "paraphrase": true,
+        "kind": "paraphrase",
+        "score": 1.0,
+        "stale_score": null,
+        "answer": "You are booked on flight **TP-1264**! 🛫 That's the departure flight you mentioned earlier. Just a quick note: we also"
+      },
+      {
+        "turn": 80,
+        "question": "By the way, what was the departure date before the move?",
+        "plant_turn": 19,
+        "lag": 61,
+        "paraphrase": false,
+        "kind": "temporal",
+        "score": 1.0,
+        "stale_score": 0.0,
+        "answer": "Earlier in our conversation, you mentioned that the flight was originally scheduled to depart on **May 12**. However, yo"
+      },
+      {
+        "turn": 84,
+        "question": "By the way, where does the night train go? And also, where are we staying?",
+        "plant_turn": 29,
+        "lag": 55,
+        "paraphrase": false,
+        "kind": "multihop",
+        "score": 0.5,
+        "stale_score": null,
+        "answer": "The night train goes to **Porto**! 🚂\n\nAs for where you are staying, you have actually rebooked to **Alfama Suites"
+      },
+      {
+        "turn": 88,
+        "question": "Quick question! what is the trip budget? And also, which office handles the visa?",
+        "plant_turn": 39,
+        "lag": 49,
+        "paraphrase": false,
+        "kind": "multihop",
+        "score": 0.5,
+        "stale_score": null,
+        "answer": "That is a wonderful combination of details! To answer your questions:\n\n*   **Trip Budget:** You planned to spend **1400 "
+      },
+      {
+        "turn": 91,
+        "question": "By the way, what is the trip budget?",
+        "plant_turn": 39,
+        "lag": 52,
+        "paraphrase": false,
+        "kind": "direct",
+        "score": 1.0,
+        "stale_score": null,
+        "answer": "You planned to spend **1400 euros** on your trip! That's a fantastic budget to enjoy the best of **Alfama Suites** and"
+      },
+      {
+        "turn": 94,
+        "question": "By the way, where is the visa appointment?",
+        "plant_turn": 25,
+        "lag": 69,
+        "paraphrase": false,
+        "kind": "direct",
+        "score": 1.0,
+        "stale_score": null,
+        "answer": "You mentioned earlier that the visa appointment is at the **consulate**! 🏛️ It's a huge milestone to get sorted before y"
+      }
+    ]
+  },
+  "e2e": {
+    "per_rep_mean_s": [
+      1.8619,
+      1.8614,
+      1.8621,
+      1.8609,
+      1.8624
+    ],
+    "mean_s": 1.8618,
+    "median_s": 1.8619,
+    "includes_retrieval": true,
+    "warmup_reps": 1
+  }
+}

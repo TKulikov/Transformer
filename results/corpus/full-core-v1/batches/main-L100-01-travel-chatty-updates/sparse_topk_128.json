@@ -1,0 +1,329 @@
+{
+  "strategy": "sparse_topk_128",
+  "spec_id": "main-L100-01-travel-chatty-updates",
+  "analysis": {
+    "recall_mean": 0.104,
+    "recall_direct": 0.132,
+    "recall_paraphrase": 0.0,
+    "recall_by_zone": {
+      "early": 0.139,
+      "middle": 0.0
+    },
+    "recall_by_kind": {
+      "direct": 0.0,
+      "paraphrase": 0.0,
+      "multihop": 0.1,
+      "unanswerable": 1.0,
+      "temporal": 0.0
+    },
+    "recall_by_lag": {
+      "0-5": 0.0,
+      "6-12": 0.0,
+      "13-20": 0.0,
+      "21+": 0.042
+    },
+    "stale_rate": 0.0,
+    "stale_updated_rate": 0.0,
+    "consistency_vs_reference": 0.148,
+    "tone_mean": 0.8196,
+    "rep_mean": 0.0,
+    "prompt_tokens": 241776,
+    "generated_tokens": 3179,
+    "embed_tokens": 4400,
+    "cache_slots": 403552,
+    "attention_flops_proxy": 403552,
+    "max_cache_len": 128,
+    "mean_turn_latency_s": 1.9698,
+    "median_turn_latency_s": 1.9835,
+    "p90_turn_latency_s": 2.527,
+    "peak_mem_mb": 8313.23,
+    "kv_injected_slots": null,
+    "kv_steps": null,
+    "memory_stats": null,
+    "rag_stats": {
+      "adds": 8,
+      "upserts": 28,
+      "evictions": 0,
+      "size": 8
+    },
+    "probe_details": [
+      {
+        "turn": 27,
+        "question": "Tell me, what is the name of the hotel?",
+        "plant_turn": 11,
+        "lag": 16,
+        "paraphrase": false,
+        "kind": "direct",
+        "score": 0.0,
+        "stale_score": null,
+        "answer": "The name of the hotel is **Mirador**."
+      },
+      {
+        "turn": 32,
+        "question": "By the way, where does the night train go?",
+        "plant_turn": 29,
+        "lag": 3,
+        "paraphrase": false,
+        "kind": "direct",
+        "score": 0.0,
+        "stale_score": null,
+        "answer": "That's a great question! The night train you're likely thinking of is the famous **Night Train to Lisbon** (often operat"
+      },
+      {
+        "turn": 33,
+        "question": "By the way, what is the insurance policy number?",
+        "plant_turn": 28,
+        "lag": 5,
+        "paraphrase": false,
+        "kind": "direct",
+        "score": 0.0,
+        "stale_score": null,
+        "answer": "That's a great question! However, I don't have access to your personal travel documents or specific insurance policy det"
+      },
+      {
+        "turn": 36,
+        "question": "Quick question! what is my flight number?",
+        "plant_turn": 24,
+        "lag": 12,
+        "paraphrase": false,
+        "kind": "direct",
+        "score": 0.0,
+        "stale_score": null,
+        "answer": "I don't have access to your personal travel information, such as your specific flight number. That kind of detail is onl"
+      },
+      {
+        "turn": 42,
+        "question": "By the way, how much money did we plan to spend?",
+        "plant_turn": 39,
+        "lag": 3,
+        "paraphrase": true,
+        "kind": "paraphrase",
+        "score": 0.0,
+        "stale_score": null,
+        "answer": "You planned to spend **1,200 Euros** on your trip! That covers the flight, accommodation at the Mirador hotel, and a few"
+      },
+      {
+        "turn": 43,
+        "question": "Quick question! who is our local guide?",
+        "plant_turn": 26,
+        "lag": 17,
+        "paraphrase": true,
+        "kind": "paraphrase",
+        "score": 0.0,
+        "stale_score": null,
+        "answer": "That's a great question! Based on the details we've shared so far, we haven't mentioned a specific name for your local g"
+      },
+      {
+        "turn": 45,
+        "question": "By the way, what is the name of the hotel?",
+        "plant_turn": 11,
+        "lag": 34,
+        "paraphrase": false,
+        "kind": "direct",
+        "score": 0.0,
+        "stale_score": null,
+        "answer": "The name of the hotel is **Mirador**! It's a lovely name, especially for a place in Portugal, as \"Mirador\" translates to"
+      },
+      {
+        "turn": 46,
+        "question": "Tell me, where are we flying? And also, how much money did we plan to spend?",
+        "plant_turn": 41,
+        "lag": 5,
+        "paraphrase": false,
+        "kind": "multihop",
+        "score": 0.0,
+        "stale_score": null,
+        "answer": "Based on our conversation, we are flying to **Portugal** (specifically, the hotel name \"Mirador\" and the mention of a \"h"
+      },
+      {
+        "turn": 47,
+        "question": "Quick question! which policy covers the trip?",
+        "plant_turn": 28,
+        "lag": 19,
+        "paraphrase": true,
+        "kind": "paraphrase",
+        "score": 0.0,
+        "stale_score": null,
+        "answer": "That's a great question! Since we haven't discussed the specific travel insurance or policy details yet, I don't have th"
+      },
+      {
+        "turn": 49,
+        "question": "By the way, what is the trip budget? And also, who is our local guide?",
+        "plant_turn": 39,
+        "lag": 10,
+        "paraphrase": false,
+        "kind": "multihop",
+        "score": 0.0,
+        "stale_score": null,
+        "answer": "That's a great question! However, based on our conversation so far, I don't have any specific details about your trip bu"
+      },
+      {
+        "turn": 51,
+        "question": "Tell me, which camera am I taking?",
+        "plant_turn": 48,
+        "lag": 3,
+        "paraphrase": false,
+        "kind": "direct",
+        "score": 0.0,
+        "stale_score": null,
+        "answer": "You are taking the **TP-2000** (or simply the **TP** camera), as mentioned earlier in our conversation when you asked ab"
+      },
+      {
+        "turn": 55,
+        "question": "By the way, what evening show did we book?",
+        "plant_turn": null,
+        "lag": null,
+        "paraphrase": false,
+        "kind": "unanswerable",
+        "score": 1.0,
+        "stale_score": null,
+        "answer": "That's a great question! However, I don't have access to your specific booking details or the itinerary for your trip to"
+      },
+      {
+        "turn": 57,
+        "question": "By the way, which hotel did we book before the rebooking?",
+        "plant_turn": 11,
+        "lag": 46,
+        "paraphrase": false,
+        "kind": "temporal",
+        "score": 0.0,
+        "stale_score": 0.0,
+        "answer": "I don't have access to your personal travel records, booking history, or specific itinerary details. As an AI, I don't k"
+      },
+      {
+        "turn": 61,
+        "question": "Tell me, what is my flight number? And also, who is our local guide?",
+        "plant_turn": 26,
+        "lag": 35,
+        "paraphrase": false,
+        "kind": "multihop",
+        "score": 0.0,
+        "stale_score": null,
+        "answer": "I don't have access to your personal travel data, so I can't tell you your specific flight number or the name of your lo"
+      },
+      {
+        "turn": 68,
+        "question": "Quick question! what is the departure date?",
+        "plant_turn": 19,
+        "lag": 49,
+        "paraphrase": true,
+        "kind": "paraphrase",
+        "score": 0.0,
+        "stale_score": 0.0,
+        "answer": "Based on our conversation, the specific departure date was never mentioned! We talked about your trip to **Mirador** (or"
+      },
+      {
+        "turn": 73,
+        "question": "Tell me, what is the name of the guide?",
+        "plant_turn": 26,
+        "lag": 47,
+        "paraphrase": false,
+        "kind": "direct",
+        "score": 0.0,
+        "stale_score": null,
+        "answer": "The name of the guide isn't mentioned in our conversation yet! Since you're planning a trip to **Mirador** (which sounds"
+      },
+      {
+        "turn": 74,
+        "question": "Tell me, what is the name of the hotel?",
+        "plant_turn": 11,
+        "lag": 63,
+        "paraphrase": false,
+        "kind": "direct",
+        "score": 0.0,
+        "stale_score": 0.0,
+        "answer": "The name of the hotel is **Mirador**!\n\nIt's a lovely name, especially for a trip to Portugal, as \"Mirador\" translates to"
+      },
+      {
+        "turn": 76,
+        "question": "Quick question! what is the return flight number?",
+        "plant_turn": null,
+        "lag": null,
+        "paraphrase": false,
+        "kind": "unanswerable",
+        "score": 1.0,
+        "stale_score": null,
+        "answer": "I don't have access to your specific travel booking details, so I can't tell you the return flight number! That informat"
+      },
+      {
+        "turn": 79,
+        "question": "Quick question! which flight am I booked on?",
+        "plant_turn": 24,
+        "lag": 55,
+        "paraphrase": true,
+        "kind": "paraphrase",
+        "score": 0.0,
+        "stale_score": null,
+        "answer": "I don't have access to your personal travel records or booking details! As an AI, I can't see which specific flight you'"
+      },
+      {
+        "turn": 80,
+        "question": "By the way, what was the departure date before the move?",
+        "plant_turn": 19,
+        "lag": 61,
+        "paraphrase": false,
+        "kind": "temporal",
+        "score": 0.0,
+        "stale_score": 0.0,
+        "answer": "I don't have access to your personal travel history or records, so I can't tell you what your departure date was before "
+      },
+      {
+        "turn": 84,
+        "question": "By the way, where does the night train go? And also, where are we staying?",
+        "plant_turn": 29,
+        "lag": 55,
+        "paraphrase": false,
+        "kind": "multihop",
+        "score": 0.5,
+        "stale_score": null,
+        "answer": "That's a great question! The **night train** often goes to popular destinations like **Lisbon**, **Porto**, or even furt"
+      },
+      {
+        "turn": 88,
+        "question": "Quick question! what is the trip budget? And also, which office handles the visa?",
+        "plant_turn": 39,
+        "lag": 49,
+        "paraphrase": false,
+        "kind": "multihop",
+        "score": 0.0,
+        "stale_score": null,
+        "answer": "That is a great set of practical questions to have ready! Since I don't have access to your personal financial records o"
+      },
+      {
+        "turn": 91,
+        "question": "By the way, what is the trip budget?",
+        "plant_turn": 39,
+        "lag": 52,
+        "paraphrase": false,
+        "kind": "direct",
+        "score": 0.0,
+        "stale_score": null,
+        "answer": "I don't have access to your personal financial records, so I can't tell you the specific budget for your trip! However, "
+      },
+      {
+        "turn": 94,
+        "question": "By the way, where is the visa appointment?",
+        "plant_turn": 25,
+        "lag": 69,
+        "paraphrase": false,
+        "kind": "direct",
+        "score": 0.0,
+        "stale_score": null,
+        "answer": "I don't have access to your personal travel documents or specific itinerary details, so I can't tell you exactly where y"
+      }
+    ]
+  },
+  "e2e": {
+    "per_rep_mean_s": [
+      2.0471,
+      2.0483,
+      2.0498,
+      2.0489,
+      2.0492
+    ],
+    "mean_s": 2.0486,
+    "median_s": 2.0489,
+    "includes_retrieval": true,
+    "warmup_reps": 1
+  }
+}

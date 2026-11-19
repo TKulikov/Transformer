@@ -1,0 +1,315 @@
+{
+  "strategy": "v4_kv_mid",
+  "spec_id": "main-L100-04-study-terse-multifact",
+  "analysis": {
+    "recall_mean": 0.386,
+    "recall_direct": 0.441,
+    "recall_paraphrase": 0.2,
+    "recall_by_zone": {
+      "early": 0.447,
+      "middle": 0.0
+    },
+    "recall_by_kind": {
+      "direct": 0.4,
+      "multihop": 0.3,
+      "paraphrase": 0.2,
+      "unanswerable": 1.0
+    },
+    "recall_by_lag": {
+      "0-5": 1.0,
+      "6-12": 0.5,
+      "13-20": 0.25,
+      "21+": 0.0
+    },
+    "stale_rate": 0.0,
+    "stale_updated_rate": null,
+    "consistency_vs_reference": 0.26,
+    "tone_mean": 0.7666,
+    "rep_mean": 0.0,
+    "prompt_tokens": 42850,
+    "generated_tokens": 3124,
+    "embed_tokens": 3824,
+    "cache_slots": 1389155,
+    "attention_flops_proxy": 1389155,
+    "max_cache_len": 506,
+    "mean_turn_latency_s": 1.2879,
+    "median_turn_latency_s": 1.3224,
+    "p90_turn_latency_s": 1.3253,
+    "peak_mem_mb": 8308.37,
+    "kv_injected_slots": 423871,
+    "kv_steps": 13296,
+    "memory_stats": {
+      "get_calls": 13296,
+      "update_calls": 13296,
+      "retrievals": 3073745,
+      "stores": 1166,
+      "merges": 1647,
+      "evictions": 904,
+      "gate_rejects": 0,
+      "occupied_slots": 262
+    },
+    "rag_stats": {
+      "adds": 11,
+      "upserts": 36,
+      "evictions": 0,
+      "size": 11
+    },
+    "probe_details": [
+      {
+        "turn": 7,
+        "question": "Where do I usually study?",
+        "plant_turn": 4,
+        "lag": 3,
+        "paraphrase": false,
+        "kind": "direct",
+        "score": 1.0,
+        "stale_score": null,
+        "answer": "You usually study on the **third floor of the library**."
+      },
+      {
+        "turn": 8,
+        "question": "Question: which course did I enroll in?",
+        "plant_turn": 6,
+        "lag": 2,
+        "paraphrase": false,
+        "kind": "direct",
+        "score": 1.0,
+        "stale_score": null,
+        "answer": "You enrolled in **Linear Algebra**."
+      },
+      {
+        "turn": 9,
+        "question": "Which language do I practice? And also, which subject is the thesis about?",
+        "plant_turn": 6,
+        "lag": 3,
+        "paraphrase": false,
+        "kind": "multihop",
+        "score": 1.0,
+        "stale_score": null,
+        "answer": "You practice **German** twice a week, and your thesis topic is about **spectral clustering**."
+      },
+      {
+        "turn": 22,
+        "question": "Who is my advisor?",
+        "plant_turn": 21,
+        "lag": 1,
+        "paraphrase": false,
+        "kind": "direct",
+        "score": 1.0,
+        "stale_score": null,
+        "answer": "Your advisor is **Professor Ertel**."
+      },
+      {
+        "turn": 23,
+        "question": "Which language do I practice?",
+        "plant_turn": 4,
+        "lag": 19,
+        "paraphrase": false,
+        "kind": "direct",
+        "score": 1.0,
+        "stale_score": null,
+        "answer": "Based on the context of your **statistics exam** and the mention of **Professor Ertel** (a common name in German-speakin"
+      },
+      {
+        "turn": 24,
+        "question": "Question: which subject is the thesis about?",
+        "plant_turn": 6,
+        "lag": 18,
+        "paraphrase": true,
+        "kind": "paraphrase",
+        "score": 0.0,
+        "stale_score": null,
+        "answer": "Based on the dialogue provided, the specific subject of the thesis is **not mentioned**.\n\nThe conversation includes deta"
+      },
+      {
+        "turn": 25,
+        "question": "Question: what do I post to the group?",
+        "plant_turn": 21,
+        "lag": 4,
+        "paraphrase": true,
+        "kind": "paraphrase",
+        "score": 1.0,
+        "stale_score": null,
+        "answer": "Based on the dialogue provided, you mentioned that you **share your notes** through the group chat. Therefore, the conte"
+      },
+      {
+        "turn": 26,
+        "question": "Which course did I enroll in?",
+        "plant_turn": 6,
+        "lag": 20,
+        "paraphrase": false,
+        "kind": "direct",
+        "score": 0.0,
+        "stale_score": null,
+        "answer": "Based on the dialogue provided, the specific course you enrolled in is **not mentioned**.\n\nThe conversation references a"
+      },
+      {
+        "turn": 30,
+        "question": "Question: who is my advisor? And also, which date is the exam on?",
+        "plant_turn": 21,
+        "lag": 9,
+        "paraphrase": false,
+        "kind": "multihop",
+        "score": 0.5,
+        "stale_score": null,
+        "answer": "Based on the dialogue provided:\n\n*   **Your advisor is:** **Professor Ertel**.\n*   **The exam date is:** **Not mentioned"
+      },
+      {
+        "turn": 39,
+        "question": "Question: which course did I enroll in?",
+        "plant_turn": 6,
+        "lag": 33,
+        "paraphrase": false,
+        "kind": "direct",
+        "score": 0.0,
+        "stale_score": null,
+        "answer": "Based on the fragmented dialogue you provided, the specific course you enrolled in is **not mentioned**.\n\nThe dialogue o"
+      },
+      {
+        "turn": 42,
+        "question": "Question: where do I usually study?",
+        "plant_turn": 4,
+        "lag": 38,
+        "paraphrase": false,
+        "kind": "direct",
+        "score": 0.0,
+        "stale_score": null,
+        "answer": "Based on the fragmented dialogue you provided, the specific location where you usually study is **not mentioned**.\n\nThe "
+      },
+      {
+        "turn": 48,
+        "question": "What covers the conference fee? And also, which subject is the thesis about?",
+        "plant_turn": 19,
+        "lag": 29,
+        "paraphrase": false,
+        "kind": "multihop",
+        "score": 0.0,
+        "stale_score": null,
+        "answer": "Based on the fragmented dialogue you provided, the specific details regarding the **conference fee coverage** and the **"
+      },
+      {
+        "turn": 60,
+        "question": "Which club did I join?",
+        "plant_turn": null,
+        "lag": null,
+        "paraphrase": false,
+        "kind": "unanswerable",
+        "score": 1.0,
+        "stale_score": null,
+        "answer": "Based on the fragmented dialogue you provided, there is **no information mentioned** about which club you joined. The co"
+      },
+      {
+        "turn": 61,
+        "question": "Question: where is the summer school?",
+        "plant_turn": null,
+        "lag": null,
+        "paraphrase": false,
+        "kind": "unanswerable",
+        "score": 1.0,
+        "stale_score": null,
+        "answer": "Based on the fragmented dialogue you provided, there is **no information mentioned** regarding the location of the summe"
+      },
+      {
+        "turn": 62,
+        "question": "Question: on which day do we gather to study?",
+        "plant_turn": 44,
+        "lag": 18,
+        "paraphrase": true,
+        "kind": "paraphrase",
+        "score": 0.0,
+        "stale_score": null,
+        "answer": "Based on the fragmented dialogue you provided, there is **no information mentioned** regarding the specific day you gath"
+      },
+      {
+        "turn": 63,
+        "question": "Who is my advisor? And also, what am I learning besides the major?",
+        "plant_turn": 21,
+        "lag": 42,
+        "paraphrase": false,
+        "kind": "multihop",
+        "score": 0.0,
+        "stale_score": null,
+        "answer": "Based on the fragmented dialogue you provided, there is **no information mentioned** regarding who your advisor is or wh"
+      },
+      {
+        "turn": 80,
+        "question": "Question: who is my advisor?",
+        "plant_turn": 21,
+        "lag": 59,
+        "paraphrase": false,
+        "kind": "direct",
+        "score": 0.0,
+        "stale_score": null,
+        "answer": "I don't have access to your personal information, so I don't know who your advisor is. You will need to check your unive"
+      },
+      {
+        "turn": 86,
+        "question": "Question: which language do I practice? And also, which professor supervises me?",
+        "plant_turn": 21,
+        "lag": 65,
+        "paraphrase": false,
+        "kind": "multihop",
+        "score": 0.0,
+        "stale_score": null,
+        "answer": "I don't have access to your personal information, so I cannot tell you which language you are currently practicing or wh"
+      },
+      {
+        "turn": 87,
+        "question": "Question: how do I share my study materials?",
+        "plant_turn": 21,
+        "lag": 66,
+        "paraphrase": false,
+        "kind": "direct",
+        "score": 0.0,
+        "stale_score": null,
+        "answer": "To share your study materials effectively, consider the following methods based on your needs:\n\n*   **Cloud Storage (Goo"
+      },
+      {
+        "turn": 88,
+        "question": "Question: on which day do we gather to study?",
+        "plant_turn": 44,
+        "lag": 44,
+        "paraphrase": true,
+        "kind": "paraphrase",
+        "score": 0.0,
+        "stale_score": null,
+        "answer": "I don't have access to your specific class schedule or meeting details, so I cannot tell you the exact day you gather to"
+      },
+      {
+        "turn": 93,
+        "question": "What covers the conference fee?",
+        "plant_turn": 19,
+        "lag": 74,
+        "paraphrase": false,
+        "kind": "direct",
+        "score": 0.0,
+        "stale_score": null,
+        "answer": "I do not have access to your specific university's financial policies, scholarship details, or conference registration a"
+      },
+      {
+        "turn": 97,
+        "question": "On which day do we gather to study?",
+        "plant_turn": 44,
+        "lag": 53,
+        "paraphrase": true,
+        "kind": "paraphrase",
+        "score": 0.0,
+        "stale_score": null,
+        "answer": "I don't have access to your specific class schedule or meeting details, so I cannot tell you the exact day you gather to"
+      }
+    ]
+  },
+  "e2e": {
+    "per_rep_mean_s": [
+      1.3841,
+      1.3839,
+      1.3847,
+      1.3841,
+      1.3838
+    ],
+    "mean_s": 1.3841,
+    "median_s": 1.3841,
+    "includes_retrieval": true,
+    "warmup_reps": 1
+  }
+}

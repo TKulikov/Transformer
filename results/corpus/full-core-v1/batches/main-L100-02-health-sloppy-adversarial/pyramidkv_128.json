@@ -1,0 +1,306 @@
+{
+  "strategy": "pyramidkv_128",
+  "spec_id": "main-L100-02-health-sloppy-adversarial",
+  "analysis": {
+    "recall_mean": 0.614,
+    "recall_direct": 0.676,
+    "recall_paraphrase": 0.4,
+    "recall_by_zone": {
+      "early": 0.727,
+      "middle": 0.5
+    },
+    "recall_by_kind": {
+      "multihop": 0.1,
+      "direct": 0.9,
+      "paraphrase": 0.4,
+      "unanswerable": 1.0
+    },
+    "recall_by_lag": {
+      "0-5": 0.6,
+      "6-12": null,
+      "13-20": 0.8,
+      "21+": 0.45
+    },
+    "stale_rate": 0.0,
+    "stale_updated_rate": 0.0,
+    "consistency_vs_reference": 0.322,
+    "tone_mean": 0.7519,
+    "rep_mean": 0.0,
+    "prompt_tokens": 218131,
+    "generated_tokens": 3200,
+    "embed_tokens": 3976,
+    "cache_slots": 452768,
+    "attention_flops_proxy": 452768,
+    "max_cache_len": 279,
+    "mean_turn_latency_s": 1.7027,
+    "median_turn_latency_s": 1.6664,
+    "p90_turn_latency_s": 2.2045,
+    "peak_mem_mb": 11444.2,
+    "kv_injected_slots": null,
+    "kv_steps": null,
+    "memory_stats": null,
+    "rag_stats": {
+      "adds": 19,
+      "upserts": 34,
+      "evictions": 0,
+      "size": 19
+    },
+    "probe_details": [
+      {
+        "turn": 18,
+        "question": "how much water do i drink daily? and also, which specialist do i talk to weekly???",
+        "plant_turn": 14,
+        "lag": 4,
+        "paraphrase": false,
+        "kind": "multihop",
+        "score": 0.0,
+        "stale_score": null,
+        "answer": "That's a great set of questions! Let's break them down based on what you've shared so far:\n\n### 💧 1. How much water"
+      },
+      {
+        "turn": 24,
+        "question": "who is my therapist???",
+        "plant_turn": 11,
+        "lag": 13,
+        "paraphrase": false,
+        "kind": "direct",
+        "score": 1.0,
+        "stale_score": 0.0,
+        "answer": "Your therapist is **Anna**! 🩺\n\nYou mentioned her earlier in our conversation, and it's great that you have a professiona"
+      },
+      {
+        "turn": 29,
+        "question": "who is my cardiologist???",
+        "plant_turn": 25,
+        "lag": 4,
+        "paraphrase": false,
+        "kind": "direct",
+        "score": 1.0,
+        "stale_score": null,
+        "answer": "Your cardiologist is **Dr. Ivanova**! ❤️\n\nThat's great to know you have a specialist looking after your heart health. It"
+      },
+      {
+        "turn": 32,
+        "question": "so what is my water intake?",
+        "plant_turn": 14,
+        "lag": 18,
+        "paraphrase": true,
+        "kind": "paraphrase",
+        "score": 1.0,
+        "stale_score": null,
+        "answer": "Based on what you shared earlier, you mentioned that you drink **two liters of water a day**.\n\nThat's a fantastic habit!"
+      },
+      {
+        "turn": 37,
+        "question": "so who is my therapist?",
+        "plant_turn": 11,
+        "lag": 26,
+        "paraphrase": false,
+        "kind": "direct",
+        "score": 1.0,
+        "stale_score": 0.0,
+        "answer": "Your therapist is **Anna**! 🩺\n\nYou mentioned her earlier in our conversation, and she's been part of your support team. "
+      },
+      {
+        "turn": 47,
+        "question": "so how many steps do i aim for?",
+        "plant_turn": 45,
+        "lag": 2,
+        "paraphrase": true,
+        "kind": "paraphrase",
+        "score": 0.0,
+        "stale_score": null,
+        "answer": "Based on what you just shared, you are already aiming for **8,000 steps** per day! 🎯\n\nThat is a fantastic and"
+      },
+      {
+        "turn": 49,
+        "question": "when do i go to bed? btw",
+        "plant_turn": 46,
+        "lag": 3,
+        "paraphrase": false,
+        "kind": "direct",
+        "score": 1.0,
+        "stale_score": null,
+        "answer": "Based on what you just shared, you go to bed at **11:00 PM (23:00)** on weekdays! 🌙"
+      },
+      {
+        "turn": 54,
+        "question": "so when is the checkup?",
+        "plant_turn": 51,
+        "lag": 3,
+        "paraphrase": false,
+        "kind": "direct",
+        "score": 1.0,
+        "stale_score": null,
+        "answer": "Based on what you just told me, your check-up is scheduled for **this Friday at 9:00 AM**! 📅⏰"
+      },
+      {
+        "turn": 58,
+        "question": "which vitamin do i take in winter???",
+        "plant_turn": 38,
+        "lag": 20,
+        "paraphrase": false,
+        "kind": "direct",
+        "score": 1.0,
+        "stale_score": null,
+        "answer": "Based on what you mentioned earlier, you take **Vitamin D3** during the winter! 🌞❄️\n\nSince sunlight is scarce in colder"
+      },
+      {
+        "turn": 62,
+        "question": "so which scan was scheduled?",
+        "plant_turn": null,
+        "lag": null,
+        "paraphrase": false,
+        "kind": "unanswerable",
+        "score": 1.0,
+        "stale_score": null,
+        "answer": "Based on the details we've shared so far, the specific **scan** isn't explicitly mentioned, but we did confirm that you "
+      },
+      {
+        "turn": 64,
+        "question": "what is my daily step goal? and also, what is my weekday bedtime???",
+        "plant_turn": 46,
+        "lag": 18,
+        "paraphrase": false,
+        "kind": "multihop",
+        "score": 0.0,
+        "stale_score": null,
+        "answer": "Based on our conversation, here are the details:\n\n*   **Daily Step Goal:** **8,000 steps**\n*   **Bedtime"
+      },
+      {
+        "turn": 65,
+        "question": "which vitamin do i take in winter???",
+        "plant_turn": 38,
+        "lag": 27,
+        "paraphrase": false,
+        "kind": "direct",
+        "score": 1.0,
+        "stale_score": null,
+        "answer": "Based on our conversation, you take **Vitamin D3** during the winter! 🌞❄️\n\nSince sunlight is limited during the colder m"
+      },
+      {
+        "turn": 70,
+        "question": "on which day do i visit the clinic???",
+        "plant_turn": 51,
+        "lag": 19,
+        "paraphrase": true,
+        "kind": "paraphrase",
+        "score": 1.0,
+        "stale_score": null,
+        "answer": "Based on the details you shared earlier, you visit the clinic on **Friday**.\n\nSpecifically, your appointment is schedule"
+      },
+      {
+        "turn": 71,
+        "question": "so who is my dentist?",
+        "plant_turn": 13,
+        "lag": 58,
+        "paraphrase": false,
+        "kind": "direct",
+        "score": 1.0,
+        "stale_score": 0.0,
+        "answer": "Your dentist is **Greta**! 🦷\n\nYou mentioned her earlier in our conversation. She's part of your great team of health pro"
+      },
+      {
+        "turn": 74,
+        "question": "what do i avoid in my diet? and also, which doctor checks my heart? btw",
+        "plant_turn": 28,
+        "lag": 46,
+        "paraphrase": false,
+        "kind": "multihop",
+        "score": 0.0,
+        "stale_score": null,
+        "answer": "Based on our conversation so far, here are the answers to your specific questions:\n\n**1. What do you avoid in your diet?"
+      },
+      {
+        "turn": 81,
+        "question": "so who is my physio trainer? and also, what is my water intake?",
+        "plant_turn": 34,
+        "lag": 47,
+        "paraphrase": false,
+        "kind": "multihop",
+        "score": 0.5,
+        "stale_score": null,
+        "answer": "Based on our conversation, here are the details you asked for:\n\n*   **Your Physio Trainer:** That's **Oleg**! 🏋️"
+      },
+      {
+        "turn": 88,
+        "question": "so what is my blood type?",
+        "plant_turn": null,
+        "lag": null,
+        "paraphrase": false,
+        "kind": "unanswerable",
+        "score": 1.0,
+        "stale_score": null,
+        "answer": "Based on our conversation so far, **I don't have any information about your blood type!** 🩸\n\nWe've talked about your dai"
+      },
+      {
+        "turn": 92,
+        "question": "so how much water do i drink daily?",
+        "plant_turn": 14,
+        "lag": 78,
+        "paraphrase": false,
+        "kind": "direct",
+        "score": 0.0,
+        "stale_score": null,
+        "answer": "Based on our conversation earlier, you mentioned that you drink **2 liters (2000 ml)** of water per day.\n\nHere is a quic"
+      },
+      {
+        "turn": 93,
+        "question": "who is my cardiologist? btw",
+        "plant_turn": 25,
+        "lag": 68,
+        "paraphrase": false,
+        "kind": "direct",
+        "score": 1.0,
+        "stale_score": null,
+        "answer": "Your cardiologist is **Dr. Ivanova**! ❤️\n\nIt's great to have a dedicated specialist like her looking after your heart he"
+      },
+      {
+        "turn": 94,
+        "question": "so how many steps do i aim for?",
+        "plant_turn": 45,
+        "lag": 49,
+        "paraphrase": true,
+        "kind": "paraphrase",
+        "score": 0.0,
+        "stale_score": null,
+        "answer": "Based on our conversation, you are aiming for **8,000 steps** per day! 🚶‍♂️📈"
+      },
+      {
+        "turn": 95,
+        "question": "which trainer runs my exercises? btw",
+        "plant_turn": 34,
+        "lag": 61,
+        "paraphrase": true,
+        "kind": "paraphrase",
+        "score": 0.0,
+        "stale_score": null,
+        "answer": "Based on our conversation, the trainer who runs your exercises is **O**! 🏃‍♂️💨\n\nHe's the one you mentioned"
+      },
+      {
+        "turn": 98,
+        "question": "so what is my daily step goal? and also, what is my water intake?",
+        "plant_turn": 45,
+        "lag": 53,
+        "paraphrase": false,
+        "kind": "multihop",
+        "score": 0.0,
+        "stale_score": null,
+        "answer": "Based on our conversation, here are your stats:\n\n*   **Daily Step Goal:** **8,000 steps**\n*   **Daily Water"
+      }
+    ]
+  },
+  "e2e": {
+    "per_rep_mean_s": [
+      1.7738,
+      1.758,
+      1.759,
+      1.7571,
+      1.7577
+    ],
+    "mean_s": 1.7611,
+    "median_s": 1.758,
+    "includes_retrieval": true,
+    "warmup_reps": 1
+  }
+}
