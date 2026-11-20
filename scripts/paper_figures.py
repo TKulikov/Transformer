@@ -1,4 +1,4 @@
-"""Figures derived exclusively from the common Qwen3.5 comparison series."""
+"""Figures from the historical Qwen3.5 comparison and current core/RAG corpus series."""
 
 from __future__ import annotations
 
@@ -117,7 +117,53 @@ def make_all():
     fig_main(q)
     fig_pareto(q)
     fig_architecture()
+    make_article_figures()
 
 
 if __name__ == "__main__":
     make_all()
+
+
+def make_article_figures():
+    """Copy current core/RAG-only figures and render the current hybrid comparison."""
+    import shutil
+
+    sources = {
+        "core_quality_cost.png": RD.RES / "corpus/full-core-v1/core_quality_cost.png",
+        "core_per_dialogue.png": RD.RES / "corpus/full-core-v1/core_per_dialogue.png",
+        "core_lag.png": RD.RES / "corpus/full-core-v1/core_lag.png",
+        "rag_only_quality_cost.png": RD.RES / "corpus/full-rag-v1/rag_only_quality_cost.png",
+        "rag_only_layer_centering.png": RD.RES / "corpus/full-rag-v1/rag_only_layer_centering.png",
+        "rag_only_per_dialogue.png": RD.RES / "corpus/full-rag-v1/rag_only_per_dialogue.png",
+        "rag_only_lag.png": RD.RES / "corpus/full-rag-v1/rag_only_lag.png",
+    }
+    for name, source in sources.items():
+        if not source.exists():
+            raise FileNotFoundError(f"Сначала постройте актуальный рисунок: {source}")
+        shutil.copyfile(source, FIGS / name)
+
+    data = RD.rag_data()
+    rows = data["pair_rows"]
+    x = np.arange(len(rows))
+    width = 0.36
+    fig, ax = plt.subplots(figsize=(11.5, 5.2))
+    pure_values = [row["pure_recall"] for row in rows]
+    dual_values = [row["dual_recall"] for row in rows]
+    pure_bars = ax.bar(x - width / 2, pure_values, width, label="RAG без K/V", color="#64748b")
+    dual_bars = ax.bar(x + width / 2, dual_values, width, label="RAG + живая K/V (k32)", color="#059669")
+    full = data["metrics"]["classic_kv_full"]["recall_mean"]
+    ax.axhline(full, color="#b91c1c", linestyle="--", lw=1.4, label=f"Full KV = {full:.3f}")
+    ax.set_xticks(x, [row["label"] for row in rows], rotation=22, ha="right")
+    ax.set_ylim(0, 1.03)
+    ax.set_ylabel("Recall")
+    ax.set_title(f"Вклад K/V в текстовый RAG · {len(data['records'])} диалога", fontweight="bold")
+    ax.grid(axis="y", alpha=0.2)
+    ax.set_axisbelow(True)
+    for bars in (pure_bars, dual_bars):
+        for bar in bars:
+            ax.text(bar.get_x() + bar.get_width() / 2, bar.get_height() + 0.012,
+                    f"{bar.get_height():.3f}", ha="center", fontsize=7.5)
+    ax.legend(ncol=3, loc="upper center")
+    fig.tight_layout()
+    fig.savefig(FIGS / "rag_hybrid_pairs.png", dpi=190, bbox_inches="tight")
+    plt.close(fig)

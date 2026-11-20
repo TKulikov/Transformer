@@ -1,10 +1,10 @@
-"""Executable verification of PAPER.md against the code and the archived run.
+"""Executable verification of PAPER.md against code and archived experiment series.
 
-Run ``python scripts/verify_paper.py`` instead of re-reading the article: every
-formula (1)-(9), every algorithm parameter and every published number is checked
-against the real ``tmem`` code, a tiny CPU Qwen3.5 (for the K/V-injection
-formulas) and ``results/qwen35_comparison/qwen35-4b_battery100.json``. Prints a
-PASS/FAIL/SKIP table and exits non-zero if anything fails. CPU-only, offline.
+Run ``python scripts/verify_paper.py`` instead of re-reading the article: formulas
+(1)-(10), algorithm parameters, and published numbers are checked against the real
+``tmem`` code, a tiny CPU Qwen3.5, the historical battery100 archive, and current
+core/RAG corpus batches. Prints a PASS/FAIL/SKIP table and exits non-zero on failure.
+CPU-only and offline.
 
 Also exposed as ``run_checks()`` for the pytest wrapper in tests/.
 """
@@ -131,7 +131,7 @@ def f3():
     return "lambda=1-merge_k=0.75 — совпадает с Memory._merge_slot"
 
 
-@check("Формула (4): K_m=R_K(W_K A) без RoPE, V_m=W_V A; память вне кэша")
+@check("Формула (5): K_m=R_K(W_K A) без RoPE, V_m=W_V A; память вне кэша")
 def f4():
     from tmem.kvinject import KVMemoryAttention, install_kv_memory, uninstall_kv_memory
     model = _tiny_qwen35()
@@ -167,7 +167,7 @@ def f4():
     return "K_m=k_norm(k_proj(A)) без RoPE, V_m=v_proj(A), кэш не растёт — подтверждено на крошечной Qwen3.5"
 
 
-@check("Формула (5): маска дополняется нулевыми столбцами; scaling=1/sqrt(d_k)")
+@check("Формула (6): маска дополняется нулевыми столбцами; scaling=1/sqrt(d_k)")
 def f5():
     from tmem.kvinject import _extend_mask
     mask = torch.full((1, 2, 3, 5), float("-inf"))
@@ -189,7 +189,7 @@ def f5():
     return "нулевые столбцы памяти, причинность сохранена, scaling=1/sqrt(d_k)"
 
 
-@check("Формула (6): recall-индикатор подстроки (contains), без учёта регистра")
+@check("Формула (7): recall-индикатор подстроки (contains), без учёта регистра")
 def f6():
     assert keyword_score("The cat is Simba", ["simba"]) == 1.0
     assert keyword_score("The cat is Barsik", ["simba"]) == 0.0
@@ -198,7 +198,7 @@ def f6():
     return "доля найденных строк; при |y_i|=1 — индикатор 0/1 (metrics.keyword_score)"
 
 
-@check("Формула (7): D=1-U/G по словесным триграммам")
+@check("Формула (8): D=1-U/G по словесным триграммам")
 def f7():
     assert repetition_rate("I I I I I I") == 0.75  # 4 триграммы, все одинаковы: 1-1/4
     assert repetition_rate("completely varied word sequence here") == 0.0
@@ -206,7 +206,7 @@ def f7():
     return "1-U/G по триграммам нижнего регистра — совпадает с semantic.repetition_rate"
 
 
-@check("Формула (8): A=sum средних длин кэша; S замеров на S токенов; L=8")
+@check("Формула (9): A=sum средних длин кэша; S замеров на S токенов; L=8")
 def f8():
     from tmem.generate import decode_causal
     from tmem.models import tiny_causal
@@ -231,7 +231,7 @@ def f8():
     return "S замеров на S токенов, среднее по слоям, L=8 (config)"
 
 
-@check("Формула (9): E_A=A_full/A_method = 5.04")
+@check("Формула (10): E_A=A_full/A_method; battery100 factor = 5.04")
 def f9():
     q = RD.q35_all()
     factor = q["classic_kv_full"]["cache_slots"] / q["v4_rag_kv"]["cache_slots"]
@@ -354,40 +354,67 @@ def a_arch():
     return "config Qwen3.5-4B совпадает с §2.6"
 
 
+@check("Формула (4): dynamic gate cos>=0.5, 0..32 слотов")
+def f_dynamic_gate():
+    from tmem.kvinject import install_kv_memory, uninstall_kv_memory
+
+    class Corr:
+        def __init__(self, sign):
+            self.sign = sign
+
+        def __call__(self, hidden):
+            query = hidden.mean(dim=1)
+            base = torch.nn.functional.normalize(query, dim=-1)
+            relevant = torch.stack([self.sign * base, -base], dim=1)
+            return relevant, 2
+
+    for sign, expected in ((1.0, 1), (-1.0, 0)):
+        model = _tiny_qwen35()
+        wrappers = install_kv_memory(model, Corr(sign), layers=[2], max_slots=32,
+                                     dynamic=True, thresh=0.5)
+        ids = torch.randint(0, 128, (1, 6))
+        try:
+            with torch.no_grad():
+                model(input_ids=ids, use_cache=True)
+        finally:
+            uninstall_kv_memory(model)
+        assert wrappers[0].stats["injected_slots"] == expected
+    return "положительный cos -> 1 слот; отрицательные cos -> 0; max_slots=32"
+
+
 # --------------------------------------------------------------------- numbers
-@check("§3 числа: recall, факторы, латентность, тон, stale, диапазон KV")
+@check("Актуальные числа: core n=5 и RAG n=4, парные p-values")
 def n_numbers():
-    q = RD.q35_all()
-    ref, final = q["classic_kv_full"], q["v4_rag_kv"]
-    assert round(final["recall_mean"] * 24) == 20
-    assert round(ref["recall_mean"] * 24) == 24
-    assert round(q["pyramidkv_128"]["recall_mean"] * 24) == 18
-    assert round(q["rag_text_only"]["recall_mean"] * 24) == 16
-    assert round(q["snapkv_128"]["recall_mean"] * 24) == 15
-    assert round(q["sparse_topk_128"]["recall_mean"] * 24) == 8
-    assert round(q["sparse_sliding_128"]["recall_mean"] * 24) == 4
-    assert f"{ref['cache_slots'] / final['cache_slots']:.2f}" == "5.04"
-    assert f"{ref['prompt_tokens'] / final['prompt_tokens']:.2f}" == "4.97"
-    assert f"{final['mean_turn_latency_s']:.2f}" == "1.34" and f"{ref['mean_turn_latency_s']:.2f}" == "1.84"
-    assert f"{final['median_turn_latency_s']:.2f}" == "1.49" and f"{ref['median_turn_latency_s']:.2f}" == "1.79"
-    assert f"{final['tone_mean']:.4f}" == "0.8298"
-    assert f"{ref['stale_rate']:.3f}" == "0.125"
-    kv = [ref["cache_slots"] / q[k]["cache_slots"] for k in
-          ("sparse_sliding_128", "sparse_topk_128", "snapkv_128", "pyramidkv_128")]
-    assert f"{min(kv):.1f}" == "18.4" and f"{max(kv):.1f}" == "20.5"
-    return "все числа §3 и аннотации пересчитаны из JSON и совпадают"
+    core = RD.core_data()
+    rag = RD.rag_data()
+    assert len(core["records"]) == 5 and len(rag["records"]) == 4
+    cm = core["metrics"]
+    assert f"{cm['v4_kv_mid_dyn']['recall_mean']:.3f}" == "0.460"
+    assert f"{cm['v4_kv_mid']['recall_mean']:.3f}" == "0.410"
+    assert f"{cm['pyramidkv_128']['recall_mean']:.3f}" == "0.509"
+    assert core["pvalues"]["v4_kv_mid_dyn vs v4_kv_mid"] == 0.027
+    assert core["pvalues"]["v4_kv_mid_dyn vs pyramidkv_128"] == 0.866
+    assert f"{cm['v4_kv_mid_dyn']['slots_per_step']:.2f}" == "2.52"
+    assert f"{cm['v4_kv_mid']['slots_per_step']:.2f}" == "31.92"
+    assert f"{rag['metrics']['rag_mean_centered']['recall_mean']:.3f}" == "0.711"
+    assert rag["centering_pvalues"]["rag_last_centered vs rag_text_only"] == 0.0
+    last_pair = rag["pair_rows"][1]
+    assert f"{last_pair['delta']:.3f}" == "-0.146" and last_pair["pvalue"] == 0.042
+    assert f"{max(row['dual_recall'] for row in rag['pair_rows']):.3f}" == "0.608"
+    return "core/RAG recall, стоимость, гейт и парные проверки пересчитаны из JSON"
 
 
-@check("Текст статьи содержит пересчитанные числа (генератор)")
+@check("Текст статьи содержит актуальные числа и научные оговорки")
 def n_text():
     q = RD.q35_all()
     text = "\n".join(p for _, ps in PT.sections(q) for p in ps) + PT.abstract(q)
-    for needle in ("20 из 24", "0,833", "5,04", "4,97", "1,34", "1,84", "18,4–20,5",
-                   "десяти пар", "11, 15, 19, 23", "contains"):
+    for needle in ("0,460", "0,410", "0,509", "0,711", "0,608", "0,489", "0,710",
+                   "18,9", "27,7", "2,52", "31,92", "training-free", "MemDefrag",
+                   "предложенный новый вариант", "паритет не доказан"):
         assert needle in text, f"в тексте статьи нет «{needle}»"
-    for bad in ("пять пар", "5 пар", "subseteq", "до четырёх раз", "примерно в 18"):
-        assert bad not in text, f"в тексте статьи остался «{bad}»"
-    return "генератор paper_text.py выдаёт исправленные формулировки и числа"
+    for bad in ("20 из 24", "наилучшую позицию среди компактных", "7900 XTX"):
+        assert bad not in text, f"в тексте статьи остался устаревший текст «{bad}»"
+    return "генератор содержит текущие числа, сильные/слабые стороны и ограничения"
 
 
 class _Skip(Exception):

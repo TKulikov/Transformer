@@ -1,0 +1,306 @@
+{
+  "strategy": "rag_latent_mid",
+  "spec_id": "main-L100-03-finance-formal-distractors",
+  "analysis": {
+    "recall_mean": 0.659,
+    "recall_direct": 0.735,
+    "recall_paraphrase": 0.4,
+    "recall_by_zone": {
+      "early": 0.714,
+      "middle": 0.562
+    },
+    "recall_by_kind": {
+      "multihop": 0.3,
+      "paraphrase": 0.4,
+      "direct": 0.9,
+      "unanswerable": 1.0
+    },
+    "recall_by_lag": {
+      "0-5": 0.6,
+      "6-12": 0.25,
+      "13-20": 1.0,
+      "21+": 0.6
+    },
+    "stale_rate": 0.0,
+    "stale_updated_rate": null,
+    "consistency_vs_reference": 0.316,
+    "tone_mean": 0.8402,
+    "rep_mean": 0.0,
+    "prompt_tokens": 50106,
+    "generated_tokens": 3077,
+    "embed_tokens": 4023,
+    "cache_slots": 1582342,
+    "attention_flops_proxy": 1582342,
+    "max_cache_len": 649,
+    "mean_turn_latency_s": 1.1679,
+    "median_turn_latency_s": 1.1989,
+    "p90_turn_latency_s": 1.2345,
+    "peak_mem_mb": 8390.09,
+    "kv_injected_slots": null,
+    "kv_steps": null,
+    "memory_stats": null,
+    "rag_stats": {
+      "adds": 19,
+      "upserts": 44,
+      "evictions": 0,
+      "size": 19
+    },
+    "probe_details": [
+      {
+        "turn": 20,
+        "question": "I would like to clarify: what are the last digits of my card? And also, what do I pay for music monthly?",
+        "plant_turn": 17,
+        "lag": 3,
+        "paraphrase": false,
+        "kind": "multihop",
+        "score": 0.0,
+        "stale_score": null,
+        "answer": "Based on the information we have recorded and discussed, here are the specific details you requested:\n\n*   **Card Detail"
+      },
+      {
+        "turn": 26,
+        "question": "I would like to clarify: what do I pay for music monthly?",
+        "plant_turn": 15,
+        "lag": 11,
+        "paraphrase": true,
+        "kind": "paraphrase",
+        "score": 0.0,
+        "stale_score": null,
+        "answer": "Based on the conversation history provided, there is **no specific monthly amount** recorded for your music subscription"
+      },
+      {
+        "turn": 32,
+        "question": "I would like to clarify: what is the name of my bank?",
+        "plant_turn": 31,
+        "lag": 1,
+        "paraphrase": false,
+        "kind": "direct",
+        "score": 1.0,
+        "stale_score": null,
+        "answer": "Based on the information recorded in our conversation, your bank is called **Meridian**."
+      },
+      {
+        "turn": 36,
+        "question": "I would like to clarify: which perk comes with the card?",
+        "plant_turn": 35,
+        "lag": 1,
+        "paraphrase": true,
+        "kind": "paraphrase",
+        "score": 0.0,
+        "stale_score": null,
+        "answer": "Based on the conversation history and the notes provided, the specific perks associated with the card have not been expl"
+      },
+      {
+        "turn": 38,
+        "question": "I would like to clarify: how much is the monthly rent?",
+        "plant_turn": 21,
+        "lag": 17,
+        "paraphrase": false,
+        "kind": "direct",
+        "score": 1.0,
+        "stale_score": null,
+        "answer": "Based on the notes provided in our conversation, your monthly rent is **540 euro**."
+      },
+      {
+        "turn": 39,
+        "question": "Kindly answer: what is my mobile tariff?",
+        "plant_turn": 25,
+        "lag": 14,
+        "paraphrase": false,
+        "kind": "direct",
+        "score": 1.0,
+        "stale_score": null,
+        "answer": "Based on the notes provided in our conversation, your mobile tariff is called **Storm**."
+      },
+      {
+        "turn": 47,
+        "question": "Please provide the following: where do I keep my accounts?",
+        "plant_turn": 31,
+        "lag": 16,
+        "paraphrase": true,
+        "kind": "paraphrase",
+        "score": 1.0,
+        "stale_score": null,
+        "answer": "Based on the information provided in our conversation, you keep your accounts at the following institutions:\n\n*   **Meri"
+      },
+      {
+        "turn": 48,
+        "question": "Please provide the following: where is my broker account?",
+        "plant_turn": 44,
+        "lag": 4,
+        "paraphrase": false,
+        "kind": "direct",
+        "score": 1.0,
+        "stale_score": null,
+        "answer": "Based on the information provided in our conversation, your broker account is held at **Vector**."
+      },
+      {
+        "turn": 50,
+        "question": "Please provide the following: how much did the laptop cost?",
+        "plant_turn": 46,
+        "lag": 4,
+        "paraphrase": false,
+        "kind": "direct",
+        "score": 1.0,
+        "stale_score": null,
+        "answer": "Based on the information provided in our conversation, the laptop cost **1180 euro**."
+      },
+      {
+        "turn": 51,
+        "question": "Kindly answer: where is my broker account? And also, which card do I use?",
+        "plant_turn": 44,
+        "lag": 7,
+        "paraphrase": false,
+        "kind": "multihop",
+        "score": 0.5,
+        "stale_score": null,
+        "answer": "Based on the information provided in our conversation:\n\n*   **Broker Account Location:** Your broker account is held at "
+      },
+      {
+        "turn": 57,
+        "question": "Kindly answer: what is my monthly savings transfer?",
+        "plant_turn": 24,
+        "lag": 33,
+        "paraphrase": true,
+        "kind": "paraphrase",
+        "score": 0.0,
+        "stale_score": null,
+        "answer": "Based on the information provided in our conversation, there is no record of your monthly savings transfer amount. The n"
+      },
+      {
+        "turn": 58,
+        "question": "Kindly answer: how much is the music subscription? And also, which perk comes with the card?",
+        "plant_turn": 35,
+        "lag": 23,
+        "paraphrase": false,
+        "kind": "multihop",
+        "score": 0.5,
+        "stale_score": null,
+        "answer": "Based on the information provided in our conversation:\n\n*   **Music Subscription Cost:** Your music subscription costs *"
+      },
+      {
+        "turn": 59,
+        "question": "I would like to clarify: what is the name of my bank?",
+        "plant_turn": 31,
+        "lag": 28,
+        "paraphrase": false,
+        "kind": "direct",
+        "score": 1.0,
+        "stale_score": null,
+        "answer": "Based on the notes provided, your bank is called **Meridian**."
+      },
+      {
+        "turn": 63,
+        "question": "Please provide the following: what are the last digits of my card?",
+        "plant_turn": 17,
+        "lag": 46,
+        "paraphrase": false,
+        "kind": "direct",
+        "score": 1.0,
+        "stale_score": null,
+        "answer": "Based on the notes provided, the last digits of your card are **4291**."
+      },
+      {
+        "turn": 76,
+        "question": "I would like to clarify: what are the last digits of my card?",
+        "plant_turn": 17,
+        "lag": 59,
+        "paraphrase": false,
+        "kind": "direct",
+        "score": 1.0,
+        "stale_score": null,
+        "answer": "Based on the notes provided, the last four digits of your card are **4291**."
+      },
+      {
+        "turn": 79,
+        "question": "Kindly answer: how much did the laptop cost? And also, what did I pay for power?",
+        "plant_turn": 46,
+        "lag": 33,
+        "paraphrase": false,
+        "kind": "multihop",
+        "score": 0.0,
+        "stale_score": null,
+        "answer": "Based on the notes provided:\n\n*   **Laptop Cost:** You bought the laptop for **1,180 euros**.\n*   **Power"
+      },
+      {
+        "turn": 80,
+        "question": "Please provide the following: what is my mobile tariff?",
+        "plant_turn": 25,
+        "lag": 55,
+        "paraphrase": false,
+        "kind": "direct",
+        "score": 1.0,
+        "stale_score": null,
+        "answer": "Based on the notes provided, your mobile tariff is called **Storm**."
+      },
+      {
+        "turn": 84,
+        "question": "Please provide the following: what is the safe box code?",
+        "plant_turn": null,
+        "lag": null,
+        "paraphrase": false,
+        "kind": "unanswerable",
+        "score": 1.0,
+        "stale_score": null,
+        "answer": "Based on the notes and conversation history provided, there is no information recorded regarding your **safe box code**."
+      },
+      {
+        "turn": 87,
+        "question": "Kindly answer: how much is the electricity bill? And also, which broker do I use?",
+        "plant_turn": 44,
+        "lag": 43,
+        "paraphrase": false,
+        "kind": "multihop",
+        "score": 0.5,
+        "stale_score": null,
+        "answer": "Based on the notes provided:\n\n*   **Electricity Bill:** The bill for this month is **63 euros**.\n*   **Broker:** There"
+      },
+      {
+        "turn": 89,
+        "question": "Kindly answer: how large is the emergency fund?",
+        "plant_turn": null,
+        "lag": null,
+        "paraphrase": false,
+        "kind": "unanswerable",
+        "score": 1.0,
+        "stale_score": null,
+        "answer": "Based on the notes and conversation history provided, there is **no information recorded** regarding the size of your em"
+      },
+      {
+        "turn": 95,
+        "question": "I would like to clarify: which broker do I use?",
+        "plant_turn": 44,
+        "lag": 51,
+        "paraphrase": true,
+        "kind": "paraphrase",
+        "score": 1.0,
+        "stale_score": null,
+        "answer": "Based on the notes provided, your broker account is at **Vector**.\n\n*(Note: The previous assistant responses in the conv"
+      },
+      {
+        "turn": 96,
+        "question": "Kindly answer: how much do I save monthly?",
+        "plant_turn": 24,
+        "lag": 72,
+        "paraphrase": false,
+        "kind": "direct",
+        "score": 0.0,
+        "stale_score": null,
+        "answer": "Based on the fragmented notes and conversation history provided, there is **no information recorded** regarding your **m"
+      }
+    ]
+  },
+  "e2e": {
+    "per_rep_mean_s": [
+      1.246,
+      1.2459,
+      1.2459,
+      1.2458,
+      1.2455
+    ],
+    "mean_s": 1.2458,
+    "median_s": 1.2459,
+    "includes_retrieval": true,
+    "warmup_reps": 1
+  }
+}

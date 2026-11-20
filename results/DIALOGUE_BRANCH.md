@@ -1,6 +1,6 @@
 # Диалоговая ветка: состояние и находки
 
-Канонический обзор всей линии диалоговых экспериментов. Обновлено: 2026-11-19.
+Канонический обзор всей линии диалоговых экспериментов. Обновлено: 2026-11-20.
 Детали по прогонам — в указанных файлах; здесь только статусы, выводы и очередь.
 
 ## 1. Карта прогонов и экспериментов
@@ -13,7 +13,7 @@
 | 4 | corpus `shared-v1` | RAG на слотах инжектируемого банка (3 стратегии) | пауза: 1/12, глобально — по решению | `results/corpus/shared-v1/` |
 | 5 | corpus `shared-dev-v1` | живая память vs пирамида (свип банка 128/512/1024); побочно: кластерные RAG-ключи | пауза: 1/12, глобально — по решению | `results/corpus/shared-dev-v1/` |
 | 6 | цепочка «живая память»: goal_dialogue, interlocutor, thread_coherence, blind_eval, living_memory | TTL/gist/K-V в диалоге | done | выводы §2.3, отчёты в `results/<exp>/REPORT.md` |
-| 7 | corpus `full-core-v1` / `full-self-v1` / `full-rag-v1` | main 48: конкуренты; свип живой памяти; last/mid/mean RAG ± K/V и bank RAG | **core: 5/48; rag: 2/48 + батчи 02–03 в работе; self опционален** | `results/corpus/full-core-v1/INTERIM.md`, `results/corpus/full-rag-v1/INTERIM.md`, `docs/PLAN-dialogue-live-fullscale.md` |
+| 7 | corpus `full-core-v1` / `full-self-v1` / `full-rag-v1` | main 48: конкуренты; свип живой памяти; last/mid/mean RAG ± K/V и bank RAG | **core: 5/48; rag: 4/48; self опционален** | `results/corpus/full-core-v1/INTERIM.md`, `results/corpus/full-rag-v1/INTERIM.md`, `docs/PLAN-dialogue-live-fullscale.md` |
 
 ⚠️ **pre-fix kvinject** = прогоны до коммита `68add5b` (15.11): латентный канал был инертен
 в prefill, цифры v4 из #1 и #2 условны (см. аудит `results/DIALOGUE_BRANCH_AUDIT.md`).
@@ -109,20 +109,26 @@ full **0.851**; различия dyn с PyramidKV и SnapKV не значимы 
 остаётся 0.000. Все пять батчей `done`, ошибок и аномалий wall-time нет.
 Вывод всё ещё предварительный: n=5, основной корпус не добран.
 
-### 2.6 `full-rag-v1`: первые два main-батча (n=2)
+### 2.6 `full-rag-v1`: четыре main-батча (n=4)
 
-Гибриды mid/mean без центрирования + K/V лидируют: `v4_rag_kv_mid_plain` 0.755
-и `v4_rag_kv_mean` 0.754 против 0.682 у лучших чистых RAG; answerable-only
-0.733 / 0.731. Приросты K/V по парам: last raw +0.060, last centered −0.030,
-mid raw +0.091, mid centered +0.040, mean raw +0.072, mean centered −0.030.
-Цена гибрида — +12–17 % e2e относительно соответствующего чистого RAG.
-Центрирование не даёт общего преимущества, а сырой mid/mean-гибрид лучше
-центрированного аналога. Эффект различается между диалогами: mid raw +0.181
-на baseline и 0.000 на updates; mean raw −0.023 и +0.167 соответственно.
-На updates лучшие raw-гибриды имеют temporal 0.5 и stale_updated_rate 0.25;
-centered-гибриды — 0.0 и 0.5. Full сильнее всех (0.947, temporal 1.0), bank-RAG
-слабые (0.474–0.506). n=2, сценарий конфаундирован темой/персоной, поэтому
-вывод о приоритете raw-гибридов предварительный и требует добора диалогов.
+После добавления health/adversarial и finance/distractors прежний положительный
+вывод по n=2 **не сохранился**. Лучшие чистые RAG — `rag_mean_centered` 0.711,
+`rag_last_centered` 0.710 и `rag_mid_centered` 0.707; лучший гибрид
+`v4_rag_kv_mid` имеет только 0.608. Full имеет 0.820. Bank-RAG слабые
+(0.385–0.469).
+
+Средний вклад K/V по шести парам: last raw **+0.007**, last centered **−0.146**,
+mid raw **−0.103**, mid centered **−0.099**, mean raw **−0.089**, mean centered
+**−0.123**. После paired bootstrap и поправки Холма значимо только ухудшение
+last centered (**p=0.042**); mean centered p=0.423, остальные p=1.000. Цена
+гибрида — примерно **+12–14 % e2e**. Сходные отрицательные сдвиги получены и
+без unanswerable-проб, поэтому эффект не объясняется этой метрикой.
+
+Все шесть гибридов резко хуже соответствующих RAG на finance/distractors
+(Δ от −0.091 до −0.545), тогда как на travel/updates часть гибридов помогала.
+Вклад K/V сценарно-зависим, но общего преимущества не показал; приоритет —
+чистый текстовый RAG. Все четыре батча `done`, ошибок и аномалий wall-time нет;
+вывод предварительный до добора корпуса.
 
 ## 3. Инвалидации
 
@@ -133,12 +139,11 @@ centered-гибриды — 0.0 и 0.5. Full сильнее всех (0.947, tem
 
 ## 4. Очередь GPU (последовательно, GPU не делим)
 
-1. **Полномасштабная кампания**: `core night` 19.11 завершён (5/48, §2.5).
-   Полный `self` не нужен: динамическая ширина уже сравнивается с k32 внутри
-   `core`; `self` остаётся опциональной абляцией банка/TTL. Повторный `rag night`
-   для батчей 02–03 выполняется после того, как первая попытка на переходе от
-   `core` отказалась стартовать при занятой VRAM 11803 MiB. Лог и вотчер:
-   `results/corpus/core_rag_queue.log`.
+1. **Полномасштабная кампания**: `core night` завершён (5/48, §2.5),
+   повторный `rag night` завершён 20.11 (4/48, §2.6). Полный `self` не нужен:
+   динамическая ширина уже сравнивается с k32 внутри `core`; `self` остаётся
+   опциональной абляцией банка/TTL. Активной GPU-очереди нет; следующий добор
+   `core`/`rag` — по решению пользователя. Лог: `results/corpus/core_rag_queue.log`.
 2. **shared-v1**: 1/12 готово; глобальное продолжение (11 батчей ≈ 9 ч) только
    по отдельному решению пользователя, resume по манифесту той же командой.
 3. **shared-dev-v1**: 1/12 готово; глобальное продолжение кластерных ключей и
@@ -152,6 +157,9 @@ centered-гибриды — 0.0 и 0.5. Full сильнее всех (0.947, tem
 ## 5. Ключевые артефакты
 
 - Хаб: `results/DIALOGUE_BRANCH.md` (этот файл)
+- Единая научная статья: `results/report/PAPER.md` и `PAPER.pdf`
+- Актуальный core-отчёт: `results/corpus/full-core-v1/CORE_REPORT.pdf`
+- Актуальный RAG-only отчёт: `results/corpus/full-rag-v1/RAG_ONLY_REPORT.pdf`
 - Аудит валидности: `results/DIALOGUE_BRANCH_AUDIT.md`
 - Находки latent-v1: `results/corpus/latent-v1/INTERIM_FINDINGS.md`
 - Сводки ночных прогонов: `results/corpus/MORNING_REPORT.md`

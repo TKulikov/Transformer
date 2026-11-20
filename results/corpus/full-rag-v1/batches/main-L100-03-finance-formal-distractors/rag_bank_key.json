@@ -1,0 +1,315 @@
+{
+  "strategy": "rag_bank_key",
+  "spec_id": "main-L100-03-finance-formal-distractors",
+  "analysis": {
+    "recall_mean": 0.318,
+    "recall_direct": 0.294,
+    "recall_paraphrase": 0.4,
+    "recall_by_zone": {
+      "early": 0.321,
+      "middle": 0.312
+    },
+    "recall_by_kind": {
+      "multihop": 0.2,
+      "paraphrase": 0.4,
+      "direct": 0.2,
+      "unanswerable": 1.0
+    },
+    "recall_by_lag": {
+      "0-5": 0.7,
+      "6-12": 0.25,
+      "13-20": 0.333,
+      "21+": 0.0
+    },
+    "stale_rate": 0.0,
+    "stale_updated_rate": null,
+    "consistency_vs_reference": 0.164,
+    "tone_mean": 0.938,
+    "rep_mean": 0.0,
+    "prompt_tokens": 48383,
+    "generated_tokens": 3172,
+    "embed_tokens": 4128,
+    "cache_slots": 1582331,
+    "attention_flops_proxy": 1582331,
+    "max_cache_len": 596,
+    "mean_turn_latency_s": 1.1912,
+    "median_turn_latency_s": 1.1974,
+    "p90_turn_latency_s": 1.2294,
+    "peak_mem_mb": 8381.9,
+    "kv_injected_slots": null,
+    "kv_steps": null,
+    "memory_stats": {
+      "get_calls": 400,
+      "update_calls": 200,
+      "retrievals": 11310,
+      "stores": 37,
+      "merges": 104,
+      "evictions": 0,
+      "gate_rejects": 0,
+      "occupied_slots": 37
+    },
+    "rag_stats": {
+      "adds": 2,
+      "upserts": 61,
+      "evictions": 0,
+      "size": 2
+    },
+    "probe_details": [
+      {
+        "turn": 20,
+        "question": "I would like to clarify: what are the last digits of my card? And also, what do I pay for music monthly?",
+        "plant_turn": 17,
+        "lag": 3,
+        "paraphrase": false,
+        "kind": "multihop",
+        "score": 0.5,
+        "stale_score": null,
+        "answer": "I cannot provide the last digits of your card number (4291) or confirm your music subscription payment details.\n\nAs an A"
+      },
+      {
+        "turn": 26,
+        "question": "I would like to clarify: what do I pay for music monthly?",
+        "plant_turn": 15,
+        "lag": 11,
+        "paraphrase": true,
+        "kind": "paraphrase",
+        "score": 0.0,
+        "stale_score": null,
+        "answer": "I cannot provide details about your music subscription payment or confirm the specific amount you pay for music. As an A"
+      },
+      {
+        "turn": 32,
+        "question": "I would like to clarify: what is the name of my bank?",
+        "plant_turn": 31,
+        "lag": 1,
+        "paraphrase": false,
+        "kind": "direct",
+        "score": 1.0,
+        "stale_score": null,
+        "answer": "Based on the information you provided earlier, your bank is called **Meridian**."
+      },
+      {
+        "turn": 36,
+        "question": "I would like to clarify: which perk comes with the card?",
+        "plant_turn": 35,
+        "lag": 1,
+        "paraphrase": true,
+        "kind": "paraphrase",
+        "score": 1.0,
+        "stale_score": null,
+        "answer": "Based on the notes provided, the specific perk mentioned is a **five percent cashback**.\n\nHere is how that information w"
+      },
+      {
+        "turn": 38,
+        "question": "I would like to clarify: how much is the monthly rent?",
+        "plant_turn": 21,
+        "lag": 17,
+        "paraphrase": false,
+        "kind": "direct",
+        "score": 0.0,
+        "stale_score": null,
+        "answer": "I do not have access to your personal financial records, bank statements, or specific household details. Therefore, I ca"
+      },
+      {
+        "turn": 39,
+        "question": "Kindly answer: what is my mobile tariff?",
+        "plant_turn": 25,
+        "lag": 14,
+        "paraphrase": false,
+        "kind": "direct",
+        "score": 0.0,
+        "stale_score": null,
+        "answer": "I do not have access to your personal financial records, bank statements, or specific household details. Therefore, I ca"
+      },
+      {
+        "turn": 47,
+        "question": "Please provide the following: where do I keep my accounts?",
+        "plant_turn": 31,
+        "lag": 16,
+        "paraphrase": true,
+        "kind": "paraphrase",
+        "score": 1.0,
+        "stale_score": null,
+        "answer": "Based on the information provided in our dialogue, your accounts are held at the following institutions:\n\n*   **Bank:** "
+      },
+      {
+        "turn": 48,
+        "question": "Please provide the following: where is my broker account?",
+        "plant_turn": 44,
+        "lag": 4,
+        "paraphrase": false,
+        "kind": "direct",
+        "score": 1.0,
+        "stale_score": null,
+        "answer": "Based on the information provided in our dialogue, your broker account is held at **Vector**."
+      },
+      {
+        "turn": 50,
+        "question": "Please provide the following: how much did the laptop cost?",
+        "plant_turn": 46,
+        "lag": 4,
+        "paraphrase": false,
+        "kind": "direct",
+        "score": 0.0,
+        "stale_score": null,
+        "answer": "Based on the information provided in our dialogue, the laptop cost **€1,180**.\n\n*(Note: Although the initial note stated"
+      },
+      {
+        "turn": 51,
+        "question": "Kindly answer: where is my broker account? And also, which card do I use?",
+        "plant_turn": 44,
+        "lag": 7,
+        "paraphrase": false,
+        "kind": "multihop",
+        "score": 0.5,
+        "stale_score": null,
+        "answer": "Based on the information provided in our dialogue:\n\n*   **Broker Account Location:** Your broker account is held at **Ve"
+      },
+      {
+        "turn": 57,
+        "question": "Kindly answer: what is my monthly savings transfer?",
+        "plant_turn": 24,
+        "lag": 33,
+        "paraphrase": true,
+        "kind": "paraphrase",
+        "score": 0.0,
+        "stale_score": null,
+        "answer": "Based on the information provided in our dialogue, your monthly savings transfer amount is **€250**.\n\nThis amount is aut"
+      },
+      {
+        "turn": 58,
+        "question": "Kindly answer: how much is the music subscription? And also, which perk comes with the card?",
+        "plant_turn": 35,
+        "lag": 23,
+        "paraphrase": false,
+        "kind": "multihop",
+        "score": 0.0,
+        "stale_score": null,
+        "answer": "Based on the information provided in our dialogue:\n\n*   **Music Subscription Cost:** The music subscription costs **€12."
+      },
+      {
+        "turn": 59,
+        "question": "I would like to clarify: what is the name of my bank?",
+        "plant_turn": 31,
+        "lag": 28,
+        "paraphrase": false,
+        "kind": "direct",
+        "score": 0.0,
+        "stale_score": null,
+        "answer": "Based on the information provided in our dialogue, your bank is **Vector**.\n\nThis aligns with the earlier confirmation t"
+      },
+      {
+        "turn": 63,
+        "question": "Please provide the following: what are the last digits of my card?",
+        "plant_turn": 17,
+        "lag": 46,
+        "paraphrase": false,
+        "kind": "direct",
+        "score": 0.0,
+        "stale_score": null,
+        "answer": "Based on the information provided in our dialogue, the last digits of your card are **4829**.\n\nThis detail was confirmed"
+      },
+      {
+        "turn": 76,
+        "question": "I would like to clarify: what are the last digits of my card?",
+        "plant_turn": 17,
+        "lag": 59,
+        "paraphrase": false,
+        "kind": "direct",
+        "score": 0.0,
+        "stale_score": null,
+        "answer": "I cannot provide the last digits of your card number. As an AI, I do not have access to your personal financial data, ba"
+      },
+      {
+        "turn": 79,
+        "question": "Kindly answer: how much did the laptop cost? And also, what did I pay for power?",
+        "plant_turn": 46,
+        "lag": 33,
+        "paraphrase": false,
+        "kind": "multihop",
+        "score": 0.0,
+        "stale_score": null,
+        "answer": "I cannot answer how much your laptop cost or how much you paid for power. As an AI, I do not have access to your persona"
+      },
+      {
+        "turn": 80,
+        "question": "Please provide the following: what is my mobile tariff?",
+        "plant_turn": 25,
+        "lag": 55,
+        "paraphrase": false,
+        "kind": "direct",
+        "score": 0.0,
+        "stale_score": null,
+        "answer": "I cannot provide your mobile tariff. As an AI, I do not have access to your personal financial data, bank accounts, or p"
+      },
+      {
+        "turn": 84,
+        "question": "Please provide the following: what is the safe box code?",
+        "plant_turn": null,
+        "lag": null,
+        "paraphrase": false,
+        "kind": "unanswerable",
+        "score": 1.0,
+        "stale_score": null,
+        "answer": "I cannot provide your safe box code. As an AI, I do not have access to your personal physical security devices, home inv"
+      },
+      {
+        "turn": 87,
+        "question": "Kindly answer: how much is the electricity bill? And also, which broker do I use?",
+        "plant_turn": 44,
+        "lag": 43,
+        "paraphrase": false,
+        "kind": "multihop",
+        "score": 0.0,
+        "stale_score": null,
+        "answer": "I cannot answer how much your electricity bill is or which broker you use. As an AI, I do not have access to your person"
+      },
+      {
+        "turn": 89,
+        "question": "Kindly answer: how large is the emergency fund?",
+        "plant_turn": null,
+        "lag": null,
+        "paraphrase": false,
+        "kind": "unanswerable",
+        "score": 1.0,
+        "stale_score": null,
+        "answer": "I cannot answer how large your emergency fund is. As an AI, I do not have access to your personal financial data, bank a"
+      },
+      {
+        "turn": 95,
+        "question": "I would like to clarify: which broker do I use?",
+        "plant_turn": 44,
+        "lag": 51,
+        "paraphrase": true,
+        "kind": "paraphrase",
+        "score": 0.0,
+        "stale_score": null,
+        "answer": "I cannot answer which broker you use. As an AI, I do not have access to your personal financial data, bank accounts, inv"
+      },
+      {
+        "turn": 96,
+        "question": "Kindly answer: how much do I save monthly?",
+        "plant_turn": 24,
+        "lag": 72,
+        "paraphrase": false,
+        "kind": "direct",
+        "score": 0.0,
+        "stale_score": null,
+        "answer": "I cannot answer how much you save monthly. As an AI, I do not have access to your personal financial data, bank accounts"
+      }
+    ]
+  },
+  "e2e": {
+    "per_rep_mean_s": [
+      1.2723,
+      1.273,
+      1.2731,
+      1.2726,
+      1.2728
+    ],
+    "mean_s": 1.2728,
+    "median_s": 1.2728,
+    "includes_retrieval": true,
+    "warmup_reps": 1
+  }
+}

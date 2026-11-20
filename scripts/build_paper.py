@@ -1,4 +1,4 @@
-"""Render the scientific article as PAPER.md and a portrait GOST-style PAPER.pdf."""
+"""Render the unified scientific article as PAPER.md and standard-layout PAPER.pdf."""
 
 from __future__ import annotations
 
@@ -6,57 +6,81 @@ import html
 import io
 import re
 import sys
+from datetime import date
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 import paper_text as PT
 import report_data as RD
 
-COMPETITOR_HEADERS = ["Метод", "Принцип", "Обучение", "Источник и роль"]
+COMPETITOR_HEADERS = ["Метод", "Принцип", "Обучение", "Роль в работе"]
 COMPETITOR_ROWS = [
-    ["Полный контекст", "Вся история и полный KV-кэш", "Нет", "Контрольная точка"],
+    ["Полный контекст", "Вся история и полный KV-кэш", "Нет", "Верхний контроль"],
     ["StreamingLLM", "Attention sinks и недавние токены", "Нет", "[1]; численный контроль"],
-    ["H2O", "Heavy hitters по накопленному вниманию", "Нет", "[2]; численный контроль"],
+    ["H2O / TopK", "Heavy hitters по накопленному вниманию", "Нет", "[2]; численный контроль"],
     ["SnapKV", "Отбор префикса по observation-окну", "Нет", "[3]; численный контроль"],
     ["PyramidKV", "Неравномерный бюджет по слоям", "Нет", "[4]; численный контроль"],
-    ["KIVI", "Асимметричное 2-битное квантование K и V", "Нет", "[5]; качественный аналог"],
+    ["KIVI", "Асимметричное 2-битное квантование K/V", "Нет", "[5]; качественный аналог"],
     ["Quest", "Query-aware выбор страниц KV-кэша", "Нет", "[6]; качественный аналог"],
-    ["RAG", "Возврат текстовых фрагментов в промпт", "Обычно нет", "[7]; отдельный контроль"],
-    ["LongLLMLingua", "Question-aware сжатие промпта", "Нет для базовой модели", "[8]; качественный аналог"],
-    ["MemGPT", "Иерархия памяти и функции управления", "Нет обязательно", "[9]; системный аналог"],
-    ["MemoryBank", "Поиск, профиль пользователя и забывание", "Нет обязательно", "[10]; системный аналог"],
-    ["A-MEM", "Связные заметки и эволюция памяти", "Нет обязательно", "[11]; системный аналог"],
-    ["Mem0", "Извлечение, консолидация и графовая память", "Нет обязательно", "[12]; системный аналог"],
-    ["Memorizing Transformers", "kNN-поиск по KV прошлых сегментов", "Да", "[13]; архитектурный аналог"],
+    ["RAG", "Возврат текстовых фрагментов в промпт", "Обычно нет", "[7]; отдельный канал"],
+    ["LongLLMLingua", "Question-aware сжатие промпта", "Нет для backbone", "[8]; качественный аналог"],
+    ["MemGPT", "Иерархия памяти и функции управления", "Не обязательно", "[9]; системный аналог"],
+    ["MemoryBank", "Поиск, профиль и забывание", "Не обязательно", "[10]; системный аналог"],
+    ["A-MEM", "Связные заметки и эволюция памяти", "Не обязательно", "[11]; системный аналог"],
+    ["Mem0", "Извлечение, консолидация и граф", "Не обязательно", "[12]; системный аналог"],
+    ["Memorizing Transformers", "kNN-поиск по K/V прошлых сегментов", "Да", "[13]; близкий архитектурный аналог"],
+    ["Memory³", "Явная внешняя память из sparse K/V", "Да", "[30]; близкий архитектурный аналог"],
     ["LongMem", "Поиск и residual side-network", "Да", "[14]; архитектурный аналог"],
     ["RMT", "Memory-токены между сегментами", "Да", "[15]; архитектурный аналог"],
-    ["Landmark Attention", "Обучаемые якоря блоков контекста", "Да", "[16]; архитектурный аналог"],
-    ["Infini-attention", "Локальное attention и сжатое состояние истории", "Да", "[17]; архитектурный аналог"],
+    ["Landmark Attention", "Обучаемые якоря блоков", "Да", "[16]; архитектурный аналог"],
+    ["Infini-attention", "Локальное attention и сжатое состояние", "Да", "[17]; архитектурный аналог"],
     ["Memory Layers", "Разреженные обучаемые таблицы памяти", "Да", "[18, 19]; архитектурный аналог"],
-    ["Двухканальная память", "Текстовый поиск и дополнительные латентные K/V", "Нет", "Предложенная система"],
+    ["M+ / MemoryLLM", "Самообновляемый латентный пул", "Да", "[33]; аналог скрытых состояний"],
+    ["MemDefrag", "Консолидация и забывание latent-памяти", "Зависит от backbone", "[34]; аналог динамики памяти"],
+    ["Живая память", "TTL/EMA-банк + динамическая K/V-инъекция", "Нет", "Предложенный вариант"],
 ]
 
-CONFIG_HEADERS = ["Система", "Контекст", "Память и бюджет"]
+RUN_HEADERS = ["Серия", "Диалоги", "Назначение", "Валидность"]
+RUN_ROWS = [
+    ["battery100", "1 × 107 ходов", "Предварительное сравнение 7 систем", "pre-fix; только исторический контекст"],
+    ["latent-v1", "4/12 × 100 ходов", "Mid-RAG, RAG±K/V, inject-only", "post-fix; пилот"],
+    ["full-core-v1", "5/48 × 100 ходов", "Конкуренты и k32 vs dynamic", "post-fix; основной срез"],
+    ["full-rag-v1", "4/48 × 100 ходов", "Last/mid/mean × raw/centered × ±K/V", "post-fix; основной срез"],
+    ["Специальные тесты", "Малые серии", "TTL/gist, цель, нити, слепая оценка", "Диагностические; разные протоколы"],
+]
+
+CONFIG_HEADERS = ["Система", "Контекст", "Память и параметры"]
 CONFIG_ROWS = [
-    ["Чистый Qwen", "Вся история", "Классический неограниченный KV-кэш"],
-    ["StreamingLLM", "Вся история", "128 слотов: 4 sink + 124 recent"],
-    ["H2O", "Вся история", "128: 4 sink + 64 recent + до 60 heavy hitters"],
-    ["SnapKV", "Вся история", "128; observation = 64; kernel = 7"],
-    ["PyramidKV", "Вся история", r"Среднее 128; observation = 8; $\beta = 20$"],
-    ["Текстовый RAG-контроль", "Буфер 10 ходов (10 пар) + top-4", "Только текст; сырые эмбеддинги; классический KV"],
-    ["Двухканальная память", "Буфер 10 ходов (10 пар) + top-4", "Текст + центрирование; до 32 пар K/V в каждом из 4 слоёв"],
+    ["Full KV", "Вся история", "Неограниченный классический KV-кэш"],
+    ["Sliding / TopK", "Вся история", "128 слотов; 4 sink + recent/heavy hitters"],
+    ["SnapKV", "Вся история", "128; observation=64; kernel=7"],
+    ["PyramidKV", "Вся история", "Среднее 128; observation=8; β=20"],
+    ["RAG-only", "10 последних пар + top-4", "Last/mid/mean; raw/centered; банк 256"],
+    ["Inject-only k32", "10 последних пар", "Банк 512; до 32 K/V в 4 слоях; без текста"],
+    ["Inject-only dynamic", "10 последних пар", "Косинусный гейт 0,5; 0–32 K/V; без текста"],
+    ["RAG + K/V", "10 последних пар + top-4", "Текстовый канал + фиксированная k32"],
 ]
 
-VOLUME_HEADERS = ["Система", "Prompt", "Генер.", "Embed", "Attn-слоты", "Экономия", "Max KV"]
-LATENCY_HEADERS = ["Система", "Среднее, с", "Медиана, с", "P90, с", "Пик, МиБ"]
+MECHANISM_HEADERS = ["Тест", "Условие", "Наблюдение", "Ограничение"]
+MECHANISM_ROWS = [
+    ["goal_dialogue", "Merge-цель vs чистый centered RAG", "Confusion 0,600 vs 0,400", "Специальный малый тест"],
+    ["interlocutor", "Gist vs plain RAG", "0,756 vs 0,760; метрика насыщена", "Низкая чувствительность"],
+    ["thread_coherence", "K/V после фикса маски", "Confusion 0,286 vs 0,000 у v3", "7 проб; другой протокол"],
+    ["blind_eval", "Слепая оценка 5 условий", "Нет консенсуса о преимуществе", "Субъективная оценка"],
+    ["living_memory", "Явный TTL-gist поверх центрирования", "Дополнительного выигрыша нет", "Отличать от running centroid"],
+]
 
-REPRO_COMMAND = (
-    "HF_HUB_OFFLINE=1 .venv/bin/python -m tmem.cli --model unused --battery100 "
-    "--models qwen35-4b --device cuda --dtype bfloat16 --max-new-tokens 32 "
-    "--strategies classic_kv_full sparse_sliding_128 sparse_topk_128 snapkv_128 "
-    "pyramidkv_128 rag_text_only v4_rag_kv --out results/qwen35_comparison"
-)
-
+CORE_HEADERS = ["Система", "Recall [95% ДИ]", "Answerable", "E2E, с/ход", "Peak MiB", "Prompt"]
+HYBRID_HEADERS = ["Канал", "RAG-only", "+K/V", "Δ recall", "p Холма", "Δ E2E"]
+REPRO_COMMANDS = [
+    "scripts/run_dialogue_fullscale.sh core night",
+    "scripts/run_dialogue_fullscale.sh rag night",
+    ".venv/bin/python scripts/build_core_report.py",
+    ".venv/bin/python scripts/build_rag_only_report.py",
+    ".venv/bin/python scripts/build_paper.py",
+    ".venv/bin/python scripts/verify_paper.py",
+]
 
 _GREEK = {
     "alpha": "α", "beta": "β", "gamma": "γ", "delta": "δ", "epsilon": "ε",
@@ -65,7 +89,7 @@ _GREEK = {
 
 
 def _tex_group(tex: str, i: int):
-    """Return (argument, next_index) for a LaTeX group or single token at tex[i]."""
+    """Return a LaTeX group or token and the following input index."""
     while i < len(tex) and tex[i] == " ":
         i += 1
     if i < len(tex) and tex[i] == "{":
@@ -82,22 +106,16 @@ def _tex_group(tex: str, i: int):
 
 
 def _tex_inner(tex: str, italic: bool = True) -> str:
-    """Convert a small inline LaTeX fragment to reportlab paragraph markup.
-
-    Supports the limited grammar used in the article body: variables (italic),
-    sub/superscripts, Greek letters, \\mathrm-style commands, and punctuation.
-    Display formulas never pass through this function (they are rendered as images).
-    """
+    """Convert the article's inline LaTeX subset to ReportLab paragraph markup."""
     out = []
     i = 0
-    n = len(tex)
-    while i < n:
+    while i < len(tex):
         ch = tex[i]
         if ch == "\\":
-            m = re.match(r"\\([a-zA-Z]+)", tex[i:])
-            if m:
-                name = m.group(1)
-                i += m.end()
+            match = re.match(r"\\([a-zA-Z]+)", tex[i:])
+            if match:
+                name = match.group(1)
+                i += match.end()
                 if name in ("mathrm", "text", "operatorname"):
                     arg, i = _tex_group(tex, i)
                     out.append(html.escape(_tex_inner(arg, False)))
@@ -108,7 +126,7 @@ def _tex_inner(tex: str, italic: bool = True) -> str:
                 elif name == "top":
                     out.append("ᵀ")
                 continue
-            if i + 1 < n:
+            if i + 1 < len(tex):
                 nxt = tex[i + 1]
                 if nxt == ",":
                     out.append(" ")
@@ -144,102 +162,93 @@ def _tex_inner(tex: str, italic: bool = True) -> str:
 
 
 def _inline_markup(text: str) -> str:
-    """Escape plain text and render $...$ inline math as reportlab markup."""
+    """Escape plain text and convert inline $...$ mathematics for ReportLab."""
     parts = re.split(r"\$([^$]+)\$", text)
     out = []
-    for k, part in enumerate(parts):
-        if k % 2:
-            out.append(_tex_inner(part))
-        else:
-            out.append(html.escape(part).replace("\n", "<br/>"))
+    for index, part in enumerate(parts):
+        out.append(_tex_inner(part) if index % 2 else html.escape(part).replace("\n", "<br/>"))
     return "".join(out)
 
 
 def markdown_table(headers, rows):
+    """Return a Markdown table without altering scientific identifiers."""
     lines = ["| " + " | ".join(headers) + " |", "|" + "---|" * len(headers)]
-    return lines + ["| " + " | ".join(row) + " |" for row in rows]
+    return lines + ["| " + " | ".join(str(cell) for cell in row) + " |" for row in rows]
 
 
-def _localized_cell(value, column):
-    text = str(value)
-    if column and re.fullmatch(r"[-+]?\d[\d,]*(?:\.\d+)?×?", text):
-        return text.replace(",", " ").replace(".", ",")
-    return text
-
-
-def _localized_rows(rows):
-    return [[_localized_cell(cell, column) for column, cell in enumerate(row)] for row in rows]
-
-
-def _volume_rows(q):
-    return [[row[i] for i in (0, 1, 2, 3, 4, 5, 9)] for row in RD.cost_rows(q)]
-
-
-def _latency_rows(q):
-    return [[row[i] for i in (0, 6, 7, 8, 10)] for row in RD.cost_rows(q)]
+def _article_tables():
+    """Load all current tables once for consistent Markdown and PDF output."""
+    core = RD.core_data()
+    rag = RD.rag_data()
+    return core, rag, RD.core_table(core), RD.rag_pure_table(rag), RD.rag_hybrid_table(rag)
 
 
 def build_md(q: dict):
-    """Write the Markdown article with numbered LaTeX formulas and GOST-style captions."""
+    """Write the unified Markdown article with numbered formulas and current figures."""
+    core, rag, core_rows, rag_rows, hybrid_rows = _article_tables()
     lines = [
-        PT.UDK, "",
-        f"# {PT.TITLE}", "", f"_{PT.AUTHORS}_", "", "## АННОТАЦИЯ", "", PT.abstract(q), "",
+        f"# {PT.TITLE}", "",
+        f"*Научная статья · экспериментальный срез: core {len(core['records'])}/48, "
+        f"RAG {len(rag['records'])}/48 · {date.today().isoformat()}*", "",
+        "## АННОТАЦИЯ", "", PT.abstract(q), "",
         f"**Ключевые слова:** {PT.KEYWORDS}", "",
+        f"## {PT.EN_TITLE}", "", "**ABSTRACT**", "", PT.en_abstract(q), "",
+        f"**Keywords:** {PT.EN_KEYWORDS}", "",
     ]
     formula_number = 0
-
-    def add_text(text):
-        nonlocal formula_number
-        match = re.fullmatch(r"\$\$\s*(.*?)\s*\$\$", text, re.DOTALL)
-        if match:
-            formula_number += 1
-            lines.extend(["$$", f"{match.group(1)} \\tag{{{formula_number}}}", "$$", ""])
-        else:
-            lines.extend([text + "\n"])
-
     for heading, paragraphs in PT.sections(q):
         lines += [f"## {heading}", ""]
         for paragraph in paragraphs:
-            add_text(paragraph)
+            match = re.fullmatch(r"\$\$\s*(.*?)\s*\$\$", paragraph, re.DOTALL)
+            if match:
+                formula_number += 1
+                lines += ["$$", f"{match.group(1)} \\tag{{{formula_number}}}", "$$", ""]
+            else:
+                lines += [paragraph + "\n"]
         if heading.startswith("1 "):
-            lines += ["**Таблица 1 — Сравнение существующих решений и аналогов**", ""]
+            lines += ["**Таблица 1 — Существующие решения и аналоги**", ""]
             lines += markdown_table(COMPETITOR_HEADERS, COMPETITOR_ROWS) + [""]
-        if heading.startswith("2 "):
-            lines += ["![Архитектура двухканальной памяти](figs/architecture.png)",
-                      "Рисунок 1 — Архитектура предложенной системы", ""]
-            lines += ["**Таблица 2 — Параметры сравниваемых систем**", ""]
-            lines += markdown_table(CONFIG_HEADERS, CONFIG_ROWS) + [""]
-        if heading.startswith("3 "):
-            tables = (
-                ("Таблица 3 — Качество ответов на контрольные вопросы", RD.QUALITY_HEADERS, RD.quality_rows(q)),
-                ("Таблица 4 — Объём входа и decode-side attention-прокси", VOLUME_HEADERS, _volume_rows(q)),
-                ("Таблица 5 — Наблюденная латентность и память генерации", LATENCY_HEADERS, _latency_rows(q)),
-            )
-            for caption, headers, rows in tables:
-                lines += [f"**{caption}**", ""] + markdown_table(headers, _localized_rows(rows)) + [""]
-            lines += [
-                "![Основное сравнение](figs/comparison.png)",
-                "Рисунок 2 — Качество, attention-прокси и латентность на общей батарее", "",
-                "![Парето](figs/pareto.png)",
-                "Рисунок 3 — Компромисс между recall и decode-side attention-прокси", "",
-            ]
-    lines += [
-        "## СПИСОК ЛИТЕРАТУРЫ", "",
-        *[f"{i}. {ref}" for i, ref in enumerate(PT.REFERENCES, 1)],
-        "", f"## {PT.EN_TITLE}", "", f"_{PT.EN_AUTHORS}_", "",
-        "**ABSTRACT**", "", PT.en_abstract(q), "",
-        f"**Keywords:** {PT.EN_KEYWORDS}", "",
-        "**References**", "",
-        *[f"{i}. {ref}" for i, ref in enumerate(PT.REFERENCES, 1)],
-        "", "## Команда воспроизведения", "",
-        "```bash", REPRO_COMMAND,
-        ".venv/bin/python scripts/build_report.py", ".venv/bin/python scripts/build_paper.py", "```",
-    ]
+        elif heading.startswith("2 "):
+            lines += ["![Архитектура](figs/architecture.png)",
+                      "Рисунок 1 — Независимые текстовый и латентный каналы", ""]
+        elif heading.startswith("3 "):
+            for caption, headers, rows in [
+                ("Таблица 2 — Экспериментальные серии", RUN_HEADERS, RUN_ROWS),
+                ("Таблица 3 — Параметры сравниваемых систем", CONFIG_HEADERS, CONFIG_ROWS),
+            ]:
+                lines += [f"**{caption}**", ""] + markdown_table(headers, rows) + [""]
+        elif heading.startswith("4 "):
+            lines += ["**Таблица 4 — Живая память и конкуренты на core**", ""]
+            lines += markdown_table(CORE_HEADERS, core_rows) + [""]
+            for filename, caption in [
+                ("core_quality_cost.png", "Рисунок 2 — Core: качество, E2E и peak allocated VRAM"),
+                ("core_per_dialogue.png", "Рисунок 3 — Core: recall по отдельным диалогам"),
+                ("core_lag.png", "Рисунок 4 — Core: удержание по lag-зонам"),
+            ]:
+                lines += [f"![{caption}](figs/{filename})", caption, ""]
+            lines += ["**Таблица 5 — Текстовый RAG без K/V-инъекций**", ""]
+            lines += markdown_table(CORE_HEADERS, rag_rows) + [""]
+            for filename, caption in [
+                ("rag_only_quality_cost.png", "Рисунок 5 — RAG-only: качество и стоимость"),
+                ("rag_only_layer_centering.png", "Рисунок 6 — Парный эффект центрирования"),
+                ("rag_only_per_dialogue.png", "Рисунок 7 — RAG-only по диалогам"),
+                ("rag_only_lag.png", "Рисунок 8 — RAG-only по lag-зонам"),
+            ]:
+                lines += [f"![{caption}](figs/{filename})", caption, ""]
+            lines += ["**Таблица 6 — Вклад фиксированной K/V-инъекции в RAG**", ""]
+            lines += markdown_table(HYBRID_HEADERS, hybrid_rows) + [""]
+            lines += ["![RAG и K/V](figs/rag_hybrid_pairs.png)",
+                      "Рисунок 9 — Сравнение шести пар RAG-only и RAG+K/V", ""]
+            lines += ["**Таблица 7 — Дополнительные механистические тесты**", ""]
+            lines += markdown_table(MECHANISM_HEADERS, MECHANISM_ROWS) + [""]
+    lines += ["## СПИСОК ЛИТЕРАТУРЫ", ""]
+    lines += [f"{index}. {ref}" for index, ref in enumerate(PT.REFERENCES, 1)]
+    lines += ["", "## ВОСПРОИЗВЕДЕНИЕ", "", "```bash", *REPRO_COMMANDS, "```"]
     (RD.OUT / "PAPER.md").write_text("\n".join(lines) + "\n")
 
 
 def build_pdf(q: dict):
-    """Write a portrait A4 PDF with Russian typography, numbered formulas, tables and references."""
+    """Write a standard portrait A4 scientific PDF without GOST-specific layout."""
     import matplotlib
     from matplotlib.font_manager import FontProperties
     from matplotlib.mathtext import math_to_image
@@ -251,71 +260,51 @@ def build_pdf(q: dict):
     from reportlab.lib.utils import ImageReader
     from reportlab.pdfbase import pdfmetrics
     from reportlab.pdfbase.ttfonts import TTFont
-    from reportlab.platypus import Image, KeepTogether, Paragraph, SimpleDocTemplate, Spacer, Table, TableStyle
+    from reportlab.platypus import Image, KeepTogether, PageBreak, Paragraph, SimpleDocTemplate, Spacer, Table, TableStyle
 
     font_dir = Path("/usr/share/fonts/truetype/liberation")
-    pdfmetrics.registerFont(TTFont("LiberationSerif", str(font_dir / "LiberationSerif-Regular.ttf")))
-    pdfmetrics.registerFont(TTFont("LiberationSerif-Bold", str(font_dir / "LiberationSerif-Bold.ttf")))
-    pdfmetrics.registerFont(TTFont("LiberationSerif-Italic", str(font_dir / "LiberationSerif-Italic.ttf")))
-    pdfmetrics.registerFont(TTFont("LiberationSerif-BoldItalic", str(font_dir / "LiberationSerif-BoldItalic.ttf")))
-    pdfmetrics.registerFontFamily(
-        "LiberationSerif", normal="LiberationSerif", bold="LiberationSerif-Bold",
-        italic="LiberationSerif-Italic", boldItalic="LiberationSerif-BoldItalic",
-    )
+    pdfmetrics.registerFont(TTFont("Serif", str(font_dir / "LiberationSerif-Regular.ttf")))
+    pdfmetrics.registerFont(TTFont("Serif-Bold", str(font_dir / "LiberationSerif-Bold.ttf")))
+    pdfmetrics.registerFont(TTFont("Serif-Italic", str(font_dir / "LiberationSerif-Italic.ttf")))
+    pdfmetrics.registerFontFamily("Serif", normal="Serif", bold="Serif-Bold", italic="Serif-Italic")
     matplotlib.rcParams["mathtext.fontset"] = "stix"
-
     styles = getSampleStyleSheet()
-    body = ParagraphStyle(
-        "GOSTBody", parent=styles["Normal"], fontName="LiberationSerif", fontSize=14,
-        leading=21, alignment=TA_JUSTIFY, firstLineIndent=1.25 * cm, spaceAfter=0,
-        splitLongWords=True, hyphenationLang="ru_RU",
-    )
-    heading = ParagraphStyle(
-        "GOSTHeading", parent=body, fontName="LiberationSerif-Bold", leading=18,
-        alignment=TA_CENTER, firstLineIndent=0, spaceBefore=12, spaceAfter=12,
-        keepWithNext=True,
-    )
-    table_caption = ParagraphStyle(
-        "TableCaption", parent=body, fontSize=12, leading=15, alignment=TA_LEFT,
-        firstLineIndent=0, spaceBefore=8, spaceAfter=5, keepWithNext=True,
-    )
-    figure_caption = ParagraphStyle(
-        "FigureCaption", parent=table_caption, alignment=TA_CENTER,
-        spaceBefore=5, spaceAfter=10, keepWithNext=False,
-    )
-    title = ParagraphStyle(
-        "TitleGOST", parent=body, fontName="LiberationSerif-Bold", fontSize=16,
-        leading=20, alignment=TA_CENTER, firstLineIndent=0, spaceAfter=12,
-    )
-    authors = ParagraphStyle(
-        "Authors", parent=body, fontName="LiberationSerif-Italic", alignment=TA_CENTER,
-        firstLineIndent=0, spaceAfter=12,
-    )
-    table_text = ParagraphStyle(
-        "TableText", parent=body, fontSize=10, leading=12, alignment=TA_LEFT,
-        firstLineIndent=0, splitLongWords=True,
-    )
-    table_header = ParagraphStyle(
-        "TableHeader", parent=table_text, fontName="LiberationSerif-Bold", alignment=TA_CENTER,
-    )
-    formula_number_style = ParagraphStyle(
-        "FormulaNumber", parent=body, alignment=TA_RIGHT, firstLineIndent=0,
-    )
-    reference = ParagraphStyle(
-        "Reference", parent=body, fontSize=12, leading=16, alignment=TA_LEFT,
-        leftIndent=0.9 * cm, firstLineIndent=-0.9 * cm, spaceAfter=5,
-    )
-    doc = SimpleDocTemplate(
-        str(RD.OUT / "PAPER.pdf"), pagesize=A4,
-        leftMargin=3.0 * cm, rightMargin=1.5 * cm, topMargin=2.0 * cm, bottomMargin=2.0 * cm,
-        title=PT.TITLE, author=PT.AUTHORS, subject="Диалоговая память и сжатие KV-кэша",
-    )
+    body = ParagraphStyle("ArticleBody", parent=styles["Normal"], fontName="Serif", fontSize=10.8,
+                          leading=15, alignment=TA_JUSTIFY, firstLineIndent=0.65 * cm, spaceAfter=5,
+                          splitLongWords=True, hyphenationLang="ru_RU")
+    heading = ParagraphStyle("ArticleHeading", parent=body, fontName="Serif-Bold", fontSize=13,
+                             leading=16, alignment=TA_CENTER, firstLineIndent=0, spaceBefore=12,
+                             spaceAfter=8, keepWithNext=True)
+    title = ParagraphStyle("ArticleTitle", parent=body, fontName="Serif-Bold", fontSize=17,
+                           leading=21, alignment=TA_CENTER, firstLineIndent=0, spaceAfter=10)
+    subtitle = ParagraphStyle("ArticleSubtitle", parent=body, fontName="Serif-Italic", fontSize=10,
+                              alignment=TA_CENTER, firstLineIndent=0, textColor=colors.HexColor("#475569"))
+    table_caption = ParagraphStyle("ArticleTableCaption", parent=body, fontSize=9.5, leading=12,
+                                   alignment=TA_LEFT, firstLineIndent=0, spaceBefore=8, spaceAfter=5,
+                                   keepWithNext=True)
+    figure_caption = ParagraphStyle("ArticleFigureCaption", parent=table_caption, alignment=TA_CENTER,
+                                    spaceBefore=4, spaceAfter=9, keepWithNext=False)
+    table_text = ParagraphStyle("ArticleTableText", parent=body, fontSize=8.2, leading=10,
+                                alignment=TA_LEFT, firstLineIndent=0, splitLongWords=True)
+    table_header = ParagraphStyle("ArticleTableHeader", parent=table_text, fontName="Serif-Bold",
+                                  alignment=TA_CENTER)
+    formula_number_style = ParagraphStyle("FormulaNumber", parent=body, alignment=TA_RIGHT, firstLineIndent=0)
+    reference = ParagraphStyle("ArticleReference", parent=body, fontSize=9.5, leading=12.5,
+                               alignment=TA_LEFT, leftIndent=0.7 * cm, firstLineIndent=-0.7 * cm, spaceAfter=4)
+    code = ParagraphStyle("ArticleCode", parent=body, fontName="Courier", fontSize=8.2, leading=10,
+                          firstLineIndent=0, leftIndent=0.4 * cm)
+
+    core, rag, core_rows, rag_rows, hybrid_rows = _article_tables()
+    doc = SimpleDocTemplate(str(RD.OUT / "PAPER.pdf"), pagesize=A4, leftMargin=2.0 * cm,
+                            rightMargin=2.0 * cm, topMargin=1.8 * cm, bottomMargin=1.8 * cm,
+                            title=PT.TITLE, author="Transformer experiments",
+                            subject="Живая латентная память и текстовый retrieval")
 
     def on_page(canvas, document):
         canvas.saveState()
-        canvas.setFont("LiberationSerif", 12)
-        canvas.setFillColor(colors.black)
-        canvas.drawCentredString(A4[0] / 2, 1.0 * cm, str(document.page))
+        canvas.setFont("Serif", 9)
+        canvas.setFillColor(colors.HexColor("#475569"))
+        canvas.drawCentredString(A4[0] / 2, 0.8 * cm, str(document.page))
         canvas.restoreState()
 
     def paragraph(text, style=body):
@@ -327,23 +316,20 @@ def build_pdf(q: dict):
 
     def latex_formula(latex, number):
         buffer = io.BytesIO()
-        math_to_image(
-            f"${latex}$", buffer, prop=FontProperties(size=12), dpi=300, format="png", color="black",
-        )
+        math_to_image(f"${latex}$", buffer, prop=FontProperties(size=12), dpi=300,
+                      format="png", color="black")
         buffer.seek(0)
         reader = ImageReader(buffer)
         pixel_width, pixel_height = reader.getSize()
         width = pixel_width * 72 / 300
         height = pixel_height * 72 / 300
-        available = doc.width - 1.35 * cm
+        available = doc.width - 1.1 * cm
         scale = min(1.0, available / width)
         buffer.seek(0)
         image = Image(buffer, width=width * scale, height=height * scale)
         image.hAlign = "CENTER"
-        table = Table(
-            [[image, Paragraph(f"({number})", formula_number_style)]],
-            colWidths=[available, 1.35 * cm], hAlign="CENTER",
-        )
+        table = Table([[image, Paragraph(f"({number})", formula_number_style)]],
+                      colWidths=[available, 1.1 * cm], hAlign="CENTER")
         table.setStyle(TableStyle([
             ("VALIGN", (0, 0), (-1, -1), "MIDDLE"),
             ("LEFTPADDING", (0, 0), (-1, -1), 0), ("RIGHTPADDING", (0, 0), (-1, -1), 0),
@@ -352,39 +338,44 @@ def build_pdf(q: dict):
         table._formula_buffer = buffer
         return table
 
-    def add_table(story, caption_text, headers, rows, widths, font_size=10):
+    def add_table(story, caption_text, headers, rows, widths=None, font_size=8.2):
         story.append(Paragraph(html.escape(caption_text), table_caption))
-        cell_style = ParagraphStyle("SizedTableText", parent=table_text, fontSize=font_size, leading=font_size * 1.2)
-        head_style = ParagraphStyle("SizedTableHeader", parent=table_header, fontSize=font_size, leading=font_size * 1.2)
+        cell_style = ParagraphStyle("SizedArticleCell", parent=table_text, fontSize=font_size,
+                                    leading=font_size * 1.2)
+        head_style = ParagraphStyle("SizedArticleHead", parent=table_header, fontSize=font_size,
+                                    leading=font_size * 1.2)
         data = [[Paragraph(html.escape(str(cell)), head_style) for cell in headers]]
-        data += [
-            [Paragraph(_inline_markup(str(cell)), cell_style) for cell in _localized_rows([row])[0]]
-            for row in rows
-        ]
-        table = Table(data, colWidths=[width * cm for width in widths], repeatRows=1, hAlign="LEFT", splitByRow=1)
+        data += [[Paragraph(_inline_markup(str(cell)), cell_style) for cell in row] for row in rows]
+        if widths is None:
+            first = min(4.0, 17.0 / len(headers) * 1.5)
+            widths = [first] + [(17.0 - first) / (len(headers) - 1)] * (len(headers) - 1)
+        table = Table(data, colWidths=[width * cm for width in widths], repeatRows=1,
+                      hAlign="CENTER", splitByRow=1)
         table.setStyle(TableStyle([
-            ("GRID", (0, 0), (-1, -1), 0.5, colors.black),
-            ("BACKGROUND", (0, 0), (-1, 0), colors.HexColor("#e6e6e6")),
+            ("GRID", (0, 0), (-1, -1), 0.4, colors.HexColor("#64748b")),
+            ("BACKGROUND", (0, 0), (-1, 0), colors.HexColor("#e2e8f0")),
             ("VALIGN", (0, 0), (-1, -1), "TOP"),
-            ("ALIGN", (1, 1), (-1, -1), "CENTER"),
             ("LEFTPADDING", (0, 0), (-1, -1), 3), ("RIGHTPADDING", (0, 0), (-1, -1), 3),
             ("TOPPADDING", (0, 0), (-1, -1), 3), ("BOTTOMPADDING", (0, 0), (-1, -1), 3),
         ]))
-        story += [table, Spacer(1, 0.2 * cm)]
+        story += [table, Spacer(1, 0.18 * cm)]
 
-    def figure(path, caption_text, width=16.0 * cm):
+    def figure(path, caption_text, width=16.8 * cm):
         reader = ImageReader(str(path))
         pixel_width, pixel_height = reader.getSize()
         image = Image(str(path), width=width, height=width * pixel_height / pixel_width)
         image.hAlign = "CENTER"
         return KeepTogether([image, Paragraph(html.escape(caption_text), figure_caption)])
 
-    udk_style = ParagraphStyle("Udk", parent=body, alignment=TA_LEFT, firstLineIndent=0, spaceAfter=10)
     story = [
-        Paragraph(html.escape(PT.UDK), udk_style),
-        Paragraph(html.escape(PT.TITLE), title), Paragraph(html.escape(PT.AUTHORS), authors),
+        Paragraph(html.escape(PT.TITLE), title),
+        Paragraph(f"Научная статья · core {len(core['records'])}/48 · RAG {len(rag['records'])}/48 · "
+                  f"{date.today().isoformat()}", subtitle),
         Paragraph("АННОТАЦИЯ", heading), Paragraph(html.escape(PT.abstract(q)), body),
         Paragraph(f"<b>Ключевые слова:</b> {html.escape(PT.KEYWORDS)}", body),
+        Paragraph(html.escape(PT.EN_TITLE), heading), Paragraph("ABSTRACT", heading),
+        Paragraph(html.escape(PT.en_abstract(q)), body),
+        Paragraph(f"<b>Keywords:</b> {html.escape(PT.EN_KEYWORDS)}", body), PageBreak(),
     ]
     formula_number = 0
     for section, paragraphs in PT.sections(q):
@@ -397,140 +388,50 @@ def build_pdf(q: dict):
             else:
                 story.append(paragraph(text))
         if section.startswith("1 "):
-            add_table(story, "Таблица 1 — Сравнение существующих решений и аналогов",
-                      COMPETITOR_HEADERS, COMPETITOR_ROWS, [3.2, 6.0, 2.3, 5.0])
-        if section.startswith("2 "):
-            story.append(figure(RD.FIGS / "architecture.png", "Рисунок 1 — Архитектура предложенной системы"))
-            add_table(story, "Таблица 2 — Параметры сравниваемых систем",
-                      CONFIG_HEADERS, CONFIG_ROWS, [4.0, 3.7, 8.8])
-        if section.startswith("3 "):
-            add_table(story, "Таблица 3 — Качество ответов на контрольные вопросы",
-                      RD.QUALITY_HEADERS, RD.quality_rows(q), [5.1, 1.8, 1.8, 2.2, 1.8, 1.8, 2.0], 9)
-            add_table(story, "Таблица 4 — Объём входа и decode-side attention-прокси",
-                      VOLUME_HEADERS, _volume_rows(q), [4.2, 2.0, 1.7, 1.7, 2.8, 1.8, 2.3], 9)
-            add_table(story, "Таблица 5 — Наблюденная латентность и память генерации",
-                      LATENCY_HEADERS, _latency_rows(q), [6.0, 2.5, 2.5, 2.5, 3.0], 10)
-            story.append(figure(RD.FIGS / "comparison.png", "Рисунок 2 — Качество, attention-прокси и латентность на общей батарее"))
-            story.append(figure(RD.FIGS / "pareto.png", "Рисунок 3 — Компромисс между recall и decode-side attention-прокси", 15.0 * cm))
+            add_table(story, "Таблица 1 — Существующие решения и аналоги",
+                      COMPETITOR_HEADERS, COMPETITOR_ROWS, [3.4, 6.0, 2.5, 5.1], 7.5)
+        elif section.startswith("2 "):
+            story.append(figure(RD.FIGS / "architecture.png",
+                                "Рисунок 1 — Независимые текстовый и латентный каналы"))
+        elif section.startswith("3 "):
+            add_table(story, "Таблица 2 — Экспериментальные серии", RUN_HEADERS, RUN_ROWS,
+                      [3.1, 3.0, 6.0, 4.9], 7.7)
+            add_table(story, "Таблица 3 — Параметры сравниваемых систем", CONFIG_HEADERS,
+                      CONFIG_ROWS, [4.0, 4.0, 9.0], 8.0)
+        elif section.startswith("4 "):
+            add_table(story, "Таблица 4 — Живая память и конкуренты на core", CORE_HEADERS,
+                      core_rows, [4.2, 3.6, 2.1, 2.2, 2.0, 2.9], 7.7)
+            for filename, caption in [
+                ("core_quality_cost.png", "Рисунок 2 — Core: качество, E2E и peak allocated VRAM"),
+                ("core_per_dialogue.png", "Рисунок 3 — Core: recall по отдельным диалогам"),
+                ("core_lag.png", "Рисунок 4 — Core: удержание по lag-зонам"),
+            ]:
+                story.append(figure(RD.FIGS / filename, caption))
+            add_table(story, "Таблица 5 — Текстовый RAG без K/V-инъекций", CORE_HEADERS,
+                      rag_rows, [4.2, 3.6, 2.1, 2.2, 2.0, 2.9], 7.7)
+            for filename, caption in [
+                ("rag_only_quality_cost.png", "Рисунок 5 — RAG-only: качество и стоимость"),
+                ("rag_only_layer_centering.png", "Рисунок 6 — Парный эффект центрирования"),
+                ("rag_only_per_dialogue.png", "Рисунок 7 — RAG-only по диалогам"),
+                ("rag_only_lag.png", "Рисунок 8 — RAG-only по lag-зонам"),
+            ]:
+                story.append(figure(RD.FIGS / filename, caption))
+            add_table(story, "Таблица 6 — Вклад фиксированной K/V-инъекции в RAG",
+                      HYBRID_HEADERS, hybrid_rows, [3.7, 2.2, 2.0, 2.4, 2.3, 2.2], 8.0)
+            story.append(figure(RD.FIGS / "rag_hybrid_pairs.png",
+                                "Рисунок 9 — Сравнение шести пар RAG-only и RAG+K/V"))
+            add_table(story, "Таблица 7 — Дополнительные механистические тесты",
+                      MECHANISM_HEADERS, MECHANISM_ROWS, [3.2, 5.0, 5.0, 3.8], 7.5)
     story.append(Paragraph("СПИСОК ЛИТЕРАТУРЫ", heading))
-    story += [
-        Paragraph(html.escape(f"{i}. {ref}"), reference)
-        for i, ref in enumerate(PT.REFERENCES, 1)
-    ]
-    story.append(Paragraph(html.escape(PT.EN_TITLE), heading))
-    story.append(Paragraph(html.escape(PT.EN_AUTHORS), authors))
-    story.append(Paragraph("ABSTRACT", heading))
-    story.append(Paragraph(html.escape(PT.en_abstract(q)), body))
-    story.append(Paragraph(f"<b>Keywords:</b> {html.escape(PT.EN_KEYWORDS)}", body))
-    story.append(Paragraph("REFERENCES", heading))
-    story += [
-        Paragraph(html.escape(f"{i}. {ref}"), reference)
-        for i, ref in enumerate(PT.REFERENCES, 1)
-    ]
+    story += [Paragraph(html.escape(f"{index}. {ref}"), reference)
+              for index, ref in enumerate(PT.REFERENCES, 1)]
+    story.append(Paragraph("ВОСПРОИЗВЕДЕНИЕ", heading))
+    story += [Paragraph(html.escape(command), code) for command in REPRO_COMMANDS]
     doc.build(story, onFirstPage=on_page, onLaterPages=on_page)
 
 
-SKILL_TYPO = Path("/home/morgot/Documents/Skills/gost-typography")
-
-
-def _number_formulas_in_docx(path):
-    """Wrap every display-math paragraph into a borderless 2-column table (formula | number).
-
-    pandoc drops \\tag{n} when converting LaTeX math to OMML, so ГОСТ-style formula
-    numbers (right margin, level of the formula) are restored by post-processing.
-    """
-    from docx import Document
-    from docx.oxml import OxmlElement
-    from docx.oxml.ns import qn
-
-    doc = Document(str(path))
-    omath_para = qn("m:oMathPara")
-    math_paras = [p for p in doc.paragraphs if p._p.find(".//" + omath_para) is not None]
-    for idx, para in enumerate(math_paras, 1):
-        pe = para._p
-        tbl = OxmlElement("w:tbl")
-        tbl_pr = OxmlElement("w:tblPr")
-        tbl_w = OxmlElement("w:tblW")
-        tbl_w.set(qn("w:type"), "pct")
-        tbl_w.set(qn("w:w"), "5000")
-        borders = OxmlElement("w:tblBorders")
-        for edge in ("top", "left", "bottom", "right", "insideH", "insideV"):
-            el = OxmlElement(f"w:{edge}")
-            el.set(qn("w:val"), "none")
-            el.set(qn("w:sz"), "0")
-            borders.append(el)
-        tbl_pr.append(tbl_w)
-        tbl_pr.append(borders)
-        tbl.append(tbl_pr)
-        grid = OxmlElement("w:tblGrid")
-        for w in ("8300", "1030"):
-            gc = OxmlElement("w:gridCol")
-            gc.set(qn("w:w"), w)
-            grid.append(gc)
-        tbl.append(grid)
-        tr = OxmlElement("w:tr")
-        cells = []
-        for w in ("8300", "1030"):
-            tc = OxmlElement("w:tc")
-            tc_pr = OxmlElement("w:tcPr")
-            tc_w = OxmlElement("w:tcW")
-            tc_w.set(qn("w:type"), "dxa")
-            tc_w.set(qn("w:w"), w)
-            valign = OxmlElement("w:vAlign")
-            valign.set(qn("w:val"), "center")
-            tc_pr.append(tc_w)
-            tc_pr.append(valign)
-            tc.append(tc_pr)
-            cells.append(tc)
-        pe.addprevious(tbl)
-        cells[0].append(pe)
-        np = OxmlElement("w:p")
-        p_pr = OxmlElement("w:pPr")
-        jc = OxmlElement("w:jc")
-        jc.set(qn("w:val"), "right")
-        p_pr.append(jc)
-        np.append(p_pr)
-        run = OxmlElement("w:r")
-        text = OxmlElement("w:t")
-        text.text = f"({idx})"
-        run.append(text)
-        np.append(run)
-        cells[1].append(np)
-        tr.append(cells[0])
-        tr.append(cells[1])
-        tbl.append(tr)
-    doc.save(str(path))
-    return len(math_paras)
-
-
-def build_docx():
-    """Build PAPER.docx via pandoc with the GOST reference doc from the gost-typography skill."""
-    import shutil
-    import subprocess
-
-    pandoc = shutil.which("pandoc") or str(Path.home() / ".local/bin" / "pandoc")
-    if not Path(pandoc).exists():
-        print("pandoc не найден — DOCX пропущен")
-        return None
-    tmp = Path("/tmp/opencode")
-    tmp.mkdir(parents=True, exist_ok=True)
-    base, ref = tmp / "ref-base.docx", tmp / "gost-ref.docx"
-    subprocess.run([pandoc, "-o", str(base), "--print-default-data-file", "reference.docx"], check=True)
-    subprocess.run([sys.executable, str(SKILL_TYPO / "scripts" / "gost_reference_doc.py"),
-                    "--base", str(base), "-o", str(ref)], check=True)
-    md = (RD.OUT / "PAPER.md").read_text()
-    md = md.split("## Команда воспроизведения")[0].rstrip() + "\n"
-    docx_md = tmp / "PAPER-docx.md"
-    docx_md.write_text(md)
-    out = RD.OUT / "PAPER.docx"
-    subprocess.run([pandoc, str(docx_md), "-o", str(out), f"--reference-doc={ref}",
-                    f"--resource-path={RD.OUT}"], check=True)
-    print("формул пронумеровано:", _number_formulas_in_docx(out))
-    subprocess.run([sys.executable, str(SKILL_TYPO / "scripts" / "check_docx.py"), str(out)], check=True)
-    return out
-
-
 def main():
+    """Regenerate figures, Markdown, and PDF from all current experimental archives."""
     q = RD.q35_all()
     missing = set(RD.ORDER) - set(q)
     if missing:
@@ -539,7 +440,7 @@ def main():
     paper_figures.make_all()
     build_md(q)
     build_pdf(q)
-    build_docx()
+    print("paper:", RD.OUT / "PAPER.md")
     print("paper:", RD.OUT / "PAPER.pdf")
 
 
