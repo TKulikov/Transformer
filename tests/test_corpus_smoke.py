@@ -52,7 +52,7 @@ def test_tiny_batch_end_to_end(causal_bundle, tmp_path):
 
 
 def test_rag_variants_end_to_end_keep_kv_isolated():
-    from scripts_code.smoke_latent_campaign import tiny_qwen35_bundle
+    from scripts.smoke_latent_campaign import tiny_qwen35_bundle
     from tmem.corpus_run import full_rag_strategies
 
     bundle = tiny_qwen35_bundle()

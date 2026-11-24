@@ -285,7 +285,7 @@ class TestDynamicKVInjection:
         from tmem.qa import SESSIONS
         from tmem.semantic import band_hidden
 
-        import scripts_code.smoke_latent_campaign as smoke
+        import scripts.smoke_latent_campaign as smoke
         torch.manual_seed(0)  # deterministic: full-suite order changes the global seed
         bundle = smoke.tiny_qwen35_bundle()
         corr = CorrectionLayer(bundle.hidden_size, size=64, window_crit=-1e9, crit=0.95)

@@ -7,3 +7,13 @@ __pycache__/
 results/*.log
 results/**/*.log
 results/corpus/NIGHT_STATUS.json
+
+# Code branch (moved to a separate repository)
+/codemem/
+/scripts_code/
+/tests_code/
+/testbeds/
+/results/code/
+/docs/CODE_BRANCH_FINDINGS.md
+/docs/PLAN-code-branch.md
+/для кода.md
