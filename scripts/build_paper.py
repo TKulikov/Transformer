@@ -243,7 +243,7 @@ def build_md(q: dict):
             lines += markdown_table(MECHANISM_HEADERS, MECHANISM_ROWS) + [""]
     lines += ["## СПИСОК ЛИТЕРАТУРЫ", ""]
     lines += [f"{index}. {ref}" for index, ref in enumerate(PT.REFERENCES, 1)]
-    lines += ["", "## ВОСПРОИЗВЕДЕНИЕ", "", "```bash", *REPRO_COMMANDS, "```"]
+    lines += ["", "## ВОСПРОИЗВЕДЕНИЕ", "", f"Репозиторий проекта: <{PT.REPOSITORY_URL}>", "", "```bash", *REPRO_COMMANDS, "```"]
     (RD.OUT / "PAPER.md").write_text("\n".join(lines) + "\n")
 
 
@@ -426,6 +426,9 @@ def build_pdf(q: dict):
     story += [Paragraph(html.escape(f"{index}. {ref}"), reference)
               for index, ref in enumerate(PT.REFERENCES, 1)]
     story.append(Paragraph("ВОСПРОИЗВЕДЕНИЕ", heading))
+    story.append(Paragraph(
+        f'Репозиторий проекта: <link href="{PT.REPOSITORY_URL}">{PT.REPOSITORY_URL}</link>', reference
+    ))
     story += [Paragraph(html.escape(command), code) for command in REPRO_COMMANDS]
     doc.build(story, onFirstPage=on_page, onLaterPages=on_page)
 

@@ -1,6 +1,6 @@
 # Живая латентная память и текстовый retrieval в диалоговых LLM: компонентный анализ без дообучения
 
-*Научная статья · экспериментальный срез: core 5/48, RAG 4/48 · 2026-11-20*
+*Научная статья · экспериментальный срез: core 5/48, RAG 4/48 · 2026-11-24*
 
 ## АННОТАЦИЯ
 
@@ -337,6 +337,8 @@ Dynamic подключает в среднем 2,52 слота/шаг проти
 34. Yan R. MemDefrag: Latent Memory Defragmentation for Large Language Models / R. Yan, Z. Mao, Y. Guo. — 2026. — URL: https://arxiv.org/abs/2607.05969 (дата обращения: 20.11.2026).
 
 ## ВОСПРОИЗВЕДЕНИЕ
+
+Репозиторий проекта: <https://github.com/TKulikov/Transformer.git>
 
 ```bash
 scripts/run_dialogue_fullscale.sh core night

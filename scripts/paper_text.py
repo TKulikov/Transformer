@@ -15,6 +15,7 @@ EN_KEYWORDS = (
     "latent memory; K/V injection; embedding centering; Qwen3.5"
 )
 ACCESS_DATE = "20.11.2026"
+REPOSITORY_URL = "https://github.com/TKulikov/Transformer.git"
 
 
 def _ref(description: str, url: str) -> str:
